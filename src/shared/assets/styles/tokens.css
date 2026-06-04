@@ -1,0 +1,28 @@
+:root {
+  --sidebar-width: 240px;
+
+  --header-height: 48px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --color-background: #fafafa;
+
+  --color-sidebar: #f8f8f8;
+
+  --color-card: #ffffff;
+
+  --color-border: #ececec;
+
+  --color-muted: #f3f3f3;
+  --color-muted-hover: #ebebeb;
+
+  --color-foreground: #222222;
+
+  --color-text-secondary: #777777;
+
+  --color-text-muted: #8a8a8a;
+
+  --color-success: #79a857;
+}
