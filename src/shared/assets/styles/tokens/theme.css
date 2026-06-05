@@ -1,0 +1,41 @@
+@theme {
+  --font-geist: var(--font-geist);
+
+  --text-title-lg: var(--text-title-lg);
+  --text-title-lg--line-height: var(--text-title-lg--line-height);
+
+  --text-title-md: var(--text-title-md);
+  --text-title-md--line-height: var(--text-title-md--line-height);
+
+  --text-body-lg: var(--text-body-lg);
+  --text-body-lg--line-height: var(--text-body-lg--line-height);
+
+  --text-body-md: var(--text-body-md);
+  --text-body-md--line-height: var(--text-body-md--line-height);
+
+  --text-body-sm: var(--text-body-sm);
+  --text-body-sm--line-height: var(--text-body-sm--line-height);
+
+  --text-body-xs: var(--text-body-xs);
+  --text-body-xs--line-height: var(--text-body-xs--line-height);
+
+  --text-element-button: var(--text-element-button);
+  --text-element-button--line-height: var(
+    --text-element-button--line-height
+  );
+
+  --text-element-input: var(--text-element-input);
+  --text-element-input--line-height: var(
+    --text-element-input--line-height
+  );
+
+  --text-element-badge: var(--text-element-badge);
+  --text-element-badge--line-height: var(
+    --text-element-badge--line-height
+  );
+
+  --text-element-tag: var(--text-element-tag);
+  --text-element-tag--line-height: var(
+    --text-element-tag--line-height
+  );
+}

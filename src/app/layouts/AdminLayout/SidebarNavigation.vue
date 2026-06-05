@@ -1,57 +1,51 @@
 <script setup lang="ts">
-import { Brain, CreditCard, Database, Home, Plug } from 'lucide-vue-next';
+import { CreditCard, Database, Home, Plug, Sparkles } from 'lucide-vue-next';
+
+interface NavigationItem {
+  label: string;
+  to: string;
+  icon: typeof Home;
+}
+
+const items: NavigationItem[] = [
+  {
+    label: 'Главная',
+    to: '/dashboard',
+    icon: Home,
+  },
+  {
+    label: 'Интеграции',
+    to: '/integrations',
+    icon: Plug,
+  },
+  {
+    label: 'Загрузка данных',
+    to: '/datasets',
+    icon: Database,
+  },
+  {
+    label: 'Предсказания',
+    to: '/predictions',
+    icon: Sparkles,
+  },
+  {
+    label: 'Тарифы',
+    to: '/billing',
+    icon: CreditCard,
+  },
+];
 </script>
 
 <template>
   <nav>
     <ul class="space-y-1">
-      <li>
-        <RouterLink
-          to="/"
-          class="flex h-9 items-center gap-3 rounded-xl px-3 text-[15px] text-[#5F5F5F]"
-        >
-          <Home class="size-4" />
-          Главная
-        </RouterLink>
-      </li>
+      <li v-for="item in items" :key="item.to">
+        <RouterLink :to="item.to" class="sidebar-link" exact-active-class="router-link-active">
+          <component :is="item.icon" class="size-4 shrink-0" />
 
-      <li>
-        <RouterLink
-          to="/integrations"
-          class="flex h-9 items-center gap-3 rounded-xl px-3 text-[15px] text-[#5F5F5F]"
-        >
-          <Plug class="size-4" />
-          Интеграции
-        </RouterLink>
-      </li>
-
-      <li>
-        <RouterLink
-          to="/datasets"
-          class="flex h-9 items-center gap-3 rounded-xl bg-[#EEEEEE] px-3 text-[15px] font-medium text-[#222222]"
-        >
-          <Database class="size-4" />
-          Загрузка данных
-        </RouterLink>
-      </li>
-
-      <li>
-        <RouterLink
-          to="/predictions"
-          class="flex h-9 items-center gap-3 rounded-xl px-3 text-[15px] text-[#5F5F5F]"
-        >
-          <Brain class="size-4" />
-          Предсказания
-        </RouterLink>
-      </li>
-
-      <li>
-        <RouterLink
-          to="/billing"
-          class="flex h-9 items-center gap-3 rounded-xl px-3 text-[15px] text-[#5F5F5F]"
-        >
-          <CreditCard class="size-4" />
-          Тарифы
+          <span>
+            {{ item.label }}
+          </span>
         </RouterLink>
       </li>
     </ul>

@@ -4,7 +4,7 @@ import AdminSidebar from './AdminSidebar.vue';
 </script>
 
 <template>
-  <div class="flex h-screen bg-[#FAFAFA]">
+  <div class="flex h-screen bg-(--background)">
     <AdminSidebar />
 
     <div class="flex min-w-0 flex-1 flex-col">

@@ -1,0 +1,42 @@
+:root {
+  --font-geist: 'Geist', 'Inter', system-ui, sans-serif;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+
+  /* Titles */
+
+  --text-title-lg: 1.5rem;
+  --text-title-lg--line-height: 2rem;
+
+  --text-title-md: 1.25rem;
+  --text-title-md--line-height: 1.75rem;
+
+  /* Body */
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75rem;
+
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.5rem;
+
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.25rem;
+
+  --text-body-xs: 0.75rem;
+  --text-body-xs--line-height: 1rem;
+
+  /* Elements */
+
+  --text-element-button: 0.875rem;
+  --text-element-button--line-height: 1.25rem;
+
+  --text-element-input: 1rem;
+  --text-element-input--line-height: 1.5rem;
+
+  --text-element-badge: 0.75rem;
+  --text-element-badge--line-height: 1rem;
+
+  --text-element-tag: 0.75rem;
+  --text-element-tag--line-height: 1rem;
+}

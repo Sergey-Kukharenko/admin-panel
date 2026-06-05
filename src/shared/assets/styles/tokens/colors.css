@@ -1,5 +1,6 @@
 :root {
   /* Primitive */
+
   --color-neutral-950: #0a0a0a;
   --color-neutral-900: #171717;
   --color-neutral-850: #202020;
@@ -31,26 +32,24 @@
   --color-red-200: #fecaca;
 
   /* Semantic */
+
   --background: var(--color-neutral-50);
   --foreground: var(--color-neutral-900);
+
   --card: var(--color-neutral-0);
   --sidebar: var(--color-neutral-75);
+
   --border: var(--color-neutral-200);
+
   --muted: var(--color-neutral-100);
   --muted-hover: var(--color-neutral-200);
+
   --muted-foreground: var(--color-neutral-500);
+
   --primary: var(--color-neutral-950);
   --primary-foreground: var(--color-neutral-0);
+
   --success: var(--color-green-700);
   --warning: var(--color-yellow-700);
   --danger: var(--color-red-700);
-
-  /* Layout */
-  --sidebar-width: 240px;
-  --header-height: 48px;
-
-  /* Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
 }
