@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Cloud } from 'lucide-vue-next';
 
-import AppButton from '@/shared/ui/AppButton';
+import { AppButton } from '@/shared/ui/AppButton';
 import SourceCard from '@/shared/ui/SourceCard';
 
 import { useConnectS3 } from '../model/useConnectS3';
