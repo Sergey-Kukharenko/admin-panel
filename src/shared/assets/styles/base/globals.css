@@ -5,7 +5,11 @@ body,
 }
 
 body {
-  font-family: var(--font-geist);
-  background: var(--background);
+  background: var(--color-neutral-0);
   color: var(--foreground);
+
+  font-family: var(--font-geist);
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }

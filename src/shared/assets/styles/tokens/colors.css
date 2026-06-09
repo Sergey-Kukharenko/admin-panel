@@ -33,7 +33,7 @@
 
   /* Semantic */
 
-  --background: var(--color-neutral-50);
+  --background: var(--color-neutral-0);
   --foreground: var(--color-neutral-900);
 
   --card: var(--color-neutral-0);
