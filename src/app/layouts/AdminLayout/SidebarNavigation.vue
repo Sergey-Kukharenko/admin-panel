@@ -37,11 +37,15 @@ const items: NavigationItem[] = [
 </script>
 
 <template>
-  <nav>
-    <ul class="space-y-1">
+  <nav class="px-3">
+    <ul class="flex flex-col gap-1">
       <li v-for="item in items" :key="item.to">
-        <RouterLink :to="item.to" class="sidebar-link" exact-active-class="router-link-active">
-          <component :is="item.icon" class="size-4 shrink-0" />
+        <RouterLink
+          :to="item.to"
+          class="flex h-9 items-center gap-3 rounded-[8px] px-3 text-[14px] leading-5 font-medium text-(--muted-foreground) transition-colors hover:bg-(--muted)"
+          active-class="bg-(--muted) text-(--foreground)"
+        >
+          <component :is="item.icon" class="h-[18px] w-[18px] shrink-0" />
 
           <span>
             {{ item.label }}

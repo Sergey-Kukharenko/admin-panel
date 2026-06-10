@@ -9,8 +9,8 @@ import SidebarNavigation from './SidebarNavigation.vue';
   <aside
     class="flex h-screen w-(--sidebar-width) flex-col border-r border-(--border) bg-(--sidebar)"
   >
-    <div class="flex h-16 items-center px-6">
-      <img :src="logoUrl" alt="Logo" class="h-8 w-auto" />
+    <div class="flex h-12 items-center px-6">
+      <img :src="logoUrl" alt="Logo" class="h-4" />
     </div>
 
     <div class="px-3">

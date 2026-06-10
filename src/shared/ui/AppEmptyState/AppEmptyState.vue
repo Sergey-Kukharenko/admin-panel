@@ -26,12 +26,12 @@ defineProps<{
     </div>
 
     <!-- Заголовок строго по типографике макета -->
-    <h3 class="mb-1 text-body-md font-medium text-(--foreground)">
+    <h3 class="mb-1 text-title-sm font-medium text-(--foreground)">
       {{ title }}
     </h3>
 
     <!-- Описание -->
-    <p v-if="description" class="mb-6 text-body-sm text-(--muted-foreground) max-w-sm">
+    <p v-if="description" class="mb-6 max-w-sm text-body-sm text-(--muted-foreground)">
       {{ description }}
     </p>
 

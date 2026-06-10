@@ -3,35 +3,3 @@
 
 @import './tokens/index.css';
 @import './base/globals.css';
-
-/* Sidebar */
-
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  height: 40px;
-
-  padding-inline: 12px;
-
-  border-radius: var(--radius-md);
-
-  color: var(--muted-foreground);
-
-  font-size: 14px;
-
-  transition:
-    background-color 150ms ease,
-    color 150ms ease;
-}
-
-.sidebar-link:hover {
-  background: var(--muted);
-}
-
-.sidebar-link.router-link-active {
-  background: var(--muted);
-  color: var(--foreground);
-  font-weight: 500;
-}

@@ -15,7 +15,7 @@ const handleUpload = () => {
       description="Загрузите данные, чтобы начать работу с моделью"
     >
       <template #action>
-        <AppButton variant="secondary" size="medium" @click="handleUpload">
+        <AppButton variant="secondary" size="small" @click="handleUpload">
           Загрузить CSV
         </AppButton>
       </template>

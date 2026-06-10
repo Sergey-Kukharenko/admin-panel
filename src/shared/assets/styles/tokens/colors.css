@@ -31,7 +31,7 @@
   --color-red-700: #b91c1c;
   --color-red-200: #fecaca;
 
-  /* Semantic */
+  /* Semantic Colors */
 
   --background: var(--color-neutral-0);
   --foreground: var(--color-neutral-900);
@@ -52,4 +52,20 @@
   --success: var(--color-green-700);
   --warning: var(--color-yellow-700);
   --danger: var(--color-red-700);
+
+  /* Figma Text Tokens */
+
+  --text-primary: rgba(48, 48, 50, 0.98);
+  --text-secondary: rgba(48, 48, 50, 0.68);
+
+  /* Layout */
+
+  --sidebar-width: 240px;
+  --header-height: 48px;
+
+  /* Radius */
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
