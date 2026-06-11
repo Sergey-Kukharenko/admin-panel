@@ -8,9 +8,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div
-    class="flex min-h-[400px] flex-1 items-center justify-center rounded-(--radius-lg) border border-(--border) bg-(--card)"
-  >
+  <div class="flex flex-1 items-center justify-center min-h-[450px] w-full">
     <AppEmptyState
       title="Нет загрузок"
       description="Загрузите данные, чтобы начать работу с моделью"
