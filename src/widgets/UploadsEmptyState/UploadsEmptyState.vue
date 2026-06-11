@@ -2,20 +2,21 @@
 import { AppButton } from '@/shared/ui/AppButton';
 import { AppEmptyState } from '@/shared/ui/AppEmptyState';
 
-const handleUpload = () => {
-  console.log('Клик по кнопке загрузки CSV');
-};
+const emit = defineEmits<{
+  upload: [];
+}>();
 </script>
 
 <template>
-  <!-- Чистый прозрачный контейнер без лишних рамок и фонов -->
-  <div class="flex flex-1 items-center justify-center min-h-[450px] w-full">
+  <div
+    class="flex min-h-[400px] flex-1 items-center justify-center rounded-(--radius-lg) border border-(--border) bg-(--card)"
+  >
     <AppEmptyState
       title="Нет загрузок"
       description="Загрузите данные, чтобы начать работу с моделью"
     >
       <template #action>
-        <AppButton variant="secondary" size="small" @click="handleUpload">
+        <AppButton variant="secondary" size="small" @click="emit('upload')">
           Загрузить CSV
         </AppButton>
       </template>

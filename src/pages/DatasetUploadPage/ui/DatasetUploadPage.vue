@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
+import { DatasetUploadDrawer } from '@/widgets/DatasetUploadDrawer/ui/DatasetUploadDrawer';
 import UploadsEmptyState from '@/widgets/UploadsEmptyState/UploadsEmptyState.vue';
+
+const isDrawerOpen = ref(true); //TODO: изменить по завершению
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 w-full">
-    <!-- Шапка страницы со строгими стилями из Figma спецификации -->
+  <div class="flex w-full flex-col gap-4">
     <div class="flex flex-col gap-1">
       <h1 class="text-title-sm font-medium text-(--text-primary)">Загрузка данных</h1>
 
@@ -14,10 +18,8 @@ import UploadsEmptyState from '@/widgets/UploadsEmptyState/UploadsEmptyState.vue
       </p>
     </div>
 
-    <!-- TODO: возможно удалится -->
-    <!-- <UploadMethods /> -->
+    <UploadsEmptyState @upload="isDrawerOpen = true" />
 
-    <!-- Область пустого состояния (виджет) -->
-    <UploadsEmptyState />
+    <DatasetUploadDrawer :open="isDrawerOpen" @close="isDrawerOpen = false" />
   </div>
 </template>

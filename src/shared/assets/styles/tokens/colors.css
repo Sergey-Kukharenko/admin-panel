@@ -31,20 +31,25 @@
   --color-red-700: #b91c1c;
   --color-red-200: #fecaca;
 
-  /* Semantic Colors */
+  /* Text */
+
+  --text-primary: rgba(48, 48, 50, 0.98);
+  --text-secondary: rgba(48, 48, 50, 0.68);
+
+  /* Semantic */
 
   --background: var(--color-neutral-0);
-  --foreground: var(--color-neutral-900);
+
+  --foreground: var(--text-primary);
+  --muted-foreground: var(--text-secondary);
 
   --card: var(--color-neutral-0);
   --sidebar: var(--color-neutral-75);
 
   --border: var(--color-neutral-200);
 
-  --muted: var(--color-neutral-100);
-  --muted-hover: var(--color-neutral-200);
-
-  --muted-foreground: var(--color-neutral-500);
+  --muted: rgba(48, 48, 50, 0.06);
+  --muted-hover: rgba(48, 48, 50, 0.1);
 
   --primary: var(--color-neutral-950);
   --primary-foreground: var(--color-neutral-0);
@@ -52,20 +57,4 @@
   --success: var(--color-green-700);
   --warning: var(--color-yellow-700);
   --danger: var(--color-red-700);
-
-  /* Figma Text Tokens */
-
-  --text-primary: rgba(48, 48, 50, 0.98);
-  --text-secondary: rgba(48, 48, 50, 0.68);
-
-  /* Layout */
-
-  --sidebar-width: 240px;
-  --header-height: 48px;
-
-  /* Radius */
-
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
 }
