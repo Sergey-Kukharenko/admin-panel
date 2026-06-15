@@ -1,7 +1,17 @@
+export type DatasetIcon = 'users' | 'vip' | 'bets' | 'balance' | 'payments';
+
+export interface DatasetFile {
+  id: string;
+  name: string;
+  size: number;
+  uploadedAt: string;
+}
+
 export interface DatasetTemplate {
   id: string;
   title: string;
   description: string;
-  count: number;
-  icon: string;
+  icon: DatasetIcon;
+  count?: number;
+  files?: DatasetFile[];
 }

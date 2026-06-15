@@ -1,15 +1,27 @@
 <script setup lang="ts">
-import type { DatasetTemplate } from '@/entities/Dataset/model/types.ts';
+import { ref } from 'vue';
+
+import type { DatasetTemplate } from '@/entities/Dataset/model/types';
 import { DatasetTemplateItem } from '@/entities/Dataset/ui/DatasetTemplateItem';
+
+defineOptions({
+  name: 'DatasetTemplateList',
+});
 
 defineProps<{
   templates: DatasetTemplate[];
 }>();
 
 const emit = defineEmits<{
-  download: [string];
-  add: [string];
+  upload: [templateId: string, files: File[]];
+  remove: [templateId: string, fileId: string];
 }>();
+
+const expandedId = ref<string | null>(null);
+
+const toggle = (id: string) => {
+  expandedId.value = expandedId.value === id ? null : id;
+};
 </script>
 
 <template>
@@ -18,8 +30,10 @@ const emit = defineEmits<{
       v-for="template in templates"
       :key="template.id"
       :template="template"
-      @download="emit('download', $event)"
-      @add="emit('add', $event)"
+      :expanded="expandedId === template.id"
+      @toggle="toggle(template.id)"
+      @upload="emit('upload', template.id, $event)"
+      @remove="emit('remove', template.id, $event)"
     />
   </ul>
 </template>
