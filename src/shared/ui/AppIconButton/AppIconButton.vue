@@ -38,6 +38,7 @@ const variantClasses = computed(() => {
       'rounded-(--radius-sm)',
       'transition-colors duration-150',
       'disabled:pointer-events-none',
+      'outline-none',
       variantClasses,
     ]"
   >

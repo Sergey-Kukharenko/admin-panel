@@ -13,7 +13,7 @@ defineOptions({
   name: 'DatasetUploadZone',
 });
 
-withDefaults(defineProps<DatasetUploadZoneProps>(), {
+const props = withDefaults(defineProps<DatasetUploadZoneProps>(), {
   accept: '.csv',
   multiple: true,
   disabled: false,
@@ -24,9 +24,10 @@ const emit = defineEmits<{
 }>();
 
 const inputRef = ref<HTMLInputElement>();
+const isDragOver = ref(false); // Состояние для визуальной подсветки при перетаскивании
 
 const handleSelect = () => {
-  if (!inputRef.value) {
+  if (!inputRef.value || props.disabled) {
     return;
   }
 
@@ -47,8 +48,9 @@ const handleChange = (event: Event) => {
 
 const handleDrop = (event: DragEvent) => {
   event.preventDefault();
+  isDragOver.value = false;
 
-  if (!event.dataTransfer?.files.length) {
+  if (props.disabled || !event.dataTransfer?.files.length) {
     return;
   }
 
@@ -57,18 +59,30 @@ const handleDrop = (event: DragEvent) => {
 
 const handleDragOver = (event: DragEvent) => {
   event.preventDefault();
+  if (props.disabled) return;
+  isDragOver.value = true;
+};
+
+const handleDragLeave = () => {
+  isDragOver.value = false;
 };
 </script>
 
 <template>
   <div
-    class="flex flex-col items-center justify-center gap-4 rounded-(--radius-md) border border-dashed border-(--border) py-10 px-6 text-center bg-(--background)"
+    :class="[
+      'flex flex-col items-center justify-center rounded-(--radius-md) border border-dashed text-center py-10 px-6 transition-colors duration-150 ease-in-out',
+      // Динамические стили в зависимости от состояний
+      isDragOver ? 'border-(--primary) bg-(--muted)' : 'border-(--border) bg-(--background)',
+      disabled ? 'opacity-50 pointer-events-none' : '',
+    ]"
     @drop="handleDrop"
     @dragover="handleDragOver"
+    @dragleave="handleDragLeave"
   >
-    <p class="text-body-sm text-(--text-secondary)">Нет добавленных файлов</p>
+    <p class="text-body-sm text-(--text-secondary) mb-3 select-none">Нет добавленных файлов</p>
 
-    <AppButton variant="secondary" size="small" :disabled="disabled" @click="handleSelect">
+    <AppButton variant="outline" size="medium" :disabled="disabled" @click="handleSelect">
       Выбрать файлы
     </AppButton>
 
@@ -78,6 +92,7 @@ const handleDragOver = (event: DragEvent) => {
       class="hidden"
       :accept="accept"
       :multiple="multiple"
+      :disabled="disabled"
       @change="handleChange"
     />
   </div>

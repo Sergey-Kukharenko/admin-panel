@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronRight, MoreHorizontal, Plus } from 'lucide-vue-next';
+import { ChevronRight, MoreHorizontal, PlusCircle } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import type { DatasetTemplate } from '@/entities/Dataset/model/types';
@@ -51,18 +51,20 @@ const handleFilesChange = (event: Event) => {
       <!-- Content -->
       <button
         type="button"
-        class="flex min-w-0 flex-1 items-start gap-3 text-left"
+        class="flex min-w-0 flex-1 items-start gap-2 text-left"
         @click="emit('toggle')"
       >
-        <!-- Expand -->
-        <ChevronRight
-          class="mt-[2px] size-4 shrink-0 text-(--text-secondary) transition-transform duration-200"
-          :class="{ 'rotate-90': expanded }"
-        />
+        <div class="flex gap-1">
+          <!-- Expand -->
+          <ChevronRight
+            class="mt-[2px] size-4 shrink-0 text-(--text-secondary) transition-transform duration-200"
+            :class="{ 'rotate-90': expanded }"
+          />
 
-        <!-- Icon -->
-        <div class="flex shrink-0 items-center pt-[2px]">
-          <DatasetTemplateIcon :icon="template.icon" />
+          <!-- Icon -->
+          <div class="flex shrink-0 items-center pt-[2px]">
+            <DatasetTemplateIcon :icon="template.icon" />
+          </div>
         </div>
 
         <!-- Text -->
@@ -93,7 +95,7 @@ const handleFilesChange = (event: Event) => {
         </AppIconButton>
 
         <AppIconButton variant="ghost" @click="openFilePicker">
-          <Plus class="size-[13.333px] text-(--text-secondary)" />
+          <PlusCircle class="size-4 text-(--text-secondary)" stroke-width="2" />
         </AppIconButton>
 
         <input
@@ -108,7 +110,7 @@ const handleFilesChange = (event: Event) => {
     </div>
 
     <!-- Expanded Content -->
-    <div v-if="expanded" class="pb-3 pl-9">
+    <div v-if="expanded" class="pb-3">
       <DatasetUploadZone v-if="!filesCount" @upload="emit('upload', $event)" />
 
       <DatasetFilesList v-else :files="files" @remove="emit('remove', $event)" />

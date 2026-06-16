@@ -70,7 +70,7 @@ const emit = defineEmits<{
 
           <!-- Footer -->
 
-          <footer v-if="$slots.footer" class="border-t border-(--border) p-5">
+          <footer v-if="$slots.footer" class="border-t border-(--border)">
             <slot name="footer" />
           </footer>
         </DialogContent>
