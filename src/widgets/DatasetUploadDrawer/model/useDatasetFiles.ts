@@ -1,0 +1,74 @@
+import { onMounted, ref, watch } from 'vue';
+
+import type { DatasetFile } from '@/entities/Dataset/model/types';
+
+export type SavedFilesState = Record<string, DatasetFile[]>;
+
+export function useDatasetFiles() {
+  const filesMap = ref<SavedFilesState>({});
+
+  onMounted(() => {
+    const saved = localStorage.getItem('dataset_uploaded_files');
+    if (saved) {
+      try {
+        filesMap.value = JSON.parse(saved);
+      } catch (e) {
+        console.error('Ошибка чтения файлов из хранилища', e);
+      }
+    }
+  });
+
+  watch(
+    filesMap,
+    (newMap) => {
+      localStorage.setItem('dataset_uploaded_files', JSON.stringify(newMap));
+    },
+    { deep: true },
+  );
+
+  // Добавление файлов с гарантированным триггером реактивности Vue
+  const addFiles = (templateId: string, newFiles: File[]) => {
+    const metaFiles: DatasetFile[] = newFiles.map((file) => ({
+      id: crypto.randomUUID(),
+      name: file.name,
+      size: file.size,
+      uploadedAt: new Date().toISOString(),
+    }));
+
+    // Получаем текущий массив или создаем пустой
+    const currentCategoryFiles = filesMap.value[templateId] ? [...filesMap.value[templateId]] : [];
+    currentCategoryFiles.push(...metaFiles);
+
+    // КРИТИЧЕСКИЙ ШАГ: Перезаписываем весь объект целиком, чтобы Vue зафиксировал изменение реактивности
+    filesMap.value = {
+      ...filesMap.value,
+      [templateId]: currentCategoryFiles,
+    };
+  };
+
+  // Удаление файлов с гарантированным триггером реактивности
+  const removeFile = (fileId: string) => {
+    const updatedMap: SavedFilesState = {};
+
+    for (const templateId in filesMap.value) {
+      const currentFiles = filesMap.value[templateId];
+      if (!currentFiles) continue;
+
+      const filtered = currentFiles.filter((file) => file.id !== fileId);
+
+      // Сохраняем в новый объект только если в категории еще остались файлы
+      if (filtered.length > 0) {
+        updatedMap[templateId] = filtered;
+      }
+    }
+
+    // Перезаписываем объект стейта целиком
+    filesMap.value = updatedMap;
+  };
+
+  return {
+    filesMap,
+    addFiles,
+    removeFile,
+  };
+}

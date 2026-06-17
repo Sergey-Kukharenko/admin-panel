@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { X } from 'lucide-vue-next';
-
-import { AppIconButton } from '@/shared/ui/AppIconButton';
+import { CheckCircle2, Trash2 } from 'lucide-vue-next';
 
 export interface DatasetFile {
   id: string;
@@ -10,7 +8,7 @@ export interface DatasetFile {
 }
 
 defineOptions({
-  name: 'DatasetFilesList',
+  name: 'DatasetFileList',
 });
 
 defineProps<{
@@ -20,40 +18,33 @@ defineProps<{
 const emit = defineEmits<{
   remove: [string];
 }>();
-
-const formatSize = (size: number) => {
-  if (size < 1024) {
-    return `${size} B`;
-  }
-
-  if (size < 1024 * 1024) {
-    return `${(size / 1024).toFixed(1)} KB`;
-  }
-
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-};
 </script>
 
 <template>
-  <ul class="flex flex-col rounded-(--radius-md) border border-(--border)">
+  <!-- Список файлов (list) -->
+  <ul class="flex flex-col items-start self-stretch w-full gap-1.5 mt-2">
     <li
       v-for="file in files"
       :key="file.id"
-      class="flex items-center gap-3 border-b border-(--border) p-3 last:border-b-0"
+      class="flex h-8 max-h-12 pl-11 pr-2 py-1.5 items-center gap-2 self-stretch bg-transparent hover:bg-(--muted) rounded-(--radius-sm) group transition-colors duration-150 ease-in-out"
     >
-      <div class="flex min-w-0 flex-1 flex-col">
-        <span class="truncate text-body-sm font-medium text-(--text-primary)">
-          {{ file.name }}
-        </span>
+      <CheckCircle2 class="size-4 aspect-square flex-shrink-0 text-[#528300]" stroke-width="2" />
 
-        <span class="text-body-xs text-(--text-secondary)">
-          {{ formatSize(file.size) }}
+      <div class="flex flex-col items-start flex-1 min-w-0">
+        <span
+          class="text-sm font-medium text-[rgba(48,48,50,0.98)] leading-5 truncate w-full select-none"
+        >
+          {{ file.name }}
         </span>
       </div>
 
-      <AppIconButton variant="ghost" @click="emit('remove', file.id)">
-        <X class="size-4" />
-      </AppIconButton>
+      <button
+        type="button"
+        class="size-4 aspect-square flex items-center justify-center text-[rgba(48,48,50,0.68)] hover:text-(--danger) transition-colors cursor-pointer"
+        @click="emit('remove', file.id)"
+      >
+        <Trash2 class="size-4 aspect-square" stroke-width="2" />
+      </button>
     </li>
   </ul>
 </template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed } from 'vue';
 
 import { DatasetTemplatesList } from '@/entities/Dataset/ui/DatasetTemplatesList';
 import { DownloadTemplatesBanner } from '@/features/DownloadTemplate/ui/DownloadTemplatesBanner';
 import { AppDrawer } from '@/shared/ui/AppDrawer';
 
-import { datasetTemplates } from '../../model/datasetTemplates.ts';
+import { datasetTemplates, useDatasetFiles } from '../../model';
 import DatasetUploadFooter from './DatasetUploadFooter.vue';
 
 defineProps<{
@@ -17,14 +17,34 @@ const emit = defineEmits<{
   submit: [];
 }>();
 
-const totalUploadedFiles = ref(0);
+// Подключаем хранилище
+const { filesMap, addFiles, removeFile } = useDatasetFiles();
+
+// Объединяем шаблоны со стейтом файлов
+const templatesWithFiles = computed(() => {
+  return datasetTemplates.map((template) => ({
+    ...template,
+    files: filesMap.value[template.id] ?? [],
+  }));
+});
+
+// Считаем общее количество файлов для шапки и футера
+const totalUploadedFiles = computed(() => {
+  return Object.values(filesMap.value).reduce((acc, files) => acc + files.length, 0);
+});
 
 const handleDownload = (id: string) => {
-  console.log('download', id);
+  console.log('download template schema:', id);
 };
 
-const handleAdd = (id: string) => {
-  console.log('add', id);
+// Исправлено: имя функции и логика теперь соответствуют событию @upload
+const handleUpload = (templateId: string, uploadedFiles: File[]) => {
+  addFiles(templateId, uploadedFiles);
+};
+
+// Исправлено: метод принимает templateId и fileId, как отправляет DatasetTemplatesList
+const handleRemove = (templateId: string, fileId: string) => {
+  removeFile(fileId);
 };
 
 const handleSubmit = () => {
@@ -36,7 +56,6 @@ const handleSubmit = () => {
 
 <template>
   <AppDrawer :open="open" title="Загрузка CSV" @close="emit('close')">
-    <!-- Основной контент -->
     <div class="flex flex-col gap-6 text-left">
       <DownloadTemplatesBanner />
 
@@ -47,19 +66,20 @@ const handleSubmit = () => {
           </h3>
           <p class="text-xs text-(--text-secondary) leading-relaxed">
             Загрузите один или несколько типов данных для обучения моделей. <br />
-            Максимальный размер: 500 МБ на файл, формат CSV.
+            Максимальный размер: 500 МБ на файл, format CSV.
           </p>
         </header>
 
+        <!-- ИСПРАВЛЕНО: слушаем @upload вместо @add, и передаем правильные хэндлеры -->
         <DatasetTemplatesList
-          :templates="datasetTemplates"
+          :templates="templatesWithFiles"
           @download="handleDownload"
-          @add="handleAdd"
+          @upload="handleUpload"
+          @remove="handleRemove"
         />
       </section>
     </div>
 
-    <!-- Использование вынесенного компонента футера -->
     <template #footer>
       <DatasetUploadFooter
         :disabled="totalUploadedFiles === 0"
