@@ -66,9 +66,21 @@ export function useDatasetFiles() {
     filesMap.value = updatedMap;
   };
 
+  // Удаление всех файлов конкретного шаблона
+  const clearTemplateFiles = (templateId: string) => {
+    if (filesMap.value[templateId]) {
+      // Клонируем стейт без нужного ключа для чистого триггера реактивности Vue
+      const updatedMap = { ...filesMap.value };
+      delete updatedMap[templateId];
+
+      filesMap.value = updatedMap;
+    }
+  };
+
   return {
     filesMap,
     addFiles,
     removeFile,
+    clearTemplateFiles,
   };
 }

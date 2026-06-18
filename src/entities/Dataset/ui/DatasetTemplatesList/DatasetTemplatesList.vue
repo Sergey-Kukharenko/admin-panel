@@ -15,6 +15,8 @@ defineProps<{
 const emit = defineEmits<{
   upload: [templateId: string, files: File[]];
   remove: [templateId: string, fileId: string];
+  clearAll: [templateId: string];
+  download: [templateId: string];
 }>();
 
 const expandedId = ref<string | null>(null);
@@ -34,6 +36,7 @@ const toggle = (id: string) => {
       @toggle="toggle(template.id)"
       @upload="emit('upload', template.id, $event)"
       @remove="emit('remove', template.id, $event)"
+      @clear-all="emit('clearAll', template.id)"
     />
   </ul>
 </template>

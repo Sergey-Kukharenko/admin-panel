@@ -17,10 +17,11 @@ const emit = defineEmits<{
   submit: [];
 }>();
 
-// Подключаем хранилище
-const { filesMap, addFiles, removeFile } = useDatasetFiles();
+// Подключаем реактивное хранилище LocalStorage
+const { filesMap, addFiles, removeFile, clearTemplateFiles } = useDatasetFiles();
 
-// Объединяем шаблоны со стейтом файлов
+// Объединяем дефолтные шаблоны со стейтом файлов из LocalStorage,
+// чтобы дочерний DatasetTemplateItem увидел файлы через пропсы, как он и ожидает.
 const templatesWithFiles = computed(() => {
   return datasetTemplates.map((template) => ({
     ...template,
@@ -28,25 +29,27 @@ const templatesWithFiles = computed(() => {
   }));
 });
 
-// Считаем общее количество файлов для шапки и футера
+// Вычисляем общее количество загруженных файлов для шапки и футера
 const totalUploadedFiles = computed(() => {
   return Object.values(filesMap.value).reduce((acc, files) => acc + files.length, 0);
 });
 
-const handleDownload = (id: string) => {
-  console.log('download template schema:', id);
-};
-
-// Исправлено: имя функции и логика теперь соответствуют событию @upload
+// При добавлении файлов через инпут или Drag-and-Drop аккордеона
 const handleUpload = (templateId: string, uploadedFiles: File[]) => {
   addFiles(templateId, uploadedFiles);
 };
 
-// Исправлено: метод принимает templateId и fileId, как отправляет DatasetTemplatesList
+// При поштучном удалении файла через корзину строки
 const handleRemove = (templateId: string, fileId: string) => {
   removeFile(fileId);
 };
 
+// При полной очистке категории через выпадающий список Radix
+const handleClearAll = (templateId: string) => {
+  clearTemplateFiles(templateId);
+};
+
+// Клик по главной кнопке отправки в футере
 const handleSubmit = () => {
   if (totalUploadedFiles.value > 0) {
     emit('submit');
@@ -56,30 +59,33 @@ const handleSubmit = () => {
 
 <template>
   <AppDrawer :open="open" title="Загрузка CSV" @close="emit('close')">
+    <!-- ОСНОВНОЙ КОНТЕНТ (автоматически скроллится встроенным в AppDrawer механизмом) -->
     <div class="flex flex-col gap-6 text-left">
       <DownloadTemplatesBanner />
 
       <section class="flex flex-col gap-4">
         <header class="flex flex-col gap-1">
+          <!-- Динамический счетчик файлов из LocalStorage -->
           <h3 class="text-sm font-medium text-(--text-primary)">
             Загруженные файлы {{ totalUploadedFiles }}
           </h3>
           <p class="text-xs text-(--text-secondary) leading-relaxed">
             Загрузите один или несколько типов данных для обучения моделей. <br />
-            Максимальный размер: 500 МБ на файл, format CSV.
+            Максимальный размер: 500 МБ на файл, формат CSV.
           </p>
         </header>
 
-        <!-- ИСПРАВЛЕНО: слушаем @upload вместо @add, и передаем правильные хэндлеры -->
+        <!-- Список категорий (Users, Bets, Payments и т.д.) -->
         <DatasetTemplatesList
           :templates="templatesWithFiles"
-          @download="handleDownload"
           @upload="handleUpload"
           @remove="handleRemove"
+          @clear-all="handleClearAll"
         />
       </section>
     </div>
 
+    <!-- СИСТЕМНЫЙ СЛОТ ФУТЕРА ДРОПДАУНА -->
     <template #footer>
       <DatasetUploadFooter
         :disabled="totalUploadedFiles === 0"

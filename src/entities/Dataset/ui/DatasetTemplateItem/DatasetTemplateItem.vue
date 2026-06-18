@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ChevronRight, MoreHorizontal, PlusCircle } from 'lucide-vue-next';
+import { ChevronRight, Download, MoreHorizontal, PlusCircle, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import type { DatasetTemplate } from '@/entities/Dataset/model/types';
 import { DatasetTemplateIcon } from '@/entities/Dataset/ui/DatasetTemplateIcon';
 import DatasetFilesList from '@/entities/Dataset/ui/DatasetTemplateItem/DatasetFilesList.vue';
 import DatasetUploadZone from '@/entities/Dataset/ui/DatasetTemplateItem/DatasetUploadZone.vue';
+import { AppDropdown, AppDropdownItem } from '@/shared/ui/AppDropdown';
 import { AppIconButton } from '@/shared/ui/AppIconButton';
 
 defineOptions({
@@ -21,6 +22,7 @@ const emit = defineEmits<{
   toggle: [];
   upload: [files: File[]];
   remove: [fileId: string];
+  clearAll: [];
 }>();
 
 const inputRef = ref<HTMLInputElement>();
@@ -89,10 +91,37 @@ const handleFilesChange = (event: Event) => {
       </button>
 
       <!-- Actions -->
-      <div class="ml-3 flex shrink-0 items-center">
-        <AppIconButton variant="ghost">
-          <MoreHorizontal class="size-4 text-(--text-secondary)" />
-        </AppIconButton>
+      <div class="ml-3 flex shrink-0 items-center gap-0.5">
+        <AppDropdown align="end" :side-offset="4">
+          <template #trigger>
+            <AppIconButton variant="ghost">
+              <MoreHorizontal class="size-4 text-(--text-secondary)" />
+            </AppIconButton>
+          </template>
+
+          <!-- Пока просто заглушка, ничего не скачивает -->
+          <AppDropdownItem @select="console.log('Клик по скачиванию шаблона:', template.id)">
+            <Download
+              class="size-4 aspect-square flex-shrink-0 text-[rgba(48,48,50,0.68)]"
+              stroke-width="2"
+            />
+            <span class="text-sm font-medium text-[rgba(48,48,50,0.98)] leading-5 select-none">
+              Скачать шаблон
+            </span>
+          </AppDropdownItem>
+
+          <!-- Рабочее удаление файлов категории -->
+          <AppDropdownItem
+            :disabled="!filesCount"
+            class="data-[highlighted]:!bg-red-50"
+            @select="emit('clearAll')"
+          >
+            <Trash2 class="size-4 aspect-square flex-shrink-0 text-[#B21A25]/68" stroke-width="2" />
+            <span class="text-sm font-medium text-[#B21A25] leading-5 select-none">
+              Удалить файлы
+            </span>
+          </AppDropdownItem>
+        </AppDropdown>
 
         <AppIconButton variant="ghost" @click="openFilePicker">
           <PlusCircle class="size-4 text-(--text-secondary)" stroke-width="2" />
