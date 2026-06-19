@@ -4,6 +4,10 @@ import type { DatasetFile } from '@/entities/Dataset/model/types';
 
 export type SavedFilesState = Record<string, DatasetFile[]>;
 
+// Экспортируем константу максимального размера (500 МБ в байтах) для использования в UI компонентах
+// export const MAX_FILE_SIZE = 500 * 1024 * 1024;
+export const MAX_FILE_SIZE = 500;
+
 export function useDatasetFiles() {
   const filesMap = ref<SavedFilesState>({});
 
@@ -31,15 +35,13 @@ export function useDatasetFiles() {
     const metaFiles: DatasetFile[] = newFiles.map((file) => ({
       id: crypto.randomUUID(),
       name: file.name,
-      size: file.size,
+      size: file.size, // Пишем оригинальный размер файла в байтах
       uploadedAt: new Date().toISOString(),
     }));
 
-    // Получаем текущий массив или создаем пустой
     const currentCategoryFiles = filesMap.value[templateId] ? [...filesMap.value[templateId]] : [];
     currentCategoryFiles.push(...metaFiles);
 
-    // КРИТИЧЕСКИЙ ШАГ: Перезаписываем весь объект целиком, чтобы Vue зафиксировал изменение реактивности
     filesMap.value = {
       ...filesMap.value,
       [templateId]: currentCategoryFiles,

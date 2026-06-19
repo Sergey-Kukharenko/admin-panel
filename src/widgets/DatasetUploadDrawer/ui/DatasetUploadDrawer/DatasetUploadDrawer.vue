@@ -5,7 +5,7 @@ import { DatasetTemplatesList } from '@/entities/Dataset/ui/DatasetTemplatesList
 import { DownloadTemplatesBanner } from '@/features/DownloadTemplate/ui/DownloadTemplatesBanner';
 import { AppDrawer } from '@/shared/ui/AppDrawer';
 
-import { datasetTemplates, useDatasetFiles } from '../../model';
+import { datasetTemplates, MAX_FILE_SIZE, useDatasetFiles } from '../../model';
 import DatasetUploadFooter from './DatasetUploadFooter.vue';
 
 defineProps<{
@@ -29,9 +29,21 @@ const templatesWithFiles = computed(() => {
   }));
 });
 
-// Вычисляем общее количество загруженных файлов для шапки и футера
+// Вычисляем общее количество загруженных файлов для шапки (включая файлы с ошибками)
 const totalUploadedFiles = computed(() => {
   return Object.values(filesMap.value).reduce((acc, files) => acc + files.length, 0);
+});
+
+// Проверяем наличие валидных файлов для активации кнопки в футере
+const hasValidFiles = computed(() => {
+  // Собираем все загруженные файлы в один плоский массив
+  const allFiles = Object.values(filesMap.value).flat();
+
+  // Кнопка заблокирована, если файлов нет вообще
+  if (allFiles.length === 0) return false;
+
+  // Кнопка активна только если ВСЕ загруженные файлы не превышают лимит в 500 МБ
+  return allFiles.every((file) => file.size <= MAX_FILE_SIZE);
 });
 
 // При добавлении файлов через инпут или Drag-and-Drop аккордеона
@@ -51,7 +63,8 @@ const handleClearAll = (templateId: string) => {
 
 // Клик по главной кнопке отправки в футере
 const handleSubmit = () => {
-  if (totalUploadedFiles.value > 0) {
+  // Дополнительная проверка безопасности перед отправкой события
+  if (hasValidFiles.value) {
     emit('submit');
   }
 };
@@ -65,7 +78,7 @@ const handleSubmit = () => {
 
       <section class="flex flex-col gap-4">
         <header class="flex flex-col gap-1">
-          <!-- Динамический счетчик файлов из LocalStorage -->
+          <!-- Динамический счетчик файлов из LocalStorage (выводит общее число файлов) -->
           <h3 class="text-sm font-medium text-(--text-primary)">
             Загруженные файлы {{ totalUploadedFiles }}
           </h3>
@@ -87,8 +100,9 @@ const handleSubmit = () => {
 
     <!-- СИСТЕМНЫЙ СЛОТ ФУТЕРА ДРОПДАУНА -->
     <template #footer>
+      <!-- Кнопка «Загрузить и обработать» заблокирована, если файлов нет или есть файлы с ошибками размера -->
       <DatasetUploadFooter
-        :disabled="totalUploadedFiles === 0"
+        :disabled="!hasValidFiles"
         @cancel="emit('close')"
         @submit="handleSubmit"
       />

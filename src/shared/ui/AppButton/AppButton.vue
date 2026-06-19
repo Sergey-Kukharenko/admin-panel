@@ -86,13 +86,14 @@ const sizeClasses = computed(() => {
 });
 </script>
 
+<!-- Внутри вашего AppButton.vue -->
 <template>
   <button
     v-bind="$attrs"
     :disabled="disabled"
     :class="[
       'inline-flex items-center justify-center',
-      'rounded-(--radius-sm)',
+      'rounded-(--radius-md)',
       'font-medium',
       'whitespace-nowrap',
       'select-none',
