@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { DatasetTemplatesList } from '@/entities/Dataset/ui/DatasetTemplatesList';
 import { DownloadTemplatesBanner } from '@/features/DownloadTemplate/ui/DownloadTemplatesBanner';
+import { AppConfirmDialog } from '@/shared/ui/AppConfirmDialog'; // Импортируем наше модальное окно
 import { AppDrawer } from '@/shared/ui/AppDrawer';
 
 import { datasetTemplates, MAX_FILE_SIZE, useDatasetFiles } from '../../model';
@@ -17,11 +18,11 @@ const emit = defineEmits<{
   submit: [];
 }>();
 
-// Подключаем реактивное хранилище LocalStorage
 const { filesMap, addFiles, removeFile, clearTemplateFiles } = useDatasetFiles();
 
-// Объединяем дефолтные шаблоны со стейтом файлов из LocalStorage,
-// чтобы дочерний DatasetTemplateItem увидел файлы через пропсы, как он и ожидает.
+// Переменная состояния для управления модальным окном подтверждения
+const isConfirmOpen = ref(false);
+
 const templatesWithFiles = computed(() => {
   return datasetTemplates.map((template) => ({
     ...template,
@@ -29,56 +30,55 @@ const templatesWithFiles = computed(() => {
   }));
 });
 
-// Вычисляем общее количество загруженных файлов для шапки (включая файлы с ошибками)
 const totalUploadedFiles = computed(() => {
   return Object.values(filesMap.value).reduce((acc, files) => acc + files.length, 0);
 });
 
-// Проверяем наличие валидных файлов для активации кнопки в футере
 const hasValidFiles = computed(() => {
-  // Собираем все загруженные файлы в один плоский массив
   const allFiles = Object.values(filesMap.value).flat();
-
-  // Кнопка заблокирована, если файлов нет вообще
   if (allFiles.length === 0) return false;
-
-  // Кнопка активна только если ВСЕ загруженные файлы не превышают лимит в 500 МБ
   return allFiles.every((file) => file.size <= MAX_FILE_SIZE);
 });
 
-// При добавлении файлов через инпут или Drag-and-Drop аккордеона
 const handleUpload = (templateId: string, uploadedFiles: File[]) => {
   addFiles(templateId, uploadedFiles);
 };
 
-// При поштучном удалении файла через корзину строки
 const handleRemove = (templateId: string, fileId: string) => {
   removeFile(fileId);
 };
 
-// При полной очистке категории через выпадающий список Radix
 const handleClearAll = (templateId: string) => {
   clearTemplateFiles(templateId);
 };
 
-// Клик по главной кнопке отправки в футере
-const handleSubmit = () => {
-  // Дополнительная проверка безопасности перед отправкой события
+// 1. Клик по кнопке футера шторки: открывает окно подтверждения вместо отправки
+const handleDrawerSubmit = () => {
   if (hasValidFiles.value) {
-    emit('submit');
+    isConfirmOpen.value = true;
   }
+};
+
+// 2. Клик по черной кнопке «Да, отправить» внутри модального окна
+const handleFinalConfirm = () => {
+  isConfirmOpen.value = false;
+
+  // Очищаем локальное хранилище после успешной отправки данных
+  localStorage.removeItem('dataset_uploaded_files');
+  filesMap.value = {};
+
+  emit('submit'); // Отправляем событие на верхний уровень приложения
+  emit('close'); // Закрываем шторку загрузки файлов
 };
 </script>
 
 <template>
   <AppDrawer :open="open" title="Загрузка CSV" @close="emit('close')">
-    <!-- ОСНОВНОЙ КОНТЕНТ (автоматически скроллится встроенным в AppDrawer механизмом) -->
     <div class="flex flex-col gap-6 text-left">
       <DownloadTemplatesBanner />
 
       <section class="flex flex-col gap-4">
         <header class="flex flex-col gap-1">
-          <!-- Динамический счетчик файлов из LocalStorage (выводит общее число файлов) -->
           <h3 class="text-sm font-medium text-(--text-primary)">
             Загруженные файлы {{ totalUploadedFiles }}
           </h3>
@@ -88,7 +88,6 @@ const handleSubmit = () => {
           </p>
         </header>
 
-        <!-- Список категорий (Users, Bets, Payments и т.д.) -->
         <DatasetTemplatesList
           :templates="templatesWithFiles"
           @upload="handleUpload"
@@ -98,14 +97,22 @@ const handleSubmit = () => {
       </section>
     </div>
 
-    <!-- СИСТЕМНЫЙ СЛОТ ФУТЕРА ДРОПДАУНА -->
     <template #footer>
-      <!-- Кнопка «Загрузить и обработать» заблокирована, если файлов нет или есть файлы с ошибками размера -->
+      <!-- Направляем клик на функцию открытия модального окна -->
       <DatasetUploadFooter
         :disabled="!hasValidFiles"
         @cancel="emit('close')"
-        @submit="handleSubmit"
+        @submit="handleDrawerSubmit"
       />
     </template>
   </AppDrawer>
+
+  <!-- КОМПОНЕНТ МОДАЛЬНОГО ОКНА ПОДТВЕРЖДЕНИЯ -->
+  <AppConfirmDialog
+    :open="isConfirmOpen"
+    title="Подтвердите отправку"
+    description="Действие нельзя отменить. Файлы будут отправлены для обучения ML-моделей. После отправки данные нельзя будет отозвать. Процесс обучения займёт от 5 до 14 дней."
+    @close="isConfirmOpen = false"
+    @confirm="handleFinalConfirm"
+  />
 </template>
