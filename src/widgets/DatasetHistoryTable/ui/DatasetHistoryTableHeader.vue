@@ -11,9 +11,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex w-full items-center rounded-xl bg-[rgba(48,48,50,0.03)] px-6 self-stretch">
+  <div class="flex w-full items-center rounded-xl bg-[rgba(48,48,50,0.03)] pl-6 pr-2 self-stretch">
     <!-- 1. Ячейка: НАИМЕНОВАНИЕ -->
-    <div class="flex h-9 flex-1 items-center gap-1.5 border-r border-black/8 pl-6 pr-4">
+    <div class="flex h-9 flex-1 items-center gap-1.5 border-r border-black/8 pl-7 pr-4">
       <span
         class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.68)] leading-5 select-none"
       >

@@ -53,11 +53,11 @@ const sortedCategories = computed(() => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col items-start gap-2 bg-transparent px-6 pb-2 self-stretch">
+  <div class="flex w-full flex-col items-start gap-2 bg-transparent px-2 pb-2 self-stretch">
     <div
       v-for="category in sortedCategories"
       :key="category.id"
-      class="flex w-full flex-col items-end overflow-hidden rounded-lg border border-black/8 bg-white self-stretch"
+      class="flex w-full flex-col items-end overflow-hidden rounded-lg bg-white self-stretch"
     >
       <!-- Заголовок подтаблицы -->
       <div class="flex h-11 w-full items-center border-b border-black/8 bg-white pl-4 self-stretch">
