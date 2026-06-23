@@ -21,6 +21,10 @@ const historyGroupsMock = ref([
 
 const expandedGroups = ref<string[]>(['group-1']);
 
+// Реактивное состояние для сортировки только по строкам
+const sortBy = ref<'rows' | null>(null);
+const sortOrder = ref<'asc' | 'desc'>('asc');
+
 const toggleGroup = (id: string) => {
   if (expandedGroups.value.includes(id)) {
     expandedGroups.value = expandedGroups.value.filter((gId) => gId !== id);
@@ -28,19 +32,25 @@ const toggleGroup = (id: string) => {
     expandedGroups.value.push(id);
   }
 };
+
+const handleSortRows = () => {
+  sortBy.value = 'rows';
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+};
 </script>
 
 <template>
-  <div class="flex flex-col items-start w-[1138px] gap-8 self-stretch mx-auto py-6">
+  <div class="mx-auto flex w-[1138px] flex-col items-start gap-4 self-stretch">
     <DatasetHistoryToolbar @open-upload="$emit('openUploadDrawer')" />
 
-    <div class="flex flex-col w-full gap-1 self-stretch">
-      <DatasetHistoryTableHeader />
+    <div class="flex w-full flex-col gap-1 self-stretch">
+      <!-- Слушаем только событие sort-rows -->
+      <DatasetHistoryTableHeader @sort-rows="handleSortRows" />
 
       <div
         v-for="group in historyGroupsMock"
         :key="group.id"
-        class="flex flex-col items-center w-full bg-[rgba(48,48,50,0.03)] rounded-xl self-stretch overflow-hidden"
+        class="flex w-full flex-col items-center overflow-hidden rounded-xl bg-[rgba(48,48,50,0.03)] self-stretch"
       >
         <div class="w-full transition-all duration-150">
           <DatasetHistoryGroupHeader
@@ -62,7 +72,7 @@ const toggleGroup = (id: string) => {
           leave-to-class="max-h-0 opacity-0"
         >
           <div v-if="expandedGroups.includes(group.id)" class="w-full">
-            <DatasetHistoryGroupContent />
+            <DatasetHistoryGroupContent :sort-by="sortBy" :sort-order="sortOrder" />
           </div>
         </Transition>
       </div>
