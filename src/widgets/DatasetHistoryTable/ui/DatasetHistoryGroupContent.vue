@@ -5,7 +5,6 @@ defineOptions({
   name: 'DatasetHistoryGroupContent',
 });
 
-// Моковые данные: 3 примера категорий согласно вашему макету
 const categoriesMock = [
   {
     id: 'users',
@@ -35,25 +34,22 @@ const categoriesMock = [
 </script>
 
 <template>
-  <!-- Main Content: вертикальный контейнер, padding: 0 8px 8px 8px, gap: 8px -->
-  <div
-    class="flex flex-col items-start self-stretch w-full px-2 pb-2 gap-2 bg-[rgba(48,48,50,0.03)] rounded-b-xl"
-  >
-    <!-- Перебираем категории (3 примера: Users, Vip-users, Bets) -->
+  <!-- ИСПРАВЛЕНО: добавили строго px-6, чтобы карточки контента выровнялись по бокам с шапкой таблицы -->
+  <div class="flex flex-col items-start self-stretch w-full px-6 pb-2 gap-2 bg-transparent">
     <div
       v-for="category in categoriesMock"
       :key="category.id"
-      class="flex flex-col items-end self-stretch w-full rounded-lg bg-white overflow-hidden shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]"
+      class="flex flex-col items-end self-stretch w-full rounded-lg bg-white overflow-hidden border border-black/8"
     >
-      <!-- 1. ЗАГОЛОВОК ПОДТАБЛИЦЫ (Table Header) -->
-      <div class="flex h-11 pl-4 items-center self-stretch border-b border-black/8">
-        <div class="flex items-center gap-2 flex-1">
-          <!-- Иконка группы (Group Icon): строго 16x16, цвет с прозрачностью 68% -->
+      <!-- Заголовок подтаблицы (Table Header) -->
+      <!-- pl-4 (16px) соответствует вашему ТЗ. Правые заглушки строго по w-[160px] с border-l -->
+      <div class="flex h-11 pl-4 items-center self-stretch border-b border-black/8 bg-white">
+        <div class="flex items-center gap-2 flex-1 min-w-0">
           <Users class="size-4 text-[rgba(48,48,50,0.68)] flex-shrink-0" stroke-width="2" />
-
-          <!-- Текст названия и количества (Frame) -->
           <div class="flex items-center gap-1.5">
-            <span class="text-sm font-medium text-[rgba(48,48,50,0.98)] leading-5 select-none">
+            <span
+              class="text-sm font-medium text-[rgba(48,48,50,0.98)] leading-5 select-none truncate"
+            >
               {{ category.title }}
             </span>
             <span class="text-sm font-medium text-[rgba(48,48,50,0.57)] leading-5 select-none">
@@ -61,20 +57,16 @@ const categoriesMock = [
             </span>
           </div>
         </div>
-
-        <!-- Пустые ячейки-заглушки в шапке категории для сохранения идеальной сетки 160px -->
-        <div class="w-[160px] h-full border-l border-black/8" />
-        <div class="w-[160px] h-full" />
       </div>
 
-      <!-- 2. СТРОКИ ФАЙЛОВ (Table Rows) -->
+      <!-- Строки файлов (Table Rows) -->
       <div
         v-for="file in category.files"
         :key="file.id"
-        class="flex items-center self-stretch w-full border-b border-black/8 last:border-b-0 hover:bg-slate-50/50 transition-colors"
+        class="flex items-center self-stretch w-full border-b border-black/8 last:border-b-0 hover:bg-slate-50/50 transition-colors bg-white"
       >
-        <!-- Ячейка 1: Название файла (pl-10 дает ровно 40px отступа) -->
-        <div class="flex h-11 pl-10 pr-4 items-center gap-2 flex-1 border-r border-black/8 min-w-0">
+        <!-- Ячейка 1: Наименование файла (pl-10 дает 40px отступа по вашему ТЗ) -->
+        <div class="flex h-11 pl-10 pr-4 items-center flex-1 min-w-0">
           <span
             class="text-sm font-medium text-[rgba(48,48,50,0.98)] leading-5 truncate select-none"
           >
@@ -82,8 +74,8 @@ const categoriesMock = [
           </span>
         </div>
 
-        <!-- Ячейка 2: Объём строк (Фиксированная ширина 160px) -->
-        <div class="flex w-[160px] h-11 px-4 items-center gap-1.5 border-r border-black/8">
+        <!-- Ячейка 2: Объём строк (Чистые 160px и pl-4 для идеального выравнивания под текстом шапки) -->
+        <div class="flex w-[160px] h-11 pl-4 pr-3 items-center border-l border-black/8 shrink-0">
           <span
             class="text-sm font-medium text-[rgba(48,48,50,0.98)] leading-5 select-none font-mono"
           >
@@ -91,13 +83,11 @@ const categoriesMock = [
           </span>
         </div>
 
-        <!-- Ячейка 3: Статус (Фиксированная ширина 160px) -->
-        <div class="flex w-[160px] h-11 px-4 items-center">
-          <!-- StatusBadge: овальная пилюля, фон rgba(202, 220, 255, 0.40) -->
+        <!-- Ячейка 3: Статус (Чистые 160px и pl-4 для идеального выравнивания под текстом шапки) -->
+        <div class="flex w-[160px] h-11 pl-4 items-center border-l border-black/8 shrink-0">
           <div
             class="flex h-[23px] pl-1.5 pr-2 py-1 items-center gap-1 rounded-full bg-[rgba(202,220,255,0.40)] select-none"
           >
-            <!-- Анимированный лоадер (loader-2-line): строго 14x14px, цвет #1A0151 -->
             <Loader2
               class="size-[14px] text-[#1A0151] animate-spin flex-shrink-0"
               stroke-width="2.5"
