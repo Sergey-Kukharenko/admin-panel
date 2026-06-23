@@ -6,7 +6,7 @@ import { DownloadTemplatesBanner } from '@/features/DownloadTemplate/ui/Download
 import { AppConfirmDialog } from '@/shared/ui/AppConfirmDialog'; // Импортируем наше модальное окно
 import { AppDrawer } from '@/shared/ui/AppDrawer';
 
-import { datasetTemplates, MAX_FILE_SIZE, useDatasetFiles } from '../../model';
+import { datasetTemplates, MAX_FILE_SIZE, useDatasetFiles } from '../model';
 import DatasetUploadFooter from './DatasetUploadFooter.vue';
 
 defineProps<{

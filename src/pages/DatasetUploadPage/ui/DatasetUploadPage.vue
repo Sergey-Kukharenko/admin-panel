@@ -1,14 +1,45 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
-import { DatasetUploadDrawer } from '@/widgets/DatasetUploadDrawer/ui/DatasetUploadDrawer';
+import { DatasetHistoryTable } from '@/widgets/DatasetHistoryTable'; // Импортируем нашу таблицу
+import { DatasetUploadDrawer } from '@/widgets/DatasetUploadDrawer';
 import UploadsEmptyState from '@/widgets/UploadsEmptyState/UploadsEmptyState.vue';
 
-const isDrawerOpen = ref(true); //TODO: изменить по завершению
+defineOptions({
+  name: 'DatasetUploadPage',
+});
+
+// Флаг открытия шторки (поставили false по умолчанию для продакшн-логики)
+const isDrawerOpen = ref(false);
+
+// Флаг для управления отображением таблицы истории загрузок
+const showHistoryTable = ref(false);
+
+// Проверяем LocalStorage при старте: если пользователь ранее уже отправлял файлы,
+// таблица должна быть видна сразу, чтобы состояние не терялось при перезагрузке
+onMounted(() => {
+  const hasHistory = localStorage.getItem('dataset_history_submitted') === 'true';
+  if (hasHistory) {
+    showHistoryTable.value = true;
+  }
+});
+
+// Этот метод вызывается, когда в модальном окне шторки нажали «Да, отправить»
+const handleUploadSubmit = () => {
+  // 1. Сохраняем состояние отправки в LocalStorage
+  localStorage.setItem('dataset_history_submitted', 'true');
+
+  // 2. Включаем отображение таблицы истории загрузок на странице
+  showHistoryTable.value = true;
+
+  // 3. Закрываем шторку загрузки
+  isDrawerOpen.value = false;
+};
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-4">
+  <div class="flex w-full flex-col gap-4 text-left">
+    <!-- Заголовок и описание страницы (всегда остаются сверху) -->
     <div class="flex flex-col gap-1">
       <h1 class="text-title-sm font-medium text-(--text-primary)">Загрузка данных</h1>
 
@@ -18,8 +49,26 @@ const isDrawerOpen = ref(true); //TODO: изменить по завершени
       </p>
     </div>
 
-    <UploadsEmptyState @upload="isDrawerOpen = true" />
+    <!-- СОСТОЯНИЕ А: Файлы еще не отправлены. Показываем пустое состояние -->
+    <UploadsEmptyState v-if="!showHistoryTable" @upload="isDrawerOpen = true" />
 
-    <DatasetUploadDrawer :open="isDrawerOpen" @close="isDrawerOpen = false" />
+    <!-- СОСТОЯНИЕ Б: Кликнули «Да, отправить». Плавно рендерим виджет таблицы с фильтрами -->
+    <Transition
+      enter-from-class="opacity-0 translate-y-1"
+      enter-active-class="transition-all duration-300 ease-out"
+      enter-to-class="opacity-100 translate-y-0"
+    >
+      <div v-if="showHistoryTable" class="w-full">
+        <!-- Слушаем событие @open-upload-drawer из тулбара таблицы, чтобы открывать эту же шторку -->
+        <DatasetHistoryTable @open-upload-drawer="isDrawerOpen = true" />
+      </div>
+    </Transition>
+
+    <!-- Шторка загрузки файлов, теперь слушает наше событие @submit -->
+    <DatasetUploadDrawer
+      :open="isDrawerOpen"
+      @close="isDrawerOpen = false"
+      @submit="handleUploadSubmit"
+    />
   </div>
 </template>
