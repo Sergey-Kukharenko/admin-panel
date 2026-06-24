@@ -21,10 +21,10 @@ defineEmits<{
 <template>
   <button
     type="button"
-    class="flex h-12 w-full items-center bg-transparent px-6 text-left focus-visible:outline-none"
+    class="flex gap-3 h-12 w-full items-center bg-transparent px-6 text-left focus-visible:outline-none"
     @click="$emit('toggle')"
   >
-    <div class="flex flex-1 min-w-0 items-center gap-3">
+    <div class="flex min-w-0 items-center gap-3">
       <div class="flex shrink-0 items-center gap-2">
         <ChevronDown
           :class="[
@@ -39,29 +39,31 @@ defineEmits<{
       </span>
     </div>
 
-    <div class="flex w-[160px] h-full shrink-0 items-center pl-4">
-      <div
-        class="flex h-[23px] items-center gap-0.5 rounded-full bg-[rgba(48,48,50,0.06)] pl-1.5 pr-2 py-1 select-none"
-      >
-        <PieChart class="size-[14px] shrink-0 text-[rgba(48,48,50,0.98)]" stroke-width="2" />
-        <span
-          class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.98)] leading-5 pl-[2px]"
+    <div class="flex gap-1">
+      <div class="flex h-full shrink-0 items-center">
+        <div
+          class="flex h-[23px] items-center gap-0.5 rounded-full bg-[rgba(48,48,50,0.06)] pl-1.5 pr-2 py-1 select-none"
         >
-          {{ uploadedCount }}/{{ totalCount }}
-        </span>
+          <PieChart class="size-[14px] shrink-0 text-[rgba(48,48,50,0.98)]" stroke-width="2" />
+          <span
+            class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.98)] leading-5 pl-[2px]"
+          >
+            {{ uploadedCount }}/{{ totalCount }}
+          </span>
+        </div>
       </div>
-    </div>
 
-    <div class="flex w-[160px] h-full shrink-0 items-center pl-4">
-      <div
-        class="flex h-[23px] items-center gap-0.5 rounded-full bg-[rgba(48,48,50,0.06)] pl-1.5 pr-2 py-1 select-none"
-      >
-        <FileText class="size-[14px] shrink-0 text-[rgba(48,48,50,0.98)]" stroke-width="2" />
-        <span
-          class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.98)] leading-5 pl-[2px]"
+      <div class="flex h-full shrink-0 items-center">
+        <div
+          class="flex h-[23px] items-center gap-0.5 rounded-full bg-[rgba(48,48,50,0.06)] pl-1.5 pr-2 py-1 select-none"
         >
-          Источник:{{ source }}
-        </span>
+          <FileText class="size-[14px] shrink-0 text-[rgba(48,48,50,0.98)]" stroke-width="2" />
+          <span
+            class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.98)] leading-5 pl-[2px]"
+          >
+            Источник:{{ source }}
+          </span>
+        </div>
       </div>
     </div>
   </button>

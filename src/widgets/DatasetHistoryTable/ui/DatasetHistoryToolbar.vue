@@ -55,7 +55,7 @@ defineEmits<{
         variant="primary"
         size="small"
         class="!h-8 !px-3 !gap-1.5 text-[#FCFCFC] rounded-(--radius-sm)"
-        @click="emit('openUpload')"
+        @click="$emit('openUpload')"
       >
         Загрузить CSV
       </AppButton>
