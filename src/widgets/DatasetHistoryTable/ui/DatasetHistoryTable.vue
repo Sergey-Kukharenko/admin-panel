@@ -40,7 +40,7 @@ const handleSortRows = () => {
 </script>
 
 <template>
-  <div class="mx-auto flex w-[1138px] flex-col items-start gap-4 self-stretch">
+  <div class="mx-auto flex flex-col items-start gap-4 self-stretch">
     <DatasetHistoryToolbar @open-upload="$emit('openUploadDrawer')" />
 
     <div class="flex w-full flex-col gap-1 self-stretch">
