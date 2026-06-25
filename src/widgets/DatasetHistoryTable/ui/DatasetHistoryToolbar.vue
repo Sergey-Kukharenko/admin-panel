@@ -1,53 +1,77 @@
 <script setup lang="ts">
-import { Calendar, ChevronDown, FileText, PieChart } from 'lucide-vue-next';
+import { Calendar, FileText, PieChart } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 import { AppButton } from '@/shared/ui/AppButton';
+import { AppFilter } from '@/shared/ui/AppFilter';
 
-defineOptions({
-  name: 'DatasetHistoryToolbar',
-});
+const status = ref('');
+const types = ref<string[]>([]);
+const period = ref('');
 
 defineEmits<{
   openUpload: []; // Событие клика на кнопку «Загрузить CSV»
 }>();
+
+const statusOptions = [
+  {
+    label: 'Обработка',
+    value: 'processing',
+  },
+  {
+    label: 'Загружено',
+    value: 'uploaded',
+  },
+  {
+    label: 'Ошибка',
+    value: 'error',
+  },
+];
+
+const typeOptions = [
+  {
+    label: 'Users',
+    value: 'users',
+  },
+  {
+    label: 'Vip-users',
+    value: 'vip-users',
+  },
+  {
+    label: 'Bets',
+    value: 'bets',
+  },
+  {
+    label: 'Payments',
+    value: 'payments',
+  },
+];
 </script>
 
 <template>
-  <!-- Table Section: выравнивание по центру, распределение по краям -->
-  <div class="flex items-center justify-between w-full self-stretch">
-    <!-- Status Cards Container: блок с фильтрами, gap: 8px -->
-    <div class="flex items-center gap-2 flex-1">
-      <!-- Фильтр 1: Тип данных -->
-      <button
-        type="button"
-        class="flex h-8 min-h-8 max-h-8 pl-3 pr-2 py-1.5 justify-center items-center gap-1.5 rounded-(--radius-sm) border border-black/8 bg-white hover:bg-(--muted) transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-(--primary)"
-      >
-        <FileText class="size-4 text-[rgba(48,48,50,0.68)] flex-shrink-0" stroke-width="2" />
-        <span class="text-sm font-medium text-[#18181B] leading-5 select-none"> Тип данных </span>
-        <ChevronDown class="size-4 text-[rgba(48,48,50,0.98)] flex-shrink-0" stroke-width="2" />
-      </button>
+  <div class="w-full flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <AppFilter
+        v-model="types"
+        title="Тип данных"
+        :icon="FileText"
+        :options="typeOptions"
+        multiple
+      />
 
-      <!-- Фильтр 2: Статус -->
-      <button
-        type="button"
-        class="flex h-8 min-h-8 max-h-8 pl-3 pr-2 py-1.5 justify-center items-center gap-1.5 rounded-(--radius-sm) border border-black/8 bg-white hover:bg-(--muted) transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-(--primary)"
-      >
-        <PieChart class="size-4 text-[rgba(48,48,50,0.68)] flex-shrink-0" stroke-width="2" />
-        <span class="text-sm font-medium text-[#18181B] leading-5 select-none"> Статус </span>
-        <ChevronDown class="size-4 text-[rgba(48,48,50,0.98)] flex-shrink-0" stroke-width="2" />
-      </button>
+      <AppFilter v-model="status" title="Статус" :icon="PieChart" :options="statusOptions" />
 
-      <!-- Фильтр 3: Период -->
-      <button
-        type="button"
-        class="flex h-8 min-h-8 max-h-8 pl-3 pr-2 py-1.5 justify-center items-center gap-1.5 rounded-(--radius-sm) border border-black/8 bg-white hover:bg-(--muted) transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-(--primary)"
-      >
-        <Calendar class="size-4 text-[rgba(48,48,50,0.68)] flex-shrink-0" stroke-width="2" />
-        <span class="text-sm font-medium text-[#18181B] leading-5 select-none"> Период </span>
-        <ChevronDown class="size-4 text-[rgba(48,48,50,0.98)] flex-shrink-0" stroke-width="2" />
-      </button>
+      <AppFilter
+        v-model="period"
+        title="Период"
+        :icon="Calendar"
+        :options="[
+          { label: 'Сегодня', value: 'today' },
+          { label: 'Неделя', value: 'week' },
+          { label: 'Месяц', value: 'month' },
+        ]"
+      />
     </div>
-
     <!-- Кнопка действия: Загрузить CSV -->
     <!-- Используем нашу AppButton, перебивая её высоту до 32px (!h-8) и паддинги по спецификации Figma -->
     <div class="flex-shrink-0">
