@@ -50,7 +50,7 @@ const typeOptions = [
 
 <template>
   <div class="w-full flex items-center justify-between">
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 flex-1">
       <AppFilter
         v-model="types"
         title="Тип данных"

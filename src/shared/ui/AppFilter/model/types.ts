@@ -9,5 +9,12 @@ export interface AppFilterProps {
   title: string;
   icon: Component;
   options: FilterOption[];
-  multiple?: boolean;
+}
+
+export interface AppFilterSingleProps extends AppFilterProps {
+  modelValue?: string;
+}
+
+export interface AppFilterMultipleProps extends AppFilterProps {
+  modelValue?: string[];
 }
