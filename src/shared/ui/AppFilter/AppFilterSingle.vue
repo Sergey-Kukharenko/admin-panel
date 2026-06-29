@@ -27,7 +27,12 @@ const selectedLabel = computed(() => {
 <template>
   <DropdownMenuRoot>
     <DropdownMenuTrigger as-child>
-      <AppFilterTrigger :title="selectedLabel || title" :icon="icon" />
+      <AppFilterTrigger
+        :title="selectedLabel || title"
+        :icon="icon"
+        :clearable="!!modelValue"
+        @clear="emit('update:modelValue', '')"
+      />
     </DropdownMenuTrigger>
 
     <DropdownMenuPortal>
@@ -43,7 +48,7 @@ const selectedLabel = computed(() => {
             v-for="option in options"
             :key="option.value"
             :value="option.value"
-            class="flex h-8 cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 outline-none hover:bg-[rgba(48,48,50,0.06)] data-[highlighted]:bg-[rgba(48,48,50,0.06)]"
+            class="flex h-8 cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 outline-none hover:bg-[rgba(48,48,50,0.06)] data-[highlighted]:bg-[rgba(48,48,50,0.06)]"
           >
             <span class="text-sm font-medium text-[rgba(48,48,50,0.98)]">
               {{ option.label }}

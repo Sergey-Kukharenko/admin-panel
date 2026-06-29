@@ -32,19 +32,26 @@ function toggle(value: string) {
 <template>
   <DropdownMenuRoot>
     <DropdownMenuTrigger as-child>
-      <AppFilterTrigger :title="title" :icon="icon" :count="count" />
+      <AppFilterTrigger
+        :title="title"
+        :icon="icon"
+        :count="count"
+        :clearable="count > 0"
+        @clear="emit('update:modelValue', [])"
+      />
     </DropdownMenuTrigger>
 
     <DropdownMenuPortal>
       <DropdownMenuContent
         :side-offset="4"
+        align="start"
         class="w-[212px] rounded-xl bg-white p-1 shadow-[0_2px_8px_rgba(0,0,0,0.06),0_-6px_12px_rgba(0,0,0,0.03),0_14px_28px_rgba(0,0,0,0.08)]"
       >
         <DropdownMenuCheckboxItem
           v-for="option in options"
           :key="option.value"
           :checked="modelValue?.includes(option.value)"
-          class="flex h-8 items-center justify-between rounded-lg px-3 py-1.5 outline-none cursor-pointer hover:bg-[rgba(48,48,50,0.06)] data-[highlighted]:bg-[rgba(48,48,50,0.06)]"
+          class="flex h-8 items-center justify-between rounded-xl px-3 py-1.5 outline-none cursor-pointer hover:bg-[rgba(48,48,50,0.06)] data-[highlighted]:bg-[rgba(48,48,50,0.06)]"
           @select.prevent="toggle(option.value)"
         >
           <span class="text-sm font-medium text-[rgba(48,48,50,0.98)]">
