@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { ChevronsUpDown } from 'lucide-vue-next';
+import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-vue-next';
+
+import type { DatasetSort, DatasetSortOrder } from '../model/types';
 
 defineOptions({
   name: 'DatasetHistoryTableHeader',
 });
 
+defineProps<{
+  sortBy: DatasetSort;
+  sortOrder: DatasetSortOrder;
+}>();
+
 const emit = defineEmits<{
-  sortRows: []; // Оставляем только событие сортировки для объема строк
+  sortRows: [];
 }>();
 </script>
 
@@ -32,7 +39,17 @@ const emit = defineEmits<{
       >
         Объём строк
       </span>
-      <ChevronsUpDown class="size-[14px] shrink-0 text-[rgba(48,48,50,0.68)]" stroke-width="2" />
+      <ArrowUp
+        v-if="sortBy === 'rows' && sortOrder === 'asc'"
+        class="size-[14px] shrink-0 text-[rgba(48,48,50,0.68)]"
+      />
+
+      <ArrowDown
+        v-else-if="sortBy === 'rows' && sortOrder === 'desc'"
+        class="size-[14px] shrink-0 text-[rgba(48,48,50,0.68)]"
+      />
+
+      <ChevronsUpDown v-else class="size-[14px] shrink-0 text-[rgba(48,48,50,0.68)]" />
     </button>
 
     <!-- 3. Ячейка: СТАТУС (ИСПРАВЛЕНО: Теперь это обычный div, иконка стрелочек удалена) -->

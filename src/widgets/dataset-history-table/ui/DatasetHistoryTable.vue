@@ -3,8 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { computed, ref } from 'vue';
 
-import { useDatasetHistoryFilters } from '@/widgets/dataset-history-table/model';
-
+import { HISTORY_GROUPS_MOCK, useDatasetHistoryFilters } from '../model';
 import DatasetHistoryGroupContent from './DatasetHistoryGroupContent.vue';
 import DatasetHistoryGroupHeader from './DatasetHistoryGroupHeader.vue';
 import DatasetHistoryTableHeader from './DatasetHistoryTableHeader.vue';
@@ -20,63 +19,11 @@ defineEmits<{
   openUploadDrawer: [];
 }>();
 
-const { types, status, period } = useDatasetHistoryFilters();
+const { types, status, period, sortBy, sortOrder, setSort } = useDatasetHistoryFilters();
 
 const expandedGroups = ref(['group-1']);
 
-const sortBy = ref<'rows' | null>(null);
-const sortOrder = ref<'asc' | 'desc'>('asc');
-
-const historyGroupsMock = ref([
-  {
-    id: 'group-1',
-    date: '29 Jun 2026, 03:16',
-    uploadedCount: 1,
-    totalCount: 3,
-    source: 'CSV',
-    categories: [
-      {
-        id: 'users',
-        title: 'Users',
-        count: 2,
-        files: [
-          { id: '1', name: 'casino_rewards.csv', rowsCount: 7634, status: 'uploaded' },
-          { id: '2', name: 'jackpot_winners.csv', rowsCount: 2345, status: 'uploaded' },
-        ],
-      },
-      {
-        id: 'vip-users',
-        title: 'Vip-users',
-        count: 1,
-        files: [{ id: '3', name: 'vip_players_list.csv', rowsCount: 5420, status: 'processing' }],
-      },
-      {
-        id: 'bets',
-        title: 'Bets',
-        count: 2,
-        files: [
-          { id: '4', name: 'withdrawal_requests.csv', rowsCount: 1208, status: 'processing' },
-          { id: '5', name: 'bets.csv', rowsCount: 890, status: 'error' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'group-2',
-    date: '10 Jun 2026, 09:12',
-    uploadedCount: 3,
-    totalCount: 3,
-    source: 'CSV',
-    categories: [
-      {
-        id: 'users',
-        title: 'Users',
-        count: 1,
-        files: [{ id: '6', name: 'users.csv', rowsCount: 500, status: 'uploaded' }],
-      },
-    ],
-  },
-]);
+const historyGroupsMock = ref(HISTORY_GROUPS_MOCK);
 
 function checkPeriod(date: string, periodValue: string) {
   const created = dayjs(date, 'DD MMM YYYY, HH:mm');
@@ -111,11 +58,14 @@ function toggleGroup(id: string) {
   }
 }
 
-const handleSortRows = () => {
-  sortBy.value = 'rows';
+function handleSortRows() {
+  if (sortBy.value !== 'rows') {
+    setSort('rows', 'asc');
+    return;
+  }
 
-  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-};
+  setSort('rows', sortOrder.value === 'asc' ? 'desc' : 'asc');
+}
 </script>
 
 <template>
@@ -128,7 +78,11 @@ const handleSortRows = () => {
     />
 
     <div class="flex w-full flex-col gap-1 self-stretch">
-      <DatasetHistoryTableHeader @sort-rows="handleSortRows" />
+      <DatasetHistoryTableHeader
+        :sort-by="sortBy"
+        :sort-order="sortOrder"
+        @sort-rows="handleSortRows"
+      />
 
       <div
         v-for="group in filteredGroups"

@@ -17,6 +17,13 @@ export function useDatasetHistoryFilters() {
     });
   }
 
+  function setSort(by: DatasetSort, order: DatasetSortOrder) {
+    replaceQuery({
+      [QUERY_KEYS.sort]: by ?? undefined,
+      [QUERY_KEYS.order]: by ? order : undefined,
+    });
+  }
+
   const types = computed<string[]>({
     get() {
       const value = route.query[QUERY_KEYS.types];
@@ -89,5 +96,6 @@ export function useDatasetHistoryFilters() {
     period,
     sortBy,
     sortOrder,
+    setSort,
   };
 }
