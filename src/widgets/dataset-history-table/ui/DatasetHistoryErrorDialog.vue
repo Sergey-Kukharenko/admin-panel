@@ -8,7 +8,6 @@ defineOptions({
   name: 'DatasetHistoryErrorDialog',
 });
 
-// Строгий интерфейс для входных данных диалога в соответствии с макетом
 export interface ErrorDetails {
   uploadDate: string;
   fileNames: string[];

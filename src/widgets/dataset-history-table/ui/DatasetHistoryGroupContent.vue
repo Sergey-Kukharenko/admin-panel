@@ -1,24 +1,23 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { Loader2, Users } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { Users } from 'lucide-vue-next';
+import { computed } from 'vue';
 
-// Импортируем типы из вашей бизнес-модели
+import { AppStatusBadge } from '@/shared/ui/app-status-badge';
+
 import type { DatasetPeriod, DatasetSort, DatasetSortOrder, DatasetStatus } from '../model/types';
-// Относительный импорт локального диалога из папки ui виджета
-import DatasetHistoryErrorDialog, { type ErrorDetails } from './DatasetHistoryErrorDialog.vue';
+import { useDatasetHistoryGroupErrors } from '../model/useDatasetHistoryGroupErrors';
+import DatasetHistoryErrorDialog from './DatasetHistoryErrorDialog.vue';
 
 defineOptions({
   name: 'DatasetHistoryGroupContent',
 });
 
-// Строгие внутренние интерфейсы для полной типизации без any
 interface DatasetHistoryFile {
   id: string;
   name: string;
   rowsCount: number;
   status: DatasetStatus;
-  errorMessage?: string;
 }
 
 interface DatasetCategory {
@@ -34,14 +33,26 @@ const props = defineProps<{
   status: DatasetStatus | '';
   period: DatasetPeriod | '';
   types: string[];
-  groupDate: string; // Строка формата "14 янв 2026"
+  groupDate: string;
 }>();
 
-// Управление состоянием окна ошибок со строгими типами
-const isErrorDialogOpen = ref<boolean>(false);
-const selectedErrorDetails = ref<ErrorDetails | null>(null);
+/**
+ * ERROR CONTROLLER (UI side-effects вынесены из компонента)
+ */
+const errors = useDatasetHistoryGroupErrors(props.groupDate);
 
-// Типизированный мок-массив данных
+/**
+ * STATUS MAPPING backend -> UI
+ */
+const statusMap = {
+  LOADING: 'loading',
+  SUCCESS: 'success',
+  ERROR: 'error',
+} as const;
+
+/**
+ * MOCK DATA
+ */
 const categoriesMock: DatasetCategory[] = [
   {
     id: 'users',
@@ -64,43 +75,10 @@ const categoriesMock: DatasetCategory[] = [
     count: 2,
     files: [
       { id: '4', name: 'user_bets_daily.csv', rowsCount: 12840, status: 'SUCCESS' },
-      {
-        id: '5',
-        name: 'high_rollers_june.csv',
-        rowsCount: 540,
-        status: 'ERROR',
-      },
+      { id: '5', name: 'high_rollers_june.csv', rowsCount: 540, status: 'ERROR' },
     ],
   },
 ];
-
-// Функция теперь принимает реальный объект файла и динамически прокидывает его имя
-function handleOpenErrorDetails(file: DatasetHistoryFile, categoryTitle: string): void {
-  selectedErrorDetails.value = {
-    // Подставляем дату текущей группы, переданную через пропсы
-    uploadDate: `${props.groupDate}, 03:16`,
-
-    // Передаем в массив строго имя того файла, по которому кликнули!
-    fileNames: [file.name],
-
-    // Приводим категорию к нижнему регистру (например, "bets" или "users")
-    dataType: categoryTitle.toLowerCase(),
-
-    // Передаем реальный объем строк именно этого файла
-    checkedRows: file.rowsCount,
-
-    // Временная статика из макета (после подключения API заменится на file.errorColumnsCount)
-    errorColumns: 3,
-    errorsFound: 3,
-  };
-  isErrorDialogOpen.value = true;
-}
-
-// Обработчик скачивания отчета об ошибках
-function handleDownloadErrorFile(): void {
-  if (!selectedErrorDetails.value) return;
-  console.log('Запуск скачивания файла ошибок для:', selectedErrorDetails.value.fileNames);
-}
 
 function checkPeriod(date: string, period: string): boolean {
   if (!period) return true;
@@ -120,7 +98,7 @@ function checkPeriod(date: string, period: string): boolean {
   }
 }
 
-const visibleCategories = computed<DatasetCategory[]>(() => {
+const visibleCategories = computed(() => {
   if (!checkPeriod(props.groupDate, props.period)) {
     return [];
   }
@@ -155,23 +133,18 @@ const visibleCategories = computed<DatasetCategory[]>(() => {
 </script>
 
 <template>
-  <div
-    v-if="visibleCategories.length"
-    class="flex w-full flex-col items-start gap-2 bg-transparent px-2 pb-2 self-stretch"
-  >
+  <div v-if="visibleCategories.length" class="flex w-full flex-col gap-2 px-2 pb-2">
     <div
       v-for="category in visibleCategories"
       :key="category.id"
-      class="flex w-full flex-col items-end overflow-hidden rounded-lg bg-white self-stretch"
+      class="flex w-full flex-col overflow-hidden rounded-lg bg-white"
     >
-      <!-- Заголовок категории группы -->
-      <div
-        class="flex h-11 w-full items-center border-b border-[var(--border-default)] bg-white pl-4"
-      >
-        <div class="flex flex-1 min-w-0 items-center gap-2">
-          <Users class="w-4 h-4 shrink-0 text-[var(--text-secondary)]" :stroke-width="2" />
+      <!-- HEADER -->
+      <div class="flex h-11 w-full items-center border-b border-[var(--border-default)] pl-4">
+        <div class="flex flex-1 items-center gap-2">
+          <Users class="h-4 w-4 text-[var(--text-secondary)]" />
 
-          <div class="flex items-center gap-1.5 truncate">
+          <div class="flex items-center gap-1.5">
             <span class="text-sm font-medium text-[var(--text-primary)]">
               {{ category.title }}
             </span>
@@ -183,12 +156,13 @@ const visibleCategories = computed<DatasetCategory[]>(() => {
         </div>
       </div>
 
-      <!-- Список файлов внутри категории -->
+      <!-- FILES -->
       <div
         v-for="file in category.files"
         :key="file.id"
-        class="flex w-full items-center border-b border-[var(--border-default)] bg-white last:border-b-0 hover:bg-slate-50/50 transition-colors"
+        class="flex w-full items-center border-b border-[var(--border-default)] last:border-b-0 hover:bg-slate-50/50"
       >
+        <!-- NAME -->
         <div
           class="flex h-11 flex-1 items-center border-r border-[var(--border-default)] pl-10 pr-4"
         >
@@ -197,49 +171,30 @@ const visibleCategories = computed<DatasetCategory[]>(() => {
           </span>
         </div>
 
+        <!-- ROWS -->
         <div class="flex h-11 w-[160px] items-center border-r border-[var(--border-default)] pl-4">
           <span class="font-mono text-sm font-medium text-[var(--text-primary)]">
             {{ file.rowsCount }}
           </span>
         </div>
 
-        <!-- Контейнер статуса -->
+        <!-- STATUS -->
         <div class="flex h-11 w-[160px] items-center pl-4">
-          <!-- Загрузка -->
-          <div
-            v-if="file.status === 'LOADING'"
-            class="flex h-[23px] items-center gap-1 rounded-full bg-[rgba(202,220,255,0.40)] px-2 select-none"
-          >
-            <Loader2 class="w-[14px] h-[14px] animate-spin text-[#1A0151]" :stroke-width="2.5" />
-            <span class="text-xs uppercase text-[#1A0151]"> Загрузка </span>
-          </div>
-
-          <!-- Успешно -->
-          <div
-            v-else-if="file.status === 'SUCCESS'"
-            class="flex h-[23px] items-center gap-1 rounded-full bg-[var(--color-green-100)] px-2 select-none"
-          >
-            <span class="text-xs uppercase text-[var(--success)]"> Успешно </span>
-          </div>
-
-          <!-- Ошибка (Кликабельный тег) -->
-          <div
-            v-else
-            class="flex h-[23px] items-center gap-1 rounded-full bg-[var(--color-red-200)]/40 px-2 cursor-pointer hover:bg-[var(--color-red-200)]/60 active:scale-95 transition-all select-none"
-            @click="handleOpenErrorDetails(file, category.title)"
-          >
-            <span class="text-xs uppercase text-[var(--danger)] font-medium"> Ошибка </span>
-          </div>
+          <AppStatusBadge
+            :status="statusMap[file.status]"
+            :clickable="file.status === 'ERROR'"
+            @click="file.status === 'ERROR' && errors.open(file, category.title)"
+          />
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Модальное окно деталей ошибки из Figma-макета -->
+  <!-- ERROR DIALOG (теперь полностью управляется composable) -->
   <DatasetHistoryErrorDialog
-    :open="isErrorDialogOpen"
-    :details="selectedErrorDetails"
-    @close="isErrorDialogOpen = false"
-    @download="handleDownloadErrorFile"
+    :open="errors.isOpen.value"
+    :details="errors.details.value"
+    @close="errors.close"
+    @download="errors.download"
   />
 </template>
