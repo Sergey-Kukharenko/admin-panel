@@ -23,8 +23,10 @@ function handleCloseBanner(): void {
 </script>
 
 <template>
-  <!-- Цвет фона изменен на точный HEX #F8F8F8 через утилитарный класс Tailwind -->
-  <aside class="flex h-screen w-(--sidebar-width) flex-col border-r border-(--border) bg-[#F8F8F8]">
+  <!-- Теперь использует общую переменную bg-(--bg-surface-neutral) -->
+  <aside
+    class="flex h-screen w-(--sidebar-width) flex-col border-r border-(--border) bg-(--bg-surface-neutral)"
+  >
     <!-- Хедер сайдбара с логотипом -->
     <div class="flex h-12 items-center px-6">
       <img :src="logoUrl" alt="Логотип компании" class="h-4" />

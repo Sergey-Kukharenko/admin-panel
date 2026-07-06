@@ -84,10 +84,11 @@ function handleSortRows() {
         @sort-rows="handleSortRows"
       />
 
+      <!-- Заменили bg-[rgba(48,48,50,0.03)] на общую переменную bg-(--bg-surface-neutral) -->
       <div
         v-for="group in filteredGroups"
         :key="group.id"
-        class="flex w-full flex-col items-center overflow-hidden rounded-xl bg-[rgba(48,48,50,0.03)] self-stretch"
+        class="flex w-full flex-col items-center overflow-hidden rounded-xl bg-(--bg-surface-neutral) self-stretch"
       >
         <div class="w-full transition-all duration-150">
           <DatasetHistoryGroupHeader

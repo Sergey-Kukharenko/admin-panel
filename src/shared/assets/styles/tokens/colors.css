@@ -37,11 +37,13 @@
   --color-red-700: #b91c1c;
   --color-red-200: #fecaca;
 
+
   /* ==========================================
      2. Text Colors (Типографика)
      ========================================== */
   --text-primary: rgba(48, 48, 50, 0.98);
   --text-secondary: rgba(48, 48, 50, 0.68);
+
 
   /* ==========================================
      3. Semantic Colors (Интерфейс)
@@ -49,8 +51,10 @@
   /* Layouts & Backgrounds */
   --background: var(--color-neutral-0);
   --card: var(--color-neutral-0);
-  --sidebar: #F8F8F8;                  /* Цвет фона сайдбара */
-  --bg-surface-secondary: #F1F1F1;     /* Цвет фона баннера */
+
+  /* Переименованные и новые фоны под макеты */
+  --bg-surface-neutral: #F8F8F8;        /* Общий нейтральный фон для Сайдбара и Таблицы */
+  --bg-surface-secondary: #F1F1F1;      /* Фоновый цвет для Баннера */
 
   /* Typography Mapping */
   --foreground: var(--text-primary);
