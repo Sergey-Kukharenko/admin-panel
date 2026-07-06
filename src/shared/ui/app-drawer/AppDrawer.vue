@@ -2,7 +2,7 @@
 import { X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
 
-import { AppIconButton } from '@/shared/ui/app-icon-button';
+import { AppButton } from '@/shared/ui/app-button';
 
 export interface AppDrawerProps {
   open: boolean;
@@ -57,9 +57,9 @@ const emit = defineEmits<{
               {{ title }}
             </h2>
 
-            <AppIconButton variant="outline" @click="emit('close')">
-              <X class="size-4" />
-            </AppIconButton>
+            <AppButton variant="outline" size="icon" @click="$emit('close')">
+              <X />
+            </AppButton>
           </header>
 
           <!-- Content -->

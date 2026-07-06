@@ -6,8 +6,8 @@ import type { DatasetTemplate } from '@/entities/dataset/model/types';
 import { DatasetTemplateIcon } from '@/entities/dataset/ui/dataset-template-icon';
 import DatasetFilesList from '@/entities/dataset/ui/dataset-template-item/DatasetFilesList.vue';
 import DatasetUploadZone from '@/entities/dataset/ui/dataset-template-item/DatasetUploadZone.vue';
+import { AppButton } from '@/shared/ui/app-button';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
-import { AppIconButton } from '@/shared/ui/app-icon-button';
 
 defineOptions({
   name: 'DatasetTemplateItem',
@@ -94,9 +94,9 @@ const handleFilesChange = (event: Event) => {
       <div class="ml-3 flex shrink-0 items-center gap-0.5">
         <AppDropdown align="end" :side-offset="4">
           <template #trigger>
-            <AppIconButton variant="ghost">
-              <MoreHorizontal class="size-4 text-(--text-secondary)" />
-            </AppIconButton>
+            <AppButton variant="ghost" size="icon">
+              <MoreHorizontal class="text-(--text-secondary)" />
+            </AppButton>
           </template>
 
           <!-- Пока просто заглушка, ничего не скачивает -->
@@ -123,9 +123,9 @@ const handleFilesChange = (event: Event) => {
           </AppDropdownItem>
         </AppDropdown>
 
-        <AppIconButton variant="ghost" @click="openFilePicker">
-          <PlusCircle class="size-4 text-(--text-secondary)" stroke-width="2" />
-        </AppIconButton>
+        <AppButton variant="ghost" size="icon" @click="openFilePicker">
+          <PlusCircle class="text-(--text-secondary)" stroke-width="2" />
+        </AppButton>
 
         <input
           ref="inputRef"

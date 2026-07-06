@@ -3,7 +3,6 @@ import { AlertOctagon, X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
 
 import { AppButton } from '@/shared/ui/app-button';
-import { AppIconButton } from '@/shared/ui/app-icon-button';
 
 defineOptions({
   name: 'AppConfirmDialog',
@@ -54,9 +53,9 @@ const emit = defineEmits<{
         >
           <!-- Header с кнопкой close (32x32px) -->
           <header class="flex w-full px-5 pt-4 justify-end items-center">
-            <AppIconButton variant="ghost" class="!h-8 !w-8 !p-2" @click="emit('close')">
-              <X class="size-4 text-[rgba(48,48,50,0.98)]" />
-            </AppIconButton>
+            <AppButton variant="ghost" size="icon" @click="$emit('close')">
+              <X />
+            </AppButton>
           </header>
 
           <!-- Основной контейнер содержимого (width: 360px по фигме, за счёт px-5) -->

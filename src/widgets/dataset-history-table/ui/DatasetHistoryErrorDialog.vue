@@ -2,7 +2,7 @@
 import { X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'radix-vue';
 
-import { AppIconButton } from '@/shared/ui/app-icon-button';
+import { AppButton } from '@/shared/ui/app-button';
 
 defineOptions({
   name: 'DatasetHistoryErrorDialog',
@@ -70,13 +70,9 @@ const emit = defineEmits<{
               {{ title || 'Ошибки валидации' }}
             </DialogTitle>
 
-            <AppIconButton
-              variant="ghost"
-              class="!h-8 !w-8 !p-2 !rounded-[var(--lg,8px)] border border-[var(--border-default)]"
-              @click="emit('close')"
-            >
-              <X class="w-4 h-4 text-[var(--text-primary)]" />
-            </AppIconButton>
+            <AppButton variant="outline" size="icon" @click="$emit('close')">
+              <X />
+            </AppButton>
           </header>
 
           <!-- Content container: padding 0 20px 72px 20px согласно стилям figma -->

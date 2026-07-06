@@ -52,7 +52,7 @@ const handleUploadSubmit = () => {
       <div class="flex flex-col gap-1">
         <h1 class="text-title-sm font-medium text-(--text-primary)">Загрузка данных</h1>
 
-        <p class="max-w-[473px] text-body-sm text-(--text-secondary)">
+        <p class="max-w-118.25 text-body-sm text-(--text-secondary)">
           Загружайте данные для работы платформы и получения предсказаний — через файл, S3 или API.
         </p>
       </div>

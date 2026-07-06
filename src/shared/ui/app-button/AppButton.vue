@@ -3,7 +3,7 @@ import { computed } from 'vue';
 
 export interface AppButtonProps {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'small' | 'medium';
+  size?: 'small' | 'medium' | 'icon';
   disabled?: boolean;
 }
 
@@ -32,12 +32,12 @@ const variantClasses = computed(() => {
 
     case 'outline':
       return [
-        'border border-(--border)',
-        'bg-transparent',
+        'border',
+        'border-(--border)',
+        props.size === 'icon' ? 'bg-white' : 'bg-transparent',
         'text-(--foreground)',
-        'hover:border-(--color-neutral-700)',
-        'active:border-(--color-neutral-900)',
-        'active:bg-(--muted)',
+        'hover:bg-(--muted)', // Убрали hover:border-(--color-neutral-700)
+        'active:bg-(--muted)', // Убрали active:border-(--color-neutral-900)
         'disabled:border-(--color-neutral-200)',
         'disabled:text-(--color-neutral-400)',
       ];
@@ -77,30 +77,35 @@ const variantClasses = computed(() => {
 const sizeClasses = computed(() => {
   switch (props.size) {
     case 'small':
-      return ['h-8', 'px-3', 'gap-1.5', 'text-element-button'];
+      return ['h-8', 'px-3', 'gap-1.5', 'rounded-md'];
+
+    case 'icon':
+      return ['size-8', 'p-2', 'shrink-0', '[&>svg]:size-4', 'rounded-(--radius-sm)'];
 
     case 'medium':
     default:
-      return ['h-9', 'px-4', 'gap-2', 'text-element-button'];
+      return ['h-9', 'px-4', 'gap-2', 'rounded-md'];
   }
+});
+
+const typographyClasses = computed(() => {
+  return props.size === 'icon' ? [] : ['text-element-button', 'font-medium'];
 });
 </script>
 
-<!-- Внутри вашего AppButton.vue -->
 <template>
   <button
     v-bind="$attrs"
     :disabled="disabled"
     :class="[
       'inline-flex items-center justify-center',
-      'rounded-(--radius-md)',
-      'font-medium',
       'whitespace-nowrap',
       'select-none',
       'transition-colors duration-150 ease-in-out',
       'focus-visible:outline-none',
       'disabled:pointer-events-none',
       sizeClasses,
+      typographyClasses,
       variantClasses,
     ]"
   >

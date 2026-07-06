@@ -15,8 +15,7 @@ defineProps<{
   <section
     class="flex flex-col items-center justify-center py-12 px-4 text-center w-full max-w-xl mx-auto"
   >
-    <!-- Иллюстрация строго 260x260px согласно макету -->
-    <div class="mb-6 flex h-[260px] w-[260px] items-center justify-center overflow-hidden">
+    <div class="mb-6 flex h-65 w-65 items-center justify-center overflow-hidden">
       <img
         :src="emptyState"
         alt="empty-state"
@@ -25,7 +24,7 @@ defineProps<{
       />
     </div>
 
-    <!-- Заголовок строго по типографике макета -->
+    <!-- Заголовок -->
     <h3 class="mb-1 text-title-sm font-medium text-(--foreground)">
       {{ title }}
     </h3>

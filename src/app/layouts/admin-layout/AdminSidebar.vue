@@ -1,32 +1,67 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
+import sphereImageUrl from '@/shared/assets/images/file-templates-sphere.jpg';
 import logoUrl from '@/shared/assets/images/logo.svg';
-import AppCard from '@/shared/ui/app-card';
+import { AppSidebarBanner } from '@/shared/ui/app-sidebar-banner';
 
 import SidebarNavigation from './SidebarNavigation.vue';
+
+defineOptions({
+  name: 'TheSidebar',
+});
+
+const isBannerVisible = ref<boolean>(true);
+
+function handleDownloadTemplates(): void {
+  console.log('Клик по баннеру: скачивание шаблонов...');
+}
+
+function handleCloseBanner(): void {
+  isBannerVisible.value = false;
+}
 </script>
 
 <template>
-  <aside
-    class="flex h-screen w-(--sidebar-width) flex-col border-r border-(--border) bg-(--sidebar)"
-  >
+  <!-- Цвет фона изменен на точный HEX #F8F8F8 через утилитарный класс Tailwind -->
+  <aside class="flex h-screen w-(--sidebar-width) flex-col border-r border-(--border) bg-[#F8F8F8]">
+    <!-- Хедер сайдбара с логотипом -->
     <div class="flex h-12 items-center px-6">
-      <img :src="logoUrl" alt="Logo" class="h-4" />
+      <img :src="logoUrl" alt="Логотип компании" class="h-4" />
     </div>
 
+    <!-- Основная навигация -->
     <div class="px-3">
       <SidebarNavigation />
     </div>
 
-    <div class="mt-auto p-3">
-      <AppCard class="bg-(--muted) p-4">
-        <p class="text-sm font-medium text-[var(--foreground)]">
-          Обучение модели занимает от 5 до 14 дней
-        </p>
-
-        <p class="mt-2 text-xs leading-5 text-(--muted-foreground)">
-          После завершения вы получите уведомление на email.
-        </p>
-      </AppCard>
+    <!-- Нижняя часть сайдбара с баннером -->
+    <div class="mt-auto p-3 min-h-[140px] flex flex-col justify-end">
+      <Transition
+        appear
+        enter-active-class="transition-all duration-300 ease-out"
+        enter-from-class="opacity-0 translate-y-4 scale-95"
+        enter-to-class="opacity-100 translate-y-0 scale-100"
+        leave-active-class="transition-all duration-200 ease-in"
+        leave-from-class="opacity-100 scale-100 max-h-[200px]"
+        leave-to-class="opacity-0 scale-95 max-h-0 p-0 margin-0 overflow-hidden"
+      >
+        <AppSidebarBanner
+          v-if="isBannerVisible"
+          title="Шаблоны файлов"
+          description="Архив содержит шаблоны для всех типов данных. Заполните нужные и загрузите."
+          @click="handleDownloadTemplates"
+          @close="handleCloseBanner"
+        >
+          <template #icon>
+            <img
+              :src="sphereImageUrl"
+              alt="Иллюстрация шаблонов"
+              class="size-full object-contain select-none mix-blend-darken"
+            />
+          </template>
+        </AppSidebarBanner>
+      </Transition>
     </div>
   </aside>
 </template>
