@@ -23,7 +23,7 @@ const emit = defineEmits<{
 <template>
   <DialogRoot :open="open" @update:open="(value) => !value && emit('close')">
     <DialogPortal>
-      <!-- Overlay с размытием 6px и фоном rgba(48, 48, 50, 0.25) -->
+      <!-- Overlay с размытием -->
       <Transition
         enter-from-class="opacity-0"
         enter-active-class="transition-opacity duration-200 ease-out"
@@ -49,22 +49,22 @@ const emit = defineEmits<{
       >
         <DialogContent
           v-if="open"
-          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-[400px] flex-col rounded-(--radius-lg) bg-white border border-(--border) shadow-[0_0_1px_0_rgba(0,0,0,0.0)_inset,0_2px_8px_0_rgba(0,0,0,0.06),0_-6px_12px_0_rgba(0,0,0,0.03),0_14px_28px_0_rgba(0,0,0,0.08)] focus:outline-none overflow-hidden"
+          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-lg bg-white border border-(--border) shadow-[0_0_1px_0_rgba(0,0,0,0.0)_inset,0_2px_8px_0_rgba(0,0,0,0.06),0_-6px_12px_0_rgba(0,0,0,0.03),0_14px_28px_0_rgba(0,0,0,0.08)] focus:outline-none overflow-hidden"
         >
-          <!-- Header с кнопкой close (32x32px) -->
+          <!-- Header с кнопкой close -->
           <header class="flex w-full px-5 pt-4 justify-end items-center">
             <AppButton variant="ghost" size="icon" @click="$emit('close')">
               <X />
             </AppButton>
           </header>
 
-          <!-- Основной контейнер содержимого (width: 360px по фигме, за счёт px-5) -->
+          <!-- Основной контейнер содержимого -->
           <div class="flex flex-col items-start gap-4 px-5 pb-2">
-            <!-- Иконка предупреждения: 44x44px, цвет #B29700 -->
+            <!-- Иконка предупреждения -->
             <div
-              class="flex size-11 p-3 justify-center items-center rounded-(--radius-md) bg-[rgba(255,236,119,0.20)]"
+              class="flex size-11 p-3 justify-center items-center rounded-md bg-[rgba(255,236,119,0.20)]"
             >
-              <AlertOctagon class="size-5 text-[#B29700] flex-shrink-0" stroke-width="2" />
+              <AlertOctagon class="size-5 text-[#B29700] shrink-0" stroke-width="2" />
             </div>
 
             <!-- Content блок с текстом -->
@@ -81,7 +81,7 @@ const emit = defineEmits<{
             </div>
           </div>
 
-          <!-- Footer: 16px 20px (px-5 py-4), gap 8px -->
+          <!-- Footer -->
           <footer class="flex w-full px-5 py-4 justify-end items-center gap-2 bg-white">
             <AppButton variant="outline" size="medium" class="!px-4" @click="emit('close')">
               Отмена

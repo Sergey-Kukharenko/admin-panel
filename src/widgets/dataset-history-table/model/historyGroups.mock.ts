@@ -3,7 +3,7 @@ import type { DatasetHistoryGroup } from './types';
 export const HISTORY_GROUPS_MOCK: DatasetHistoryGroup[] = [
   {
     id: 'group-1',
-    date: '29 Jun 2026, 03:16',
+    date: '01 Jul 2026, 03:16',
     uploadedCount: 1,
     totalCount: 3,
     source: 'CSV',

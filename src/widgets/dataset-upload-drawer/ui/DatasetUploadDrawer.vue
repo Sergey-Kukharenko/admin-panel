@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { Download } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import { DatasetTemplatesList } from '@/entities/dataset/ui/dataset-templates-list';
-import { DownloadTemplatesBanner } from '@/features/download-template/ui/download-templates-banner';
+import sphereImageUrl from '@/shared/assets/images/file-templates-sphere.jpg';
+import { AppBanner } from '@/shared/ui/app-banner'; // Импортируем базовый UI-баннер напрямую
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDrawer } from '@/shared/ui/app-drawer';
 
@@ -20,7 +22,6 @@ const emit = defineEmits<{
 
 const { filesMap, addFiles, removeFile, clearTemplateFiles } = useDatasetFiles();
 
-// Переменная состояния для управления модальным окном подтверждения
 const isConfirmOpen = ref(false);
 
 const templatesWithFiles = computed(() => {
@@ -52,30 +53,48 @@ const handleClearAll = (templateId: string) => {
   clearTemplateFiles(templateId);
 };
 
-// 1. Клик по кнопке футера шторки: открывает окно подтверждения вместо отправки
+// Функция скачивания архива с шаблонами файлов
+const handleDownloadTemplates = () => {
+  console.log('Скачивание архива с шаблонами...');
+};
+
 const handleDrawerSubmit = () => {
   if (hasValidFiles.value) {
     isConfirmOpen.value = true;
   }
 };
 
-// 2. Клик по черной кнопке «Да, отправить» внутри модального окна
 const handleFinalConfirm = () => {
   isConfirmOpen.value = false;
 
-  // Очищаем локальное хранилище после успешной отправки данных
   localStorage.removeItem('dataset_uploaded_files');
   filesMap.value = {};
 
-  emit('submit'); // Отправляем событие на верхний уровень приложения
-  emit('close'); // Закрываем шторку загрузки файлов
+  emit('submit');
+  emit('close');
 };
 </script>
 
 <template>
   <AppDrawer :open="open" title="Загрузка CSV" @close="emit('close')">
     <div class="flex flex-col gap-6 text-left">
-      <DownloadTemplatesBanner />
+      <AppBanner
+        title="Шаблоны файлов"
+        description="Шаблоны и примеры для всех типов данных. Используйте их при подготовке файлов."
+        @action="handleDownloadTemplates"
+      >
+        <template #icon>
+          <img
+            :src="sphereImageUrl"
+            alt="Шаблоны файлов"
+            class="size-full object-contain select-none mix-blend-darken"
+          />
+        </template>
+
+        <template #action-icon>
+          <Download class="size-5" />
+        </template>
+      </AppBanner>
 
       <section class="flex flex-col gap-4">
         <header class="flex flex-col gap-1">
@@ -98,7 +117,6 @@ const handleFinalConfirm = () => {
     </div>
 
     <template #footer>
-      <!-- Направляем клик на функцию открытия модального окна -->
       <DatasetUploadFooter
         :disabled="!hasValidFiles"
         @cancel="emit('close')"
@@ -107,7 +125,6 @@ const handleFinalConfirm = () => {
     </template>
   </AppDrawer>
 
-  <!-- КОМПОНЕНТ МОДАЛЬНОГО ОКНА ПОДТВЕРЖДЕНИЯ -->
   <AppConfirmDialog
     :open="isConfirmOpen"
     title="Подтвердите отправку"

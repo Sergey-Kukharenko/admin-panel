@@ -22,7 +22,7 @@ function onClear(event: MouseEvent) {
 <template>
   <button
     type="button"
-    class="flex h-8 min-h-8 max-h-8 items-center justify-center gap-1.5 rounded-(--radius-sm) border border-black/8 bg-white pl-3 pr-2 py-1.5 transition-colors hover:bg-(--muted)"
+    class="flex h-8 min-h-8 max-h-8 items-center justify-center gap-1.5 rounded-sm border border-black/8 bg-white pl-3 pr-2 py-1.5 transition-colors hover:bg-(--muted)"
   >
     <component :is="icon" class="size-4 shrink-0 text-[rgba(48,48,50,0.68)]" />
 

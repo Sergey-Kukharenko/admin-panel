@@ -29,25 +29,21 @@ const emit = defineEmits<{
     <li
       v-for="file in files"
       :key="file.id"
-      class="flex min-h-8 pl-11 pr-2 py-1.5 items-start gap-2 self-stretch bg-transparent hover:bg-(--muted) rounded-(--radius-sm) group transition-colors duration-150 ease-in-out"
+      class="flex min-h-8 pl-11 pr-2 py-1.5 items-start gap-2 self-stretch bg-transparent hover:bg-(--muted) rounded-sm group transition-colors duration-150 ease-in-out"
     >
       <!-- Проверяем файл на ошибку размера -->
       <template v-if="file.size > MAX_FILE_SIZE">
-        <XCircle
-          class="size-4 aspect-square flex-shrink-0 text-[#B21A25] mt-0.5"
-          stroke-width="2"
-        />
+        <XCircle class="size-4 aspect-square shrink-0 text-[#B21A25] mt-0.5" stroke-width="2" />
       </template>
       <template v-else>
         <CheckCircle2
-          class="size-4 aspect-square flex-shrink-0 text-[#528300] mt-0.5"
+          class="size-4 aspect-square shrink-0 text-[#528300] mt-0.5"
           stroke-width="2"
         />
       </template>
 
       <!-- Контейнер с текстом (text) -->
       <div class="flex flex-col items-start flex-1 min-w-0">
-        <!-- Название файла: ИСПРАВЛЕНО, цвет всегда стандартный тёмный text-(--text-primary) -->
         <span
           class="text-sm font-medium text-(--text-primary) leading-5 truncate w-full select-none"
         >

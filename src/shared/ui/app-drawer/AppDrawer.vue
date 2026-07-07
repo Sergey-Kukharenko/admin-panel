@@ -37,7 +37,6 @@ const emit = defineEmits<{
       </Transition>
 
       <!-- Drawer -->
-
       <Transition
         enter-from-class="translate-x-full"
         enter-active-class="transition-transform duration-300 ease-out"
@@ -48,11 +47,11 @@ const emit = defineEmits<{
       >
         <DialogContent
           v-if="open"
-          class="fixed top-0 right-0 z-50 flex h-screen w-[520px] flex-col border-l border-(--border) bg-(--card) shadow-xl focus:outline-none"
+          class="fixed top-0 right-0 z-50 flex h-screen w-130 flex-col border-l border-(--border) bg-(--card) shadow-xl focus:outline-none"
         >
           <!-- Header -->
 
-          <header class="flex h-[60px] items-center justify-between px-5 pt-5 pb-4">
+          <header class="flex h-15 items-center justify-between px-5 pt-5 pb-4">
             <h2 class="text-body-md font-medium text-(--text-primary)">
               {{ title }}
             </h2>
@@ -63,13 +62,11 @@ const emit = defineEmits<{
           </header>
 
           <!-- Content -->
-
-          <section class="flex-1 overflow-y-auto px-5 pb-[92px]">
+          <section class="flex-1 overflow-y-auto px-5 pb-23">
             <slot />
           </section>
 
           <!-- Footer -->
-
           <footer v-if="$slots.footer" class="border-t border-(--border)">
             <slot name="footer" />
           </footer>

@@ -4,9 +4,9 @@ import HeaderActions from './HeaderActions.vue';
 
 <template>
   <header
-    class="flex h-[var(--header-height)] items-center justify-between border-b border-(--border) bg-white px-8"
+    class="flex h-(--header-height) items-center justify-between border-b border-(--border) bg-white px-8"
   >
-    <h1 class="text-sm font-medium text-[var(--color-foreground)]">Загрузка данных</h1>
+    <h1 class="text-sm font-medium text-(--color-foreground)">Загрузка данных</h1>
 
     <HeaderActions />
   </header>

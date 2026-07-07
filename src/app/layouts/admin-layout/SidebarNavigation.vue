@@ -42,10 +42,10 @@ const items: NavigationItem[] = [
       <li v-for="item in items" :key="item.to">
         <RouterLink
           :to="item.to"
-          class="flex h-9 items-center gap-3 rounded-[8px] px-3 text-[14px] leading-5 font-medium text-(--muted-foreground) transition-colors hover:bg-(--muted)"
+          class="flex h-9 items-center gap-3 rounded-lg px-3 text-[14px] leading-5 font-medium text-(--muted-foreground) transition-colors hover:bg-(--muted)"
           active-class="bg-(--muted) text-(--foreground)"
         >
-          <component :is="item.icon" class="h-[18px] w-[18px] shrink-0" />
+          <component :is="item.icon" class="h-4.5 w-4.5 shrink-0" />
 
           <span>
             {{ item.label }}

@@ -17,10 +17,10 @@ defineEmits<{
 <template>
   <!-- Баннер: фиксированная ширина 480px, высота 88px, отступ справа 16px, gap: 12px -->
   <div
-    class="flex items-center w-[480px] h-[88px] pr-4 gap-3 bg-[#F8F8F9] border border-(--border) rounded-(--radius-lg) shadow-sm text-left overflow-hidden transition-all hover:bg-(--color-neutral-100)"
+    class="flex items-center w-120 h-22 pr-4 gap-3 bg-[#F8F8F9] border border-(--border) rounded-lg shadow-sm text-left overflow-hidden transition-all hover:bg-neutral-100"
   >
     <!-- Изображение: занимает всю высоту 88px, гибкое сжатие отключено -->
-    <div class="flex-shrink-0 h-[88px] flex items-center justify-center">
+    <div class="shrink-0 h-22 flex items-center justify-center">
       <slot name="icon" />
     </div>
 
@@ -39,17 +39,17 @@ defineEmits<{
       </p>
     </div>
 
-    <!-- Кнопка действия (скачивание): min/max-height: 32px, padding: 8px (p-2) -->
-    <div class="flex-shrink-0 ml-auto">
+    <!-- Кнопка действия (скачивание)-->
+    <div class="shrink-0 ml-auto">
       <AppButton
         variant="ghost"
-        size="small"
-        class="!h-8 !w-8 !p-2 flex items-center justify-center text-(--text-secondary) hover:text-(--text-primary)"
+        size="icon"
+        class="text-(--text-secondary) hover:text-(--text-primary)"
         @click="$emit('action')"
       >
         <slot name="action-icon">
           <!-- Стрелка-иконка: строго 16x16px (aspect-ratio: 1/1) -->
-          <Download class="size-4 aspect-square" stroke-width="2" />
+          <Download stroke-width="2" />
         </slot>
       </AppButton>
     </div>

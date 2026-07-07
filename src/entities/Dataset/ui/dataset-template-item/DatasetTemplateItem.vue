@@ -59,12 +59,12 @@ const handleFilesChange = (event: Event) => {
         <div class="flex gap-1">
           <!-- Expand -->
           <ChevronRight
-            class="mt-[2px] size-4 shrink-0 text-(--text-secondary) transition-transform duration-200"
+            class="mt-0.5 size-4 shrink-0 text-(--text-secondary) transition-transform duration-200"
             :class="{ 'rotate-90': expanded }"
           />
 
           <!-- Icon -->
-          <div class="flex shrink-0 items-center pt-[2px]">
+          <div class="flex shrink-0 items-center pt-0.5">
             <DatasetTemplateIcon :icon="template.icon" />
           </div>
         </div>
@@ -102,7 +102,7 @@ const handleFilesChange = (event: Event) => {
           <!-- Пока просто заглушка, ничего не скачивает -->
           <AppDropdownItem @select="console.log('Клик по скачиванию шаблона:', template.id)">
             <Download
-              class="size-4 aspect-square flex-shrink-0 text-[rgba(48,48,50,0.68)]"
+              class="size-4 aspect-square shrink-0 text-[rgba(48,48,50,0.68)]"
               stroke-width="2"
             />
             <span class="text-sm font-medium text-[rgba(48,48,50,0.98)] leading-5 select-none">
@@ -113,10 +113,10 @@ const handleFilesChange = (event: Event) => {
           <!-- Рабочее удаление файлов категории -->
           <AppDropdownItem
             :disabled="!filesCount"
-            class="data-[highlighted]:!bg-red-50"
+            class="data-highlighted:bg-red-50!"
             @select="emit('clearAll')"
           >
-            <Trash2 class="size-4 aspect-square flex-shrink-0 text-[#B21A25]/68" stroke-width="2" />
+            <Trash2 class="size-4 aspect-square shrink-0 text-[#B21A25]/68" stroke-width="2" />
             <span class="text-sm font-medium text-[#B21A25] leading-5 select-none">
               Удалить файлы
             </span>

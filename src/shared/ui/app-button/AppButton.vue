@@ -36,8 +36,8 @@ const variantClasses = computed(() => {
         'border-(--border)',
         props.size === 'icon' ? 'bg-white' : 'bg-transparent',
         'text-(--foreground)',
-        'hover:bg-(--muted)', // Убрали hover:border-(--color-neutral-700)
-        'active:bg-(--muted)', // Убрали active:border-(--color-neutral-900)
+        'hover:bg-(--muted)',
+        'active:bg-(--muted)',
         'disabled:border-(--color-neutral-200)',
         'disabled:text-(--color-neutral-400)',
       ];

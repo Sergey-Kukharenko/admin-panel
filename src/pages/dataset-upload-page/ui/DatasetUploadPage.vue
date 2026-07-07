@@ -16,7 +16,7 @@ const isDrawerOpen = ref(false);
 // Флаг для управления отображением таблицы истории загрузок
 const showHistoryTable = ref(false);
 
-// Реактивный массив статусов для источников данных (согласно макету Figma)
+// Реактивный массив статусов для источников данных
 const sourcesStatuses = computed(() => [
   { id: 'csv', label: 'CSV загрузка', statusText: 'Активен', isActive: true },
   { id: 's3', label: 'S3 Bucket', statusText: 'Неактивен', isActive: false },

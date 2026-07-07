@@ -8,7 +8,7 @@ import { AppSidebarBanner } from '@/shared/ui/app-sidebar-banner';
 import SidebarNavigation from './SidebarNavigation.vue';
 
 defineOptions({
-  name: 'TheSidebar',
+  name: 'AdminSidebar',
 });
 
 const isBannerVisible = ref<boolean>(true);
@@ -23,7 +23,6 @@ function handleCloseBanner(): void {
 </script>
 
 <template>
-  <!-- Теперь использует общую переменную bg-(--bg-surface-neutral) -->
   <aside
     class="flex h-screen w-(--sidebar-width) flex-col border-r border-(--border) bg-(--bg-surface-neutral)"
   >
@@ -38,7 +37,7 @@ function handleCloseBanner(): void {
     </div>
 
     <!-- Нижняя часть сайдбара с баннером -->
-    <div class="mt-auto p-3 min-h-[140px] flex flex-col justify-end">
+    <div class="mt-auto p-3 min-h-35 flex flex-col justify-end">
       <Transition
         appear
         enter-active-class="transition-all duration-300 ease-out"
