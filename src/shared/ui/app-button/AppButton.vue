@@ -77,14 +77,14 @@ const variantClasses = computed(() => {
 const sizeClasses = computed(() => {
   switch (props.size) {
     case 'small':
-      return ['h-8', 'px-3', 'gap-1.5', 'rounded-md'];
+      return ['h-8', 'px-3', 'gap-1.5', 'rounded-(--radius-sm)'];
 
     case 'icon':
       return ['size-8', 'p-2', 'shrink-0', '[&>svg]:size-4', 'rounded-(--radius-sm)'];
 
     case 'medium':
     default:
-      return ['h-9', 'px-4', 'gap-2', 'rounded-md'];
+      return ['h-9', 'px-4', 'gap-2', 'rounded-(--radius-sm)'];
   }
 });
 

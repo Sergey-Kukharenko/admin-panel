@@ -18,7 +18,7 @@ defineOptions({
     </ScrollAreaViewport>
 
     <ScrollAreaScrollbar orientation="vertical" class="flex w-2.5 touch-none select-none p-0.5">
-      <ScrollAreaThumb class="flex-1 rounded-full bg-(--color-neutral-300)" />
+      <ScrollAreaThumb class="flex-1 rounded-full bg-neutral-300" />
     </ScrollAreaScrollbar>
   </ScrollAreaRoot>
 </template>

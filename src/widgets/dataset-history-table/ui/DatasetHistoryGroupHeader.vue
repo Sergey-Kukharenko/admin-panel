@@ -42,11 +42,11 @@ defineEmits<{
     <div class="flex gap-1">
       <div class="flex h-full shrink-0 items-center">
         <div
-          class="flex h-[23px] items-center gap-0.5 rounded-full bg-[rgba(48,48,50,0.06)] pl-1.5 pr-2 py-1 select-none"
+          class="flex h-5.75 items-center gap-0.5 rounded-full bg-[rgba(48,48,50,0.06)] pl-1.5 pr-2 py-1 select-none"
         >
-          <PieChart class="size-[14px] shrink-0 text-[rgba(48,48,50,0.98)]" stroke-width="2" />
+          <PieChart class="size-3.5 shrink-0 text-[rgba(48,48,50,0.98)]" stroke-width="2" />
           <span
-            class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.98)] leading-5 pl-[2px]"
+            class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.98)] leading-5 pl-0.5"
           >
             {{ uploadedCount }}/{{ totalCount }}
           </span>
@@ -55,11 +55,11 @@ defineEmits<{
 
       <div class="flex h-full shrink-0 items-center">
         <div
-          class="flex h-[23px] items-center gap-0.5 rounded-full bg-[rgba(48,48,50,0.06)] pl-1.5 pr-2 py-1 select-none"
+          class="flex h-5.75 items-center gap-0.5 rounded-full bg-[rgba(48,48,50,0.06)] pl-1.5 pr-2 py-1 select-none"
         >
-          <FileText class="size-[14px] shrink-0 text-[rgba(48,48,50,0.98)]" stroke-width="2" />
+          <FileText class="size-3.5 shrink-0 text-[rgba(48,48,50,0.98)]" stroke-width="2" />
           <span
-            class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.98)] leading-5 pl-[2px]"
+            class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.98)] leading-5 pl-0.5"
           >
             Источник:{{ source }}
           </span>

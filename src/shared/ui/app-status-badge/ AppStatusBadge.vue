@@ -46,13 +46,13 @@ const config = computed(() => STATUS_CONFIG[props.status]);
 
 <template>
   <div
-    class="inline-flex h-[23px] items-center gap-1 rounded-full px-2 select-none transition-all"
+    class="inline-flex h-5.75 items-center gap-1 rounded-full px-2 select-none transition-all"
     :class="[config.bg, clickable && 'cursor-pointer hover:bg-opacity-80 active:scale-95']"
     @click="$emit('click')"
   >
     <component
       :is="config.icon"
-      class="size-[14px]"
+      class="size-3.5"
       :class="[config.color, config.animate && 'animate-spin']"
       :stroke-width="2.5"
     />

@@ -140,12 +140,12 @@ const visibleCategories = computed(() => {
       class="flex w-full flex-col overflow-hidden rounded-lg bg-white"
     >
       <!-- HEADER -->
-      <div class="flex h-11 w-full items-center border-b border-[var(--border-default)] pl-4">
+      <div class="flex h-11 w-full items-center border-b border-(--border-default) pl-4">
         <div class="flex flex-1 items-center gap-2">
-          <Users class="h-4 w-4 text-[var(--text-secondary)]" />
+          <Users class="h-4 w-4 text-(--text-secondary)" />
 
           <div class="flex items-center gap-1.5">
-            <span class="text-sm font-medium text-[var(--text-primary)]">
+            <span class="text-sm font-medium text-(--text-primary)">
               {{ category.title }}
             </span>
 
@@ -160,26 +160,24 @@ const visibleCategories = computed(() => {
       <div
         v-for="file in category.files"
         :key="file.id"
-        class="flex w-full items-center border-b border-[var(--border-default)] last:border-b-0 hover:bg-slate-50/50"
+        class="flex w-full items-center border-b border-(--border-default) last:border-b-0 hover:bg-slate-50/50"
       >
         <!-- NAME -->
-        <div
-          class="flex h-11 flex-1 items-center border-r border-[var(--border-default)] pl-10 pr-4"
-        >
-          <span class="truncate text-sm font-medium text-[var(--text-primary)]">
+        <div class="flex h-11 flex-1 items-center border-r border-(--border-default) pl-10 pr-4">
+          <span class="truncate text-sm font-medium text-(--text-primary)">
             {{ file.name }}
           </span>
         </div>
 
         <!-- ROWS -->
-        <div class="flex h-11 w-[160px] items-center border-r border-[var(--border-default)] pl-4">
-          <span class="font-mono text-sm font-medium text-[var(--text-primary)]">
+        <div class="flex h-11 w-40 items-center border-r border-(--border-default) pl-4">
+          <span class="font-mono text-sm font-medium text-(--text-primary)">
             {{ file.rowsCount }}
           </span>
         </div>
 
         <!-- STATUS -->
-        <div class="flex h-11 w-[160px] items-center pl-4">
+        <div class="flex h-11 w-40 items-center pl-4">
           <AppStatusBadge
             :status="statusMap[file.status]"
             :clickable="file.status === 'ERROR'"
@@ -190,7 +188,7 @@ const visibleCategories = computed(() => {
     </div>
   </div>
 
-  <!-- ERROR DIALOG (теперь полностью управляется composable) -->
+  <!-- ERROR DIALOG (управляется composable) -->
   <DatasetHistoryErrorDialog
     :open="errors.isOpen.value"
     :details="errors.details.value"

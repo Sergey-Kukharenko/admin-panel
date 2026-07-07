@@ -35,14 +35,12 @@ const tagStyles = computed(() => {
       {{ label }}
     </span>
 
-    <!-- Тег статуса с border-radius: 4px -->
+    <!-- Тег статуса -->
     <div
       :style="tagStyles"
       class="flex h-6 max-h-6 items-center justify-center gap-1 px-1.5 py-1 rounded-sm backdrop-blur-[calc(var(--blur,0px)/2)] box-border"
     >
-      <!-- Блок иконки из Lucide -->
       <div class="relative w-3.5 h-3.5 flex items-center justify-center shrink-0">
-        <!-- Внешний гексагон -->
         <Hexagon class="w-full h-full text-current" :stroke-width="2.2" />
 
         <!-- Галочка для активного состояния -->

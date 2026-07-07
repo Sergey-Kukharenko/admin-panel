@@ -50,13 +50,8 @@ defineEmits<{
       />
     </div>
 
-    <div class="flex-shrink-0">
-      <AppButton
-        variant="primary"
-        size="small"
-        class="!h-8 !gap-1.5 !px-3 rounded-(--radius-sm) text-[#FCFCFC]"
-        @click="$emit('openUpload')"
-      >
+    <div class="shrink-0">
+      <AppButton variant="primary" size="small" @click="$emit('openUpload')">
         Загрузить CSV
       </AppButton>
     </div>

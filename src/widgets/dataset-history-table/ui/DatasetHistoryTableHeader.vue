@@ -18,7 +18,6 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <!-- Привязали фон к новой семантической переменной -->
   <div class="flex w-full items-center rounded-xl bg-(--bg-surface-neutral) pl-6 pr-2 self-stretch">
     <!-- 1. Ячейка: НАИМЕНОВАНИЕ -->
     <div class="flex h-9 flex-1 items-center gap-1.5 border-r border-black/8 pl-7 pr-4">
@@ -32,7 +31,7 @@ const emit = defineEmits<{
     <!-- 2. Ячейка: ОБЪЁМ СТРОК -->
     <button
       type="button"
-      class="flex h-9 w-[160px] cursor-pointer items-center justify-between gap-1.5 border-r border-black/8 pl-4 pr-3 text-left transition-colors hover:bg-[rgba(48,48,50,0.02)] focus-visible:outline-none"
+      class="flex h-9 w-40 cursor-pointer items-center justify-between gap-1.5 border-r border-black/8 pl-4 pr-3 text-left transition-colors hover:bg-[rgba(48,48,50,0.02)] focus-visible:outline-none"
       @click="emit('sortRows')"
     >
       <span
@@ -42,19 +41,19 @@ const emit = defineEmits<{
       </span>
       <ArrowUp
         v-if="sortBy === 'rows' && sortOrder === 'asc'"
-        class="size-[14px] shrink-0 text-[rgba(48,48,50,0.68)]"
+        class="size-3.5 shrink-0 text-[rgba(48,48,50,0.68)]"
       />
 
       <ArrowDown
         v-else-if="sortBy === 'rows' && sortOrder === 'desc'"
-        class="size-[14px] shrink-0 text-[rgba(48,48,50,0.68)]"
+        class="size-3.5 shrink-0 text-[rgba(48,48,50,0.68)]"
       />
 
-      <ChevronsUpDown v-else class="size-[14px] shrink-0 text-[rgba(48,48,50,0.68)]" />
+      <ChevronsUpDown v-else class="size-3.5 shrink-0 text-[rgba(48,48,50,0.68)]" />
     </button>
 
     <!-- 3. Ячейка: СТАТУС -->
-    <div class="flex h-9 w-[160px] items-center pl-4 pr-3 text-left">
+    <div class="flex h-9 w-40 items-center pl-4 pr-3 text-left">
       <span
         class="font-mono text-xs font-medium uppercase text-[rgba(48,48,50,0.68)] leading-5 select-none"
       >

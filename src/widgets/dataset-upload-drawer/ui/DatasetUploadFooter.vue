@@ -12,18 +12,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex items-center justify-end w-full h-[76px] px-5 py-4 gap-2 bg-(--background)">
-    <AppButton variant="outline" size="medium" class="!px-4" @click="emit('cancel')">
-      Отмена
-    </AppButton>
+  <div class="flex items-center justify-end w-full h-19 px-5 py-4 gap-2 bg-(--background)">
+    <AppButton variant="outline" size="medium" @click="emit('cancel')"> Отмена </AppButton>
 
-    <AppButton
-      variant="primary"
-      size="medium"
-      class="!px-4 text-[#FCFCFC] disabled:opacity-50"
-      :disabled="disabled"
-      @click="emit('submit')"
-    >
+    <AppButton variant="primary" size="medium" :disabled="disabled" @click="emit('submit')">
       Загрузить и обработать
     </AppButton>
   </div>
