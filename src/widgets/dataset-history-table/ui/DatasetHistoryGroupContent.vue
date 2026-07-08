@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import { Users } from 'lucide-vue-next';
 import { computed } from 'vue';
 
+import type { DatasetIcon } from '@/entities/dataset/model/types';
+import { DatasetTemplateIcon } from '@/entities/dataset/ui/dataset-template-icon';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
 import type { DatasetPeriod, DatasetSort, DatasetSortOrder, DatasetStatus } from '../model/types';
@@ -24,6 +25,7 @@ interface DatasetCategory {
   id: string;
   title: string;
   count: number;
+  icon: DatasetIcon; // Строго типизируем слаг иконки через тип сущности
   files: DatasetHistoryFile[];
 }
 
@@ -37,7 +39,7 @@ const props = defineProps<{
 }>();
 
 /**
- * ERROR CONTROLLER (UI side-effects вынесены из компонента)
+ * ERROR CONTROLLER
  */
 const errors = useDatasetHistoryGroupErrors(props.groupDate);
 
@@ -58,6 +60,7 @@ const categoriesMock: DatasetCategory[] = [
     id: 'users',
     title: 'Users',
     count: 2,
+    icon: 'users',
     files: [
       { id: '1', name: 'casino_rewards.csv', rowsCount: 7634, status: 'LOADING' },
       { id: '2', name: 'jackpot_winners.csv', rowsCount: 2345, status: 'SUCCESS' },
@@ -67,12 +70,14 @@ const categoriesMock: DatasetCategory[] = [
     id: 'vip-users',
     title: 'Vip-users',
     count: 1,
+    icon: 'vip',
     files: [{ id: '3', name: 'vip_players_list.csv', rowsCount: 5420, status: 'LOADING' }],
   },
   {
     id: 'bets',
     title: 'Bets',
     count: 2,
+    icon: 'bets',
     files: [
       { id: '4', name: 'user_bets_daily.csv', rowsCount: 12840, status: 'SUCCESS' },
       { id: '5', name: 'high_rollers_june.csv', rowsCount: 540, status: 'ERROR' },
@@ -142,7 +147,8 @@ const visibleCategories = computed(() => {
       <!-- HEADER -->
       <div class="flex h-11 w-full items-center border-b border-(--border-default) pl-4">
         <div class="flex flex-1 items-center gap-2">
-          <Users class="h-4 w-4 text-(--text-secondary)" />
+          <!-- Рендерим готовый компонент иконки из сущности датасета -->
+          <DatasetTemplateIcon :icon="category.icon" class="h-4 w-4" />
 
           <div class="flex items-center gap-1.5">
             <span class="text-sm font-medium text-(--text-primary)">
@@ -188,7 +194,7 @@ const visibleCategories = computed(() => {
     </div>
   </div>
 
-  <!-- ERROR DIALOG (управляется composable) -->
+  <!-- ERROR DIALOG -->
   <DatasetHistoryErrorDialog
     :open="errors.isOpen.value"
     :details="errors.details.value"

@@ -52,9 +52,9 @@
   --background: var(--color-neutral-0);
   --card: var(--color-neutral-0);
 
-  /* Переименованные и новые фоны под макеты */
-  --bg-surface-neutral: #F8F8F8;        /* Общий нейтральный фон для Сайдбара и Таблицы */
-  --bg-surface-secondary: #F1F1F1;      /* Фоновый цвет для Баннера */
+  /* Фоновые подложки */
+  --bg-surface-neutral: #F8F8F8;        /* Сайдбар, группы и шапка таблицы */
+  --bg-surface-secondary: #F1F1F1;      /* Баннер */
 
   /* Typography Mapping */
   --foreground: var(--text-primary);
@@ -65,6 +65,10 @@
   --primary-foreground: var(--color-neutral-0);
   --muted: rgba(48, 48, 50, 0.06);
   --muted-hover: rgba(48, 48, 50, 0.1);
+
+  /* Переменные для активного состояния элементов навигации */
+  --sidebar-item-active: #ECECEC;
+  --sidebar-item-active-foreground: rgba(48, 48, 50, 0.98);
 
   /* Borders */
   --border: var(--color-neutral-200);
