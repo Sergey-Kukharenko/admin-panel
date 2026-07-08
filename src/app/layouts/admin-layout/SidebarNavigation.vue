@@ -52,7 +52,7 @@ const items: NavigationItem[] = [
       <li v-for="item in items" :key="item.to">
         <RouterLink
           :to="item.to"
-          class="group flex h-9 items-center gap-3 rounded-lg px-3 text-[14px] leading-5 font-medium text-(--muted-foreground) transition-all hover:bg-(--muted) hover:text-(--foreground)"
+          class="group flex h-9 items-center gap-3 rounded-sm px-3 text-[14px] leading-5 font-medium text-(--muted-foreground) transition-all hover:bg-(--muted) hover:text-(--foreground)"
           active-class="bg-(--sidebar-item-active) !text-(--sidebar-item-active-foreground)"
         >
           <component :is="item.icon" class="h-4.5 w-4.5 shrink-0" />
