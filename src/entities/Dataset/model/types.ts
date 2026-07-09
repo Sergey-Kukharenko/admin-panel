@@ -13,5 +13,10 @@ export interface DatasetTemplate {
   description: string;
   icon: DatasetIcon;
   count?: number;
+
+  /**
+   * Уже загруженные файлы,
+   * полученные с сервера.
+   */
   files?: DatasetFile[];
 }

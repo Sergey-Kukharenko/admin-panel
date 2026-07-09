@@ -2,21 +2,31 @@
 import { ChevronRight, Download, MoreHorizontal, PlusCircle, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
-import type { DatasetTemplate } from '@/entities/dataset/model/types';
-import { DatasetTemplateIcon } from '@/entities/dataset/ui/dataset-template-icon';
-import DatasetFilesList from '@/entities/dataset/ui/dataset-template-item/DatasetFilesList.vue';
-import DatasetUploadZone from '@/entities/dataset/ui/dataset-template-item/DatasetUploadZone.vue';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
+
+import type { DatasetTemplate } from '../../model/types';
+import type { DatasetUpload } from '../../model/upload';
+import DatasetFilesList from '../dataset-files-list/DatasetFilesList.vue';
+import DatasetTemplateIcon from '../dataset-template-icon/DatasetTemplateIcon.vue';
+import DatasetUploadList from '../dataset-upload-list/DatasetUploadList.vue';
+import DatasetUploadZone from '../dataset-upload-zone/DatasetUploadZone.vue';
 
 defineOptions({
   name: 'DatasetTemplateItem',
 });
 
-const props = defineProps<{
-  template: DatasetTemplate;
-  expanded?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    template: DatasetTemplate;
+    uploads?: DatasetUpload[];
+    expanded?: boolean;
+  }>(),
+  {
+    uploads: () => [],
+    expanded: false,
+  },
+);
 
 const emit = defineEmits<{
   toggle: [];
@@ -28,21 +38,18 @@ const emit = defineEmits<{
 const inputRef = ref<HTMLInputElement>();
 
 const files = computed(() => props.template.files ?? []);
-const filesCount = computed(() => files.value.length);
+const hasFiles = computed(() => files.value.length > 0);
+const hasUploads = computed(() => props.uploads.length > 0);
 
 const openFilePicker = () => {
   inputRef.value?.click();
 };
 
 const handleFilesChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-
-  if (!target.files?.length) {
-    return;
-  }
-
-  emit('upload', Array.from(target.files));
-  target.value = '';
+  const input = event.target as HTMLInputElement;
+  if (!input.files?.length) return;
+  emit('upload', Array.from(input.files));
+  input.value = '';
 };
 </script>
 
@@ -50,43 +57,29 @@ const handleFilesChange = (event: Event) => {
   <li class="flex w-full flex-col">
     <!-- Header -->
     <div class="flex items-center py-3">
-      <!-- Content -->
       <button
         type="button"
         class="flex min-w-0 flex-1 items-start gap-2 text-left"
         @click="emit('toggle')"
       >
         <div class="flex gap-1">
-          <!-- Expand -->
           <ChevronRight
             class="mt-0.5 size-4 shrink-0 text-(--text-secondary) transition-transform duration-200"
             :class="{ 'rotate-90': expanded }"
           />
-
-          <!-- Icon -->
           <div class="flex shrink-0 items-center pt-0.5">
             <DatasetTemplateIcon :icon="template.icon" />
           </div>
         </div>
 
-        <!-- Text -->
         <div class="flex min-w-0 flex-1 flex-col gap-1">
           <div class="flex items-center gap-1">
-            <h4 class="text-body-sm font-medium text-(--text-primary)">
-              {{ template.title }}
-            </h4>
-
-            <span
-              v-if="template.icon === 'users'"
-              class="text-body-sm font-medium text-(--text-secondary)"
-            >
-              {{ template.count }}
-            </span>
+            <h4 class="text-body-sm font-medium text-(--text-primary)">{{ template.title }}</h4>
+            <span v-if="template.count" class="text-body-sm font-medium text-(--text-secondary)">{{
+              template.count
+            }}</span>
           </div>
-
-          <p class="text-body-xs text-(--text-secondary)">
-            {{ template.description }}
-          </p>
+          <p class="text-body-xs text-(--text-secondary)">{{ template.description }}</p>
         </div>
       </button>
 
@@ -98,51 +91,43 @@ const handleFilesChange = (event: Event) => {
               <MoreHorizontal class="text-(--text-secondary)" />
             </AppButton>
           </template>
-
-          <!-- Пока просто заглушка, ничего не скачивает -->
-          <AppDropdownItem @select="console.log('Клик по скачиванию шаблона:', template.id)">
-            <Download
-              class="size-4 aspect-square shrink-0 text-[rgba(48,48,50,0.68)]"
-              stroke-width="2"
-            />
-            <span class="text-sm font-medium text-[rgba(48,48,50,0.98)] leading-5 select-none">
-              Скачать шаблон
-            </span>
+          <AppDropdownItem>
+            <Download class="size-4 text-(--text-secondary)" stroke-width="2" />
+            <span class="text-body-sm font-medium text-(--text-primary)"> Скачать шаблон </span>
           </AppDropdownItem>
-
-          <!-- Рабочее удаление файлов категории -->
           <AppDropdownItem
-            :disabled="!filesCount"
+            :disabled="!hasFiles"
             class="data-highlighted:bg-red-50!"
             @select="emit('clearAll')"
           >
-            <Trash2 class="size-4 aspect-square shrink-0 text-[#B21A25]/68" stroke-width="2" />
-            <span class="text-sm font-medium text-[#B21A25] leading-5 select-none">
-              Удалить файлы
-            </span>
+            <Trash2 class="size-4 text-(--danger)" stroke-width="2" />
+            <span class="text-body-sm font-medium text-(--danger)"> Удалить файлы </span>
           </AppDropdownItem>
         </AppDropdown>
 
         <AppButton variant="ghost" size="icon" @click="openFilePicker">
           <PlusCircle class="text-(--text-secondary)" stroke-width="2" />
         </AppButton>
-
         <input
           ref="inputRef"
+          class="hidden"
           type="file"
           multiple
           accept=".csv,.xlsx,.xls"
-          class="hidden"
           @change="handleFilesChange"
         />
       </div>
     </div>
 
-    <!-- Expanded Content -->
-    <div v-if="expanded" class="pb-3">
-      <DatasetUploadZone v-if="!filesCount" @upload="emit('upload', $event)" />
-
-      <DatasetFilesList v-else :files="files" @remove="emit('remove', $event)" />
+    <!-- Expanded -->
+    <div v-if="expanded" class="pb-3 pl-10 flex flex-col gap-2">
+      <DatasetUploadZone v-if="!hasFiles && !hasUploads" @upload="emit('upload', $event)" />
+      <DatasetFilesList v-if="hasFiles" :files="files" @remove="emit('remove', $event)" />
+      <DatasetUploadList
+        v-if="hasUploads"
+        :uploads="uploads"
+        @remove-upload="emit('remove', $event)"
+      />
     </div>
   </li>
 </template>

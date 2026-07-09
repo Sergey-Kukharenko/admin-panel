@@ -2,9 +2,9 @@
 import { Download } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
-import { DatasetTemplatesList } from '@/entities/dataset/ui/dataset-templates-list';
+import { DatasetTemplatesList } from '@/entities/dataset';
 import sphereImageUrl from '@/shared/assets/images/file-templates-sphere.jpg';
-import { AppBanner } from '@/shared/ui/app-banner'; // Импортируем базовый UI-баннер напрямую
+import { AppBanner } from '@/shared/ui/app-banner';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDrawer } from '@/shared/ui/app-drawer';
 
@@ -20,7 +20,7 @@ const emit = defineEmits<{
   submit: [];
 }>();
 
-const { filesMap, addFiles, removeFile, clearTemplateFiles } = useDatasetFiles();
+const { filesMap, uploadsMap, addFiles, removeFile, clearTemplateFiles } = useDatasetFiles();
 
 const isConfirmOpen = ref(false);
 
@@ -53,7 +53,6 @@ const handleClearAll = (templateId: string) => {
   clearTemplateFiles(templateId);
 };
 
-// Функция скачивания архива с шаблонами файлов
 const handleDownloadTemplates = () => {
   console.log('Скачивание архива с шаблонами...');
 };
@@ -66,10 +65,8 @@ const handleDrawerSubmit = () => {
 
 const handleFinalConfirm = () => {
   isConfirmOpen.value = false;
-
   localStorage.removeItem('dataset_uploaded_files');
   filesMap.value = {};
-
   emit('submit');
   emit('close');
 };
@@ -109,6 +106,7 @@ const handleFinalConfirm = () => {
 
         <DatasetTemplatesList
           :templates="templatesWithFiles"
+          :uploads-map="uploadsMap"
           @upload="handleUpload"
           @remove="handleRemove"
           @clear-all="handleClearAll"

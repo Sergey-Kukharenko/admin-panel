@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CheckCircle2, Trash2, XCircle } from 'lucide-vue-next';
 
-import { MAX_FILE_SIZE } from '@/widgets/dataset-upload-drawer/model/useDatasetFiles';
+import { MAX_FILE_SIZE } from '@/widgets/dataset-upload-drawer/model';
 
 export interface DatasetFile {
   id: string;
@@ -29,33 +29,33 @@ const emit = defineEmits<{
     <li
       v-for="file in files"
       :key="file.id"
-      class="flex min-h-8 pl-11 pr-2 py-1.5 items-start gap-2 self-stretch bg-transparent hover:bg-(--muted) rounded-sm group transition-colors duration-150 ease-in-out"
+      class="flex min-h-8 pl-1 pr-2 py-1.5 items-start gap-2 self-stretch bg-transparent hover:bg-(--muted) rounded-sm group transition-colors duration-150 ease-in-out"
     >
       <!-- Проверяем файл на ошибку размера -->
-      <template v-if="file.size > MAX_FILE_SIZE">
-        <XCircle class="size-4 aspect-square shrink-0 text-[#B21A25] mt-0.5" stroke-width="2" />
-      </template>
-      <template v-else>
-        <CheckCircle2
-          class="size-4 aspect-square shrink-0 text-[#528300] mt-0.5"
-          stroke-width="2"
+      <div class="shrink-0 flex items-center justify-center pt-[3px]">
+        <XCircle
+          v-if="file.size > MAX_FILE_SIZE"
+          class="size-3.5 text-(--danger)"
+          stroke-width="1.5"
         />
-      </template>
+        <CheckCircle2 v-else class="size-3.5 text-(--success)" stroke-width="1.5" />
+      </div>
 
       <!-- Контейнер с текстом (text) -->
       <div class="flex flex-col items-start flex-1 min-w-0">
+        <!-- ИСПРАВЛЕНО: Цвет текста имени файла теперь всегда text-(--text-primary) как в макете -->
         <span
-          class="text-sm font-medium text-(--text-primary) leading-5 truncate w-full select-none"
+          class="text-sm font-medium leading-5 truncate w-full select-none text-(--text-primary)"
         >
           {{ file.name }}
         </span>
 
-        <!-- Текст ошибки -->
+        <!-- Текст ошибки изменен строго под макет Figma -->
         <span
           v-if="file.size > MAX_FILE_SIZE"
-          class="text-xs font-normal text-[#B21A25]/68 leading-4 mt-0.5 select-none"
+          class="text-xs font-normal text-(--danger) leading-4 mt-0.5 select-none"
         >
-          Слишком большой файл
+          Размер превышает 500 МБ
         </span>
       </div>
 

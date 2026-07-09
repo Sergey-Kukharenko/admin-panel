@@ -70,6 +70,12 @@
   --sidebar-item-active: #ECECEC;
   --sidebar-item-active-foreground: rgba(48, 48, 50, 0.98);
 
+  /* Прогресс и состояния загрузки файлов (Upload) */
+  --text-tertiary: rgba(48, 48, 50, 0.50);           /* Текст процентов 53% */
+  --icon-muted: rgba(48, 48, 50, 0.15);              /* Тонкая иконка очереди */
+  --progress-track: rgba(48, 48, 50, 0.06);          /* Фон дорожки прогресс-бара */
+  --progress-fill: rgba(48, 48, 50, 0.98);           /* Насыщенный цвет бегунка и спиннера */
+
   /* Borders */
   --border: var(--color-neutral-200);
   --border-default: rgba(48, 48, 50, 0.08);

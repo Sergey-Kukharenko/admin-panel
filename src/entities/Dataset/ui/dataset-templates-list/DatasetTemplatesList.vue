@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import type { DatasetTemplate } from '@/entities/dataset/model/types';
-import { DatasetTemplateItem } from '@/entities/dataset/ui/dataset-template-item';
+import type { DatasetTemplate } from '../../model/types';
+import type { DatasetUpload } from '../../model/upload'; // Импортируем тип из соседнего файла модели
+import DatasetTemplateItem from '../dataset-template-item/DatasetTemplateItem.vue';
 
 defineOptions({
-  name: 'DatasetTemplateList',
+  name: 'DatasetTemplatesList',
 });
 
 defineProps<{
   templates: DatasetTemplate[];
+  uploadsMap?: Record<string, DatasetUpload[]>; // Добавили мапу загрузок
 }>();
 
 const emit = defineEmits<{
   upload: [templateId: string, files: File[]];
   remove: [templateId: string, fileId: string];
   clearAll: [templateId: string];
-  download: [templateId: string];
 }>();
 
 const expandedId = ref<string | null>(null);
@@ -32,6 +33,7 @@ const toggle = (id: string) => {
       v-for="template in templates"
       :key="template.id"
       :template="template"
+      :uploads="uploadsMap?.[template.id] ?? []"
       :expanded="expandedId === template.id"
       @toggle="toggle(template.id)"
       @upload="emit('upload', template.id, $event)"

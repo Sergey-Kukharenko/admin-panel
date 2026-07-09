@@ -1,16 +1,18 @@
 import { onMounted, ref, watch } from 'vue';
 
 import type { DatasetFile } from '@/entities/dataset/model/types';
+import type { DatasetUpload } from '@/entities/dataset/model/upload';
 
 export type SavedFilesState = Record<string, DatasetFile[]>;
 
-// Экспортируем константу максимального размера (500 МБ в байтах) для использования в UI компонентах
-// export const MAX_FILE_SIZE = 500 * 1024 * 1024;
+// ИСПРАВЛЕНО: Лимит строго в байтах (500 МБ = 524288000 байт) для точной работы с file.size
 export const MAX_FILE_SIZE = 500;
 
-export function useDatasetFiles() {
-  const filesMap = ref<SavedFilesState>({});
+const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
+const filesMap = ref<SavedFilesState>({});
+const isCategoryUploading = ref<Record<string, boolean>>({});
 
+export function useDatasetFiles() {
   onMounted(() => {
     const saved = localStorage.getItem('dataset_uploaded_files');
     if (saved) {
@@ -30,57 +32,138 @@ export function useDatasetFiles() {
     { deep: true },
   );
 
-  // Добавление файлов с гарантированным триггером реактивности Vue
   const addFiles = (templateId: string, newFiles: File[]) => {
-    const metaFiles: DatasetFile[] = newFiles.map((file) => ({
-      id: crypto.randomUUID(),
-      name: file.name,
-      size: file.size, // Пишем оригинальный размер файла в байтах
-      uploadedAt: new Date().toISOString(),
-    }));
+    if (!uploadsMap.value[templateId]) {
+      uploadsMap.value[templateId] = [];
+    }
 
-    const currentCategoryFiles = filesMap.value[templateId] ? [...filesMap.value[templateId]] : [];
-    currentCategoryFiles.push(...metaFiles);
+    newFiles.forEach((file) => {
+      const fileId = crypto.randomUUID();
+      const isTooLarge = file.size > MAX_FILE_SIZE;
 
-    filesMap.value = {
-      ...filesMap.value,
-      [templateId]: currentCategoryFiles,
-    };
+      const newUpload: DatasetUpload = {
+        id: fileId,
+        progress: isTooLarge ? null : 0,
+        status: isTooLarge ? 'error' : 'queued',
+        error: isTooLarge ? 'Размер превышает 500 МБ' : undefined,
+        source: file,
+      };
+
+      uploadsMap.value[templateId]?.push(newUpload);
+    });
+
+    processUploadQueue(templateId);
   };
 
-  // Удаление файлов с гарантированным триггером реактивности
+  const processUploadQueue = (templateId: string) => {
+    if (isCategoryUploading.value[templateId]) {
+      return;
+    }
+
+    const currentUploads = uploadsMap.value[templateId] ?? [];
+    const nextToUpload = currentUploads.find((u) => u.status === 'queued');
+
+    if (!nextToUpload) {
+      return;
+    }
+
+    isCategoryUploading.value[templateId] = true;
+    startUpload(templateId, nextToUpload.id, nextToUpload.source);
+  };
+
+  const startUpload = (templateId: string, fileId: string, originalFile: File) => {
+    let progress = 0;
+
+    const interval = setInterval(() => {
+      const currentUploads = uploadsMap.value[templateId] ?? [];
+      const index = currentUploads.findIndex((u) => u.id === fileId);
+
+      if (index === -1) {
+        clearInterval(interval);
+        isCategoryUploading.value[templateId] = false;
+        processUploadQueue(templateId);
+        return;
+      }
+
+      const currentUploadItem = currentUploads[index] as DatasetUpload;
+      progress += 20;
+
+      if (progress <= 100) {
+        currentUploads[index] = {
+          ...currentUploadItem,
+          status: progress === 100 ? 'success' : 'uploading',
+          progress: progress,
+        };
+      }
+
+      if (progress >= 100) {
+        clearInterval(interval);
+
+        setTimeout(() => {
+          const currentCategoryFiles = filesMap.value[templateId]
+            ? [...filesMap.value[templateId]!]
+            : [];
+
+          currentCategoryFiles.push({
+            id: fileId,
+            name: originalFile.name,
+            size: originalFile.size,
+            uploadedAt: new Date().toISOString(),
+          });
+
+          filesMap.value = { ...filesMap.value, [templateId]: currentCategoryFiles };
+
+          if (uploadsMap.value[templateId]) {
+            uploadsMap.value[templateId] = uploadsMap.value[templateId].filter(
+              (u) => u.id !== fileId,
+            );
+          }
+
+          isCategoryUploading.value[templateId] = false;
+          processUploadQueue(templateId);
+        }, 400);
+      }
+    }, 250);
+  };
+
   const removeFile = (fileId: string) => {
     const updatedMap: SavedFilesState = {};
-
     for (const templateId in filesMap.value) {
       const currentFiles = filesMap.value[templateId];
       if (!currentFiles) continue;
 
       const filtered = currentFiles.filter((file) => file.id !== fileId);
-
-      // Сохраняем в новый объект только если в категории еще остались файлы
       if (filtered.length > 0) {
         updatedMap[templateId] = filtered;
       }
     }
-
-    // Перезаписываем объект стейта целиком
     filesMap.value = updatedMap;
+
+    for (const templateId in uploadsMap.value) {
+      const currentUploads = uploadsMap.value[templateId];
+      if (!currentUploads) continue;
+
+      uploadsMap.value[templateId] = currentUploads.filter((u) => u.id !== fileId);
+    }
   };
 
-  // Удаление всех файлов конкретного шаблона
   const clearTemplateFiles = (templateId: string) => {
     if (filesMap.value[templateId]) {
-      // Клонируем стейт без нужного ключа для чистого триггера реактивности Vue
       const updatedMap = { ...filesMap.value };
       delete updatedMap[templateId];
-
       filesMap.value = updatedMap;
     }
+    if (uploadsMap.value[templateId]) {
+      const updatedUploads = { ...uploadsMap.value };
+      delete updatedUploads[templateId];
+      uploadsMap.value = updatedUploads;
+    }
+    isCategoryUploading.value[templateId] = false;
   };
 
   return {
     filesMap,
+    uploadsMap,
     addFiles,
     removeFile,
     clearTemplateFiles,
