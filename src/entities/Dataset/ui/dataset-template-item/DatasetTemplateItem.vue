@@ -143,7 +143,7 @@ const handleFilesChange = (event: Event) => {
     </div>
 
     <!-- Expanded -->
-    <div v-if="expanded" class="pb-3 pl-10 flex flex-col gap-2">
+    <div v-if="expanded" class="py-3 pl-10 flex flex-col gap-2">
       <DatasetUploadZone
         v-if="!hasListItems"
         :accept="DATASET_FILE_ACCEPT"
