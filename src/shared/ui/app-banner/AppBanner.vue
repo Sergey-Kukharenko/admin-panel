@@ -9,15 +9,20 @@ interface Props {
 }
 
 defineProps<Props>();
-defineEmits<{
-  (e: 'action'): void;
+
+const emit = defineEmits<{
+  action: [];
 }>();
 </script>
 
 <template>
   <div
-    class="flex items-center w-120 h-22 pr-4 gap-3 bg-(--bg-surface-accent) border border-(--border) rounded-lg shadow-sm text-left overflow-hidden transition-all hover:bg-(--bg-surface-hover)"
-    @click="$emit('action')"
+    role="button"
+    tabindex="0"
+    class="flex items-center w-120 h-22 pr-4 gap-3 bg-(--bg-surface-accent) rounded-lg shadow-sm text-left overflow-hidden transition-all hover:bg-(--bg-surface-hover) cursor-pointer"
+    @click="emit('action')"
+    @keydown.enter="emit('action')"
+    @keydown.space.prevent="emit('action')"
   >
     <div class="shrink-0 h-22 flex items-center justify-center">
       <slot name="icon" />
@@ -35,13 +40,12 @@ defineEmits<{
       </p>
     </div>
 
-    <!-- Кнопка действия (скачивание)-->
     <div class="shrink-0 ml-auto">
       <AppButton
-        variant="ghost"
+        variant="outline"
         size="icon"
         class="text-(--text-secondary) hover:text-(--text-primary)"
-        @click="$emit('action')"
+        @click.stop="emit('action')"
       >
         <slot name="action-icon">
           <Download stroke-width="2" />

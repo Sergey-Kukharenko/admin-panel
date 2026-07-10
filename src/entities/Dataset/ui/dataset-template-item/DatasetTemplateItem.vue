@@ -15,6 +15,8 @@ defineOptions({
   name: 'DatasetTemplateItem',
 });
 
+const DATASET_FILE_ACCEPT = '.csv,text/csv';
+
 const props = withDefaults(
   defineProps<{
     template: DatasetTemplate;
@@ -37,23 +39,33 @@ const emit = defineEmits<{
 const inputRef = ref<HTMLInputElement>();
 
 const files = computed(() => props.template.files ?? []);
+const addedFilesCount = computed(() => files.value.length);
 const hasFiles = computed(() => files.value.length > 0);
 const hasUploads = computed(() => props.uploads.length > 0);
 const hasListItems = computed(() => hasFiles.value || hasUploads.value);
+
+const headerClasses = computed(() => ['flex items-center', props.expanded ? 'pt-3 pb-0' : 'py-3']);
 
 const openFilePicker = () => {
   inputRef.value?.click();
 };
 
-const handleFilesChange = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  if (!input.files?.length) return;
-
+const expandIfCollapsed = () => {
   if (!props.expanded) {
     emit('toggle');
   }
+};
 
-  emit('upload', Array.from(input.files));
+const handleFilesChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const selectedFiles = input.files ? Array.from(input.files) : [];
+
+  if (!selectedFiles.length) {
+    return;
+  }
+
+  expandIfCollapsed();
+  emit('upload', selectedFiles);
   input.value = '';
 };
 </script>
@@ -61,7 +73,7 @@ const handleFilesChange = (event: Event) => {
 <template>
   <li class="flex w-full flex-col">
     <!-- Header -->
-    <div class="flex items-center py-3">
+    <div :class="headerClasses">
       <button
         type="button"
         class="flex min-w-0 flex-1 items-start gap-2 text-left"
@@ -79,10 +91,16 @@ const handleFilesChange = (event: Event) => {
 
         <div class="flex min-w-0 flex-1 flex-col gap-1">
           <div class="flex items-center gap-1">
-            <h4 class="text-body-sm font-medium text-(--text-primary)">{{ template.title }}</h4>
-            <span v-if="template.count" class="text-body-sm font-medium text-(--text-secondary)">{{
-              template.count
-            }}</span>
+            <h4 class="text-body-sm font-medium text-(--text-primary)">
+              {{ template.title }}
+            </h4>
+
+            <span
+              v-if="addedFilesCount > 0"
+              class="text-body-sm font-medium text-(--text-secondary)"
+            >
+              {{ addedFilesCount }}
+            </span>
           </div>
           <p class="text-body-xs text-(--text-secondary)">{{ template.description }}</p>
         </div>
@@ -118,7 +136,7 @@ const handleFilesChange = (event: Event) => {
           class="hidden"
           type="file"
           multiple
-          accept=".csv,text/csv"
+          :accept="DATASET_FILE_ACCEPT"
           @change="handleFilesChange"
         />
       </div>
@@ -126,7 +144,11 @@ const handleFilesChange = (event: Event) => {
 
     <!-- Expanded -->
     <div v-if="expanded" class="pb-3 pl-10 flex flex-col gap-2">
-      <DatasetUploadZone v-if="!hasListItems" @upload="emit('upload', $event)" />
+      <DatasetUploadZone
+        v-if="!hasListItems"
+        :accept="DATASET_FILE_ACCEPT"
+        @upload="emit('upload', $event)"
+      />
 
       <DatasetFilesList v-else :files="files" :uploads="uploads" @remove="emit('remove', $event)" />
     </div>

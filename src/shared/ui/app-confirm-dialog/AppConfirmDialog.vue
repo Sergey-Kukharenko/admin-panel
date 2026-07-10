@@ -53,7 +53,7 @@ const emit = defineEmits<{
         >
           <!-- Header с кнопкой close -->
           <header class="flex w-full px-5 pt-4 justify-end items-center">
-            <AppButton variant="ghost" size="icon" @click="$emit('close')">
+            <AppButton variant="outline" size="icon" @click="$emit('close')">
               <X />
             </AppButton>
           </header>
