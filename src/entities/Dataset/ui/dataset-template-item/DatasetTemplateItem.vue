@@ -9,7 +9,6 @@ import type { DatasetTemplate } from '../../model/types';
 import type { DatasetUpload } from '../../model/upload';
 import DatasetFilesList from '../dataset-files-list/DatasetFilesList.vue';
 import DatasetTemplateIcon from '../dataset-template-icon/DatasetTemplateIcon.vue';
-import DatasetUploadList from '../dataset-upload-list/DatasetUploadList.vue';
 import DatasetUploadZone from '../dataset-upload-zone/DatasetUploadZone.vue';
 
 defineOptions({
@@ -40,6 +39,7 @@ const inputRef = ref<HTMLInputElement>();
 const files = computed(() => props.template.files ?? []);
 const hasFiles = computed(() => files.value.length > 0);
 const hasUploads = computed(() => props.uploads.length > 0);
+const hasListItems = computed(() => hasFiles.value || hasUploads.value);
 
 const openFilePicker = () => {
   inputRef.value?.click();
@@ -48,6 +48,11 @@ const openFilePicker = () => {
 const handleFilesChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (!input.files?.length) return;
+
+  if (!props.expanded) {
+    emit('toggle');
+  }
+
   emit('upload', Array.from(input.files));
   input.value = '';
 };
@@ -113,7 +118,7 @@ const handleFilesChange = (event: Event) => {
           class="hidden"
           type="file"
           multiple
-          accept=".csv,.xlsx,.xls"
+          accept=".csv,text/csv"
           @change="handleFilesChange"
         />
       </div>
@@ -121,13 +126,9 @@ const handleFilesChange = (event: Event) => {
 
     <!-- Expanded -->
     <div v-if="expanded" class="pb-3 pl-10 flex flex-col gap-2">
-      <DatasetUploadZone v-if="!hasFiles && !hasUploads" @upload="emit('upload', $event)" />
-      <DatasetFilesList v-if="hasFiles" :files="files" @remove="emit('remove', $event)" />
-      <DatasetUploadList
-        v-if="hasUploads"
-        :uploads="uploads"
-        @remove-upload="emit('remove', $event)"
-      />
+      <DatasetUploadZone v-if="!hasListItems" @upload="emit('upload', $event)" />
+
+      <DatasetFilesList v-else :files="files" :uploads="uploads" @remove="emit('remove', $event)" />
     </div>
   </li>
 </template>

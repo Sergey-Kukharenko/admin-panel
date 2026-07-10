@@ -56,7 +56,7 @@ const strokeDasharray = computed(() => {
 
 <style scoped>
 .upload-spinner-progress {
-  transition: stroke-dasharray 250ms ease-out;
+  transition: stroke-dasharray 80ms linear;
 }
 
 /* Разворачиваем круг, чтобы заполнение начиналось строго сверху (на 12 часов) */

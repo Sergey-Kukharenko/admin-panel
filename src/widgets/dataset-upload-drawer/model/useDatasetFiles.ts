@@ -8,13 +8,38 @@ export type SavedFilesState = Record<string, DatasetFile[]>;
 // ИСПРАВЛЕНО: Лимит строго в байтах (500 МБ = 524288000 байт) для точной работы с file.size
 export const MAX_FILE_SIZE = 500;
 
+const CSV_FILE_EXTENSION = '.csv';
+const CSV_MIME_TYPE = 'text/csv';
+
+const UPLOAD_PROGRESS_STEP = 2;
+const UPLOAD_PROGRESS_INTERVAL = 40;
+
 const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
 const filesMap = ref<SavedFilesState>({});
 const isCategoryUploading = ref<Record<string, boolean>>({});
 
+const getFileValidationError = (file: File) => {
+  const normalizedFileName = file.name.toLowerCase();
+
+  if (file.size > MAX_FILE_SIZE) {
+    return 'Размер превышает 500 МБ';
+  }
+
+  if (file.size === 0) {
+    return 'Файл не содержит данных';
+  }
+
+  if (!normalizedFileName.endsWith(CSV_FILE_EXTENSION) && file.type !== CSV_MIME_TYPE) {
+    return 'Поддерживается только CSV';
+  }
+
+  return undefined;
+};
+
 export function useDatasetFiles() {
   onMounted(() => {
     const saved = localStorage.getItem('dataset_uploaded_files');
+
     if (saved) {
       try {
         filesMap.value = JSON.parse(saved);
@@ -39,13 +64,13 @@ export function useDatasetFiles() {
 
     newFiles.forEach((file) => {
       const fileId = crypto.randomUUID();
-      const isTooLarge = file.size > MAX_FILE_SIZE;
+      const validationError = getFileValidationError(file);
 
       const newUpload: DatasetUpload = {
         id: fileId,
-        progress: isTooLarge ? null : 0,
-        status: isTooLarge ? 'error' : 'queued',
-        error: isTooLarge ? 'Размер превышает 500 МБ' : undefined,
+        progress: validationError ? null : 0,
+        status: validationError ? 'error' : 'queued',
+        error: validationError,
         source: file,
       };
 
@@ -86,44 +111,40 @@ export function useDatasetFiles() {
       }
 
       const currentUploadItem = currentUploads[index] as DatasetUpload;
-      progress += 20;
+      progress = Math.min(progress + UPLOAD_PROGRESS_STEP, 100);
 
-      if (progress <= 100) {
-        currentUploads[index] = {
-          ...currentUploadItem,
-          status: progress === 100 ? 'success' : 'uploading',
-          progress: progress,
-        };
-      }
+      currentUploads[index] = {
+        ...currentUploadItem,
+        status: 'uploading',
+        progress,
+      };
 
       if (progress >= 100) {
         clearInterval(interval);
 
-        setTimeout(() => {
-          const currentCategoryFiles = filesMap.value[templateId]
-            ? [...filesMap.value[templateId]!]
-            : [];
+        const currentCategoryFiles = filesMap.value[templateId]
+          ? [...filesMap.value[templateId]!]
+          : [];
 
-          currentCategoryFiles.push({
-            id: fileId,
-            name: originalFile.name,
-            size: originalFile.size,
-            uploadedAt: new Date().toISOString(),
-          });
+        currentCategoryFiles.push({
+          id: fileId,
+          name: originalFile.name,
+          size: originalFile.size,
+          uploadedAt: new Date().toISOString(),
+        });
 
-          filesMap.value = { ...filesMap.value, [templateId]: currentCategoryFiles };
+        filesMap.value = { ...filesMap.value, [templateId]: currentCategoryFiles };
 
-          if (uploadsMap.value[templateId]) {
-            uploadsMap.value[templateId] = uploadsMap.value[templateId].filter(
-              (u) => u.id !== fileId,
-            );
-          }
+        if (uploadsMap.value[templateId]) {
+          uploadsMap.value[templateId] = uploadsMap.value[templateId].filter(
+            (u) => u.id !== fileId,
+          );
+        }
 
-          isCategoryUploading.value[templateId] = false;
-          processUploadQueue(templateId);
-        }, 400);
+        isCategoryUploading.value[templateId] = false;
+        processUploadQueue(templateId);
       }
-    }, 250);
+    }, UPLOAD_PROGRESS_INTERVAL);
   };
 
   const removeFile = (fileId: string) => {
