@@ -1,5 +1,7 @@
 @theme {
+  --font-sans: var(--font-geist);
   --font-geist: var(--font-geist);
+  --font-mono: var(--font-family-mono);
 
   --text-title-lg: var(--text-title-lg);
   --text-title-lg--line-height: var(--text-title-lg--line-height);
