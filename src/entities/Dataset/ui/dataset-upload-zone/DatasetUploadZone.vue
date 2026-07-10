@@ -24,7 +24,7 @@ const emit = defineEmits<{
 }>();
 
 const inputRef = ref<HTMLInputElement>();
-const isDragOver = ref(false); // Состояние для визуальной подсветки при перетаскивании
+const isDragOver = ref(false);
 
 const handleSelect = () => {
   if (!inputRef.value || props.disabled) {
@@ -36,13 +36,13 @@ const handleSelect = () => {
 
 const handleChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
+  const selectedFiles = input.files ? Array.from(input.files) : [];
 
-  if (!input.files?.length) {
+  if (!selectedFiles.length) {
     return;
   }
 
-  emit('upload', Array.from(input.files));
-
+  emit('upload', selectedFiles);
   input.value = '';
 };
 
@@ -50,16 +50,22 @@ const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   isDragOver.value = false;
 
-  if (props.disabled || !event.dataTransfer?.files.length) {
+  const droppedFiles = event.dataTransfer?.files ? Array.from(event.dataTransfer.files) : [];
+
+  if (props.disabled || !droppedFiles.length) {
     return;
   }
 
-  emit('upload', Array.from(event.dataTransfer.files));
+  emit('upload', droppedFiles);
 };
 
 const handleDragOver = (event: DragEvent) => {
   event.preventDefault();
-  if (props.disabled) return;
+
+  if (props.disabled) {
+    return;
+  }
+
   isDragOver.value = true;
 };
 
@@ -71,8 +77,7 @@ const handleDragLeave = () => {
 <template>
   <div
     :class="[
-      'flex flex-col items-center justify-center rounded-(--radius-md) border border-dashed text-center py-10 px-6 transition-colors duration-150 ease-in-out',
-      // Динамические стили в зависимости от состояний
+      'flex flex-col items-center justify-center rounded-md border border-dashed text-center py-10 px-6 transition-colors duration-150 ease-in-out',
       isDragOver ? 'border-(--primary) bg-(--muted)' : 'border-(--border) bg-(--background)',
       disabled ? 'opacity-50 pointer-events-none' : '',
     ]"
