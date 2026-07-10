@@ -43,7 +43,7 @@ const emit = defineEmits<{
       >
         <DialogOverlay
           v-if="open"
-          class="fixed inset-0 z-50 bg-[rgba(48,48,50,0.25)] backdrop-blur-[6px]"
+          class="fixed inset-0 z-50 bg-(--overlay) backdrop-blur-overlay"
         />
       </Transition>
 
@@ -58,7 +58,7 @@ const emit = defineEmits<{
       >
         <DialogContent
           v-if="open"
-          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-md bg-(--background) border border-(--border-default) shadow-[0_2px_8px_0_rgba(0,0,0,0.06),0_14px_28px_0_rgba(0,0,0,0.08)] focus:outline-none overflow-hidden"
+          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-md bg-(--background) border border-(--border-default) shadow-(--shadow-panel-short) focus:outline-none overflow-hidden"
         >
           <!-- Header -->
           <header

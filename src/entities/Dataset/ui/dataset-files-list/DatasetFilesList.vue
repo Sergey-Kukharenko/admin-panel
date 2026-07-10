@@ -5,7 +5,6 @@ import { computed } from 'vue';
 import type { DatasetFile } from '@/entities/dataset/model/types';
 import type { DatasetUpload } from '@/entities/dataset/model/upload';
 import { DatasetUploadSpinner } from '@/entities/dataset/ui/dataset-upload-spinner';
-import { MAX_FILE_SIZE } from '@/widgets/dataset-upload-drawer/model';
 
 defineOptions({
   name: 'DatasetFilesList',
@@ -80,12 +79,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
     >
       <template v-if="item.type === 'file'">
         <div class="shrink-0 flex items-center justify-center pt-[3px] w-4 h-4">
-          <XCircle
-            v-if="item.file.size > MAX_FILE_SIZE"
-            class="size-3.5 text-(--danger)"
-            stroke-width="1.5"
-          />
-          <CheckCircle2 v-else class="size-3.5 text-(--success)" stroke-width="1.5" />
+          <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
@@ -94,18 +88,11 @@ const getProgressStyle = (upload: DatasetUpload) => ({
           >
             {{ item.file.name }}
           </span>
-
-          <span
-            v-if="item.file.size > MAX_FILE_SIZE"
-            class="text-xs font-normal text-(--danger) leading-4 mt-0.5 select-none"
-          >
-            Размер превышает 500 МБ
-          </span>
         </div>
 
         <button
           type="button"
-          class="size-4 aspect-square flex items-center justify-center text-[rgba(48,48,50,0.68)] hover:text-(--danger) transition-colors cursor-pointer mt-0.5"
+          class="size-4 aspect-square flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer mt-0.5"
           @click="emit('remove', item.file.id)"
         >
           <Trash2 class="size-4 aspect-square" stroke-width="2" />
@@ -131,7 +118,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
             </div>
 
             <span
-              class="font-mono text-[10px] font-normal leading-[15px] text-(--text-tertiary) shrink-0 select-none"
+              class="font-mono text-body-2xs font-normal text-(--text-tertiary) shrink-0 select-none"
             >
               {{ item.upload.progress ?? 0 }}%
             </span>
@@ -160,7 +147,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
 
       <template v-else-if="isError(item.upload)">
         <div class="shrink-0 flex items-center justify-center h-5">
-          <XCircle class="size-3.5 text-(--danger)" :stroke-width="1.5" />
+          <XCircle class="size-3.5 text-(--danger)" stroke-width="1.5" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
@@ -171,14 +158,14 @@ const getProgressStyle = (upload: DatasetUpload) => ({
           </span>
 
           <span class="text-xs font-normal text-(--danger) leading-4 mt-0.5 select-none">
-            {{ item.upload.error || 'Размер превышает 500 МБ' }}
+            {{ item.upload.error }}
           </span>
         </div>
 
         <div class="shrink-0 flex items-center justify-center h-5">
           <button
             type="button"
-            class="size-4 flex items-center justify-center text-[rgba(48,48,50,0.68)] hover:text-(--danger) transition-colors cursor-pointer"
+            class="size-4 flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer"
             @click="emit('remove', item.upload.id)"
           >
             <Trash2 class="size-4 aspect-square" stroke-width="2" />

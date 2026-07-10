@@ -1,4 +1,10 @@
 :root {
   --sidebar-width: 240px;
   --header-height: 48px;
+
+  --blur-overlay: 6px;
+  --blur-floating-panel: 20px;
+
+  --collapsible-content-max-height: 1000px;
+  --sidebar-banner-max-height: 200px;
 }

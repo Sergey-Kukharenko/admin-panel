@@ -1,15 +1,10 @@
 import { onMounted, ref, watch } from 'vue';
 
+import { getDatasetFileValidationError } from '@/entities/dataset/model/fileValidation';
 import type { DatasetFile } from '@/entities/dataset/model/types';
 import type { DatasetUpload } from '@/entities/dataset/model/upload';
 
 export type SavedFilesState = Record<string, DatasetFile[]>;
-
-// ИСПРАВЛЕНО: Лимит строго в байтах (500 МБ = 524288000 байт) для точной работы с file.size
-export const MAX_FILE_SIZE = 500;
-
-const CSV_FILE_EXTENSION = '.csv';
-const CSV_MIME_TYPE = 'text/csv';
 
 const UPLOAD_PROGRESS_STEP = 2;
 const UPLOAD_PROGRESS_INTERVAL = 40;
@@ -18,28 +13,9 @@ const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
 const filesMap = ref<SavedFilesState>({});
 const isCategoryUploading = ref<Record<string, boolean>>({});
 
-const getFileValidationError = (file: File) => {
-  const normalizedFileName = file.name.toLowerCase();
-
-  if (file.size > MAX_FILE_SIZE) {
-    return 'Размер превышает 500 МБ';
-  }
-
-  if (file.size === 0) {
-    return 'Файл не содержит данных';
-  }
-
-  if (!normalizedFileName.endsWith(CSV_FILE_EXTENSION) && file.type !== CSV_MIME_TYPE) {
-    return 'Поддерживается только CSV';
-  }
-
-  return undefined;
-};
-
 export function useDatasetFiles() {
   onMounted(() => {
     const saved = localStorage.getItem('dataset_uploaded_files');
-
     if (saved) {
       try {
         filesMap.value = JSON.parse(saved);
@@ -64,7 +40,7 @@ export function useDatasetFiles() {
 
     newFiles.forEach((file) => {
       const fileId = crypto.randomUUID();
-      const validationError = getFileValidationError(file);
+      const validationError = getDatasetFileValidationError(file);
 
       const newUpload: DatasetUpload = {
         id: fileId,

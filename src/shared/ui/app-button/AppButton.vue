@@ -34,7 +34,7 @@ const variantClasses = computed(() => {
       return [
         'border',
         'border-(--border)',
-        props.size === 'icon' ? 'bg-white' : 'bg-transparent',
+        props.size === 'icon' ? 'bg-(--surface)' : 'bg-transparent',
         'text-(--foreground)',
         'hover:bg-(--muted)',
         'active:bg-(--muted)',

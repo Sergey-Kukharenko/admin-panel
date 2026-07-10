@@ -8,7 +8,7 @@ import { AppBanner } from '@/shared/ui/app-banner';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDrawer } from '@/shared/ui/app-drawer';
 
-import { datasetTemplates, MAX_FILE_SIZE, useDatasetFiles } from '../model';
+import { datasetTemplates, useDatasetFiles } from '../model';
 import DatasetUploadFooter from './DatasetUploadFooter.vue';
 
 defineProps<{
@@ -36,16 +36,14 @@ const totalUploadedFiles = computed(() => {
 });
 
 const hasValidFiles = computed(() => {
-  const allFiles = Object.values(filesMap.value).flat();
-  if (allFiles.length === 0) return false;
-  return allFiles.every((file) => file.size <= MAX_FILE_SIZE);
+  return Object.values(filesMap.value).some((files) => files.length > 0);
 });
 
 const handleUpload = (templateId: string, uploadedFiles: File[]) => {
   addFiles(templateId, uploadedFiles);
 };
 
-const handleRemove = (templateId: string, fileId: string) => {
+const handleRemove = (_templateId: string, fileId: string) => {
   removeFile(fileId);
 };
 

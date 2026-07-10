@@ -16,7 +16,8 @@ defineEmits<{
 
 <template>
   <div
-    class="flex items-center w-120 h-22 pr-4 gap-3 bg-[#F8F8F9] border border-(--border) rounded-lg shadow-sm text-left overflow-hidden transition-all hover:bg-neutral-100"
+    class="flex items-center w-120 h-22 pr-4 gap-3 bg-(--bg-surface-accent) border border-(--border) rounded-lg shadow-sm text-left overflow-hidden transition-all hover:bg-(--bg-surface-hover)"
+    @click="$emit('action')"
   >
     <div class="shrink-0 h-22 flex items-center justify-center">
       <slot name="icon" />

@@ -33,7 +33,10 @@ const emit = defineEmits<{
         leave-active-class="transition-opacity duration-300 ease-in"
         leave-to-class="opacity-0"
       >
-        <DialogOverlay v-if="open" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-[6px]" />
+        <DialogOverlay
+          v-if="open"
+          class="fixed inset-0 z-40 bg-(--overlay-strong) backdrop-blur-(--blur-overlay)"
+        />
       </Transition>
 
       <!-- Drawer -->

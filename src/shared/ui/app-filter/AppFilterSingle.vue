@@ -38,7 +38,7 @@ const selectedLabel = computed(() => {
     <DropdownMenuPortal>
       <DropdownMenuContent
         :side-offset="4"
-        class="w-53 rounded-xl bg-white p-1 shadow-[0_2px_8px_rgba(0,0,0,0.06),0_-6px_12px_rgba(0,0,0,0.03),0_14px_28px_rgba(0,0,0,0.08)]"
+        class="w-53 rounded-xl bg-(--surface) p-1 shadow-(--shadow-panel)"
       >
         <DropdownMenuRadioGroup
           :model-value="modelValue"
@@ -48,13 +48,13 @@ const selectedLabel = computed(() => {
             v-for="option in options"
             :key="option.value"
             :value="option.value"
-            class="flex h-8 cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 outline-none hover:bg-[rgba(48,48,50,0.06)] data-highlighted:bg-[rgba(48,48,50,0.06)]"
+            class="flex h-8 cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 outline-none hover:bg-(--muted) data-highlighted:bg-(--muted)"
           >
-            <span class="text-sm font-medium text-[rgba(48,48,50,0.98)]">
+            <span class="text-sm font-medium text-(--text-primary)">
               {{ option.label }}
             </span>
 
-            <Check v-if="modelValue === option.value" class="size-4 text-[rgba(48,48,50,0.68)]" />
+            <Check v-if="modelValue === option.value" class="size-4 text-(--text-secondary)" />
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

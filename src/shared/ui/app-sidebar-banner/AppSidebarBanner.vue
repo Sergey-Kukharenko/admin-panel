@@ -22,7 +22,7 @@ defineOptions({
 
 <template>
   <div
-    class="relative flex w-53.5 flex-col items-start justify-center gap-4 rounded-xl bg-(--bg-surface-secondary) px-3 pt-4 pb-3 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7),inset_0_-1px_0_0_rgba(0,0,0,0.04)]"
+    class="relative flex w-53.5 flex-col items-start justify-center gap-4 rounded-xl bg-(--bg-surface-secondary) px-3 pt-4 pb-3 shadow-(--shadow-sidebar-banner)"
   >
     <!-- Кнопка закрытия -->
     <AppButton

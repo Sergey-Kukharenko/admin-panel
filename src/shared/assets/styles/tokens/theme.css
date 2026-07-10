@@ -38,4 +38,13 @@
   --text-element-tag--line-height: var(
     --text-element-tag--line-height
   );
+
+  --text-body-2xs: var(--text-body-2xs);
+  --text-body-2xs--line-height: var(--text-body-2xs--line-height);
+
+  --blur-overlay: var(--blur-overlay);
+  --blur-floating-panel: var(--blur-floating-panel);
+
+  --collapsible-content-max-height: var(--collapsible-content-max-height);
+  --sidebar-banner-max-height: var(--sidebar-banner-max-height);
 }

@@ -31,19 +31,25 @@
 
   /* Yellow */
   --color-yellow-700: #a16207;
+  --color-yellow-600: #b29700;
   --color-yellow-100: #fef08a;
 
   /* Red */
   --color-red-700: #b91c1c;
   --color-red-200: #fecaca;
 
+  /* Violet */
+  --color-violet-950: #1a0151;
 
   /* ==========================================
      2. Text Colors (Типографика)
      ========================================== */
   --text-primary: rgba(48, 48, 50, 0.98);
   --text-secondary: rgba(48, 48, 50, 0.68);
-
+  --text-tertiary: rgba(48, 48, 50, 0.5);
+  --text-quaternary: rgba(48, 48, 50, 0.57);
+  --text-inverse: var(--color-neutral-0);
+  --text-inverse-soft: #fcfcfc;
 
   /* ==========================================
      3. Semantic Colors (Интерфейс)
@@ -51,10 +57,13 @@
   /* Layouts & Backgrounds */
   --background: var(--color-neutral-0);
   --card: var(--color-neutral-0);
+  --surface: var(--color-neutral-0);
 
   /* Фоновые подложки */
-  --bg-surface-neutral: #F8F8F8;        /* Сайдбар, группы и шапка таблицы */
-  --bg-surface-secondary: #F1F1F1;      /* Баннер */
+  --bg-surface-neutral: #f8f8f8;
+  --bg-surface-secondary: #f1f1f1;
+  --bg-surface-accent: #f8f8f9;
+  --bg-surface-hover: var(--color-neutral-100);
 
   /* Typography Mapping */
   --foreground: var(--text-primary);
@@ -65,27 +74,56 @@
   --primary-foreground: var(--color-neutral-0);
   --muted: rgba(48, 48, 50, 0.06);
   --muted-hover: rgba(48, 48, 50, 0.1);
+  --muted-hover-soft: rgba(48, 48, 50, 0.02);
+
+  /* Icons */
+  --icon-primary: var(--text-primary);
+  --icon-secondary: var(--text-secondary);
+  --icon-tertiary: #8a8a8a;
+  --icon-muted: rgba(48, 48, 50, 0.15);
+
+  /* Overlay */
+  --overlay: rgba(48, 48, 50, 0.25);
+  --overlay-strong: rgba(0, 0, 0, 0.4);
 
   /* Переменные для активного состояния элементов навигации */
-  --sidebar-item-active: #ECECEC;
+  --sidebar-item-active: #ececec;
   --sidebar-item-active-foreground: rgba(48, 48, 50, 0.98);
 
   /* Прогресс и состояния загрузки файлов (Upload) */
-  --text-tertiary: rgba(48, 48, 50, 0.50);           /* Текст процентов 53% */
-  --icon-muted: rgba(48, 48, 50, 0.15);              /* Тонкая иконка очереди */
-  --progress-track: rgba(48, 48, 50, 0.06);          /* Фон дорожки прогресс-бара */
-  --progress-fill: rgba(48, 48, 50, 0.98);           /* Насыщенный цвет бегунка и спиннера */
+  --progress-track: rgba(48, 48, 50, 0.06);
+  --progress-fill: rgba(48, 48, 50, 0.98);
 
   /* Borders */
   --border: var(--color-neutral-200);
   --border-default: rgba(48, 48, 50, 0.08);
+  --border-subtle: rgba(0, 0, 0, 0.08);
 
   /* Statuses */
   --success: var(--color-green-700);
   --warning: var(--color-yellow-700);
+  --warning-foreground: var(--color-yellow-600);
+  --warning-muted: rgba(255, 236, 119, 0.2);
   --danger: var(--color-red-700);
 
   /* Badges & Tags */
-  --bg-tag-active: #D1FF97;
+  --bg-tag-active: #d1ff97;
   --bg-tag-inactive: rgba(48, 48, 50, 0.08);
+  --bg-badge-loading: rgba(202, 220, 255, 0.4);
+  --text-badge-loading: var(--color-violet-950);
+
+  /* Shadows */
+  --shadow-panel:
+    0 0 1px 0 rgba(0, 0, 0, 0) inset,
+    0 2px 8px 0 rgba(0, 0, 0, 0.06),
+    0 -6px 12px 0 rgba(0, 0, 0, 0.03),
+    0 14px 28px 0 rgba(0, 0, 0, 0.08);
+
+  --shadow-panel-short:
+    0 2px 8px 0 rgba(0, 0, 0, 0.06),
+    0 14px 28px 0 rgba(0, 0, 0, 0.08);
+
+  --shadow-sidebar-banner:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
 }

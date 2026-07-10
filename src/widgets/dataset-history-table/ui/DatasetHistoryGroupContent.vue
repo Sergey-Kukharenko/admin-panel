@@ -142,7 +142,7 @@ const visibleCategories = computed(() => {
     <div
       v-for="category in visibleCategories"
       :key="category.id"
-      class="flex w-full flex-col overflow-hidden rounded-lg bg-white"
+      class="flex w-full flex-col overflow-hidden rounded-lg bg-(--surface)"
     >
       <!-- HEADER -->
       <div class="flex h-11 w-full items-center border-b border-(--border-default) pl-4">
@@ -155,7 +155,7 @@ const visibleCategories = computed(() => {
               {{ category.title }}
             </span>
 
-            <span class="text-sm font-medium text-[rgba(48,48,50,0.57)]">
+            <span class="text-sm font-medium text-(--text-quaternary)">
               {{ category.count }}
             </span>
           </div>
@@ -166,7 +166,7 @@ const visibleCategories = computed(() => {
       <div
         v-for="file in category.files"
         :key="file.id"
-        class="flex w-full items-center border-b border-(--border-default) last:border-b-0 hover:bg-slate-50/50"
+        class="flex w-full items-center border-b border-(--border-default) last:border-b-0 hover:bg-(--muted-hover-soft)"
       >
         <!-- NAME -->
         <div class="flex h-11 flex-1 items-center border-r border-(--border-default) pl-10 pr-4">

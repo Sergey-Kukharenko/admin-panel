@@ -34,7 +34,7 @@ const emit = defineEmits<{
       >
         <DialogOverlay
           v-if="open"
-          class="fixed inset-0 z-50 bg-[rgba(48,48,50,0.25)] backdrop-blur-[6px]"
+          class="fixed inset-0 z-50 bg-(--overlay) backdrop-blur-(--blur-overlay)"
         />
       </Transition>
 
@@ -49,7 +49,7 @@ const emit = defineEmits<{
       >
         <DialogContent
           v-if="open"
-          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-lg bg-white border border-(--border) shadow-[0_0_1px_0_rgba(0,0,0,0.0)_inset,0_2px_8px_0_rgba(0,0,0,0.06),0_-6px_12px_0_rgba(0,0,0,0.03),0_14px_28px_0_rgba(0,0,0,0.08)] focus:outline-none overflow-hidden"
+          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-lg bg-(--surface) border border-(--border) shadow-(--shadow-panel) focus:outline-none overflow-hidden"
         >
           <!-- Header с кнопкой close -->
           <header class="flex w-full px-5 pt-4 justify-end items-center">
@@ -62,9 +62,9 @@ const emit = defineEmits<{
           <div class="flex flex-col items-start gap-4 px-5 pb-2">
             <!-- Иконка предупреждения -->
             <div
-              class="flex size-11 p-3 justify-center items-center rounded-md bg-[rgba(255,236,119,0.20)]"
+              class="flex size-11 p-3 justify-center items-center rounded-md bg-(--warning-muted)"
             >
-              <AlertOctagon class="size-5 text-[#B29700] shrink-0" stroke-width="2" />
+              <AlertOctagon class="size-5 text-(--warning-foreground) shrink-0" stroke-width="2" />
             </div>
 
             <!-- Content блок с текстом -->
@@ -82,18 +82,16 @@ const emit = defineEmits<{
           </div>
 
           <!-- Footer -->
-          <footer class="flex w-full px-5 py-4 justify-end items-center gap-2 bg-white">
-            <AppButton variant="outline" size="medium" class="!px-4" @click="emit('close')">
-              Отмена
-            </AppButton>
+          <footer class="flex w-full px-5 py-4 justify-end items-center gap-2 bg-(--surface)">
+            <AppButton variant="outline" size="medium" @click="emit('close')"> Отмена </AppButton>
 
             <AppButton
               variant="primary"
               size="medium"
-              class="!px-4 text-[#FCFCFC]"
+              class="text-(--text-inverse-soft)"
               @click="emit('confirm')"
             >
-              Да, отправить
+              Подтвердить
             </AppButton>
           </footer>
         </DialogContent>

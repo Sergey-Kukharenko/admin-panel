@@ -44,7 +44,7 @@ function handleCloseBanner(): void {
         enter-from-class="opacity-0 translate-y-4 scale-95"
         enter-to-class="opacity-100 translate-y-0 scale-100"
         leave-active-class="transition-all duration-200 ease-in"
-        leave-from-class="opacity-100 scale-100 max-h-[200px]"
+        leave-from-class="opacity-100 scale-100 max-h-(--sidebar-banner-max-height)"
         leave-to-class="opacity-0 scale-95 max-h-0 p-0 margin-0 overflow-hidden"
       >
         <AppSidebarBanner

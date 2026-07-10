@@ -1,4 +1,4 @@
-export type DatasetUploadStatus = 'queued' | 'uploading' | 'success' | 'error';
+export type DatasetUploadStatus = 'queued' | 'uploading' | 'error';
 
 export interface DatasetUpload {
   /**
@@ -18,7 +18,7 @@ export interface DatasetUpload {
 
   /**
    * Прогресс загрузки (0–100).
-   * Для queued может быть null.
+   * Для queued/error может быть null.
    */
   progress: number | null;
 

@@ -21,22 +21,22 @@ const STATUS_CONFIG = {
   loading: {
     text: 'Загрузка',
     icon: Loader2,
-    bg: 'bg-[rgba(202,220,255,0.40)]',
-    color: 'text-[#1A0151]',
+    bg: 'bg-(--bg-badge-loading)',
+    color: 'text-(--text-badge-loading)',
     animate: true,
   },
   success: {
     text: 'Успешно',
     icon: Check,
-    bg: 'bg-[var(--color-green-100)]',
-    color: 'text-[var(--success)]',
+    bg: 'bg-(--color-green-100)',
+    color: 'text-(--success)',
     animate: false,
   },
   error: {
     text: 'Ошибка',
     icon: CircleAlert,
-    bg: 'bg-[var(--color-red-200)]/40',
-    color: 'text-[var(--danger)]',
+    bg: 'bg-(--color-red-200)',
+    color: 'text-(--danger)',
     animate: false,
   },
 } as const;
