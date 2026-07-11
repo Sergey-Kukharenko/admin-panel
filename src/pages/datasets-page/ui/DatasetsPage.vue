@@ -7,7 +7,7 @@ import { DatasetUploadDrawer } from '@/widgets/dataset-upload-drawer';
 import { UploadsEmptyState } from '@/widgets/uploads-empty-state';
 
 defineOptions({
-  name: 'DatasetUploadPage',
+  name: 'DatasetsPage',
 });
 
 // Флаг открытия шторки (поставили false по умолчанию для продакшн-логики)

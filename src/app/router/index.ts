@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import DatasetUploadPage from '@/pages/dataset-upload-page/ui/DatasetUploadPage.vue';
+import BillingPage from '@/pages/billing-page/ui/BillingPage.vue';
+import DashboardPage from '@/pages/dashboard-page/ui/DashboardPage.vue';
+import DatasetsPage from '@/pages/datasets-page/ui/DatasetsPage.vue';
+import IntegrationsPage from '@/pages/integrations-page/ui/IntegrationsPage.vue';
+import PredictionsPage from '@/pages/predictions-page/ui/PredictionsPage.vue';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -10,8 +14,24 @@ export const router = createRouter({
       redirect: '/datasets',
     },
     {
+      path: '/dashboard',
+      component: DashboardPage,
+    },
+    {
+      path: '/integrations',
+      component: IntegrationsPage,
+    },
+    {
       path: '/datasets',
-      component: DatasetUploadPage,
+      component: DatasetsPage,
+    },
+    {
+      path: '/predictions',
+      component: PredictionsPage,
+    },
+    {
+      path: '/billing',
+      component: BillingPage,
     },
   ],
 });
