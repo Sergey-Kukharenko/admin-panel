@@ -31,10 +31,7 @@ function handleCloseBanner(): void {
       <img :src="logoUrl" alt="Логотип компании" class="h-4" />
     </div>
 
-    <!-- Основная навигация -->
-    <div class="px-3">
-      <SidebarNavigation />
-    </div>
+    <SidebarNavigation />
 
     <!-- Нижняя часть сайдбара с баннером -->
     <div class="mt-auto p-3 min-h-35 flex flex-col justify-end">

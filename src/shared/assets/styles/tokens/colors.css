@@ -60,6 +60,7 @@
   --surface: var(--color-neutral-0);
 
   /* Фоновые подложки */
+  --bg-surface-primary: var(--color-neutral-0);
   --bg-surface-neutral: #f8f8f8;
   --bg-surface-secondary: #f1f1f1;
   --bg-surface-accent: #f8f8f9;
@@ -81,6 +82,7 @@
   --icon-secondary: var(--text-secondary);
   --icon-tertiary: #8a8a8a;
   --icon-muted: rgba(48, 48, 50, 0.15);
+  --icon-neutral: rgba(48, 48, 50, 0.68);
 
   /* Overlay */
   --overlay: rgba(48, 48, 50, 0.25);
@@ -105,12 +107,13 @@
   --warning-foreground: var(--color-yellow-600);
   --warning-muted: rgba(255, 236, 119, 0.2);
   --danger: var(--color-red-700);
+  --success-ready: #528300;
+  --danger-failed: #c45d4e;
 
   /* Badges & Tags */
   --bg-tag-active: #d1ff97;
   --bg-tag-inactive: rgba(48, 48, 50, 0.08);
   --bg-badge-loading: rgba(202, 220, 255, 0.4);
-  --text-badge-loading: var(--color-violet-950);
 
   /* Shadows */
   --shadow-panel:
@@ -126,4 +129,8 @@
   --shadow-sidebar-banner:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
     inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
+
+  /* Tooltip */
+  --bg-foreground-overlay: #1c1c1e;
+  --text-overlay: var(--color-neutral-0);
 }
