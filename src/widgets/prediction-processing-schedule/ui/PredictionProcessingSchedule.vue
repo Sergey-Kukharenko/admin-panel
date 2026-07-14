@@ -10,10 +10,8 @@ import {
 } from 'radix-vue';
 import { computed, ref } from 'vue';
 
-import {
-  predictionProcessingScheduleItems,
-  predictionProcessingScheduleMonth,
-} from '../model/constants';
+// Импортируем обновленные константы
+import { initialScheduleMonth, predictionProcessingSchedule } from '../model/constants';
 import PredictionProcessingScheduleItem from './PredictionProcessingScheduleItem.vue';
 
 defineOptions({
@@ -21,35 +19,48 @@ defineOptions({
 });
 
 const scheduleWidthClass = 'w-[332px]';
-const scheduleListWidthClass = 'w-[306px]';
 
 const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
 
-const [initialMonthName, initialYear] = predictionProcessingScheduleMonth.split(' ');
+// Разбиваем дефолтный месяц ("Июл 2026" -> "Июл", "2026")
+const [initialMonthName = '', initialYear = ''] = initialScheduleMonth.split(' ');
 
 const calendarOpened = ref(false);
 const monthPickerOpened = ref(false);
 const selectedMonthName = ref(initialMonthName);
 const selectedYear = ref(initialYear);
 
+// Текущий выбранный месяц строкой (например, "Авг 2026")
 const selectedMonth = computed(() => {
   return `${selectedMonthName.value} ${selectedYear.value}`;
 });
 
-const defaultSelectedDays = Array.from(
-  new Set(predictionProcessingScheduleItems.map((item) => Number.parseInt(item.dayOfMonth, 10))),
-);
+// Автоматически вытаскиваем все активные дни для ВСЕХ месяцев из констант
+const defaultSelectedDaysByMonth = Object.entries(predictionProcessingSchedule).reduce<
+  Record<string, number[]>
+>((accumulator, [monthKey, events]) => {
+  accumulator[monthKey] = Array.from(
+    new Set(events.map((item) => Number.parseInt(item.dayOfMonth, 10))),
+  );
+  return accumulator;
+}, {});
 
-const selectedDaysByMonth = ref<Record<string, number[]>>({
-  [predictionProcessingScheduleMonth]: defaultSelectedDays,
-});
+// Стейт выбранных дней в календаре
+const selectedDaysByMonth = ref<Record<string, number[]>>(defaultSelectedDaysByMonth);
 
+// Дни, выбранные в текущем активном месяце
 const selectedDays = computed(() => {
   return selectedDaysByMonth.value[selectedMonth.value] ?? [];
 });
 
+// Динамически определяем количество дней в месяце (31 для июля и августа)
+const daysInCurrentMonth = computed(() => {
+  const isAugustOrJuly = ['Июл', 'Авг'].includes(selectedMonthName.value);
+  return isAugustOrJuly ? 31 : 30; // Базовая заглушка, соответствующая вашему коду
+});
+
 const calendarDays = computed(() => {
-  const currentMonthDays = Array.from({ length: 30 }, (_, index) => {
+  const currentMonthDays = Array.from({ length: daysInCurrentMonth.value }, (_, index) => {
     const day = index + 1;
 
     return {
@@ -84,15 +95,14 @@ const calendarRows = computed(() => {
   return rows;
 });
 
+// Фильтруем и сортируем элементы в зависимости от ВЫБРАННОГО месяца
 const sortedPredictionProcessingScheduleItems = computed(() => {
-  if (selectedMonth.value !== predictionProcessingScheduleMonth) {
-    return [];
-  }
+  // Берем события конкретно для выбранного месяца (если их нет — пустой массив)
+  const currentMonthEvents = predictionProcessingSchedule[selectedMonth.value] ?? [];
 
-  return predictionProcessingScheduleItems
+  return currentMonthEvents
     .filter((item) => {
       const itemDay = Number.parseInt(item.dayOfMonth, 10);
-
       return selectedDays.value.includes(itemDay);
     })
     .sort((firstItem, secondItem) => {
@@ -153,7 +163,6 @@ function selectMonth(month: string) {
   monthPickerOpened.value = false;
 }
 
-// Проверяем условия: календарь открыт И элементов в списке >= 6
 const isPaddingBottomRemoved = computed(() => {
   return calendarOpened.value && sortedPredictionProcessingScheduleItems.value.length >= 6;
 });
@@ -161,7 +170,6 @@ const isPaddingBottomRemoved = computed(() => {
 const asideClasses = computed(() => [
   scheduleWidthClass,
   'pt-2 bg-[var(--bg-surface-neutral)] rounded-xl inline-flex flex-col justify-start items-start gap-3 overflow-hidden shrink-0',
-  // Класс pb-4 уберётся, только если элементов 6 или больше при открытом календаре
   !isPaddingBottomRemoved.value && 'pb-4',
 ]);
 </script>
