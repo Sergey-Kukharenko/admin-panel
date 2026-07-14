@@ -152,21 +152,28 @@ function selectMonth(month: string) {
   selectedMonthName.value = month;
   monthPickerOpened.value = false;
 }
+
+// Проверяем условия: календарь открыт И элементов в списке >= 6
+const isPaddingBottomRemoved = computed(() => {
+  return calendarOpened.value && sortedPredictionProcessingScheduleItems.value.length >= 6;
+});
+
+const asideClasses = computed(() => [
+  scheduleWidthClass,
+  'pt-2 bg-[var(--bg-surface-neutral)] rounded-xl inline-flex flex-col justify-start items-start gap-3 overflow-hidden shrink-0',
+  // Класс pb-4 уберётся, только если элементов 6 или больше при открытом календаре
+  !isPaddingBottomRemoved.value && 'pb-4',
+]);
 </script>
 
 <template>
-  <aside
-    :class="[
-      scheduleWidthClass,
-      'pt-2 pb-4 bg-[var(--bg-surface-neutral)] rounded-xl inline-flex flex-col justify-start items-start gap-3 overflow-hidden shrink-0',
-    ]"
-  >
+  <aside :class="asideClasses">
     <CollapsibleRoot v-model:open="calendarOpened" class="w-full">
       <div class="self-stretch flex flex-col justify-start items-start gap-3">
         <header class="self-stretch h-8 px-5 pt-2 flex flex-col justify-start items-start gap-2">
           <div class="self-stretch inline-flex justify-between items-center">
             <h2
-              class="flex-1 justify-start text-[var(--text-primary)] text-base font-medium font-['Geist'] leading-6"
+              class="flex-1 justify-start text-[var(--text-primary)] text-base font-medium leading-6"
             >
               Расписание обработки
             </h2>
@@ -178,7 +185,7 @@ function selectMonth(month: string) {
               @click="toggleCalendar"
             >
               <span
-                class="justify-start text-[var(--text-primary)] text-sm font-medium font-['Geist'] leading-5"
+                class="justify-start text-[var(--text-primary)] text-sm font-medium leading-5"
                 @click="toggleMonthPicker"
               >
                 {{ selectedMonth }}
@@ -207,7 +214,7 @@ function selectMonth(month: string) {
             >
               <div v-if="monthPickerOpened" key="months" class="rounded-xl py-1">
                 <div
-                  class="mb-3 text-center text-[var(--text-primary)] text-sm font-medium font-['Geist'] leading-5"
+                  class="mb-3 text-center text-[var(--text-primary)] text-sm font-medium leading-5"
                 >
                   {{ selectedYear }}
                 </div>
@@ -218,7 +225,7 @@ function selectMonth(month: string) {
                     :key="month"
                     type="button"
                     :class="[
-                      'h-7 rounded-full px-2 text-xs font-normal font-[\'Geist\'] leading-4 transition-colors',
+                      'h-7 rounded-full px-2 text-xs font-normal leading-4 transition-colors',
                       selectedMonthName === month
                         ? 'bg-[var(--bg-tag-active)] text-[var(--icon-primary)]'
                         : 'text-[var(--icon-secondary)] hover:bg-[var(--bg-tag-active)]',
@@ -264,10 +271,9 @@ function selectMonth(month: string) {
     </CollapsibleRoot>
 
     <!-- Секция ScrollArea для списка событий под календарем -->
-    <div class="w-full pl-4 pr-1">
-      <ScrollAreaRoot class="w-full overflow-hidden pr-3" type="auto">
-        <!-- Ограничиваем высоту вьюпорта под 2.5 элемента (примерно 172px) -->
-        <ScrollAreaViewport class="w-full max-h-[172px] pr-2">
+    <div class="w-full pl-2 pr-1">
+      <ScrollAreaRoot class="w-full overflow-hidden pr-2" type="auto">
+        <ScrollAreaViewport class="w-full max-h-[376px]">
           <div class="flex flex-col gap-2">
             <PredictionProcessingScheduleItem
               v-for="item in sortedPredictionProcessingScheduleItems"

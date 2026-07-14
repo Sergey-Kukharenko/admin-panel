@@ -13,11 +13,12 @@ defineProps<{
 
 <template>
   <div
-    class="self-stretch pl-3 pr-1.5 py-3 bg-[var(--background)] rounded-[var(--radius-sm)] inline-flex justify-start items-center gap-2 mt-auto mb-1"
+    class="self-stretch pl-3 pr-1.5 py-3 bg-[var(--background)] rounded-[var(--radius-sm)] flex justify-between items-start gap-1"
   >
-    <div class="w-36 h-8 inline-flex flex-col justify-start items-start">
+    <!-- Колонка 1: Статус -->
+    <div class="flex-1 min-w-0 flex flex-col justify-start items-start">
       <div
-        class="self-stretch justify-start text-[var(--text-secondary)] text-[8.11px] font-normal font-['Geist_Mono'] uppercase leading-4 tracking-tight"
+        class="self-stretch text-[var(--text-secondary)] text-[8.11px] font-normal uppercase leading-4 tracking-tight truncate"
       >
         Статус результата
       </div>
@@ -37,7 +38,7 @@ defineProps<{
         </div>
 
         <div
-          class="justify-start text-[9.74px] font-medium font-['Geist_Mono'] uppercase leading-4"
+          class="justify-start text-[9.74px] font-medium uppercase leading-4 truncate"
           :class="{
             'text-[var(--success-ready)]': integration.status === 'ready',
             'text-[var(--danger-failed)]': integration.status === 'failed',
@@ -50,31 +51,33 @@ defineProps<{
       </div>
     </div>
 
-    <div class="w-20 h-8 inline-flex flex-col justify-start items-start">
+    <!-- Колонка 2: Следующий расчет -->
+    <div class="w-[84px] shrink-0 flex flex-col justify-start items-start">
       <div
-        class="self-stretch justify-start text-[var(--text-secondary)] text-[8.11px] font-normal font-['Geist_Mono'] uppercase leading-4 tracking-tight"
+        class="self-stretch text-[var(--text-secondary)] text-[8.11px] font-normal uppercase leading-4 tracking-tight whitespace-nowrap"
       >
         Следующий расчет
       </div>
 
       <div class="inline-flex justify-start items-center gap-1.5">
         <div
-          class="justify-start text-[var(--text-primary)] text-[9.74px] font-medium font-['Geist_Mono'] uppercase leading-4"
+          class="justify-start text-[var(--text-primary)] text-[9.74px] font-medium uppercase leading-4 whitespace-nowrap"
         >
           {{ integration.nextCalculation }}
         </div>
       </div>
     </div>
 
-    <div class="w-20 h-8 inline-flex flex-col justify-start items-start">
+    <!-- Колонка 3: Последний расчет -->
+    <div class="w-[84px] shrink-0 flex flex-col justify-start items-start">
       <div
-        class="justify-start text-[var(--text-secondary)] text-[8.11px] font-normal font-['Geist_Mono'] uppercase leading-4 tracking-tight"
+        class="self-stretch text-[var(--text-secondary)] text-[8.11px] font-normal uppercase leading-4 tracking-tight whitespace-nowrap"
       >
         Последний расчет
       </div>
 
       <div
-        class="justify-start text-[var(--text-primary)] text-[9.74px] font-medium font-['Geist_Mono'] uppercase leading-4"
+        class="justify-start text-[var(--text-primary)] text-[9.74px] font-medium uppercase leading-4 whitespace-nowrap"
       >
         {{ integration.lastCalculation }}
       </div>

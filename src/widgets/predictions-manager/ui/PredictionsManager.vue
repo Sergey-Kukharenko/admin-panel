@@ -33,7 +33,7 @@ const groupedIntegrations = computed(() => {
       >
         <header class="w-full inline-flex justify-start items-center gap-1">
           <h2
-            class="justify-start text-[var(--text-secondary)] text-xs font-medium font-['Geist_Mono'] uppercase leading-5 tracking-wider"
+            class="justify-start text-[var(--text-secondary)] text-xs font-medium uppercase leading-5 tracking-wider"
           >
             {{ categoryName }}
           </h2>
