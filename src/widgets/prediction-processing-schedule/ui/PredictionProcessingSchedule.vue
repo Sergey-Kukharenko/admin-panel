@@ -158,11 +158,11 @@ function selectMonth(month: string) {
   <aside
     :class="[
       scheduleWidthClass,
-      'h-[512px] pt-2 bg-[var(--bg-surface-neutral)] rounded-xl inline-flex flex-col justify-start items-start gap-4 overflow-hidden shrink-0',
+      'pt-2 pb-4 bg-[var(--bg-surface-neutral)] rounded-xl inline-flex flex-col justify-start items-start gap-3 overflow-hidden shrink-0',
     ]"
   >
     <CollapsibleRoot v-model:open="calendarOpened" class="w-full">
-      <div class="self-stretch h-[504px] flex flex-col justify-start items-start gap-3">
+      <div class="self-stretch flex flex-col justify-start items-start gap-3">
         <header class="self-stretch h-8 px-5 pt-2 flex flex-col justify-start items-start gap-2">
           <div class="self-stretch inline-flex justify-between items-center">
             <h2
@@ -244,82 +244,47 @@ function selectMonth(month: string) {
                     :aria-pressed="day.selected"
                     :data-state="day.disabled ? 'disabled' : day.selected ? 'active' : 'default'"
                     :class="[
-                      'size-8 rounded-full inline-flex items-center justify-center transition-colors',
-                      day.selected && 'bg-[var(--bg-tag-active)]',
-                      !day.disabled && 'hover:bg-[var(--bg-tag-active)]',
-                      day.disabled && 'opacity-70 cursor-default',
+                      'size-8 rounded-full inline-flex items-center justify-center transition-colors text-sm font-medium',
+                      day.selected && 'bg-[var(--bg-tag-active)] text-[var(--text-primary)]',
+                      !day.disabled &&
+                        !day.selected &&
+                        'text-[var(--text-secondary)] hover:bg-[var(--bg-tag-active)]',
+                      day.disabled && 'opacity-30 cursor-default',
                     ]"
                     @click="toggleSelectedDay(day.value)"
                   >
-                    <span
-                      :class="[
-                        'text-xs font-normal font-[\'Geist\'] leading-4',
-                        day.disabled
-                          ? 'text-[var(--icon-disabled)]'
-                          : day.selected
-                            ? 'text-[var(--icon-primary)]'
-                            : 'text-[var(--icon-secondary)]',
-                      ]"
-                    >
-                      {{ day.value }}
-                    </span>
+                    {{ day.value }}
                   </button>
                 </div>
               </div>
             </Transition>
           </div>
         </CollapsibleContent>
-
-        <div
-          :class="[
-            scheduleWidthClass,
-            'pl-2 pr-4 relative flex flex-col justify-start items-start gap-1 overflow-hidden',
-            calendarOpened ? 'h-[285px]' : 'h-[457px]',
-          ]"
-        >
-          <div
-            :class="[
-              scheduleWidthClass,
-              'pl-2 pr-4 relative flex flex-col justify-start items-start gap-1 overflow-hidden',
-              calendarOpened ? 'h-[285px]' : 'h-[457px]',
-            ]"
-          >
-            <ScrollAreaRoot
-              :class="['relative overflow-hidden', calendarOpened ? 'h-[285px]' : 'h-80']"
-            >
-              <ScrollAreaViewport
-                :class="[scheduleListWidthClass, 'h-full rounded-lg overflow-x-hidden']"
-              >
-                <div class="flex flex-col justify-start items-start gap-1">
-                  <PredictionProcessingScheduleItem
-                    v-for="item in sortedPredictionProcessingScheduleItems"
-                    :key="item.id"
-                    :item="item"
-                  />
-
-                  <div
-                    v-if="!sortedPredictionProcessingScheduleItems.length"
-                    class="w-[306px] h-14 p-2 bg-[var(--bg-surface-primary)] rounded-lg inline-flex items-center justify-center"
-                  >
-                    <span class="text-sm font-normal text-[var(--text-tertiary)]">
-                      Нет событий на выбранные даты
-                    </span>
-                  </div>
-                </div>
-              </ScrollAreaViewport>
-
-              <ScrollAreaScrollbar
-                orientation="vertical"
-                class="absolute right-[-16px] top-0 flex h-full w-4 touch-none select-none justify-center overflow-hidden px-[3px] py-3"
-              >
-                <ScrollAreaThumb
-                  class="w-1 rounded-sm bg-[var(--icon-neutral)] opacity-30 outline outline-1 outline-white/10"
-                />
-              </ScrollAreaScrollbar>
-            </ScrollAreaRoot>
-          </div>
-        </div>
       </div>
     </CollapsibleRoot>
+
+    <!-- Секция ScrollArea для списка событий под календарем -->
+    <div class="w-full pl-4 pr-1">
+      <ScrollAreaRoot class="w-full overflow-hidden pr-3" type="auto">
+        <!-- Ограничиваем высоту вьюпорта под 2.5 элемента (примерно 172px) -->
+        <ScrollAreaViewport class="w-full max-h-[172px] pr-2">
+          <div class="flex flex-col gap-2">
+            <PredictionProcessingScheduleItem
+              v-for="item in sortedPredictionProcessingScheduleItems"
+              :key="item.id"
+              :item="item"
+            />
+          </div>
+        </ScrollAreaViewport>
+
+        <!-- Тонкий кастомный скроллбар -->
+        <ScrollAreaScrollbar
+          class="flex select-none touch-none p-0.5 bg-transparent w-1.5 absolute right-1 top-0 bottom-0 transition-colors hover:bg-black/5"
+          orientation="vertical"
+        >
+          <ScrollAreaThumb class="flex-1 bg-[var(--text-secondary)] opacity-30 rounded-full" />
+        </ScrollAreaScrollbar>
+      </ScrollAreaRoot>
+    </div>
   </aside>
 </template>
