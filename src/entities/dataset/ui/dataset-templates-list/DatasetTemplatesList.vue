@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 
 import type { DatasetTemplate } from '../../model/types';
-import type { DatasetUpload } from '../../model/upload'; // Импортируем тип из соседнего файла модели
+import type { DatasetUpload } from '../../model/upload';
 import DatasetTemplateItem from '../dataset-template-item/DatasetTemplateItem.vue';
 
 defineOptions({

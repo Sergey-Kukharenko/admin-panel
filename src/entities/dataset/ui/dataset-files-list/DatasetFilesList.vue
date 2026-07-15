@@ -78,7 +78,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
       ]"
     >
       <template v-if="item.type === 'file'">
-        <div class="shrink-0 flex items-center justify-center pt-[3px] w-4 h-4">
+        <div class="shrink-0 flex items-center justify-center pt-0.75 w-4 h-4">
           <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
         </div>
 
@@ -124,8 +124,8 @@ const getProgressStyle = (upload: DatasetUpload) => ({
             </span>
           </div>
 
-          <div class="w-full mt-auto z-10 self-stretch pl-7.5 pr-3 pb-[1px]">
-            <div class="h-[2px] w-full rounded-full bg-(--progress-track)">
+          <div class="w-full mt-auto z-10 self-stretch pl-7.5 pr-3 pb-px">
+            <div class="h-0.5 w-full rounded-full bg-(--progress-track)">
               <div
                 class="h-full rounded-full bg-(--progress-fill) transition-all duration-75 ease-linear"
                 :style="getProgressStyle(item.upload)"

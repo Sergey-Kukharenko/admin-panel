@@ -26,14 +26,12 @@ function handleCloseBanner(): void {
   <aside
     class="flex h-screen w-(--sidebar-width) flex-col border-r border-(--border) bg-(--bg-surface-neutral)"
   >
-    <!-- Хедер сайдбара с логотипом -->
     <div class="flex h-12 items-center px-6">
       <img :src="logoUrl" alt="Логотип компании" class="h-4" />
     </div>
 
     <SidebarNavigation />
 
-    <!-- Нижняя часть сайдбара с баннером -->
     <div class="mt-auto p-3 min-h-35 flex flex-col justify-end">
       <Transition
         appear
