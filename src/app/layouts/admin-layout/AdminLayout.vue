@@ -10,7 +10,7 @@ import AdminSidebar from './AdminSidebar.vue';
     <div class="flex min-w-0 flex-1 flex-col">
       <AdminHeader />
 
-      <main class="max-w-300 flex-1 p-8">
+      <main class="flex-1 p-8">
         <RouterView />
       </main>
     </div>
