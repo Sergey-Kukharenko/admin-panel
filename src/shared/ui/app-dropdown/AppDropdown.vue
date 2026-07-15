@@ -23,7 +23,6 @@ defineProps<{
     </DropdownMenuTrigger>
 
     <DropdownMenuPortal>
-      <!-- Контент списка  -->
       <DropdownMenuContent
         :align="align ?? 'end'"
         :side-offset="sideOffset ?? 4"
