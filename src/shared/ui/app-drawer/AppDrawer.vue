@@ -23,8 +23,8 @@ const emit = defineEmits<{
 <template>
   <DialogRoot :open="open" @update:open="(value) => !value && emit('close')">
     <DialogPortal>
-      <!-- Overlay -->
 
+      <!-- Overlay -->
       <Transition
         enter-from-class="opacity-0"
         enter-active-class="transition-opacity duration-300 ease-out"
