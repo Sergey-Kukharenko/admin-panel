@@ -18,7 +18,6 @@ defineProps<{
 
 <template>
   <DropdownMenuRoot>
-    <!-- Триггер выпадающего списка -->
     <DropdownMenuTrigger as-child>
       <slot name="trigger" />
     </DropdownMenuTrigger>
