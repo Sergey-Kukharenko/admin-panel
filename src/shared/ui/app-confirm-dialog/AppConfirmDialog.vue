@@ -34,7 +34,7 @@ const emit = defineEmits<{
       >
         <DialogOverlay
           v-if="open"
-          class="fixed inset-0 z-50 bg-(--overlay) backdrop-blur-(--blur-overlay)"
+          class="fixed inset-0 z-50 bg-(--overlay) backdrop-blur-overlay"
         />
       </Transition>
 
