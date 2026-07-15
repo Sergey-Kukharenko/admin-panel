@@ -16,7 +16,7 @@ defineProps<{
 
 <template>
   <article
-    class="w-95.5 max-w-95.5 min-h-32 shrink-0 px-2 pb-2 bg-[var(--bg-surface-neutral)] rounded-[var(--radius-md)] flex flex-col justify-start items-start transition-all duration-200"
+    class="w-95.5 max-w-95.5 min-h-32 shrink-0 px-2 pb-2 bg-(--bg-surface-neutral) rounded-md flex flex-col justify-start items-start transition-all duration-200"
   >
     <div class="self-stretch p-3 inline-flex justify-start items-center gap-4">
       <div class="flex-1 flex justify-start items-center gap-3 min-w-0">
@@ -52,19 +52,19 @@ defineProps<{
             class="w-56 z-50 animate-in fade-in-0 zoom-in-95 duration-100 select-none"
           >
             <div
-              class="px-2 py-1.5 bg-[var(--bg-foreground-overlay)] rounded-sm shadow-[var(--shadow-panel)] backdrop-blur-[20px] flex flex-col justify-center items-center"
+              class="px-2 py-1.5 bg-(--bg-foreground-overlay) rounded-sm shadow-(--shadow-panel) backdrop-blur-[20px] flex flex-col justify-center items-center"
             >
-              <p class="text-[var(--text-overlay)] text-xs font-normal font-['Geist'] leading-4">
+              <p class="text-(--text-overlay) text-xs font-normal font-['Geist'] leading-4">
                 {{ integration.tooltipText }}
               </p>
             </div>
 
-            <TooltipArrow class="fill-[var(--bg-foreground-overlay)]" :width="8" :height="4" />
+            <TooltipArrow class="fill-(--bg-foreground-overlay)" :width="8" :height="4" />
           </TooltipContent>
         </TooltipRoot>
 
         <h3
-          class="justify-start text-[var(--text-primary)] text-sm font-medium font-['Geist'] leading-6 truncate"
+          class="justify-start text-(--text-primary) text-sm font-medium font-['Geist'] leading-6 truncate"
         >
           {{ integration.name }}
         </h3>
