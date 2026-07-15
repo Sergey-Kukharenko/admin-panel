@@ -25,7 +25,7 @@ interface DatasetCategory {
   id: string;
   title: string;
   count: number;
-  icon: DatasetIcon; // Строго типизируем слаг иконки через тип сущности
+  icon: DatasetIcon;
   files: DatasetHistoryFile[];
 }
 
