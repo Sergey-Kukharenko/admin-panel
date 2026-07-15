@@ -7,7 +7,7 @@ defineOptions({
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
-// Конфигурация анимации
+// Конфигурация анимации.
 const CONFIG = {
   amp: 40, // Амплитуда деформации волн
   nscale: 7, // Крупность волн
