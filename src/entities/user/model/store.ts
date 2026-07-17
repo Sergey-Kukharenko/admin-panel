@@ -1,32 +1,31 @@
-import type { User } from 'oidc-client-ts';
 import { computed, ref } from 'vue';
 
-// Импортируем наш менеджер из shared слоя
-import { userManager } from '@/shared/api/auth';
+import { apiClient } from '@/shared/api';
 
-// Делаем стейт глобальным (вне функции), чтобы при каждом вызове useUserStore данные сохранялись
-const user = ref<User | null>(null);
+// Строгая типизация профиля пользователя под схему из Swagger
+export interface UserProfile {
+  authenticated: boolean; // Статус авторизации
+  email: string; // Рабочий email
+  project_id: string; // ID текущего проекта
+  authentik_user_id: string; // Идентификатор пользователя в Authentik
+}
+
+const user = ref<UserProfile | null>(null);
 const isLoading = ref<boolean>(true);
 
 export const useUserStore = () => {
-  // Проверяет: есть ли пользователь и не истёк ли токен
-  const isAuthenticated = computed<boolean>(() => !!user.value && !user.value.expired);
-
-  // Возвращает профиль (имя, email и т.д.)
-  const userProfile = computed(() => user.value?.profile ?? null);
-
-  // Токен доступа для прикрепления к запросам API
-  const accessToken = computed<string>(() => user.value?.access_token ?? '');
+  const isAuthenticated = computed<boolean>(() => !!user.value?.authenticated);
+  const userProfile = computed<UserProfile | null>(() => user.value);
 
   /**
-   * Инициализация авторизации.
-   * Вызывается один раз при старте приложения: проверяет localStorage на наличие живой сессии.
+   * Проверка сессии при старте через GET /user/me
    */
   async function initAuth(): Promise<void> {
     try {
-      user.value = await userManager.getUser();
+      const response = await apiClient.get<UserProfile>('/user/me');
+      user.value = response.data;
     } catch (err) {
-      console.error('Ошибка при инициализации OIDC сессии:', err);
+      // Если сессии нет (401), сбрасываем стейт в null
       user.value = null;
     } finally {
       isLoading.value = false;
@@ -34,25 +33,31 @@ export const useUserStore = () => {
   }
 
   /**
-   * Запуск процесса авторизации.
-   * Перенаправляет пользователя на страницу входа Authentik.
+   * Перенаправление браузера на нативный 307-редирект бэкенда /authorization/login
    */
-  async function login(): Promise<void> {
-    try {
-      await userManager.signinRedirect();
-    } catch (err) {
-      console.error('Ошибка редиректа на Authentik:', err);
-    }
+  function login(): void {
+    window.location.href = `${apiClient.defaults.baseURL}/authorization/login`;
   }
 
   /**
-   * Выход из системы.
-   * Очищает локальный стейт и перенаправляет в Authentik для завершения сессии.
+   * Выход из системы с получением ссылки и редиректом на IdP Authentik
    */
   async function logout(): Promise<void> {
     try {
-      await userManager.signoutRedirect();
+      // Делаем POST-запрос на логаут и забираем урл
+      const response = await apiClient.post<{ authentik_logout_url: string }>(
+        '/authorization/logout',
+      );
+      const { authentik_logout_url } = response.data;
+
       user.value = null;
+
+      if (authentik_logout_url) {
+        // Уводим браузер, чтобы Authentik тоже сбросил глобальную сессию
+        window.location.href = authentik_logout_url;
+      } else {
+        window.location.reload();
+      }
     } catch (err) {
       console.error('Ошибка при выходе из системы:', err);
     }
@@ -63,7 +68,6 @@ export const useUserStore = () => {
     isLoading,
     isAuthenticated,
     userProfile,
-    accessToken,
     initAuth,
     login,
     logout,

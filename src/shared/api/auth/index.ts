@@ -1,1 +1,0 @@
-export { userManager } from './config';
