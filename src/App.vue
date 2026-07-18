@@ -4,10 +4,9 @@ import { useUserStore } from '@/entities/user';
 import { AuthLoader } from '@/widgets/auth-loader';
 
 const userStore = useUserStore();
-console.log(userStore);
 </script>
 
 <template>
-  <AuthLoader v-if="userStore.isLoading.value" />
+  <AuthLoader v-if="userStore.isLoading" />
   <AdminLayout v-else />
 </template>

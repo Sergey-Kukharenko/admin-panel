@@ -1,33 +1,24 @@
+import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import { apiClient } from '@/shared/api';
-import { API_URL } from '@/shared/config/env';
+import { sessionApi } from '@/shared/api';
+import { API_URL } from '@/shared/config/api';
 
-export interface UserProfile {
-  authenticated: boolean;
-  email: string;
-  project_id: string;
-  authentik_user_id: string;
-}
+import type { UserProfile } from './types';
 
-const user = ref<UserProfile | null>(null);
-const isLoading = ref(true);
+export const useUserStore = defineStore('user', () => {
+  const user = ref<UserProfile | null>(null);
 
-export function useUserStore() {
-  const isAuthenticated = computed(() => user.value?.authenticated === true);
+  const isLoading = ref(true);
 
-  const userProfile = computed(() => user.value);
+  const isAuthenticated = computed(() => user.value?.authenticated ?? false);
 
   async function initAuth() {
     try {
-      const { data } = await apiClient.get<UserProfile>('/user/me');
+      const { data } = await sessionApi.me();
 
       user.value = data;
-
-      if (window.location.search.includes('auth=success')) {
-        window.history.replaceState({}, '', window.location.pathname);
-      }
-    } catch (error) {
+    } catch {
       user.value = null;
     } finally {
       isLoading.value = false;
@@ -40,16 +31,16 @@ export function useUserStore() {
 
   function logout() {
     user.value = null;
-    window.location.reload();
+
+    window.location.href = `${API_URL}/authorization/logout`;
   }
 
   return {
     user,
     isLoading,
     isAuthenticated,
-    userProfile,
     initAuth,
     login,
     logout,
   };
-}
+});

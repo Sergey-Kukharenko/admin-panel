@@ -5,10 +5,24 @@ import { createApp } from 'vue';
 
 import App from '@/App.vue';
 import { router } from '@/app/router';
+import { useUserStore } from '@/entities/user';
 
-const app = createApp(App);
+async function bootstrap() {
+  const app = createApp(App);
 
-app.use(createPinia());
-app.use(router);
+  const pinia = createPinia();
 
-app.mount('#app');
+  app.use(pinia);
+
+  const userStore = useUserStore();
+
+  await userStore.initAuth();
+
+  app.use(router);
+
+  await router.isReady();
+
+  app.mount('#app');
+}
+
+bootstrap();

@@ -9,63 +9,44 @@ import { PredictionsPage } from '@/pages/predictions-page';
 
 export const router = createRouter({
   history: createWebHistory(),
-
   routes: [
-    {
-      path: '/',
-      redirect: '/datasets',
-    },
-
+    { path: '/', redirect: '/datasets' },
     {
       path: '/dashboard',
       component: DashboardPage,
-      meta: {
-        requiresAuth: true,
-      },
+      meta: { requiresAuth: true },
     },
-
-    {
-      path: '/datasets',
-      component: DatasetsPage,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-
     {
       path: '/integrations',
       component: IntegrationsPage,
-      meta: {
-        requiresAuth: true,
-      },
+      meta: { requiresAuth: true },
     },
-
+    {
+      path: '/datasets',
+      component: DatasetsPage,
+      meta: { requiresAuth: true },
+    },
     {
       path: '/predictions',
       component: PredictionsPage,
-      meta: {
-        requiresAuth: true,
-      },
+      meta: { requiresAuth: true },
     },
-
     {
       path: '/billing',
       component: BillingPage,
-      meta: {
-        requiresAuth: true,
-      },
+      meta: { requiresAuth: true },
     },
   ],
 });
 
-router.beforeEach(async (to) => {
+router.beforeEach((to) => {
   const userStore = useUserStore();
 
-  if (userStore.isLoading.value) {
-    await userStore.initAuth();
+  if (to.meta.requiresAuth && !userStore.isAuthenticated) {
+    userStore.login();
+
+    return false;
   }
 
-  if (to.meta.requiresAuth && !userStore.isAuthenticated.value) {
-    return userStore.login();
-  }
+  return true;
 });
