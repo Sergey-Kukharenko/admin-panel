@@ -1,8 +1,8 @@
 import { onMounted, ref, watch } from 'vue';
 
-import { getDatasetFileValidationError } from '../../../entities/dataset/model/fileValidation';
-import type { DatasetFile } from '../../../entities/dataset/model/types';
-import type { DatasetUpload } from '../../../entities/dataset/model/upload';
+import type { DatasetFile } from '@/entities/dataset';
+import type { DatasetUpload } from '@/entities/dataset';
+import { getDatasetFileValidationError } from '@/entities/dataset';
 
 export type SavedFilesState = Record<string, DatasetFile[]>;
 

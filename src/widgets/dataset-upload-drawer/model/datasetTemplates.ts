@@ -1,4 +1,4 @@
-import type { DatasetTemplate } from '../../../entities/dataset/model/types';
+import type { DatasetTemplate } from '@/entities/dataset';
 
 export const datasetTemplates: DatasetTemplate[] = [
   {
