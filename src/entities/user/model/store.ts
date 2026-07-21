@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import { sessionApi } from '@/shared/api';
 import { API_URL } from '@/shared/config/api';
 
 import type { UserProfile } from './types';
@@ -14,15 +13,16 @@ export const useUserStore = defineStore('user', () => {
   const isAuthenticated = computed(() => user.value?.authenticated ?? false);
 
   async function initAuth() {
-    try {
-      const { data } = await sessionApi.me();
-
-      user.value = data;
-    } catch {
-      user.value = null;
-    } finally {
-      isLoading.value = false;
-    }
+    // try {
+    //   const { data } = await sessionApi.me();
+    //
+    //   user.value = data;
+    // } catch {
+    //   user.value = null;
+    // } finally {
+    //   isLoading.value = false;
+    // }
+    isLoading.value = false;
   }
 
   function login() {
