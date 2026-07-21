@@ -1,13 +1,13 @@
 import { onMounted, ref, watch } from 'vue';
 
-import type { DatasetFile } from '@/entities/dataset';
-import type { DatasetUpload } from '@/entities/dataset';
-import { getDatasetFileValidationError } from '@/entities/dataset';
+import {
+  datasetApi,
+  type DatasetFile,
+  type DatasetUpload,
+  getDatasetFileValidationError,
+} from '@/entities/dataset';
 
 export type SavedFilesState = Record<string, DatasetFile[]>;
-
-const UPLOAD_PROGRESS_STEP = 2;
-const UPLOAD_PROGRESS_INTERVAL = 40;
 
 const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
 const filesMap = ref<SavedFilesState>({});
@@ -16,21 +16,26 @@ const isCategoryUploading = ref<Record<string, boolean>>({});
 export function useDatasetFiles() {
   onMounted(() => {
     const saved = localStorage.getItem('dataset_uploaded_files');
-    if (saved) {
-      try {
-        filesMap.value = JSON.parse(saved);
-      } catch (e) {
-        console.error('Ошибка чтения файлов из хранилища', e);
-      }
+
+    if (!saved) {
+      return;
+    }
+
+    try {
+      filesMap.value = JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
     }
   });
 
   watch(
     filesMap,
-    (newMap) => {
-      localStorage.setItem('dataset_uploaded_files', JSON.stringify(newMap));
+    (value) => {
+      localStorage.setItem('dataset_uploaded_files', JSON.stringify(value));
     },
-    { deep: true },
+    {
+      deep: true,
+    },
   );
 
   const addFiles = (templateId: string, newFiles: File[]) => {
@@ -38,123 +43,100 @@ export function useDatasetFiles() {
       uploadsMap.value[templateId] = [];
     }
 
+    const currentUploads = uploadsMap.value[templateId];
+    if (!currentUploads) return;
+
     newFiles.forEach((file) => {
-      const fileId = crypto.randomUUID();
       const validationError = getDatasetFileValidationError(file);
 
-      const newUpload: DatasetUpload = {
-        id: fileId,
+      currentUploads.push({
+        id: crypto.randomUUID(),
+        source: file,
         progress: validationError ? null : 0,
         status: validationError ? 'error' : 'queued',
         error: validationError,
-        source: file,
-      };
-
-      uploadsMap.value[templateId]?.push(newUpload);
+      });
     });
 
-    processUploadQueue(templateId);
+    processQueue(templateId);
   };
 
-  const processUploadQueue = (templateId: string) => {
+  async function processQueue(templateId: string) {
     if (isCategoryUploading.value[templateId]) {
       return;
     }
 
-    const currentUploads = uploadsMap.value[templateId] ?? [];
-    const nextToUpload = currentUploads.find((u) => u.status === 'queued');
+    const upload = uploadsMap.value[templateId]?.find((item) => item.status === 'queued');
 
-    if (!nextToUpload) {
+    if (!upload) {
       return;
     }
 
     isCategoryUploading.value[templateId] = true;
-    startUpload(templateId, nextToUpload.id, nextToUpload.source);
-  };
 
-  const startUpload = (templateId: string, fileId: string, originalFile: File) => {
-    let progress = 0;
+    upload.status = 'uploading';
 
-    const interval = setInterval(() => {
-      const currentUploads = uploadsMap.value[templateId] ?? [];
-      const index = currentUploads.findIndex((u) => u.id === fileId);
+    try {
+      const response = await datasetApi.uploadFile(
+        {
+          datasetTypeId: templateId,
+          file: upload.source,
+        },
+        (progress) => {
+          upload.progress = progress;
+        },
+      );
 
-      if (index === -1) {
-        clearInterval(interval);
-        isCategoryUploading.value[templateId] = false;
-        processUploadQueue(templateId);
-        return;
+      const responseData = response.data;
+
+      if (!filesMap.value[templateId]) {
+        filesMap.value[templateId] = [];
       }
 
-      const currentUploadItem = currentUploads[index] as DatasetUpload;
-      progress = Math.min(progress + UPLOAD_PROGRESS_STEP, 100);
+      filesMap.value[templateId]?.push({
+        id: upload.id,
+        file: upload.source,
+        // ИСПРАВЛЕНО: Берем красивое имя исходного файла пользователя
+        name: upload.source.name,
+        size: upload.source.size,
+        uploadedAt: responseData.uploaded_at,
+        progress: 100,
+        status: 'success',
+        serverFileId: responseData.file_id,
+        rowsCount: responseData.rows_count,
+      });
 
-      currentUploads[index] = {
-        ...currentUploadItem,
-        status: 'uploading',
-        progress,
-      };
+      uploadsMap.value[templateId] = (uploadsMap.value[templateId] || []).filter(
+        (item) => item.id !== upload.id,
+      );
+    } catch (e) {
+      upload.status = 'error';
+      upload.progress = null;
+      upload.error = 'Ошибка загрузки файла';
+    }
 
-      if (progress >= 100) {
-        clearInterval(interval);
+    isCategoryUploading.value[templateId] = false;
 
-        const currentCategoryFiles = filesMap.value[templateId]
-          ? [...filesMap.value[templateId]!]
-          : [];
-
-        currentCategoryFiles.push({
-          id: fileId,
-          name: originalFile.name,
-          size: originalFile.size,
-          uploadedAt: new Date().toISOString(),
-        });
-
-        filesMap.value = { ...filesMap.value, [templateId]: currentCategoryFiles };
-
-        if (uploadsMap.value[templateId]) {
-          uploadsMap.value[templateId] = uploadsMap.value[templateId].filter(
-            (u) => u.id !== fileId,
-          );
-        }
-
-        isCategoryUploading.value[templateId] = false;
-        processUploadQueue(templateId);
-      }
-    }, UPLOAD_PROGRESS_INTERVAL);
-  };
+    processQueue(templateId);
+  }
 
   const removeFile = (fileId: string) => {
-    const updatedMap: SavedFilesState = {};
     for (const templateId in filesMap.value) {
-      const currentFiles = filesMap.value[templateId];
-      if (!currentFiles) continue;
-
-      const filtered = currentFiles.filter((file) => file.id !== fileId);
-      if (filtered.length > 0) {
-        updatedMap[templateId] = filtered;
-      }
+      filesMap.value[templateId] = (filesMap.value[templateId] || []).filter(
+        (file) => file.id !== fileId,
+      );
     }
-    filesMap.value = updatedMap;
 
     for (const templateId in uploadsMap.value) {
-      const currentUploads = uploadsMap.value[templateId];
-      if (!currentUploads) continue;
-
-      uploadsMap.value[templateId] = currentUploads.filter((u) => u.id !== fileId);
+      uploadsMap.value[templateId] = (uploadsMap.value[templateId] || []).filter(
+        (upload) => upload.id !== fileId,
+      );
     }
   };
 
   const clearTemplateFiles = (templateId: string) => {
-    if (filesMap.value[templateId]) {
-      const updatedMap = { ...filesMap.value };
-      delete updatedMap[templateId];
-      filesMap.value = updatedMap;
-    }
-    if (uploadsMap.value[templateId]) {
-      const updatedUploads = { ...uploadsMap.value };
-      delete updatedUploads[templateId];
-      uploadsMap.value = updatedUploads;
-    }
+    delete filesMap.value[templateId];
+    delete uploadsMap.value[templateId];
     isCategoryUploading.value[templateId] = false;
   };
 

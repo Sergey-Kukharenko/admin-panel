@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+import { useUserStore } from '@/entities/user';
 import { BillingPage } from '@/pages/billing-page';
 import { DashboardPage } from '@/pages/dashboard-page';
 import { DatasetsPage } from '@/pages/datasets-page';
@@ -39,13 +40,13 @@ export const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  // const userStore = useUserStore();
-  //
-  // if (to.meta.requiresAuth && !userStore.isAuthenticated) {
-  //   userStore.login();
-  //
-  //   return false;
-  // }
-  //
-  // return true;
+  const userStore = useUserStore();
+
+  if (to.meta.requiresAuth && !userStore.isAuthenticated) {
+    userStore.login();
+
+    return false;
+  }
+
+  return true;
 });
