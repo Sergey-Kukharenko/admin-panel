@@ -3,23 +3,36 @@ import { onMounted, ref, watch } from 'vue';
 import {
   datasetApi,
   type DatasetFile,
+  type DatasetTemplate,
   type DatasetUpload,
   getDatasetFileValidationError,
+  mapServerTemplate, // Импортируем наш маппер
 } from '@/entities/dataset';
 
 export type SavedFilesState = Record<string, DatasetFile[]>;
 
+// ИСПРАВЛЕНО: Теперь шаблоны — это динамический реактивный массив вместо статичных моков
+const templates = ref<DatasetTemplate[]>([]);
 const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
 const filesMap = ref<SavedFilesState>({});
 const isCategoryUploading = ref<Record<string, boolean>>({});
 
 export function useDatasetFiles() {
-  onMounted(() => {
-    const saved = localStorage.getItem('dataset_uploaded_files');
-
-    if (!saved) {
-      return;
+  // Новый метод для загрузки и трансформации шаблонов
+  const loadTemplates = async () => {
+    try {
+      const response = await datasetApi.getTemplates();
+      templates.value = response.data.map(mapServerTemplate);
+    } catch (e) {
+      console.error('Ошибка при загрузке шаблонов датасетов:', e);
     }
+  };
+
+  onMounted(() => {
+    loadTemplates(); // Запускаем загрузку данных с бэкенда при открытии/монтировании
+
+    const saved = localStorage.getItem('dataset_uploaded_files');
+    if (!saved) return;
 
     try {
       filesMap.value = JSON.parse(saved);
@@ -33,9 +46,7 @@ export function useDatasetFiles() {
     (value) => {
       localStorage.setItem('dataset_uploaded_files', JSON.stringify(value));
     },
-    {
-      deep: true,
-    },
+    { deep: true },
   );
 
   const addFiles = (templateId: string, newFiles: File[]) => {
@@ -140,11 +151,39 @@ export function useDatasetFiles() {
     isCategoryUploading.value[templateId] = false;
   };
 
+  /**
+   * Скачать пустой эталонный CSV-шаблон с бэкенда по его ID
+   */
+  const downloadTemplateFile = async (templateId: string, templateName: string) => {
+    try {
+      const response = await datasetApi.downloadTemplate(templateId);
+
+      // Создаем временную ссылку на Blob (бинарный CSV-файл)
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Название файла при скачивании, например: users_template.csv
+      link.setAttribute('download', `${templateName.toLowerCase()}_template.csv`);
+
+      document.body.appendChild(link);
+      link.click();
+
+      // Очищаем DOM и память
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Не удалось скачать шаблон файла:', e);
+    }
+  };
+
   return {
+    templates, // Обязательно возвращаем наружу для UI-компонентов
     filesMap,
     uploadsMap,
     addFiles,
     removeFile,
     clearTemplateFiles,
+    downloadTemplateFile,
   };
 }

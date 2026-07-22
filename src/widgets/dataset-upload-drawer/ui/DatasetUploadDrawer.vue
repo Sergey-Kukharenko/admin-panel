@@ -2,13 +2,13 @@
 import { Download } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
-import { DatasetTemplatesList } from '@/entities/dataset';
+import { datasetApi, DatasetTemplatesList } from '@/entities/dataset'; // Добавлен datasetApi для скачивания архива
 import sphereImageUrl from '@/shared/assets/images/file-templates-sphere.jpg';
 import { AppBanner } from '@/shared/ui/app-banner';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDrawer } from '@/shared/ui/app-drawer';
 
-import { datasetTemplates, useDatasetFiles } from '../model';
+import { useDatasetFiles } from '../model'; // ИСПРАВЛЕНО: Удален импорт статических моков datasetTemplates
 import DatasetUploadFooter from './DatasetUploadFooter.vue';
 
 defineProps<{
@@ -20,12 +20,21 @@ const emit = defineEmits<{
   submit: [];
 }>();
 
-const { filesMap, uploadsMap, addFiles, removeFile, clearTemplateFiles } = useDatasetFiles();
+const {
+  templates,
+  filesMap,
+  uploadsMap,
+  addFiles,
+  removeFile,
+  clearTemplateFiles,
+  downloadTemplateFile,
+} = useDatasetFiles();
 
 const isConfirmOpen = ref(false);
 
+// ИСПРАВЛЕНО: Вычисляемое свойство теперь маппит файлы на динамический массив templates с бэкенда
 const templatesWithFiles = computed(() => {
-  return datasetTemplates.map((template) => ({
+  return templates.value.map((template) => ({
     ...template,
     files: filesMap.value[template.id] ?? [],
   }));
@@ -51,8 +60,25 @@ const handleClearAll = (templateId: string) => {
   clearTemplateFiles(templateId);
 };
 
-const handleDownloadTemplates = () => {
-  console.log('Скачивание архива с шаблонами...');
+// ИСПРАВЛЕНО: Реализовано скачивание реального ZIP-архива шаблонов с бэкенда
+const handleDownloadTemplates = async () => {
+  try {
+    const response = await datasetApi.downloadTemplatesArchive();
+
+    // Создаем ссылку для скачивания Blob (бинарного архива)
+    const url = window.URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'dataset_templates.zip'); // Название скачиваемого файла
+    document.body.appendChild(link);
+    link.click();
+
+    // Очищаем DOM-дерево и память
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Ошибка при скачивании архива шаблонов:', error);
+  }
 };
 
 const handleDrawerSubmit = () => {
@@ -108,6 +134,7 @@ const handleFinalConfirm = () => {
           @upload="handleUpload"
           @remove="handleRemove"
           @clear-all="handleClearAll"
+          @download-template="(id, name) => downloadTemplateFile(id, name)"
         />
       </section>
     </div>

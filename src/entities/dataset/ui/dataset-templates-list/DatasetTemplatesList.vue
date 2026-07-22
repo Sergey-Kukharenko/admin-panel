@@ -18,6 +18,7 @@ const emit = defineEmits<{
   upload: [templateId: string, files: File[]];
   remove: [templateId: string, fileId: string];
   clearAll: [templateId: string];
+  downloadTemplate: [templateId: string, templateName: string];
 }>();
 
 const expandedId = ref<string | null>(null);
@@ -39,6 +40,7 @@ const toggle = (id: string) => {
       @upload="emit('upload', template.id, $event)"
       @remove="emit('remove', template.id, $event)"
       @clear-all="emit('clearAll', template.id)"
+      @download-template="emit('downloadTemplate', template.id, template.title)"
     />
   </ul>
 </template>

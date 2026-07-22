@@ -34,6 +34,7 @@ const emit = defineEmits<{
   upload: [files: File[]];
   remove: [fileId: string];
   clearAll: [];
+  downloadTemplate: [];
 }>();
 
 const inputRef = ref<HTMLInputElement>();
@@ -114,7 +115,7 @@ const handleFilesChange = (event: Event) => {
               <MoreHorizontal class="text-(--text-secondary)" />
             </AppButton>
           </template>
-          <AppDropdownItem>
+          <AppDropdownItem @select="emit('downloadTemplate')">
             <Download class="size-4 text-(--text-secondary)" stroke-width="2" />
             <span class="text-body-sm font-medium text-(--text-primary)"> Скачать шаблон </span>
           </AppDropdownItem>
