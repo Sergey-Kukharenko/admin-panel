@@ -2,13 +2,13 @@
 import { Download } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
-import { datasetApi, DatasetTemplatesList } from '@/entities/dataset'; // Добавлен datasetApi для скачивания архива
+import { datasetApi } from '@/entities/dataset';
+import { DatasetTemplatesList, useDatasetFiles } from '@/features/upload-dataset';
 import sphereImageUrl from '@/shared/assets/images/file-templates-sphere.jpg';
 import { AppBanner } from '@/shared/ui/app-banner';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDrawer } from '@/shared/ui/app-drawer';
 
-import { useDatasetFiles } from '../model'; // ИСПРАВЛЕНО: Удален импорт статических моков datasetTemplates
 import DatasetUploadFooter from './DatasetUploadFooter.vue';
 
 defineProps<{

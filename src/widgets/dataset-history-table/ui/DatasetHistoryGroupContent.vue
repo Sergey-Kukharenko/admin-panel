@@ -2,8 +2,8 @@
 import dayjs from 'dayjs';
 import { computed } from 'vue';
 
+import { DatasetTemplateIcon } from '@/entities/dataset';
 import type { DatasetIcon } from '@/entities/dataset/model/types';
-import { DatasetTemplateIcon } from '@/entities/dataset/ui/dataset-template-icon';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
 import type { DatasetPeriod, DatasetSort, DatasetSortOrder, DatasetStatus } from '../model/types';

@@ -2,14 +2,13 @@
 import { ChevronRight, Download, MoreHorizontal, PlusCircle, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
+import type { DatasetTemplate, DatasetUpload } from '@/entities/dataset';
+import { DatasetTemplateIcon } from '@/entities/dataset';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 
-import type { DatasetTemplate } from '../../model/types';
-import type { DatasetUpload } from '../../model/upload';
-import DatasetFilesList from '../dataset-files-list/DatasetFilesList.vue';
-import DatasetTemplateIcon from '../dataset-template-icon/DatasetTemplateIcon.vue';
-import DatasetUploadZone from '../dataset-upload-zone/DatasetUploadZone.vue';
+import { DatasetFilesList } from '../dataset-files-list';
+import { DatasetUploadZone } from '../dataset-upload-zone';
 
 defineOptions({
   name: 'DatasetTemplateItem',

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import type { DatasetTemplate } from '../../model/types';
-import type { DatasetUpload } from '../../model/upload';
+import type { DatasetTemplate, DatasetUpload } from '@/entities/dataset';
+
 import DatasetTemplateItem from '../dataset-template-item/DatasetTemplateItem.vue';
 
 defineOptions({

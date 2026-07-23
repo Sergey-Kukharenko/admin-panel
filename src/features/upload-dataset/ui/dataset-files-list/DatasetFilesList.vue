@@ -2,9 +2,9 @@
 import { CheckCircle2, Circle, Trash2, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 
+import { DatasetUploadSpinner } from '@/entities/dataset';
 import type { DatasetFile } from '@/entities/dataset/model/types';
 import type { DatasetUpload } from '@/entities/dataset/model/upload';
-import { DatasetUploadSpinner } from '@/entities/dataset/ui/dataset-upload-spinner';
 
 defineOptions({
   name: 'DatasetFilesList',
