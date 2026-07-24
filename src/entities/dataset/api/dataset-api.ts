@@ -1,6 +1,11 @@
 import { apiClient } from '@/shared/api';
 
-import type { DatasetFilesFilters, UploadDatasetRequest, UploadedDatasetFile } from '../model/api';
+import type {
+  DatasetFilesFilters,
+  FetchFilesBackendResponse,
+  UploadDatasetRequest,
+  UploadedDatasetFile,
+} from '../model/api';
 
 export const datasetApi = {
   /** Получить список шаблонов CSV */
@@ -20,9 +25,14 @@ export const datasetApi = {
 
   /** Получить историю загрузок */
   getFiles(params?: DatasetFilesFilters) {
-    return apiClient.get<UploadedDatasetFile[]>('/data-load/files', { params });
+    // ⚡ Строго указываем FetchFilesBackendResponse вместо UploadedDatasetFile[]
+    return apiClient.get<FetchFilesBackendResponse>('/data-load/files', {
+      params,
+      paramsSerializer: {
+        indexes: null,
+      },
+    });
   },
-
   /** Загрузить CSV с отслеживанием прогресса */
   uploadFile(payload: UploadDatasetRequest, onProgress?: (progress: number) => void) {
     const formData = new FormData();

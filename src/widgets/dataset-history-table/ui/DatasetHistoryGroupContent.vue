@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { computed } from 'vue';
 
 import { DatasetTemplateIcon } from '@/entities/dataset';
+import type { UploadedDatasetFile } from '@/entities/dataset/model/api';
 import type { DatasetIcon } from '@/entities/dataset/model/types';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
@@ -14,22 +14,14 @@ defineOptions({
   name: 'DatasetHistoryGroupContent',
 });
 
-interface DatasetHistoryFile {
-  id: string;
-  name: string;
-  rowsCount: number;
-  status: DatasetStatus;
-}
-
-interface DatasetCategory {
-  id: string;
-  title: string;
-  count: number;
-  icon: DatasetIcon;
-  files: DatasetHistoryFile[];
+interface DatasetGroupBackendStructure {
+  dataset_type: string;
+  files_count: number;
+  files: UploadedDatasetFile[];
 }
 
 const props = defineProps<{
+  datasetGroups: DatasetGroupBackendStructure[];
   sortBy: DatasetSort;
   sortOrder: DatasetSortOrder;
   status: DatasetStatus | '';
@@ -52,67 +44,42 @@ const statusMap = {
   ERROR: 'error',
 } as const;
 
-/**
- * MOCK DATA
- */
-const categoriesMock: DatasetCategory[] = [
-  {
-    id: 'users',
-    title: 'Users',
-    count: 2,
-    icon: 'users',
-    files: [
-      { id: '1', name: 'casino_rewards.csv', rowsCount: 7634, status: 'LOADING' },
-      { id: '2', name: 'jackpot_winners.csv', rowsCount: 2345, status: 'SUCCESS' },
-    ],
-  },
-  {
-    id: 'vip-users',
-    title: 'Vip-users',
-    count: 1,
-    icon: 'vip',
-    files: [{ id: '3', name: 'vip_players_list.csv', rowsCount: 5420, status: 'LOADING' }],
-  },
-  {
-    id: 'bets',
-    title: 'Bets',
-    count: 2,
-    icon: 'bets',
-    files: [
-      { id: '4', name: 'user_bets_daily.csv', rowsCount: 12840, status: 'SUCCESS' },
-      { id: '5', name: 'high_rollers_june.csv', rowsCount: 540, status: 'ERROR' },
-    ],
-  },
-];
-
-function checkPeriod(date: string, period: string): boolean {
-  if (!period) return true;
-
-  const created = dayjs(date, 'DD MMM YYYY, HH:mm');
-  const now = dayjs();
-
-  switch (period) {
-    case 'today':
-      return created.isSame(now, 'day');
-    case 'week':
-      return created.isAfter(now.subtract(7, 'day'));
-    case 'month':
-      return created.isAfter(now.subtract(1, 'month'));
-    default:
-      return true;
-  }
-}
-
 const visibleCategories = computed(() => {
-  if (!checkPeriod(props.groupDate, props.period)) {
-    return [];
-  }
+  if (!props.datasetGroups) return [];
 
-  return categoriesMock
-    .map((category) => {
-      let files = [...category.files];
+  const currentTypeNames = Array.isArray(props.types)
+    ? props.types
+    : props.types
+      ? String(props.types).split(',')
+      : [];
 
-      if (props.types.length && !props.types.includes(category.id)) {
+  return props.datasetGroups
+    .map((group) => {
+      let files = group.files.map((file) => {
+        const prettyFileName = `${group.dataset_type}.csv`;
+        const computedStatus =
+          file.status === 'succeeded'
+            ? 'SUCCESS'
+            : file.status === 'failed'
+              ? 'ERROR'
+              : ('LOADING' as DatasetStatus);
+
+        return {
+          id: file.file_id,
+          name: prettyFileName,
+          rowsCount: file.rows_count,
+          status: computedStatus,
+          rawFile: {
+            ...file,
+            name: prettyFileName,
+            rowsCount: file.rows_count,
+            status: computedStatus,
+          },
+        };
+      });
+
+      // Простое и надежное сравнение строк
+      if (currentTypeNames.length && !currentTypeNames.includes(group.dataset_type)) {
         files = [];
       }
 
@@ -127,13 +94,24 @@ const visibleCategories = computed(() => {
         });
       }
 
+      let computedIcon: DatasetIcon = 'bets';
+      const typeLower = group.dataset_type.toLowerCase();
+      if (typeLower.includes('vip')) computedIcon = 'vip';
+      else if (typeLower.includes('user')) computedIcon = 'users';
+      else if (typeLower.includes('bet')) computedIcon = 'bets';
+
+      const formattedTitle =
+        group.dataset_type.charAt(0).toUpperCase() + group.dataset_type.slice(1).replace('_', ' ');
+
       return {
-        ...category,
+        id: group.dataset_type,
+        title: formattedTitle,
         count: files.length,
+        icon: computedIcon,
         files,
       };
     })
-    .filter((category) => category.files.length);
+    .filter((category) => category.files.length > 0);
 });
 </script>
 
@@ -147,7 +125,6 @@ const visibleCategories = computed(() => {
       <!-- HEADER -->
       <div class="flex h-11 w-full items-center border-b border-(--border-default) pl-4">
         <div class="flex flex-1 items-center gap-2">
-          <!-- Рендерим готовый компонент иконки из сущности датасета -->
           <DatasetTemplateIcon :icon="category.icon" class="h-4 w-4" />
 
           <div class="flex items-center gap-1.5">
@@ -184,10 +161,11 @@ const visibleCategories = computed(() => {
 
         <!-- STATUS -->
         <div class="flex h-11 w-40 items-center pl-4">
+          <!-- ⚡ Передаем строго оригинальный file.rawFile для контроллера ошибок -->
           <AppStatusBadge
             :status="statusMap[file.status]"
             :clickable="file.status === 'ERROR'"
-            @click="file.status === 'ERROR' && errors.open(file, category.title)"
+            @click="file.status === 'ERROR' && errors.open(file.rawFile, category.title)"
           />
         </div>
       </div>

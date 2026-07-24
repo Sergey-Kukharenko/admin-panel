@@ -32,3 +32,23 @@ export interface UploadedDatasetFile {
   created_at: string;
   updated_at: string;
 }
+
+// 🚀 ПЕРЕНЕСЕНО СЮДА: Описываем структуру группы внутри суток
+export interface DatasetGroup {
+  dataset_type: string;
+  files_count: number;
+  files: UploadedDatasetFile[]; // Используем тип файла, объявленный выше
+}
+
+// 🚀 ПЕРЕНЕСЕНО СЮДА: Структура суток загрузки
+export interface DatasetHistoryDayGroup {
+  uploaded_at: string;
+  dataset_groups: DatasetGroup[];
+}
+
+// 🚀 ПЕРЕНЕСЕНО СЮДА: Финальная корневая схема ответа GET /data-load/files
+export interface FetchFilesBackendResponse {
+  items: DatasetHistoryDayGroup[];
+  total_count: number;
+  next_page_offset: number | null;
+}

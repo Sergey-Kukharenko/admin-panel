@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ChevronDown, FileText, PieChart } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 defineOptions({
   name: 'DatasetHistoryGroupHeader',
 });
 
-defineProps<{
+const props = defineProps<{
   date: string;
   uploadedCount: number;
   totalCount: number;
@@ -16,6 +17,24 @@ defineProps<{
 defineEmits<{
   toggle: [];
 }>();
+
+/**
+ * 🗓️ Нативное форматирование даты через Intl API браузера
+ * Переводит "2026-07-24T09:57:23.585609Z" ➔ "24 июл. 2026 г., 11:57"
+ */
+const formattedDate = computed(() => {
+  if (!props.date) return '';
+
+  const dateObj = new Date(props.date);
+
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(dateObj);
+});
 </script>
 
 <template>
@@ -34,8 +53,9 @@ defineEmits<{
           stroke-width="2.5"
         />
       </div>
+      <!-- Выводим готовую красивую дату из computed -->
       <span class="truncate text-sm font-medium text-(--text-primary) leading-5 select-none">
-        {{ date }}
+        {{ formattedDate }}
       </span>
     </div>
 
@@ -61,7 +81,7 @@ defineEmits<{
           <span
             class="font-mono text-xs font-medium uppercase text-(--text-primary) leading-5 pl-0.5"
           >
-            Источник:{{ source }}
+            Источник: {{ source }}
           </span>
         </div>
       </div>
