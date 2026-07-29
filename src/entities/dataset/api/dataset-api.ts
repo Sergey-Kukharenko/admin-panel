@@ -24,10 +24,10 @@ export const datasetApi = {
   },
 
   /** Получить историю загрузок */
-  getFiles(params?: DatasetFilesFilters) {
-    // ⚡ Строго указываем FetchFilesBackendResponse вместо UploadedDatasetFile[]
+  getFiles(params?: DatasetFilesFilters, signal?: AbortSignal) {
     return apiClient.get<FetchFilesBackendResponse>('/data-load/files', {
       params,
+      signal, // ⚡ Передаем сигнал отмены в Axios
       paramsSerializer: {
         indexes: null,
       },

@@ -72,10 +72,7 @@ const { data: templatesResponse, isSuccess: isTemplatesLoaded } = useQuery({
 });
 
 /**
- * 📡 2. Запрос истории файлов
- */
-/**
- * 📡 Строго типизированный запрос к бэкенду с конвертацией имен в UUID на лету
+ * 📡 2. Запрос истории файлов с автоматической отменой через TanStack Query v5
  */
 const {
   data: serverResponse,
@@ -84,64 +81,60 @@ const {
 } = useQuery<FetchFilesBackendResponse>({
   queryKey: [
     'dataset-history',
-    computed(() => filtersState.types.value.join(',')),
-    computed(() => String(filtersState.status.value)),
-    computed(() => String(filtersState.period.value)),
-    orderByParam,
-    limit,
-    offset,
+    () => filtersState.types.value.join(','),
+    () => String(filtersState.status.value),
+    () => String(filtersState.period.value),
+    () => String(orderByParam.value),
+    () => limit.value,
+    () => offset.value,
   ],
-  queryFn: async () => {
+  // ⚡ Просто деструктурируем signal из контекста запроса
+  queryFn: async ({ signal }) => {
     const { gte, lte } = getPeriodDates(filtersState.period.value);
     const backendStatus = filtersState.status.value
       ? mapUiStatusToBackend(filtersState.status.value)
       : undefined;
 
-    // 1. Нормализуем имена из URL в массив
     const currentTypeNames = Array.isArray(filtersState.types.value)
       ? filtersState.types.value
       : filtersState.types.value
         ? String(filtersState.types.value).split(',')
         : [];
 
-    // 2. НА ЛЕТУ: Переводим текстовые имена из URL в массив UUID для бэкенда
     const cachedTemplates = templatesResponse.value || [];
     const backendUuids = cachedTemplates
       .filter((tpl) => currentTypeNames.includes(tpl.name))
       .map((tpl) => tpl.dataset_type_id);
 
-    // 🚀 Вызываем API: склеиваем UUID в плоскую строку через запятую под требования FastAPI
-    const response = await datasetApi.getFiles({
-      limit: limit.value,
-      offset: offset.value,
-      order_by: orderByParam.value,
-      dataset_type_id__in: backendUuids.length ? backendUuids.join(',') : undefined,
-      status__in: backendStatus || undefined,
-      uploaded_at__gte: gte,
-      uploaded_at__lte: lte,
-    });
+    // 🚀 Передаем signal в Axios-клиент вторым аргументом
+    const response = await datasetApi.getFiles(
+      {
+        limit: limit.value,
+        offset: offset.value,
+        order_by: orderByParam.value,
+        dataset_type_id__in: backendUuids.length ? backendUuids.join(',') : undefined,
+        status__in: backendStatus || undefined,
+        uploaded_at__gte: gte,
+        uploaded_at__lte: lte,
+      },
+      signal,
+    );
 
-    // Чистый возврат: типы совпадают идеально, компилятор доволен
     return response.data;
   },
-
   placeholderData: (previousData) => previousData,
-  // Ждем загрузки шаблонов, чтобы маппер UUID отработал безошибочно при первой загрузке страницы
   enabled: isTemplatesLoaded,
 
   refetchInterval: (
     query: Query<FetchFilesBackendResponse, Error, FetchFilesBackendResponse, readonly unknown[]>,
   ): number | undefined => {
     const queryData = query.state.data;
-
-    // Вместо false возвращаем undefined для отключения опроса
     if (!queryData || !queryData.items) return undefined;
 
     const hasAwaitingFiles = queryData.items.some((day) =>
       day.dataset_groups?.some((group) => group.files?.some((file) => file.status === 'awaiting')),
     );
 
-    // Если файлы в обработке — опрашиваем каждые 4000мс, иначе отключаем (undefined)
     return hasAwaitingFiles ? 4000 : undefined;
   },
 });
