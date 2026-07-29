@@ -1,55 +1,55 @@
-import { onMounted, ref, watch } from 'vue';
+import { defineStore } from 'pinia';
+import { ref, watch } from 'vue';
 
-import {
-  datasetApi,
-  type DatasetFile,
-  type DatasetTemplate,
-  type DatasetUpload,
-  getDatasetFileValidationError,
-  mapServerTemplate, // Импортируем наш маппер
-} from '@/entities/dataset';
+import type { DatasetFile, DatasetTemplate, DatasetUpload } from '@/entities/dataset';
+import { datasetApi, getDatasetFileValidationError, mapServerTemplate } from '@/entities/dataset';
+import { downloadBlob } from '@/shared/lib/downloadBlob';
+
+const SAVED_FILES_STORAGE_KEY = 'dataset_uploaded_files';
 
 export type SavedFilesState = Record<string, DatasetFile[]>;
 
-// ИСПРАВЛЕНО: Теперь шаблоны — это динамический реактивный массив вместо статичных моков
-const templates = ref<DatasetTemplate[]>([]);
-const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
-const filesMap = ref<SavedFilesState>({});
-const isCategoryUploading = ref<Record<string, boolean>>({});
+function readSavedFiles(): SavedFilesState {
+  const saved = localStorage.getItem(SAVED_FILES_STORAGE_KEY);
+  if (!saved) return {};
 
-export function useDatasetFiles() {
-  // Новый метод для загрузки и трансформации шаблонов
-  const loadTemplates = async () => {
+  try {
+    return JSON.parse(saved);
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
+}
+
+export const useUploadDatasetStore = defineStore('uploadDataset', () => {
+  const templates = ref<DatasetTemplate[]>([]);
+  const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
+  const filesMap = ref<SavedFilesState>(readSavedFiles());
+  const isCategoryUploading = ref<Record<string, boolean>>({});
+
+  let isInitialized = false;
+
+  watch(
+    filesMap,
+    (value) => {
+      localStorage.setItem(SAVED_FILES_STORAGE_KEY, JSON.stringify(value));
+    },
+    { deep: true },
+  );
+
+  async function init() {
+    if (isInitialized) return;
+    isInitialized = true;
+
     try {
       const response = await datasetApi.getTemplates();
       templates.value = response.data.map(mapServerTemplate);
     } catch (e) {
       console.error('Ошибка при загрузке шаблонов датасетов:', e);
     }
-  };
+  }
 
-  onMounted(() => {
-    loadTemplates(); // Запускаем загрузку данных с бэкенда при открытии/монтировании
-
-    const saved = localStorage.getItem('dataset_uploaded_files');
-    if (!saved) return;
-
-    try {
-      filesMap.value = JSON.parse(saved);
-    } catch (e) {
-      console.error(e);
-    }
-  });
-
-  watch(
-    filesMap,
-    (value) => {
-      localStorage.setItem('dataset_uploaded_files', JSON.stringify(value));
-    },
-    { deep: true },
-  );
-
-  const addFiles = (templateId: string, newFiles: File[]) => {
+  function addFiles(templateId: string, newFiles: File[]) {
     if (!uploadsMap.value[templateId]) {
       uploadsMap.value[templateId] = [];
     }
@@ -70,7 +70,7 @@ export function useDatasetFiles() {
     });
 
     processQueue(templateId);
-  };
+  }
 
   async function processQueue(templateId: string) {
     if (isCategoryUploading.value[templateId]) {
@@ -107,7 +107,6 @@ export function useDatasetFiles() {
       filesMap.value[templateId]?.push({
         id: upload.id,
         file: upload.source,
-        // ИСПРАВЛЕНО: Берем красивое имя исходного файла пользователя
         name: upload.source.name,
         size: upload.source.size,
         uploadedAt: responseData.uploaded_at,
@@ -120,7 +119,7 @@ export function useDatasetFiles() {
       uploadsMap.value[templateId] = (uploadsMap.value[templateId] || []).filter(
         (item) => item.id !== upload.id,
       );
-    } catch (e) {
+    } catch {
       upload.status = 'error';
       upload.progress = null;
       upload.error = 'Ошибка загрузки файла';
@@ -131,7 +130,7 @@ export function useDatasetFiles() {
     processQueue(templateId);
   }
 
-  const removeFile = (fileId: string) => {
+  function removeFile(fileId: string) {
     for (const templateId in filesMap.value) {
       filesMap.value[templateId] = (filesMap.value[templateId] || []).filter(
         (file) => file.id !== fileId,
@@ -143,47 +142,38 @@ export function useDatasetFiles() {
         (upload) => upload.id !== fileId,
       );
     }
-  };
+  }
 
-  const clearTemplateFiles = (templateId: string) => {
+  function clearTemplateFiles(templateId: string) {
     delete filesMap.value[templateId];
     delete uploadsMap.value[templateId];
     isCategoryUploading.value[templateId] = false;
-  };
+  }
 
-  /**
-   * Скачать пустой эталонный CSV-шаблон с бэкенда по его ID
-   */
-  const downloadTemplateFile = async (templateId: string, templateName: string) => {
+  function resetAll() {
+    filesMap.value = {};
+    uploadsMap.value = {};
+  }
+
+  async function downloadTemplateFile(templateId: string, templateName: string) {
     try {
       const response = await datasetApi.downloadTemplate(templateId);
 
-      // Создаем временную ссылку на Blob (бинарный CSV-файл)
-      const url = window.URL.createObjectURL(response.data);
-      const link = document.createElement('a');
-      link.href = url;
-
-      // Название файла при скачивании, например: users_template.csv
-      link.setAttribute('download', `${templateName.toLowerCase()}_template.csv`);
-
-      document.body.appendChild(link);
-      link.click();
-
-      // Очищаем DOM и память
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      downloadBlob(response.data, `${templateName.toLowerCase()}_template.csv`);
     } catch (e) {
       console.error('Не удалось скачать шаблон файла:', e);
     }
-  };
+  }
 
   return {
-    templates, // Обязательно возвращаем наружу для UI-компонентов
+    templates,
     filesMap,
     uploadsMap,
+    init,
     addFiles,
     removeFile,
     clearTemplateFiles,
+    resetAll,
     downloadTemplateFile,
   };
-}
+});

@@ -1,24 +1,5 @@
 import type { FilterOption } from '@/shared/ui/app-filter';
 
-export const DATASET_TYPE_OPTIONS = [
-  {
-    label: 'Users',
-    value: 'users',
-  },
-  {
-    label: 'Vip-users',
-    value: 'vip-users',
-  },
-  {
-    label: 'Bets',
-    value: 'bets',
-  },
-  {
-    label: 'Payments',
-    value: 'payments',
-  },
-] satisfies readonly FilterOption[];
-
 export const DATASET_STATUS_OPTIONS = [
   {
     label: 'Загрузка',

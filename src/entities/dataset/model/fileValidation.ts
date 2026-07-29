@@ -1,4 +1,4 @@
-export const DATASET_MAX_FILE_SIZE_BYTES = 500;
+export const DATASET_MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
 
 export const DATASET_ALLOWED_FILE_EXTENSION = '.csv';
 export const DATASET_ALLOWED_MIME_TYPE = 'text/csv';

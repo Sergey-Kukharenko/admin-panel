@@ -2,6 +2,8 @@
 import { ChevronDown, FileText, PieChart } from 'lucide-vue-next';
 import { computed } from 'vue';
 
+import { formatDatasetGroupDate } from '../model/utils';
+
 defineOptions({
   name: 'DatasetHistoryGroupHeader',
 });
@@ -18,23 +20,7 @@ defineEmits<{
   toggle: [];
 }>();
 
-/**
- * 🗓️ Нативное форматирование даты через Intl API браузера
- * Переводит "2026-07-24T09:57:23.585609Z" ➔ "24 июл. 2026 г., 11:57"
- */
-const formattedDate = computed(() => {
-  if (!props.date) return '';
-
-  const dateObj = new Date(props.date);
-
-  return new Intl.DateTimeFormat('ru-RU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(dateObj);
-});
+const formattedDate = computed(() => formatDatasetGroupDate(props.date));
 </script>
 
 <template>

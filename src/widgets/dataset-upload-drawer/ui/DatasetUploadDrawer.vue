@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Download } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { computed, onMounted, ref } from 'vue';
 
 import { datasetApi } from '@/entities/dataset';
-import { DatasetTemplatesList, useDatasetFiles } from '@/features/upload-dataset';
+import { DatasetTemplatesList, useUploadDatasetStore } from '@/features/upload-dataset';
 import sphereImageUrl from '@/shared/assets/images/file-templates-sphere.jpg';
+import { downloadBlob } from '@/shared/lib/downloadBlob';
 import { AppBanner } from '@/shared/ui/app-banner';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDrawer } from '@/shared/ui/app-drawer';
@@ -20,19 +22,15 @@ const emit = defineEmits<{
   submit: [];
 }>();
 
-const {
-  templates,
-  filesMap,
-  uploadsMap,
-  addFiles,
-  removeFile,
-  clearTemplateFiles,
-  downloadTemplateFile,
-} = useDatasetFiles();
+const uploadDatasetStore = useUploadDatasetStore();
+const { templates, filesMap, uploadsMap } = storeToRefs(uploadDatasetStore);
+
+onMounted(() => {
+  uploadDatasetStore.init();
+});
 
 const isConfirmOpen = ref(false);
 
-// ИСПРАВЛЕНО: Вычисляемое свойство теперь маппит файлы на динамический массив templates с бэкенда
 const templatesWithFiles = computed(() => {
   return templates.value.map((template) => ({
     ...template,
@@ -49,33 +47,22 @@ const hasValidFiles = computed(() => {
 });
 
 const handleUpload = (templateId: string, uploadedFiles: File[]) => {
-  addFiles(templateId, uploadedFiles);
+  uploadDatasetStore.addFiles(templateId, uploadedFiles);
 };
 
 const handleRemove = (_templateId: string, fileId: string) => {
-  removeFile(fileId);
+  uploadDatasetStore.removeFile(fileId);
 };
 
 const handleClearAll = (templateId: string) => {
-  clearTemplateFiles(templateId);
+  uploadDatasetStore.clearTemplateFiles(templateId);
 };
 
-// ИСПРАВЛЕНО: Реализовано скачивание реального ZIP-архива шаблонов с бэкенда
 const handleDownloadTemplates = async () => {
   try {
     const response = await datasetApi.downloadTemplatesArchive();
 
-    // Создаем ссылку для скачивания Blob (бинарного архива)
-    const url = window.URL.createObjectURL(response.data);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'dataset_templates.zip'); // Название скачиваемого файла
-    document.body.appendChild(link);
-    link.click();
-
-    // Очищаем DOM-дерево и память
-    link.remove();
-    window.URL.revokeObjectURL(url);
+    downloadBlob(response.data, 'dataset_templates.zip');
   } catch (error) {
     console.error('Ошибка при скачивании архива шаблонов:', error);
   }
@@ -89,8 +76,7 @@ const handleDrawerSubmit = () => {
 
 const handleFinalConfirm = () => {
   isConfirmOpen.value = false;
-  localStorage.removeItem('dataset_uploaded_files');
-  filesMap.value = {};
+  uploadDatasetStore.resetAll();
   emit('submit');
   emit('close');
 };
@@ -134,7 +120,7 @@ const handleFinalConfirm = () => {
           @upload="handleUpload"
           @remove="handleRemove"
           @clear-all="handleClearAll"
-          @download-template="(id, name) => downloadTemplateFile(id, name)"
+          @download-template="(id, name) => uploadDatasetStore.downloadTemplateFile(id, name)"
         />
       </section>
     </div>

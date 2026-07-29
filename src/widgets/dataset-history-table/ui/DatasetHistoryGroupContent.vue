@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { DatasetTemplateIcon } from '@/entities/dataset';
-import type { UploadedDatasetFile } from '@/entities/dataset/model/api';
-import type { DatasetIcon } from '@/entities/dataset/model/types';
+import type { DatasetGroup } from '@/entities/dataset';
+import { DatasetTemplateIcon, getDatasetTypeContent } from '@/entities/dataset';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
-import type { DatasetPeriod, DatasetSort, DatasetSortOrder, DatasetStatus } from '../model/types';
+import { mapBackendStatusToUi } from '../model/statusMapping';
+import type { DatasetSort, DatasetSortOrder } from '../model/types';
 import { useDatasetHistoryGroupErrors } from '../model/useDatasetHistoryGroupErrors';
 import DatasetHistoryErrorDialog from './DatasetHistoryErrorDialog.vue';
 
@@ -14,55 +14,32 @@ defineOptions({
   name: 'DatasetHistoryGroupContent',
 });
 
-interface DatasetGroupBackendStructure {
-  dataset_type: string;
-  files_count: number;
-  files: UploadedDatasetFile[];
-}
-
 const props = defineProps<{
-  datasetGroups: DatasetGroupBackendStructure[];
+  datasetGroups: DatasetGroup[];
   sortBy: DatasetSort;
   sortOrder: DatasetSortOrder;
-  status: DatasetStatus | '';
-  period: DatasetPeriod | '';
-  types: string[];
   groupDate: string;
 }>();
 
-/**
- * ERROR CONTROLLER
- */
 const errors = useDatasetHistoryGroupErrors(props.groupDate);
 
 /**
- * STATUS MAPPING backend -> UI
+ * UI-статус AppStatusBadge отличается по написанию от нашего DatasetStatus
  */
-const statusMap = {
+const badgeStatusMap = {
   LOADING: 'loading',
   SUCCESS: 'success',
   ERROR: 'error',
 } as const;
 
 const visibleCategories = computed(() => {
-  if (!props.datasetGroups) return [];
-
-  const currentTypeNames = Array.isArray(props.types)
-    ? props.types
-    : props.types
-      ? String(props.types).split(',')
-      : [];
-
   return props.datasetGroups
     .map((group) => {
-      let files = group.files.map((file) => {
+      const { title, icon } = getDatasetTypeContent(group.dataset_type);
+
+      const files = group.files.map((file) => {
         const prettyFileName = `${group.dataset_type}.csv`;
-        const computedStatus =
-          file.status === 'succeeded'
-            ? 'SUCCESS'
-            : file.status === 'failed'
-              ? 'ERROR'
-              : ('LOADING' as DatasetStatus);
+        const computedStatus = mapBackendStatusToUi(file.status);
 
         return {
           id: file.file_id,
@@ -78,15 +55,6 @@ const visibleCategories = computed(() => {
         };
       });
 
-      // Простое и надежное сравнение строк
-      if (currentTypeNames.length && !currentTypeNames.includes(group.dataset_type)) {
-        files = [];
-      }
-
-      if (props.status) {
-        files = files.filter((file) => file.status === props.status);
-      }
-
       if (props.sortBy === 'rows') {
         files.sort((a, b) => {
           const diff = a.rowsCount - b.rowsCount;
@@ -94,20 +62,11 @@ const visibleCategories = computed(() => {
         });
       }
 
-      let computedIcon: DatasetIcon = 'bets';
-      const typeLower = group.dataset_type.toLowerCase();
-      if (typeLower.includes('vip')) computedIcon = 'vip';
-      else if (typeLower.includes('user')) computedIcon = 'users';
-      else if (typeLower.includes('bet')) computedIcon = 'bets';
-
-      const formattedTitle =
-        group.dataset_type.charAt(0).toUpperCase() + group.dataset_type.slice(1).replace('_', ' ');
-
       return {
         id: group.dataset_type,
-        title: formattedTitle,
+        title,
         count: files.length,
-        icon: computedIcon,
+        icon,
         files,
       };
     })
@@ -163,7 +122,7 @@ const visibleCategories = computed(() => {
         <div class="flex h-11 w-40 items-center pl-4">
           <!-- ⚡ Передаем строго оригинальный file.rawFile для контроллера ошибок -->
           <AppStatusBadge
-            :status="statusMap[file.status]"
+            :status="badgeStatusMap[file.status]"
             :clickable="file.status === 'ERROR'"
             @click="file.status === 'ERROR' && errors.open(file.rawFile, category.title)"
           />

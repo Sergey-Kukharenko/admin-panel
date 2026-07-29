@@ -82,23 +82,27 @@ const DEFAULT_CONTENT: TemplateStaticContent = {
 };
 
 /**
+ * Единая точка правды для title/description/icon датасета по его системному имени.
+ * Если бэк пришлет что-то совсем новое, выведется его системное имя без перевода.
+ */
+export function getDatasetTypeContent(name: string): TemplateStaticContent {
+  return TEMPLATE_CONTENT_MAP[name] ?? { ...DEFAULT_CONTENT, title: name };
+}
+
+/**
  * Преобразует сырой элемент с бэкенда в полную структуру DatasetTemplate для UI
  */
 export function mapServerTemplate(serverItem: {
   dataset_type_id: string;
   name: string;
 }): DatasetTemplate {
-  // Ищем совпадение в словаре по полю name от бэкенда
-  const staticContent = TEMPLATE_CONTENT_MAP[serverItem.name] || {
-    ...DEFAULT_CONTENT,
-    title: serverItem.name, // если бэк пришлет что-то совсем новое, выведется его системное имя
-  };
+  const { title, description, icon } = getDatasetTypeContent(serverItem.name);
 
   return {
     id: serverItem.dataset_type_id,
-    title: staticContent.title,
-    description: staticContent.description,
-    icon: staticContent.icon,
+    title,
+    description,
+    icon,
     count: 0,
   };
 }

@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query';
 import { Calendar, FileText, PieChart } from 'lucide-vue-next';
 import { computed } from 'vue';
 
-import { datasetApi } from '@/entities/dataset';
+import { getDatasetTypeContent, useDatasetTemplates } from '@/entities/dataset';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppFilter } from '@/shared/ui/app-filter';
 
-import { DATASET_PERIOD_OPTIONS } from '../model';
+import { DATASET_PERIOD_OPTIONS, DATASET_STATUS_OPTIONS } from '../model';
 import type { DatasetPeriod, DatasetStatus } from '../model/types';
 
 defineOptions({
@@ -33,14 +32,7 @@ defineEmits<{
 /**
  * 📡 Загрузка динамических типов данных (шаблонов) с бэкенда
  */
-const { data: templatesServerResponse } = useQuery({
-  queryKey: ['dataset-templates'],
-  queryFn: async () => {
-    const response = await datasetApi.getTemplates();
-    return response.data;
-  },
-  staleTime: 1000 * 60 * 15, // Кэшируем типы на 15 минут
-});
+const { data: templatesServerResponse } = useDatasetTemplates();
 
 /**
  * 🗺️ Маппинг шаблонов бэкенда под контракт FilterOption
@@ -49,24 +41,11 @@ const { data: templatesServerResponse } = useQuery({
 const dynamicTypeOptions = computed(() => {
   if (!templatesServerResponse.value) return [];
 
-  return templatesServerResponse.value.map((tpl) => {
-    const prettyLabel = tpl.name.charAt(0).toUpperCase() + tpl.name.slice(1).replace('_', ' ');
-
-    return {
-      value: tpl.name, // 🚀 Возвращаем tpl.name, чтобы в URL было ?types=balances_daily
-      label: prettyLabel,
-    };
-  });
+  return templatesServerResponse.value.map((tpl) => ({
+    value: tpl.name, // 🚀 Возвращаем tpl.name, чтобы в URL было ?types=balances_daily
+    label: getDatasetTypeContent(tpl.name).title,
+  }));
 });
-
-/**
- * 🎨 Опции фильтрации статусов в соответствии с вашим UI-стейтом
- */
-const statusOptions = [
-  { value: 'LOADING', label: 'Загрузка' },
-  { value: 'SUCCESS', label: 'Успешно' },
-  { value: 'ERROR', label: 'Ошибка' },
-] as const;
 </script>
 
 <template>
@@ -80,7 +59,12 @@ const statusOptions = [
         :options="dynamicTypeOptions"
       />
 
-      <AppFilter v-model="status" title="Статус" :icon="PieChart" :options="statusOptions" />
+      <AppFilter
+        v-model="status"
+        title="Статус"
+        :icon="PieChart"
+        :options="DATASET_STATUS_OPTIONS"
+      />
 
       <AppFilter
         v-model="period"
