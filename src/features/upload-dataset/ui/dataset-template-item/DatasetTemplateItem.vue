@@ -116,7 +116,7 @@ const handleFilesChange = (event: Event) => {
           </template>
           <AppDropdownItem @select="emit('downloadTemplate')">
             <Download class="size-4 text-(--text-secondary)" stroke-width="2" />
-            <span class="text-body-sm font-medium text-(--text-primary)"> Скачать шаблон </span>
+            <span class="text-body-sm font-medium text-(--text-primary)">Скачать шаблон</span>
           </AppDropdownItem>
           <AppDropdownItem
             :disabled="!hasFiles"
@@ -124,7 +124,7 @@ const handleFilesChange = (event: Event) => {
             @select="emit('clearAll')"
           >
             <Trash2 class="size-4 text-(--danger)" stroke-width="2" />
-            <span class="text-body-sm font-medium text-(--danger)"> Удалить файлы </span>
+            <span class="text-body-sm font-medium text-(--danger)">Удалить файлы</span>
           </AppDropdownItem>
         </AppDropdown>
 

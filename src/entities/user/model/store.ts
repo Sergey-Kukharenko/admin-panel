@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 
 import { sessionApi } from '@/shared/api';
 import { API_URL } from '@/shared/config/api';
+import { IS_DEV } from '@/shared/config/env';
 
 import type { UserProfile } from './types';
 
@@ -27,7 +28,13 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function login() {
-    window.location.href = `${API_URL}/authorization/login`;
+    const url = new URL(`${API_URL}/authorization/login`);
+
+    if (IS_DEV) {
+      url.searchParams.set('mode', 'local');
+    }
+
+    window.location.href = url.toString();
   }
 
   function logout() {

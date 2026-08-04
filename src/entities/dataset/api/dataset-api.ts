@@ -55,4 +55,12 @@ export const datasetApi = {
   downloadFile(fileId: string) {
     return apiClient.get<Blob>(`/data-load/files/${fileId}`, { responseType: 'blob' });
   },
+
+  /**
+   * Удалить загруженный файл по ID
+   * Метод заработает, когда бэкенд добавит DELETE эндпоинт
+   */
+  deleteFile(fileId: string) {
+    return apiClient.delete<void>(`/data-load/files/${fileId}`);
+  },
 };
