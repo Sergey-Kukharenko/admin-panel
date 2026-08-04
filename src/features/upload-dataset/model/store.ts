@@ -1,8 +1,14 @@
+import { useQueryClient } from '@tanstack/vue-query';
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 
 import type { DatasetFile, DatasetTemplate, DatasetUpload } from '@/entities/dataset';
-import { datasetApi, getDatasetFileValidationError, mapServerTemplate } from '@/entities/dataset';
+import {
+  DATASET_HISTORY_QUERY_KEY,
+  datasetApi,
+  getDatasetFileValidationError,
+  mapServerTemplate,
+} from '@/entities/dataset';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
 const SAVED_FILES_STORAGE_KEY = 'dataset_uploaded_files';
@@ -22,6 +28,8 @@ function readSavedFiles(): SavedFilesState {
 }
 
 export const useUploadDatasetStore = defineStore('uploadDataset', () => {
+  const queryClient = useQueryClient();
+
   const templates = ref<DatasetTemplate[]>([]);
   const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
   const filesMap = ref<SavedFilesState>(readSavedFiles());
@@ -119,6 +127,10 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
       uploadsMap.value[templateId] = (uploadsMap.value[templateId] || []).filter(
         (item) => item.id !== upload.id,
       );
+
+      // Файл уже попал в /data-load/files — обновляем историю загрузок, чтобы
+      // таблица (или переход из пустого состояния в неё) не ждала ручного рефреша
+      queryClient.invalidateQueries({ queryKey: [DATASET_HISTORY_QUERY_KEY] });
     } catch {
       upload.status = 'error';
       upload.progress = null;

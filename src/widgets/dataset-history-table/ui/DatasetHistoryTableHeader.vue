@@ -1,20 +1,7 @@
 <script setup lang="ts">
-import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-vue-next';
-
-import type { DatasetSort, DatasetSortOrder } from '../model/types';
-
 defineOptions({
   name: 'DatasetHistoryTableHeader',
 });
-
-defineProps<{
-  sortBy: DatasetSort;
-  sortOrder: DatasetSortOrder;
-}>();
-
-const emit = defineEmits<{
-  sortRows: [];
-}>();
 </script>
 
 <template>
@@ -28,29 +15,16 @@ const emit = defineEmits<{
       </span>
     </div>
 
-    <!-- 2. Ячейка: ОБЪЁМ СТРОК -->
-    <button
-      type="button"
-      class="flex h-9 w-40 cursor-pointer items-center justify-between gap-1.5 border-r border-(--border-subtle) pl-4 pr-3 text-left transition-colors hover:bg-(--muted-hover-soft) focus-visible:outline-none"
-      @click="emit('sortRows')"
+    <!-- 2. Ячейка: ОБЪЁМ СТРОК (сортировка отключена — бэкенд не поддерживает order_by=rows_count) -->
+    <div
+      class="flex h-9 w-40 items-center justify-between gap-1.5 border-r border-(--border-subtle) pl-4 pr-3 text-left"
     >
       <span
         class="font-mono text-xs font-medium uppercase text-(--text-secondary) leading-5 select-none"
       >
         Объём строк
       </span>
-      <ArrowUp
-        v-if="sortBy === 'rows' && sortOrder === 'asc'"
-        class="size-3.5 shrink-0 text-(--text-secondary)"
-      />
-
-      <ArrowDown
-        v-else-if="sortBy === 'rows' && sortOrder === 'desc'"
-        class="size-3.5 shrink-0 text-(--text-secondary)"
-      />
-
-      <ChevronsUpDown v-else class="size-3.5 shrink-0 text-(--text-secondary)" />
-    </button>
+    </div>
 
     <!-- 3. Ячейка: СТАТУС -->
     <div class="flex h-9 w-40 items-center pl-4 pr-3 text-left">

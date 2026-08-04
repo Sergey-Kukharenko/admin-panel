@@ -7,12 +7,9 @@ export interface DatasetFilesFilters {
   dataset_type_id__in?: string;
   source_type__in?: string;
   status__in?: string;
-
   uploaded_at__gte?: string;
   uploaded_at__lte?: string;
-
   order_by?: string;
-
   limit?: number;
   offset?: number;
 }
@@ -22,31 +19,34 @@ export interface UploadedDatasetFile {
   project_id: string;
   dataset_type: string;
   rows_count: number;
-  status: string;
+  status: 'succeeded' | 'failed' | 'awaiting';
   file_name: string;
+  file_name_csv: string;
   s3_bucket: string;
   source_type: string;
-  validation_errors: unknown;
+  validation_errors: {
+    missing_columns?: string[];
+    missing_values?: string[];
+    wrong_column_type?: Record<string, { required: string; actual: string }>;
+    not_allowed_values?: Record<string, string[]>;
+  } | null;
   uploaded_at: string;
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
-// 🚀 ПЕРЕНЕСЕНО СЮДА: Описываем структуру группы внутри суток
 export interface DatasetGroup {
   dataset_type: string;
   files_count: number;
-  files: UploadedDatasetFile[]; // Используем тип файла, объявленный выше
+  files: UploadedDatasetFile[];
 }
 
-// 🚀 ПЕРЕНЕСЕНО СЮДА: Структура суток загрузки
 export interface DatasetHistoryDayGroup {
   uploaded_at: string;
   dataset_groups: DatasetGroup[];
 }
 
-// 🚀 ПЕРЕНЕСЕНО СЮДА: Финальная корневая схема ответа GET /data-load/files
 export interface FetchFilesBackendResponse {
   items: DatasetHistoryDayGroup[];
   total_count: number;

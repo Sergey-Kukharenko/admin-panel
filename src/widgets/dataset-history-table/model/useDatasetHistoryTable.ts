@@ -2,22 +2,29 @@ import { type Query, useQuery } from '@tanstack/vue-query';
 import { computed, ref, watch } from 'vue';
 
 import type { FetchFilesBackendResponse } from '@/entities/dataset';
-import { datasetApi, useDatasetTemplates } from '@/entities/dataset';
+import { DATASET_HISTORY_QUERY_KEY, datasetApi, useDatasetTemplates } from '@/entities/dataset';
 
 import { mapUiStatusToBackend } from './statusMapping';
 import { useDatasetHistoryFilters } from './useDatasetHistoryFilters';
+import { useDatasetHistoryPagination } from './useDatasetHistoryPagination';
 import { getPeriodDates } from './utils';
 
-const HISTORY_QUERY_KEY = 'dataset-history';
 const AWAITING_FILES_POLL_INTERVAL_MS = 4000;
 
 export function useDatasetHistoryTable() {
   const filters = useDatasetHistoryFilters();
-  const { data: templatesResponse, isSuccess: isTemplatesLoaded } = useDatasetTemplates();
+  const { page, perPage } = useDatasetHistoryPagination();
+  const {
+    data: templatesResponse,
+    isSuccess: isTemplatesLoaded,
+    isLoading: isTemplatesLoading,
+  } = useDatasetTemplates();
 
-  const limit = ref(20);
-  const offset = ref(0);
   const expandedGroups = ref<string[]>([]);
+
+  const offset = computed(() => (page.value - 1) * perPage.value);
+
+  const totalItems = computed(() => serverResponse.value?.total_count ?? 0);
 
   const orderByParam = computed(() => {
     if (filters.sortBy.value === 'rows') {
@@ -26,9 +33,20 @@ export function useDatasetHistoryTable() {
     return '-uploaded_at,-created_at';
   });
 
-  // Сбрасываем стейт при изменении фильтров
-  watch([() => filters.types.value, () => filters.status.value, () => filters.period.value], () => {
-    offset.value = 0;
+  // Смена фильтров возвращает список к первой странице
+  // ⚡ Сравниваем types через join(','), а не по ссылке на массив: filters.types.value
+  // на каждый доступ возвращает новый массив (split(',')), из-за чего watch по ссылке
+  // срабатывал на любое изменение route.query (в т.ч. смену страницы) и зацикливал сброс page
+  watch(
+    [() => filters.types.value.join(','), () => filters.status.value, () => filters.period.value],
+    () => {
+      page.value = 1;
+      expandedGroups.value = [];
+    },
+  );
+
+  // Переход на другую страницу (в т.ч. из-за смены размера страницы) сворачивает группы предыдущей страницы
+  watch(page, () => {
     expandedGroups.value = [];
   });
 
@@ -38,12 +56,13 @@ export function useDatasetHistoryTable() {
     isFetching,
   } = useQuery<FetchFilesBackendResponse>({
     queryKey: [
-      HISTORY_QUERY_KEY,
+      DATASET_HISTORY_QUERY_KEY,
+      // Используем функции-геттеры для реактивного отслеживания фильтров в ключе запроса
       () => filters.types.value.join(','),
       () => filters.status.value,
       () => filters.period.value,
       () => orderByParam.value,
-      () => limit.value,
+      () => perPage.value,
       () => offset.value,
     ],
     queryFn: async ({ signal }) => {
@@ -57,7 +76,7 @@ export function useDatasetHistoryTable() {
 
       const response = await datasetApi.getFiles(
         {
-          limit: limit.value,
+          limit: perPage.value,
           offset: offset.value,
           order_by: orderByParam.value,
           dataset_type_id__in: backendUuids.length ? backendUuids.join(',') : undefined,
@@ -89,7 +108,28 @@ export function useDatasetHistoryTable() {
     },
   });
 
-  // Авто-раскрытие самой первой (свежей) группы, как только приходят данные
+  // Фильтры по умолчанию (ничего не выбрано) — только в этом случае решаем,
+  // показывать ли пустой экран вместо таблицы. Если пользователь сам сузил
+  // список фильтрами и результат пуст, это не «нет истории», а «нет совпадений»,
+  // и должно обрабатываться существующим сообщением «Ничего не найдено».
+  const isDefaultFilters = computed(
+    () =>
+      filters.types.value.length === 0 && filters.status.value === '' && filters.period.value === '',
+  );
+
+  const hasTemplates = computed(() => (templatesResponse.value?.length ?? 0) > 0);
+  const hasFiles = computed(() => totalItems.value > 0);
+
+  // Пока не пришёл ответ ни по шаблонам, ни по файлам — не показываем пустой экран,
+  // чтобы он не мелькал перед тем, как данные реально подтвердят его необходимость.
+  const isInitialLoading = computed(() => isTemplatesLoading.value || isLoading.value);
+
+  const showHistoryTable = computed(() => {
+    if (!isDefaultFilters.value) return true;
+    if (isInitialLoading.value) return true;
+    return hasTemplates.value && hasFiles.value;
+  });
+
   watch(
     serverResponse,
     (newData) => {
@@ -122,7 +162,9 @@ export function useDatasetHistoryTable() {
           0,
         );
         const totalCount = datasetGroups.reduce((acc, group) => acc + group.files.length, 0);
-        const source = (datasetGroups[0]?.files[0]?.source_type ?? 'CSV').replace('_', ' ');
+
+        const firstFile = datasetGroups[0]?.files?.[0];
+        const source = (firstFile?.source_type ?? 'CSV').replace('_', ' ');
 
         return {
           id: dayGroup.uploaded_at,
@@ -144,14 +186,6 @@ export function useDatasetHistoryTable() {
     }
   }
 
-  function handleSortRows() {
-    if (filters.sortBy.value !== 'rows') {
-      filters.setSort('rows', 'asc');
-      return;
-    }
-    filters.setSort('rows', filters.sortOrder.value === 'asc' ? 'desc' : 'asc');
-  }
-
   return {
     filters,
     renderedGroups,
@@ -159,6 +193,9 @@ export function useDatasetHistoryTable() {
     isFetching,
     expandedGroups,
     toggleGroup,
-    handleSortRows,
+    page,
+    perPage,
+    totalItems,
+    showHistoryTable,
   };
 }
