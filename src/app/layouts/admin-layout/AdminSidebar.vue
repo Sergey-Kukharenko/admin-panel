@@ -24,7 +24,7 @@ function handleCloseBanner(): void {
 
 <template>
   <aside
-    class="flex h-screen w-(--sidebar-width) flex-col border-r border-(--border) bg-(--bg-surface-neutral)"
+    class="sticky top-0 flex h-screen w-(--sidebar-width) shrink-0 self-start flex-col border-r border-(--border) bg-(--bg-surface-neutral)"
   >
     <div class="flex h-12 items-center px-6">
       <img :src="logoUrl" alt="Логотип компании" class="h-4" />

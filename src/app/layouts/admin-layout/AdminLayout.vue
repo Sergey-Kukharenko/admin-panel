@@ -4,13 +4,13 @@ import AdminSidebar from './AdminSidebar.vue';
 </script>
 
 <template>
-  <div class="flex h-screen w-full">
+  <div class="flex min-h-screen w-full">
     <AdminSidebar />
 
     <div class="flex min-w-0 flex-1 flex-col">
-      <AdminHeader />
+      <AdminHeader class="shrink-0" />
 
-      <main class="flex-1 p-8">
+      <main class="flex flex-1 flex-col gap-6 p-8 pb-12">
         <RouterView />
       </main>
     </div>

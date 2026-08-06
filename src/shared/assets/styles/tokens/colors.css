@@ -108,27 +108,25 @@
   --warning-muted: rgba(255, 236, 119, 0.2);
   --danger: var(--color-red-700);
   --success-ready: #528300;
+  --success-alt: #004730;
   --danger-failed: #c45d4e;
 
   /* Badges & Tags */
   --bg-tag-active: #d1ff97;
   --bg-tag-inactive: rgba(48, 48, 50, 0.08);
   --bg-badge-loading: rgba(202, 220, 255, 0.4);
+  --bg-badge-success: rgba(209, 255, 151, 0.6);
+  --bg-badge-danger: rgba(206, 98, 82, 0.15);
 
   /* Shadows */
   --shadow-panel:
-    0 0 1px 0 rgba(0, 0, 0, 0) inset,
-    0 2px 8px 0 rgba(0, 0, 0, 0.06),
-    0 -6px 12px 0 rgba(0, 0, 0, 0.03),
-    0 14px 28px 0 rgba(0, 0, 0, 0.08);
+    0 0 1px 0 rgba(0, 0, 0, 0) inset, 0 2px 8px 0 rgba(0, 0, 0, 0.06),
+    0 -6px 12px 0 rgba(0, 0, 0, 0.03), 0 14px 28px 0 rgba(0, 0, 0, 0.08);
 
-  --shadow-panel-short:
-    0 2px 8px 0 rgba(0, 0, 0, 0.06),
-    0 14px 28px 0 rgba(0, 0, 0, 0.08);
+  --shadow-panel-short: 0 2px 8px 0 rgba(0, 0, 0, 0.06), 0 14px 28px 0 rgba(0, 0, 0, 0.08);
 
   --shadow-sidebar-banner:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
 
   /* Tooltip */
   --bg-foreground-overlay: #1c1c1e;
