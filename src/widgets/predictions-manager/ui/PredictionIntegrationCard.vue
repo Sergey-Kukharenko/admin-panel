@@ -16,7 +16,7 @@ defineProps<{
 
 <template>
   <article
-    class="w-95.5 max-w-95.5 min-h-32 shrink-0 px-2 pb-2 bg-(--bg-surface-neutral) rounded-md flex flex-col justify-start items-start transition-all duration-200"
+    class="min-h-32 shrink-0 px-2 pb-2 bg-(--bg-surface-neutral) rounded-md flex flex-col justify-start items-start"
   >
     <div class="self-stretch p-3 inline-flex justify-start items-center gap-4">
       <div class="flex-1 flex justify-start items-center gap-3 min-w-0">

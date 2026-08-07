@@ -44,7 +44,7 @@ const groupedIntegrations = computed(() => {
             v-for="item in items"
             :key="item.id"
             :integration="item"
-            class="w-full xl:w-[382px]"
+            class="w-full min-[1455px]:w-[382px]"
           />
         </div>
       </section>
