@@ -13,7 +13,9 @@ import chevronDownIcon from '../assets/icons/chevron-down.svg';
 import { getDayCellClasses } from '../model/calendarCellClasses';
 import { monthShortNames } from '../model/constants';
 import { useScheduleCalendar } from '../model/useScheduleCalendar';
+import PredictionProcessingScheduleErrorState from './PredictionProcessingScheduleErrorState.vue';
 import PredictionProcessingScheduleItem from './PredictionProcessingScheduleItem.vue';
+import PredictionProcessingScheduleSkeleton from './PredictionProcessingScheduleSkeleton.vue';
 import ScheduleMonthPicker from './ScheduleMonthPicker.vue';
 
 defineOptions({
@@ -31,6 +33,9 @@ const {
   toggleCalendar,
   toggleMonthPicker,
   selectMonth,
+  isLoading,
+  isError,
+  refetch,
 } = useScheduleCalendar();
 
 const isPaddingBottomRemoved = computed(
@@ -44,7 +49,10 @@ const asideClasses = computed(() => [
 </script>
 
 <template>
-  <aside :class="asideClasses">
+  <PredictionProcessingScheduleSkeleton v-if="isLoading" />
+  <PredictionProcessingScheduleErrorState v-else-if="isError" @retry="refetch" />
+
+  <aside v-else :class="asideClasses">
     <CollapsibleRoot v-model:open="calendarOpened" class="w-full">
       <div class="self-stretch flex flex-col justify-start items-start gap-3">
         <header class="self-stretch h-8 px-5 pt-2 flex flex-col justify-start items-start gap-2">
@@ -123,6 +131,13 @@ const asideClasses = computed(() => [
               :key="item.id"
               :item="item"
             />
+
+            <p
+              v-if="sortedScheduleItems.length === 0"
+              class="px-3 py-6 text-center text-sm text-(--text-secondary)"
+            >
+              Событий в этом месяце нет
+            </p>
           </div>
         </ScrollAreaViewport>
 
