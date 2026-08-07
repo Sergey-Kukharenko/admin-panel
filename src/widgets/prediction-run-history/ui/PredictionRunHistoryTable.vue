@@ -6,7 +6,6 @@ import {
   CircleCheck,
   CircleX,
   Download,
-  Globe,
 } from 'lucide-vue-next';
 import { toRef } from 'vue';
 
@@ -153,8 +152,13 @@ function sortIconClassFor(field: PredictionRunSortField) {
     <!-- ROWS -->
     <div class="flex w-full flex-col divide-y divide-(--border-default)">
       <div v-for="item in sortedItems" :key="item.id" class="flex w-full items-center">
-        <div class="flex h-11 w-26 shrink-0 items-center border-r border-(--border-default) px-4">
-          <span class="text-sm font-medium leading-5 text-(--text-primary)">{{ item.id }}</span>
+        <div
+          class="flex h-11 w-26 shrink-0 items-center border-r border-(--border-default) px-4"
+          :title="item.id"
+        >
+          <span class="truncate text-sm font-medium leading-5 text-(--text-primary)">
+            {{ item.id.slice(0, 8) }}
+          </span>
         </div>
 
         <div class="flex h-11 min-w-px flex-1 items-center border-r border-(--border-default) px-4">
@@ -210,15 +214,13 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
         <div class="flex h-11 w-[91px] shrink-0 items-center justify-center px-2">
           <button
-            v-if="item.resultType"
+            v-if="item.isDownloadable"
             type="button"
             class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
             @click="$emit('download', item)"
           >
-            <component :is="item.resultType === 'csv' ? Download : Globe" class="size-4" />
-            <span class="text-sm font-medium leading-5">
-              {{ item.resultType === 'csv' ? 'CSV' : 'API' }}
-            </span>
+            <Download class="size-4" />
+            <span class="text-sm font-medium leading-5">CSV</span>
           </button>
         </div>
       </div>

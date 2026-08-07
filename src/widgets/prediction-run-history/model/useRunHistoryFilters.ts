@@ -1,21 +1,38 @@
-import { computed, type Ref, ref } from 'vue';
+import { useQuery } from '@tanstack/vue-query';
+import { computed, ref } from 'vue';
 
-import type { PredictionRunRecord } from './types';
+import { productApi } from '@/entities/product';
 
-export function useRunHistoryFilters(items: Ref<PredictionRunRecord[]>) {
-  const selectedProduct = ref('');
+const PRODUCT_OPTIONS_QUERY_KEY = ['prediction-run-history-products'];
+const PRODUCT_OPTIONS_STALE_TIME = 1000 * 60 * 15;
 
-  const productOptions = computed(() =>
-    [...new Set(items.value.map((item) => item.product))].sort((first, second) =>
-      first.localeCompare(second, 'ru'),
-    ),
-  );
+/**
+ * Список продуктов для фильтра берём из /products, а не из уже загруженной истории
+ * прогонов — так пункты фильтра не «сжимаются» до одного продукта после того,
+ * как выбор применится к запросу истории.
+ */
+export function useRunHistoryFilters() {
+  const selectedProductId = ref('');
 
-  const filteredItems = computed(() => {
-    if (!selectedProduct.value) return items.value;
-
-    return items.value.filter((item) => item.product === selectedProduct.value);
+  const { data: productsResponse } = useQuery({
+    queryKey: PRODUCT_OPTIONS_QUERY_KEY,
+    queryFn: async () => {
+      const response = await productApi.getProducts();
+      return response.data;
+    },
+    staleTime: PRODUCT_OPTIONS_STALE_TIME,
   });
 
-  return { selectedProduct, productOptions, filteredItems };
+  const productOptions = computed(() =>
+    (productsResponse.value ?? [])
+      .map((product) => ({ id: product.product_id, name: product.name }))
+      .sort((first, second) => first.name.localeCompare(second.name, 'ru')),
+  );
+
+  const selectedProductName = computed(
+    () =>
+      productOptions.value.find((product) => product.id === selectedProductId.value)?.name ?? '',
+  );
+
+  return { selectedProductId, selectedProductName, productOptions };
 }

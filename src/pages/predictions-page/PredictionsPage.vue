@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PredictionProcessingSchedule } from '@/widgets/prediction-processing-schedule';
-import { PredictionRunHistory, predictionRunHistory } from '@/widgets/prediction-run-history';
+import { PredictionRunHistory } from '@/widgets/prediction-run-history';
 import { PredictionsManager } from '@/widgets/predictions-manager';
 
 defineOptions({
@@ -20,6 +20,6 @@ defineOptions({
       </aside>
     </div>
 
-    <PredictionRunHistory :items="predictionRunHistory" />
+    <PredictionRunHistory />
   </div>
 </template>
