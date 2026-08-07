@@ -16,3 +16,16 @@ body {
 
   font-family: var(--font-geist);
 }
+
+@theme {
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+  100% {
+    background-position: -150% 0;
+  }
+}

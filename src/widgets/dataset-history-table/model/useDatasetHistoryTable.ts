@@ -191,6 +191,7 @@ export function useDatasetHistoryTable() {
     renderedGroups,
     isLoading,
     isFetching,
+    isTemplatesLoading,
     expandedGroups,
     toggleGroup,
     page,
