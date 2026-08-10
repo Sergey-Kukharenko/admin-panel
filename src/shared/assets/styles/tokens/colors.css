@@ -77,6 +77,11 @@
   --muted-hover: rgba(48, 48, 50, 0.1);
   --muted-hover-soft: rgba(48, 48, 50, 0.02);
 
+  /* Accent (чекбоксы, тумблеры) */
+  --bg-accent: #aceb5c;
+  --bg-accent-hover: #94ca4f;
+  --border-accent: #aceb5c;
+
   /* Icons */
   --icon-primary: var(--text-primary);
   --icon-secondary: var(--text-secondary);
@@ -124,6 +129,10 @@
     0 -6px 12px 0 rgba(0, 0, 0, 0.03), 0 14px 28px 0 rgba(0, 0, 0, 0.08);
 
   --shadow-panel-short: 0 2px 8px 0 rgba(0, 0, 0, 0.06), 0 14px 28px 0 rgba(0, 0, 0, 0.08);
+
+  --shadow-field:
+    0 0 1px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
+    0 2px 4px 0 rgba(0, 0, 0, 0.04), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
 
   --shadow-sidebar-banner:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
