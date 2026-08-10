@@ -13,6 +13,7 @@ import {
 import { computed } from 'vue';
 
 import { PAGE_SIZE_OPTIONS } from '../model';
+import { getPaginationRange } from '../model/utils';
 
 defineOptions({
   name: 'DatasetHistoryPagination',
@@ -38,6 +39,8 @@ const rangeEnd = computed(() => {
   return Math.min(currentPage.value * pageSize.value, props.totalItems);
 });
 
+const paginationRange = computed(() => getPaginationRange(currentPage.value, totalPages.value));
+
 function handlePrevPage() {
   if (currentPage.value > 1) {
     currentPage.value--;
@@ -48,6 +51,10 @@ function handleNextPage() {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
   }
+}
+
+function goToPage(page: number) {
+  currentPage.value = page;
 }
 
 function handlePageSizeChange(value: unknown) {
@@ -110,29 +117,46 @@ function handlePageSizeChange(value: unknown) {
       </div>
 
       <!-- Переключатели страниц -->
-      <div
-        class="flex items-center gap-2 font-mono text-xs font-medium text-(--text-secondary) uppercase"
-      >
+      <div class="flex items-center gap-0.5">
         <button
           type="button"
           :disabled="currentPage === 1"
-          class="flex size-7 items-center justify-center rounded-lg border border-(--border-subtle) bg-(--surface) text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed focus-visible:outline-none"
+          class="flex size-8 items-center justify-center rounded-lg text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
           @click="handlePrevPage"
         >
-          <ChevronLeft class="size-3.5" stroke-width="2.5" />
+          <ChevronLeft class="size-4" stroke-width="2.5" />
         </button>
 
-        <span class="text-(--text-primary) normal-case font-sans text-xs font-medium px-1">
-          Страница {{ currentPage }} из {{ totalPages }}
-        </span>
+        <template v-for="(item, index) in paginationRange" :key="`${item}-${index}`">
+          <span
+            v-if="item === 'ellipsis'"
+            class="flex h-8 min-w-8 items-center justify-center rounded-lg px-3 py-1.5 font-sans text-sm font-medium text-(--text-secondary) select-none"
+          >
+            …
+          </span>
+
+          <button
+            v-else
+            type="button"
+            class="flex h-8 min-w-8 items-center justify-center rounded-lg px-3 py-1.5 font-sans text-sm font-medium normal-case transition-colors cursor-pointer hover:bg-(--muted-hover-soft) focus-visible:outline-none"
+            :class="
+              item === currentPage
+                ? 'bg-(--muted) text-(--text-primary)'
+                : 'text-(--text-secondary)'
+            "
+            @click="goToPage(item)"
+          >
+            {{ item }}
+          </button>
+        </template>
 
         <button
           type="button"
           :disabled="currentPage >= totalPages"
-          class="flex size-7 items-center justify-center rounded-lg border border-(--border-subtle) bg-(--surface) text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed focus-visible:outline-none"
+          class="flex size-8 items-center justify-center rounded-lg text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
           @click="handleNextPage"
         >
-          <ChevronRight class="size-3.5" stroke-width="2.5" />
+          <ChevronRight class="size-4" stroke-width="2.5" />
         </button>
       </div>
     </div>
