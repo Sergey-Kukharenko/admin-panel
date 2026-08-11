@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Bell, Globe, Info } from 'lucide-vue-next';
+
+import { UserMenu } from '@/features/user-menu';
 </script>
 
 <template>
@@ -16,6 +18,6 @@ import { Bell, Globe, Info } from 'lucide-vue-next';
       <Bell class="size-4 text-(--icon-tertiary)" />
     </button>
 
-    <img src="https://i.pravatar.cc/32" alt="avatar" class="size-8 rounded-full" />
+    <UserMenu />
   </div>
 </template>
