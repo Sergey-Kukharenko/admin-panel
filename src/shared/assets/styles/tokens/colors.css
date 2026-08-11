@@ -46,10 +46,16 @@
      ========================================== */
   --text-primary: rgba(48, 48, 50, 0.98);
   --text-secondary: rgba(48, 48, 50, 0.68);
-  --text-tertiary: rgba(48, 48, 50, 0.5);
+  --text-tertiary: rgba(48, 48, 50, 0.57);
   --text-quaternary: rgba(48, 48, 50, 0.57);
   --text-inverse: var(--color-neutral-0);
   --text-inverse-soft: #fcfcfc;
+  --text-disabled: rgba(48, 48, 50, 0.25);
+  --text-loading: var(--color-violet-950);
+  --text-success: var(--success-ready);
+  --text-success-alt: var(--success-alt);
+  --text-warning: var(--warning-foreground);
+  --text-error: var(--danger-failed);
 
   /* ==========================================
      3. Semantic Colors (Интерфейс)
@@ -66,6 +72,10 @@
   --bg-surface-accent: #f8f8f9;
   --bg-surface-hover: var(--color-neutral-100);
 
+  /* Поля ввода */
+  --bg-input: rgba(48, 48, 50, 0.06);
+  --bg-input-hover: rgba(48, 48, 50, 0.1);
+
   /* Typography Mapping */
   --foreground: var(--text-primary);
   --muted-foreground: var(--text-secondary);
@@ -79,22 +89,41 @@
 
   /* Accent (чекбоксы, тумблеры) */
   --bg-accent: #aceb5c;
-  --bg-accent-hover: #94ca4f;
+  --bg-accent-hover: #9fc670;
   --border-accent: #aceb5c;
 
   /* Icons */
   --icon-primary: var(--text-primary);
   --icon-secondary: var(--text-secondary);
-  --icon-tertiary: #8a8a8a;
+  --icon-tertiary: rgba(48, 48, 50, 0.57);
   --icon-muted: rgba(48, 48, 50, 0.15);
   --icon-neutral: rgba(48, 48, 50, 0.68);
+  --icon-disabled: var(--text-disabled);
+  --icon-loading: var(--text-loading);
+  --icon-success: var(--text-success);
+  --icon-success-alt: var(--text-success-alt);
+  --icon-warning: var(--text-warning);
+  --icon-error: var(--text-error);
+
+  /* Кнопки (состояния фона/рамки) */
+  --bg-button-primary: rgba(0, 0, 0, 0.98);
+  --bg-button-primary-hover: var(--text-primary);
+  --bg-button-primary-pressed: var(--text-quaternary);
+  --bg-button-primary-disabled: rgba(48, 48, 50, 0.22);
+  --bg-button-secondary: rgba(48, 48, 50, 0.06);
+  --bg-button-secondary-hover: rgba(48, 48, 50, 0.1);
+  --bg-button-secondary-pressed: rgba(48, 48, 50, 0.08);
+  --border-button: rgba(48, 48, 50, 0.12);
+  --border-button-hover: var(--icon-muted);
+  --border-button-pressed: rgba(48, 48, 50, 0.22);
+  --border-button-disabled: rgba(48, 48, 50, 0.1);
 
   /* Overlay */
   --overlay: rgba(48, 48, 50, 0.25);
   --overlay-strong: rgba(0, 0, 0, 0.4);
 
   /* Переменные для активного состояния элементов навигации */
-  --sidebar-item-active: #ececec;
+  --sidebar-item-active: rgba(48, 48, 50, 0.06);
   --sidebar-item-active-foreground: rgba(48, 48, 50, 0.98);
 
   /* Прогресс и состояния загрузки файлов (Upload) */
@@ -105,6 +134,9 @@
   --border: var(--color-neutral-200);
   --border-default: rgba(48, 48, 50, 0.08);
   --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-focus: rgba(48, 48, 50, 0.15);
+  --border-dash: rgba(48, 48, 50, 0.12);
+  --border-error: var(--danger-failed);
 
   /* Statuses */
   --success: var(--color-green-700);
@@ -122,6 +154,17 @@
   --bg-badge-loading: rgba(202, 220, 255, 0.4);
   --bg-badge-success: rgba(209, 255, 151, 0.6);
   --bg-badge-danger: rgba(206, 98, 82, 0.15);
+  --bg-badge-neutral: rgba(48, 48, 50, 0.06);
+  --bg-badge-processing: rgba(48, 48, 50, 0.08);
+  --bg-badge-error: rgba(255, 224, 227, 0.9);
+
+  /* Статистика (графики дашборда) */
+  --stats-bets: #9fc670;
+  --stats-users: var(--bg-accent);
+  --stats-bets-daily: var(--success-ready);
+  --stats-balance-daily: rgba(48, 48, 50, 0.22);
+  --stats-payments: var(--text-quaternary);
+  --stats-vip-users: var(--bg-button-primary);
 
   /* Shadows */
   --shadow-panel:
