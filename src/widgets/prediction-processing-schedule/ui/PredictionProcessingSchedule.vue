@@ -43,7 +43,7 @@ const isPaddingBottomRemoved = computed(
 );
 
 const asideClasses = computed(() => [
-  'w-[332px] pt-2 bg-[var(--bg-surface-neutral)] rounded-xl relative inline-flex flex-col justify-start items-start gap-3 overflow-hidden shrink-0',
+  'w-[332px] pt-2 bg-[var(--bg-surface-neutral)] rounded-(--radius-xl) relative inline-flex flex-col justify-start items-start gap-3 overflow-hidden shrink-0',
   !isPaddingBottomRemoved.value && 'pb-4',
 ]);
 </script>
@@ -65,7 +65,7 @@ const asideClasses = computed(() => [
 
             <button
               type="button"
-              class="h-6 py-1 rounded-[32px] flex justify-start items-center gap-1"
+              class="h-6 py-1 rounded-(--radius-4xl) flex justify-start items-center gap-1"
               aria-label="Показать или скрыть календарь расписания обработки"
               @click="toggleCalendar"
             >
@@ -146,7 +146,7 @@ const asideClasses = computed(() => [
           class="flex select-none touch-none p-0.5 bg-transparent w-1.5 absolute right-1 top-0 bottom-0 transition-colors hover:bg-black/5"
           orientation="vertical"
         >
-          <ScrollAreaThumb class="flex-1 bg-[var(--text-secondary)] opacity-30 rounded-full" />
+          <ScrollAreaThumb class="flex-1 bg-[var(--text-secondary)] opacity-30 rounded-(--radius-full)" />
         </ScrollAreaScrollbar>
       </ScrollAreaRoot>
     </div>

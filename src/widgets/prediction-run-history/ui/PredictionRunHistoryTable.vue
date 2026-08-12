@@ -38,7 +38,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 </script>
 
 <template>
-  <div class="w-full overflow-clip rounded-[var(--radius-md)] border border-(--border-default)">
+  <div class="w-full overflow-clip rounded-(--radius-xl) border border-(--border-default)">
     <!-- HEADER -->
     <div class="flex w-full items-center">
       <button
@@ -193,7 +193,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
         <div class="flex h-11 w-30 shrink-0 items-center border-r border-(--border-default) px-4">
           <div
-            class="inline-flex h-5.75 items-center gap-1 rounded-full py-1 pl-1.5 pr-2"
+            class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) py-1 pl-1.5 pr-2"
             :class="item.status === 'ready' ? 'bg-(--bg-badge-success)' : 'bg-(--bg-badge-danger)'"
           >
             <CircleCheck
@@ -216,7 +216,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
           <button
             v-if="item.isDownloadable"
             type="button"
-            class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
+            class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
             @click="$emit('download', item)"
           >
             <Download class="size-4" />

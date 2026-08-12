@@ -28,7 +28,7 @@ const tagStyles = computed(() => {
 
 <template>
   <div
-    class="flex items-center gap-1.5 p-[4px_4px_4px_8px] bg-(--card) select-none box-border border border-(--border-default) rounded-(--lg,var(--radius-sm))"
+    class="flex items-center gap-1.5 p-[4px_4px_4px_8px] bg-(--card) select-none box-border border border-(--border-default) rounded-(--radius-lg)"
   >
     <!-- Текст названия источника -->
     <span class="font-sans text-sm font-normal leading-[143%] text-(--text-primary)">
@@ -38,7 +38,7 @@ const tagStyles = computed(() => {
     <!-- Тег статуса -->
     <div
       :style="tagStyles"
-      class="flex h-6 max-h-6 items-center justify-center gap-1 px-1.5 py-1 rounded-sm backdrop-blur-[calc(var(--blur,0px)/2)] box-border"
+      class="flex h-6 max-h-6 items-center justify-center gap-1 px-1.5 py-1 rounded-(--radius-sm) backdrop-blur-[calc(var(--blur,0px)/2)] box-border"
     >
       <div class="relative w-3.5 h-3.5 flex items-center justify-center shrink-0">
         <Hexagon class="w-full h-full text-current" :stroke-width="2.2" />
@@ -51,7 +51,7 @@ const tagStyles = computed(() => {
         />
 
         <!-- Точка для неактивного состояния -->
-        <span v-else class="absolute w-0.75 h-0.75 rounded-full bg-current" />
+        <span v-else class="absolute w-0.75 h-0.75 rounded-(--radius-full) bg-current" />
       </div>
 
       <!-- Текст статуса -->

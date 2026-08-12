@@ -64,7 +64,7 @@ function handlePageSizeChange(value: unknown) {
 
 <template>
   <div
-    class="flex h-12 w-full items-center justify-between rounded-xl bg-(--bg-surface-neutral) px-6 mt-2 self-stretch border border-(--border-subtle) select-none"
+    class="flex h-12 w-full items-center justify-between rounded-(--radius-xl) bg-(--bg-surface-neutral) px-6 mt-2 self-stretch border border-(--border-subtle) select-none"
   >
     <!-- Левая часть: Количество строк -->
     <div
@@ -89,7 +89,7 @@ function handlePageSizeChange(value: unknown) {
           @update:model-value="handlePageSizeChange"
         >
           <SelectTrigger
-            class="flex items-center gap-1.5 rounded-lg bg-(--muted) px-2.5 py-1 outline-hidden hover:bg-(--muted-hover-soft) data-[state=open]:bg-(--muted-hover-soft) cursor-pointer transition-colors"
+            class="flex items-center gap-1.5 rounded-(--radius-lg) bg-(--muted) px-2.5 py-1 outline-hidden hover:bg-(--muted-hover-soft) data-[state=open]:bg-(--muted-hover-soft) cursor-pointer transition-colors"
           >
             <SelectValue class="font-sans text-xs font-medium text-(--text-primary)" />
             <ChevronDown class="size-3 text-(--text-primary)" stroke-width="2.5" />
@@ -99,14 +99,14 @@ function handlePageSizeChange(value: unknown) {
             <SelectContent
               position="popper"
               :side-offset="4"
-              class="z-50 min-w-(--radix-select-trigger-width) overflow-hidden rounded-xl border border-(--border-subtle) bg-(--surface) p-1 shadow-(--shadow-panel) transition-[opacity,transform] duration-150 starting:scale-95 starting:opacity-0"
+              class="z-50 min-w-(--radix-select-trigger-width) overflow-hidden rounded-(--radius-xl) border border-(--border-subtle) bg-(--surface) p-1 shadow-(--shadow-panel) transition-[opacity,transform] duration-150 starting:scale-95 starting:opacity-0"
             >
               <SelectViewport class="flex flex-col gap-0.5">
                 <SelectItem
                   v-for="size in PAGE_SIZE_OPTIONS"
                   :key="size"
                   :value="String(size)"
-                  class="flex h-8 cursor-pointer items-center justify-center rounded-lg font-sans text-xs font-medium text-(--text-primary) outline-none data-highlighted:bg-(--muted) data-[state=checked]:bg-(--muted)"
+                  class="flex h-8 cursor-pointer items-center justify-center rounded-(--radius-lg) font-sans text-xs font-medium text-(--text-primary) outline-none data-highlighted:bg-(--muted) data-[state=checked]:bg-(--muted)"
                 >
                   <SelectItemText>{{ size }}</SelectItemText>
                 </SelectItem>
@@ -121,7 +121,7 @@ function handlePageSizeChange(value: unknown) {
         <button
           type="button"
           :disabled="currentPage === 1"
-          class="flex size-8 items-center justify-center rounded-lg text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
+          class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
           @click="handlePrevPage"
         >
           <ChevronLeft class="size-4" stroke-width="2.5" />
@@ -130,7 +130,7 @@ function handlePageSizeChange(value: unknown) {
         <template v-for="(item, index) in paginationRange" :key="`${item}-${index}`">
           <span
             v-if="item === 'ellipsis'"
-            class="flex h-8 min-w-8 items-center justify-center rounded-lg px-3 py-1.5 font-sans text-sm font-medium text-(--text-secondary) select-none"
+            class="flex h-8 min-w-8 items-center justify-center rounded-(--radius-lg) px-3 py-1.5 font-sans text-sm font-medium text-(--text-secondary) select-none"
           >
             …
           </span>
@@ -138,7 +138,7 @@ function handlePageSizeChange(value: unknown) {
           <button
             v-else
             type="button"
-            class="flex h-8 min-w-8 items-center justify-center rounded-lg px-3 py-1.5 font-sans text-sm font-medium normal-case transition-colors cursor-pointer hover:bg-(--muted-hover-soft) focus-visible:outline-none"
+            class="flex h-8 min-w-8 items-center justify-center rounded-(--radius-lg) px-3 py-1.5 font-sans text-sm font-medium normal-case transition-colors cursor-pointer hover:bg-(--muted-hover-soft) focus-visible:outline-none"
             :class="
               item === currentPage
                 ? 'bg-(--muted) text-(--text-primary)'
@@ -153,7 +153,7 @@ function handlePageSizeChange(value: unknown) {
         <button
           type="button"
           :disabled="currentPage >= totalPages"
-          class="flex size-8 items-center justify-center rounded-lg text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
+          class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
           @click="handleNextPage"
         >
           <ChevronRight class="size-4" stroke-width="2.5" />

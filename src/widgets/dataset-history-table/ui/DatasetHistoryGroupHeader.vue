@@ -48,7 +48,7 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
     <div class="flex gap-1">
       <div class="flex h-full shrink-0 items-center">
         <div
-          class="flex h-5.75 items-center gap-0.5 rounded-full bg-(--muted) pl-1.5 pr-2 py-1 select-none"
+          class="flex h-5.75 items-center gap-0.5 rounded-(--radius-full) bg-(--muted) pl-1.5 pr-2 py-1 select-none"
         >
           <PieChart class="size-3.5 shrink-0 text-(--text-primary)" stroke-width="2" />
           <span
@@ -61,7 +61,7 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
 
       <div class="flex h-full shrink-0 items-center">
         <div
-          class="flex h-5.75 items-center gap-0.5 rounded-full bg-(--muted) pl-1.5 pr-2 py-1 select-none"
+          class="flex h-5.75 items-center gap-0.5 rounded-(--radius-full) bg-(--muted) pl-1.5 pr-2 py-1 select-none"
         >
           <FileText class="size-3.5 shrink-0 text-(--text-primary)" stroke-width="2" />
           <span

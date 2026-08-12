@@ -17,8 +17,8 @@ const email = computed(() => userStore.user?.email ?? '');
 <template>
   <AppDropdown align="end" :side-offset="8">
     <template #trigger>
-      <button type="button" class="flex size-8 shrink-0 items-center justify-center rounded-full">
-        <img src="https://i.pravatar.cc/32" alt="avatar" class="size-8 rounded-full" />
+      <button type="button" class="flex size-8 shrink-0 items-center justify-center rounded-(--radius-full)">
+        <img src="https://i.pravatar.cc/32" alt="avatar" class="size-8 rounded-(--radius-full)" />
       </button>
     </template>
 

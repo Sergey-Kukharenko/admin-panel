@@ -92,7 +92,7 @@ const detailsRows = computed(() => {
       >
         <DialogContent
           v-if="open"
-          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-md bg-(--background) border border-(--border-default) shadow-(--shadow-panel-short) focus:outline-none overflow-hidden"
+          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-(--radius-md) bg-(--background) border border-(--border-default) shadow-(--shadow-panel-short) focus:outline-none overflow-hidden"
         >
           <!-- Header -->
           <header

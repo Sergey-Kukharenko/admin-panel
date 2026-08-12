@@ -5,7 +5,7 @@ defineOptions({
 </script>
 
 <template>
-  <div class="flex w-full items-center rounded-xl bg-(--bg-surface-neutral) pl-6 pr-2 self-stretch">
+  <div class="flex w-full items-center rounded-(--radius-xl) bg-(--bg-surface-neutral) pl-6 pr-2 self-stretch">
     <!-- 1. Ячейка: НАИМЕНОВАНИЕ -->
     <div class="flex h-9 flex-1 items-center gap-1.5 border-r border-(--border-subtle) pl-7 pr-4">
       <span

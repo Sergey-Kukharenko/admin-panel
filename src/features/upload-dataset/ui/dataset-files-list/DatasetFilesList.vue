@@ -73,7 +73,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
         'flex min-h-8 items-start self-stretch bg-transparent transition-colors duration-150 ease-in-out w-full',
         item.type === 'upload' && isUploading(item.upload)
           ? 'pr-2 pl-0 py-0.5'
-          : 'pl-1 pr-2 py-1.5 gap-2 hover:bg-(--muted) rounded-sm group',
+          : 'pl-1 pr-2 py-1.5 gap-2 hover:bg-(--muted) rounded-(--radius-sm) group',
       ]"
     >
       <template v-if="item.type === 'file'">
@@ -100,7 +100,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
 
       <template v-else-if="isUploading(item.upload)">
         <div
-          class="relative flex flex-1 flex-col items-start justify-center rounded-md bg-(--muted) overflow-hidden py-1 min-h-[35px] w-full"
+          class="relative flex flex-1 flex-col items-start justify-center rounded-(--radius-md) bg-(--muted) overflow-hidden py-1 min-h-[35px] w-full"
         >
           <div class="flex w-full items-center justify-between gap-2 z-10 self-stretch pl-2 pr-3">
             <div class="flex items-center gap-2 min-w-0">
@@ -124,9 +124,9 @@ const getProgressStyle = (upload: DatasetUpload) => ({
           </div>
 
           <div class="w-full mt-auto z-10 self-stretch pl-7.5 pr-3 pb-px">
-            <div class="h-0.5 w-full rounded-full bg-(--progress-track)">
+            <div class="h-0.5 w-full rounded-(--radius-full) bg-(--progress-track)">
               <div
-                class="h-full rounded-full bg-(--progress-fill) transition-all duration-75 ease-linear"
+                class="h-full rounded-(--radius-full) bg-(--progress-fill) transition-all duration-75 ease-linear"
                 :style="getProgressStyle(item.upload)"
               />
             </div>

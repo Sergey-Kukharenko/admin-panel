@@ -22,7 +22,7 @@ defineOptions({
 
 <template>
   <div
-    class="relative flex w-53.5 flex-col items-start justify-center gap-4 rounded-xl bg-(--bg-surface-secondary) px-3 pt-4 pb-3 shadow-(--shadow-sidebar-banner)"
+    class="relative flex w-53.5 flex-col items-start justify-center gap-4 rounded-(--radius-xl) bg-(--bg-surface-secondary) px-3 pt-4 pb-3 shadow-(--shadow-sidebar-banner)"
   >
     <!-- Кнопка закрытия -->
     <AppButton
@@ -38,7 +38,7 @@ defineOptions({
     <!-- Кнопка контента -->
     <button
       type="button"
-      class="flex w-full flex-col items-start gap-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring) rounded-xl"
+      class="flex w-full flex-col items-start gap-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ring) rounded-(--radius-xl)"
       @click="emit('click')"
     >
       <div v-if="$slots.icon" class="size-12 shrink-0">

@@ -32,10 +32,10 @@ const monthRows = computed(() => {
 
 <template>
   <div
-    class="absolute right-4 top-12 z-10 w-[180px] flex flex-col gap-0.5 p-1 rounded-xl bg-(--surface) shadow-(--shadow-panel) backdrop-blur-floating-panel animate-in fade-in-50 zoom-in-95 duration-100"
+    class="absolute right-4 top-12 z-10 w-[180px] flex flex-col gap-0.5 p-1 rounded-(--radius-xl) bg-(--surface) shadow-(--shadow-panel) backdrop-blur-floating-panel animate-in fade-in-50 zoom-in-95 duration-100"
   >
     <div
-      class="w-full rounded-lg px-3 py-1.5 text-center text-[var(--text-primary)] text-sm font-medium leading-5"
+      class="w-full rounded-(--radius-lg) px-3 py-1.5 text-center text-[var(--text-primary)] text-sm font-medium leading-5"
     >
       {{ year }}
     </div>

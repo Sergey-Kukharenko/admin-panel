@@ -39,7 +39,7 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
         <template #trigger>
           <button
             type="button"
-            class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-(--border-default) px-3 py-1.5 transition-colors hover:bg-(--muted-hover)"
+            class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 py-1.5 transition-colors hover:bg-(--muted-hover)"
           >
             <span class="text-sm font-medium leading-5 text-[#18181b]">
               {{ selectedProductName || 'Все продукты' }}

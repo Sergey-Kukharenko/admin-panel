@@ -14,7 +14,7 @@ defineEmits<{
 
 <template>
   <aside
-    class="w-[332px] shrink-0 flex flex-col items-center justify-center gap-3 rounded-xl bg-[var(--bg-surface-neutral)] px-5 py-8 text-center"
+    class="w-[332px] shrink-0 flex flex-col items-center justify-center gap-3 rounded-(--radius-xl) bg-[var(--bg-surface-neutral)] px-5 py-8 text-center"
   >
     <AlertOctagon class="size-5 text-(--danger-failed)" stroke-width="2" />
     <p class="text-sm font-medium leading-5 text-(--text-primary)">

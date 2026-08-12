@@ -79,7 +79,7 @@ const visibleCategories = computed(() => {
     <div
       v-for="category in visibleCategories"
       :key="category.id"
-      class="flex w-full flex-col overflow-hidden rounded-lg bg-(--surface)"
+      class="flex w-full flex-col overflow-hidden rounded-(--radius-lg) bg-(--surface)"
     >
       <!-- HEADER -->
       <div class="flex h-11 w-full items-center border-b border-(--border-default) pl-4">

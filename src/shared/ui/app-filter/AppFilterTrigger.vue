@@ -22,7 +22,7 @@ function onClear(event: MouseEvent) {
 <template>
   <button
     type="button"
-    class="flex h-8 min-h-8 max-h-8 items-center justify-center gap-1.5 rounded-sm border border-(--border-subtle) bg-(--surface) pl-3 pr-2 py-1.5 transition-colors hover:bg-(--muted)"
+    class="flex h-8 min-h-8 max-h-8 items-center justify-center gap-1.5 rounded-(--radius-sm) border border-(--border-subtle) bg-(--surface) pl-3 pr-2 py-1.5 transition-colors hover:bg-(--muted)"
   >
     <component :is="icon" class="size-4 shrink-0 text-(--text-secondary)" />
 
@@ -32,7 +32,7 @@ function onClear(event: MouseEvent) {
 
     <span
       v-if="count"
-      class="flex size-4 items-center justify-center rounded-full bg-(--primary) text-body-2xs font-medium text-(--primary-foreground)"
+      class="flex size-4 items-center justify-center rounded-(--radius-full) bg-(--primary) text-body-2xs font-medium text-(--primary-foreground)"
     >
       {{ count }}
     </span>

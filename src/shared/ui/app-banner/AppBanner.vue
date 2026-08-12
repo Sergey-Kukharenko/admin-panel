@@ -19,7 +19,7 @@ const emit = defineEmits<{
   <div
     role="button"
     tabindex="0"
-    class="flex items-center w-120 h-22 pr-4 gap-3 bg-(--bg-surface-accent) rounded-lg shadow-sm text-left overflow-hidden transition-all hover:bg-(--bg-surface-hover) cursor-pointer"
+    class="flex items-center w-120 h-22 pr-4 gap-3 bg-(--bg-surface-accent) rounded-(--radius-lg) shadow-sm text-left overflow-hidden transition-all hover:bg-(--bg-surface-hover) cursor-pointer"
     @click="emit('action')"
     @keydown.enter="emit('action')"
     @keydown.space.prevent="emit('action')"

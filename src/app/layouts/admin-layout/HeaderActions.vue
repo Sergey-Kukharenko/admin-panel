@@ -6,15 +6,15 @@ import { UserMenu } from '@/features/user-menu';
 
 <template>
   <div class="flex items-center gap-1">
-    <button type="button" class="flex size-8 items-center justify-center rounded-sm">
+    <button type="button" class="flex size-8 items-center justify-center rounded-(--radius-sm)">
       <Globe class="size-4 text-(--icon-tertiary)" />
     </button>
 
-    <button type="button" class="flex size-8 items-center justify-center rounded-sm">
+    <button type="button" class="flex size-8 items-center justify-center rounded-(--radius-sm)">
       <Info class="size-4 text-(--icon-tertiary)" />
     </button>
 
-    <button type="button" class="flex size-8 items-center justify-center rounded-sm">
+    <button type="button" class="flex size-8 items-center justify-center rounded-(--radius-sm)">
       <Bell class="size-4 text-(--icon-tertiary)" />
     </button>
 

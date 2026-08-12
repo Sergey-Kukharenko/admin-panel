@@ -5,7 +5,7 @@ defineOptions({
 </script>
 
 <template>
-  <div class="rounded-lg border border-(--border) bg-(--card)">
+  <div class="rounded-(--radius-lg) border border-(--border) bg-(--card)">
     <slot />
   </div>
 </template>

@@ -70,7 +70,7 @@ watch(showHistoryTable, (value) => emit('update:hasHistory', value), { immediate
 
         <div
           v-else-if="renderedGroups.length === 0"
-          class="w-full py-16 text-center text-sm text-(--text-secondary) border border-dashed border-(--border-subtle) rounded-xl"
+          class="w-full py-16 text-center text-sm text-(--text-secondary) border border-dashed border-(--border-subtle) rounded-(--radius-xl)"
         >
           Ничего не найдено
         </div>
@@ -80,7 +80,7 @@ watch(showHistoryTable, (value) => emit('update:hasHistory', value), { immediate
           <div
             v-for="group in renderedGroups"
             :key="group.id"
-            class="flex w-full flex-col items-center overflow-hidden rounded-xl bg-(--bg-surface-neutral) self-stretch mb-1"
+            class="flex w-full flex-col items-center overflow-hidden rounded-(--radius-xl) bg-(--bg-surface-neutral) self-stretch mb-1"
           >
             <div class="w-full transition-all duration-150">
               <DatasetHistoryGroupHeader

@@ -38,7 +38,7 @@ const selectedLabel = computed(() => {
     <DropdownMenuPortal>
       <DropdownMenuContent
         :side-offset="4"
-        class="w-53 rounded-xl bg-(--surface) p-1 shadow-(--shadow-panel)"
+        class="w-53 rounded-(--radius-xl) bg-(--surface) p-1 shadow-(--shadow-panel)"
       >
         <DropdownMenuRadioGroup
           :model-value="modelValue"
@@ -48,7 +48,7 @@ const selectedLabel = computed(() => {
             v-for="option in options"
             :key="option.value"
             :value="option.value"
-            class="flex h-8 cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 outline-none hover:bg-(--muted) data-highlighted:bg-(--muted)"
+            class="flex h-8 cursor-pointer items-center justify-between rounded-(--radius-xl) px-3 py-1.5 outline-none hover:bg-(--muted) data-highlighted:bg-(--muted)"
           >
             <span class="text-sm font-medium text-(--text-primary)">
               {{ option.label }}

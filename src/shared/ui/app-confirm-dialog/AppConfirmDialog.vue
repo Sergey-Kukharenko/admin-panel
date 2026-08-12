@@ -49,7 +49,7 @@ const emit = defineEmits<{
       >
         <DialogContent
           v-if="open"
-          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-lg bg-(--surface) border border-(--border) shadow-(--shadow-panel) focus:outline-none overflow-hidden"
+          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-(--radius-lg) bg-(--surface) border border-(--border) shadow-(--shadow-panel) focus:outline-none overflow-hidden"
         >
           <!-- Header с кнопкой close -->
           <header class="flex w-full px-5 pt-4 justify-end items-center">
@@ -62,7 +62,7 @@ const emit = defineEmits<{
           <div class="flex flex-col items-start gap-4 px-5 pb-2">
             <!-- Иконка предупреждения -->
             <div
-              class="flex size-11 p-3 justify-center items-center rounded-md bg-(--warning-muted)"
+              class="flex size-11 p-3 justify-center items-center rounded-(--radius-md) bg-(--warning-muted)"
             >
               <AlertOctagon class="size-5 text-(--warning-foreground) shrink-0" stroke-width="2" />
             </div>

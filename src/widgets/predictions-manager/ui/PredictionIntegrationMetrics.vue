@@ -13,7 +13,7 @@ defineProps<{
 
 <template>
   <div
-    class="self-stretch pl-3 pr-[7px] py-3 bg-[var(--background)] rounded-[var(--radius-sm)] flex items-center gap-[9px]"
+    class="self-stretch pl-3 pr-[7px] py-3 bg-[var(--background)] rounded-(--radius-lg) flex items-center gap-[9px]"
   >
     <!-- Колонка 1: Статус -->
     <div class="flex-1 min-w-0 flex flex-col justify-start items-start">
@@ -26,7 +26,7 @@ defineProps<{
       <div
         :data-status="integration.status"
         data-type="results"
-        class="max-h-5 rounded-sm inline-flex justify-end items-center gap-[3.25px]"
+        class="max-h-5 rounded-(--radius-sm) inline-flex justify-end items-center gap-[3.25px]"
       >
         <div class="size-3 relative overflow-hidden flex items-center justify-center">
           <img

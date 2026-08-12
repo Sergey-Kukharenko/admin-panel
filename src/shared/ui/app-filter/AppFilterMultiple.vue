@@ -45,13 +45,13 @@ function toggle(value: string) {
       <DropdownMenuContent
         :side-offset="4"
         align="start"
-        class="w-53 rounded-xl bg-(--surface) p-1 shadow-(--shadow-panel)"
+        class="w-53 rounded-(--radius-xl) bg-(--surface) p-1 shadow-(--shadow-panel)"
       >
         <DropdownMenuCheckboxItem
           v-for="option in options"
           :key="option.value"
           :checked="modelValue?.includes(option.value)"
-          class="flex h-8 items-center justify-between rounded-xl px-3 py-1.5 outline-none cursor-pointer hover:bg-(--muted) data-highlighted:bg-(--muted)"
+          class="flex h-8 items-center justify-between rounded-(--radius-xl) px-3 py-1.5 outline-none cursor-pointer hover:bg-(--muted) data-highlighted:bg-(--muted)"
           @select.prevent="toggle(option.value)"
         >
           <span class="text-sm font-medium text-(--text-primary)">
