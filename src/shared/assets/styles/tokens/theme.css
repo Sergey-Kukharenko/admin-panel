@@ -9,6 +9,12 @@
   --text-title-md: var(--text-title-md);
   --text-title-md--line-height: var(--text-title-md--line-height);
 
+  --text-title-sm: var(--text-title-sm);
+  --text-title-sm--line-height: var(--text-title-sm--line-height);
+
+  --text-title-xs: var(--text-title-xs);
+  --text-title-xs--line-height: var(--text-title-xs--line-height);
+
   --text-body-lg: var(--text-body-lg);
   --text-body-lg--line-height: var(--text-body-lg--line-height);
 
@@ -22,27 +28,31 @@
   --text-body-xs--line-height: var(--text-body-xs--line-height);
 
   --text-element-button: var(--text-element-button);
-  --text-element-button--line-height: var(
-    --text-element-button--line-height
-  );
+  --text-element-button--line-height: var(--text-element-button--line-height);
 
   --text-element-input: var(--text-element-input);
-  --text-element-input--line-height: var(
-    --text-element-input--line-height
-  );
+  --text-element-input--line-height: var(--text-element-input--line-height);
 
   --text-element-badge: var(--text-element-badge);
-  --text-element-badge--line-height: var(
-    --text-element-badge--line-height
-  );
+  --text-element-badge--line-height: var(--text-element-badge--line-height);
 
   --text-element-tag: var(--text-element-tag);
-  --text-element-tag--line-height: var(
-    --text-element-tag--line-height
-  );
+  --text-element-tag--line-height: var(--text-element-tag--line-height);
 
   --text-body-2xs: var(--text-body-2xs);
   --text-body-2xs--line-height: var(--text-body-2xs--line-height);
+
+  --text-element-accent: var(--text-element-accent);
+  --text-element-accent--line-height: var(--text-element-accent--line-height);
+
+  --text-element-date-number: var(--text-element-date-number);
+  --text-element-date-number--line-height: var(--text-element-date-number--line-height);
+
+  --text-element-small-caption: var(--text-element-small-caption);
+  --text-element-small-caption--line-height: var(--text-element-small-caption--line-height);
+
+  --text-element-counter: var(--text-element-counter);
+  --text-element-counter--line-height: var(--text-element-counter--line-height);
 
   --blur-overlay: var(--blur-overlay);
   --blur-floating-panel: var(--blur-floating-panel);

@@ -22,7 +22,7 @@ defineProps<{
       </div>
 
       <div
-        class="text-center justify-start font-mono text-[var(--text-primary)] text-lg font-normal leading-5"
+        class="text-center justify-start font-mono text-[var(--text-primary)] text-element-date-number font-normal"
       >
         {{ item.dayOfMonth }}
       </div>

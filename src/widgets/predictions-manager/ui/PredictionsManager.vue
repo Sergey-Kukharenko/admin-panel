@@ -27,7 +27,7 @@ const { groupedIntegrations, hasData, isLoading, isError, refetch } = usePredict
       >
         <header class="w-full inline-flex justify-start items-center gap-1">
           <h2
-            class="justify-start font-mono text-xs font-medium uppercase leading-5 text-[var(--text-secondary)]"
+            class="justify-start font-mono text-element-tag font-medium uppercase text-[var(--text-secondary)]"
           >
             {{ categoryName }}
           </h2>

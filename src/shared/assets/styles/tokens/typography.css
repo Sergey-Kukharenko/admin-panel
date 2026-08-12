@@ -5,13 +5,7 @@
 
   --font-geist: 'Geist', 'Inter', system-ui, sans-serif;
   --font-family-mono:
-    'Geist Mono',
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    monospace;
+    'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* ==========================================================================
      Font Weight
@@ -19,6 +13,7 @@
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
+  --font-weight-semibold: 600;
 
   /* ==========================================================================
      Titles
@@ -38,6 +33,11 @@
 
   --text-title-sm: 1.125rem;
   --text-title-sm--line-height: 1.5rem;
+
+  /* 16 / 24 */
+
+  --text-title-xs: 1rem;
+  --text-title-xs--line-height: 1.5rem;
 
   /* ==========================================================================
      Body
@@ -87,8 +87,28 @@
   --text-element-badge: 0.75rem;
   --text-element-badge--line-height: 1rem;
 
-  /* Tags 12 / 16 */
+  /* Tags 12 / 20, mono, uppercase */
 
   --text-element-tag: 0.75rem;
-  --text-element-tag--line-height: 1rem;
+  --text-element-tag--line-height: 1.25rem;
+
+  /* Accent 32 / 32 */
+
+  --text-element-accent: 2rem;
+  --text-element-accent--line-height: 2rem;
+
+  /* Date/number 18 / 20, mono */
+
+  --text-element-date-number: 1.125rem;
+  --text-element-date-number--line-height: 1.25rem;
+
+  /* Small caption 10 / 20, mono, uppercase */
+
+  --text-element-small-caption: 0.625rem;
+  --text-element-small-caption--line-height: 1.25rem;
+
+  /* Counter 10 / 12, semibold */
+
+  --text-element-counter: 0.625rem;
+  --text-element-counter--line-height: 0.75rem;
 }

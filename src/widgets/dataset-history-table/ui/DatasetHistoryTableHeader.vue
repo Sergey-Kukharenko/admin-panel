@@ -9,7 +9,7 @@ defineOptions({
     <!-- 1. Ячейка: НАИМЕНОВАНИЕ -->
     <div class="flex h-9 flex-1 items-center gap-1.5 border-r border-(--border-subtle) pl-7 pr-4">
       <span
-        class="font-mono text-xs font-medium uppercase text-(--text-secondary) leading-5 select-none"
+        class="font-mono text-element-tag font-medium uppercase text-(--text-secondary) select-none"
       >
         Наименование
       </span>
@@ -20,7 +20,7 @@ defineOptions({
       class="flex h-9 w-40 items-center justify-between gap-1.5 border-r border-(--border-subtle) pl-4 pr-3 text-left"
     >
       <span
-        class="font-mono text-xs font-medium uppercase text-(--text-secondary) leading-5 select-none"
+        class="font-mono text-element-tag font-medium uppercase text-(--text-secondary) select-none"
       >
         Объём строк
       </span>
@@ -29,7 +29,7 @@ defineOptions({
     <!-- 3. Ячейка: СТАТУС -->
     <div class="flex h-9 w-40 items-center pl-4 pr-3 text-left">
       <span
-        class="font-mono text-xs font-medium uppercase text-(--text-secondary) leading-5 select-none"
+        class="font-mono text-element-tag font-medium uppercase text-(--text-secondary) select-none"
       >
         Статус
       </span>

@@ -55,7 +55,7 @@ const tagStyles = computed(() => {
       </div>
 
       <!-- Текст статуса -->
-      <span class="font-mono text-xs font-medium leading-5 uppercase tracking-wide">
+      <span class="font-mono text-element-tag font-medium uppercase tracking-wide">
         {{ statusText }}
       </span>
     </div>

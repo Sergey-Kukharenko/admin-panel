@@ -52,7 +52,7 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
         >
           <PieChart class="size-3.5 shrink-0 text-(--text-primary)" stroke-width="2" />
           <span
-            class="font-mono text-xs font-medium uppercase text-(--text-primary) leading-5 pl-0.5"
+            class="font-mono text-element-tag font-medium uppercase text-(--text-primary) pl-0.5"
           >
             {{ uploadedCount }}/{{ totalCount }}
           </span>
@@ -65,7 +65,7 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
         >
           <FileText class="size-3.5 shrink-0 text-(--text-primary)" stroke-width="2" />
           <span
-            class="font-mono text-xs font-medium uppercase text-(--text-primary) leading-5 pl-0.5"
+            class="font-mono text-element-tag font-medium uppercase text-(--text-primary) pl-0.5"
           >
             Источник: {{ source }}
           </span>
