@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckCircle2, Circle, Trash2, XCircle } from 'lucide-vue-next';
+import { CheckCircle2, Trash2, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import type { DatasetFile, DatasetUpload } from '@/entities/dataset';
@@ -135,13 +135,25 @@ const getProgressStyle = (upload: DatasetUpload) => ({
       </template>
 
       <template v-else-if="isQueued(item.upload)">
-        <div class="shrink-0 flex items-center justify-center h-5">
-          <Circle class="size-3.5 text-(--icon-muted)" :stroke-width="1.5" />
+        <div class="shrink-0 flex items-center justify-center pt-0.75 w-4 h-4">
+          <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
         </div>
 
-        <span class="truncate text-sm font-medium text-(--text-primary) leading-5 select-none">
-          {{ item.upload.source.name }}
-        </span>
+        <div class="flex flex-col items-start flex-1 min-w-0">
+          <span
+            class="text-sm font-medium leading-5 truncate w-full select-none text-(--text-primary)"
+          >
+            {{ item.upload.source.name }}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          class="size-4 aspect-square flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer mt-0.5"
+          @click="emit('remove', item.upload.id)"
+        >
+          <Trash2 class="size-4 aspect-square" stroke-width="2" />
+        </button>
       </template>
 
       <template v-else-if="isError(item.upload)">

@@ -23,7 +23,7 @@ const emit = defineEmits<{
 }>();
 
 const uploadDatasetStore = useUploadDatasetStore();
-const { templates, filesMap, uploadsMap } = storeToRefs(uploadDatasetStore);
+const { templates, filesMap, uploadsMap, isSubmitting } = storeToRefs(uploadDatasetStore);
 
 onMounted(() => {
   uploadDatasetStore.init();
@@ -39,11 +39,19 @@ const templatesWithFiles = computed(() => {
 });
 
 const totalUploadedFiles = computed(() => {
-  return Object.values(filesMap.value).reduce((acc, files) => acc + files.length, 0);
+  const uploadedCount = Object.values(filesMap.value).reduce((acc, files) => acc + files.length, 0);
+  const queuedCount = Object.values(uploadsMap.value).reduce(
+    (acc, uploads) => acc + uploads.filter((upload) => upload.status !== 'error').length,
+    0,
+  );
+
+  return uploadedCount + queuedCount;
 });
 
 const hasValidFiles = computed(() => {
-  return Object.values(filesMap.value).some((files) => files.length > 0);
+  return Object.values(uploadsMap.value).some((uploads) =>
+    uploads.some((upload) => upload.status === 'queued'),
+  );
 });
 
 const handleUpload = (templateId: string, uploadedFiles: File[]) => {
@@ -74,8 +82,11 @@ const handleDrawerSubmit = () => {
   }
 };
 
-const handleFinalConfirm = () => {
+const handleFinalConfirm = async () => {
   isConfirmOpen.value = false;
+
+  await uploadDatasetStore.submitQueuedFiles();
+
   uploadDatasetStore.resetAll();
   emit('submit');
   emit('close');
@@ -127,7 +138,8 @@ const handleFinalConfirm = () => {
 
     <template #footer>
       <DatasetUploadFooter
-        :disabled="!hasValidFiles"
+        :disabled="!hasValidFiles || isSubmitting"
+        :submitting="isSubmitting"
         @cancel="emit('close')"
         @submit="handleDrawerSubmit"
       />

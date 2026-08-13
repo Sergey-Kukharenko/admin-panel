@@ -34,6 +34,7 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
   const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
   const filesMap = ref<SavedFilesState>(readSavedFiles());
   const isCategoryUploading = ref<Record<string, boolean>>({});
+  const isSubmitting = ref(false);
 
   let isInitialized = false;
 
@@ -68,6 +69,8 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
     newFiles.forEach((file) => {
       const validationError = getDatasetFileValidationError(file);
 
+      // Добавление файла — чисто локальная операция, ничего не читается и не
+      // грузится: реальная отправка на бэк стартует только из submitQueuedFiles.
       currentUploads.push({
         id: crypto.randomUUID(),
         source: file,
@@ -76,11 +79,9 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
         error: validationError,
       });
     });
-
-    processQueue(templateId);
   }
 
-  async function processQueue(templateId: string) {
+  async function processQueue(templateId: string): Promise<void> {
     if (isCategoryUploading.value[templateId]) {
       return;
     }
@@ -139,7 +140,18 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
 
     isCategoryUploading.value[templateId] = false;
 
-    processQueue(templateId);
+    await processQueue(templateId);
+  }
+
+  /** Отправляет на бэк все файлы, добавленные локально (по клику на кнопку в футере) */
+  async function submitQueuedFiles() {
+    isSubmitting.value = true;
+
+    try {
+      await Promise.all(Object.keys(uploadsMap.value).map((templateId) => processQueue(templateId)));
+    } finally {
+      isSubmitting.value = false;
+    }
   }
 
   function removeFile(fileId: string) {
@@ -181,11 +193,13 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
     templates,
     filesMap,
     uploadsMap,
+    isSubmitting,
     init,
     addFiles,
     removeFile,
     clearTemplateFiles,
     resetAll,
     downloadTemplateFile,
+    submitQueuedFiles,
   };
 });

@@ -39,7 +39,10 @@ const emit = defineEmits<{
 const inputRef = ref<HTMLInputElement>();
 
 const files = computed(() => props.template.files ?? []);
-const addedFilesCount = computed(() => files.value.length);
+const nonErrorUploads = computed(() =>
+  props.uploads.filter((upload) => upload.status !== 'error'),
+);
+const addedFilesCount = computed(() => files.value.length + nonErrorUploads.value.length);
 const hasFiles = computed(() => files.value.length > 0);
 const hasUploads = computed(() => props.uploads.length > 0);
 const hasListItems = computed(() => hasFiles.value || hasUploads.value);
@@ -119,7 +122,7 @@ const handleFilesChange = (event: Event) => {
             <span class="text-body-sm font-medium text-(--text-primary)">Скачать шаблон</span>
           </AppDropdownItem>
           <AppDropdownItem
-            :disabled="!hasFiles"
+            :disabled="!hasListItems"
             class="data-highlighted:bg-red-50!"
             @select="emit('clearAll')"
           >
