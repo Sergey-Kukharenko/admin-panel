@@ -1,10 +1,10 @@
-export const DATASET_MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
+export const DATASET_MAX_FILE_SIZE_BYTES = 512 * 1024 * 1024;
 
 export const DATASET_ALLOWED_FILE_EXTENSION = '.csv';
 export const DATASET_ALLOWED_MIME_TYPE = 'text/csv';
 
 export const DATASET_FILE_ERRORS = {
-  tooLarge: 'Размер превышает 500 МБ',
+  tooLarge: 'Размер превышает 512 МБ',
   empty: 'Файл не содержит данных',
   unsupportedFormat: 'Поддерживается только CSV',
 } as const;
