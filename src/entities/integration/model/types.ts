@@ -1,6 +1,6 @@
 export type IntegrationType = 'rest-api' | 's3';
 
-export type IntegrationStatus = 'not_configured';
+export type IntegrationStatus = 'not_configured' | 'pending' | 'connected';
 
 export interface IntegrationDetail {
   description: string;
@@ -16,7 +16,6 @@ export interface Integration {
   name: string;
   cardDescription: string;
   features: string[];
-  status: IntegrationStatus;
   recommended?: boolean;
   detail: IntegrationDetail;
 }

@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ArrowUpRight, FileText } from 'lucide-vue-next';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { toast } from 'vue-sonner';
 
 import type { Integration } from '@/entities/integration';
+import { useIntegrationsStore } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { RestApiConnectionModal } from '@/widgets/rest-api-connection-modal';
@@ -15,6 +18,9 @@ const props = defineProps<{
   integration: Integration;
 }>();
 
+const router = useRouter();
+const integrationsStore = useIntegrationsStore();
+
 const isConnectionModalOpen = ref(false);
 
 function requestConnection() {
@@ -24,6 +30,13 @@ function requestConnection() {
   }
 
   // TODO: заменить на реальный вызов API, когда появится backend-эндпоинт запроса подключения.
+}
+
+function handleConnectionRequestSubmit() {
+  isConnectionModalOpen.value = false;
+  integrationsStore.requestConnection(props.integration.type);
+  toast.success('Заявка успешно создана!');
+  router.push('/integrations');
 }
 </script>
 
@@ -66,6 +79,7 @@ function requestConnection() {
       v-if="integration.type === 'rest-api'"
       :open="isConnectionModalOpen"
       @close="isConnectionModalOpen = false"
+      @submit="handleConnectionRequestSubmit"
     />
   </div>
 </template>

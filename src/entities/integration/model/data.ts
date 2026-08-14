@@ -11,7 +11,6 @@ export const INTEGRATIONS: Integration[] = [
       'Готовность к реалтайм-обработке',
       'Безопасный обмен через короткоживущие токены',
     ],
-    status: 'not_configured',
     recommended: true,
     detail: {
       description: 'Прямая передача данных через HTTP API с поддержкой батч-загрузки и стриминга',
@@ -32,7 +31,6 @@ export const INTEGRATIONS: Integration[] = [
       'Бесшовная интеграция с существующим data lake',
       'Безопасное хранение с шифрованием данных',
     ],
-    status: 'not_configured',
     detail: {
       description: 'Файловый обмен данными через облачное хранилище Amazon S3 с поддержкой периодической выгрузки',
       emptyStateTitle: 'Интеграция не подключена',

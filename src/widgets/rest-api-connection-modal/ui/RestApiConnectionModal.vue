@@ -6,10 +6,10 @@ import { reactive, ref } from 'vue';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppCheckbox } from '@/shared/ui/app-checkbox';
 import { AppSwitch } from '@/shared/ui/app-switch';
+import { AppTooltip } from '@/shared/ui/app-tooltip';
 
 import type { ConnectionEnvironment } from '../model/constants';
 import { CONNECTION_PRODUCTS, ENVIRONMENT_OPTIONS } from '../model/constants';
-import InfoTooltip from './InfoTooltip.vue';
 
 defineOptions({
   name: 'RestApiConnectionModal',
@@ -21,6 +21,7 @@ defineProps<{
 
 const emit = defineEmits<{
   close: [];
+  submit: [];
 }>();
 
 const organization = ref('');
@@ -42,7 +43,7 @@ function addIpAddress() {
 
 function handleSubmit() {
   // TODO: заменить на реальный вызов API, когда появится backend-эндпоинт заявок на подключение.
-  emit('close');
+  emit('submit');
 }
 </script>
 
@@ -112,7 +113,7 @@ function handleSubmit() {
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-1">
                 <p class="text-sm font-medium text-(--text-primary)">Тип доступа</p>
-                <InfoTooltip
+                <AppTooltip
                   text="Выберите способ доступа к API. При ограничении по IP необходимо указать разрешенные IP-адреса."
                 />
               </div>
@@ -124,7 +125,7 @@ function handleSubmit() {
             <div class="flex flex-col gap-2">
               <div class="flex items-center gap-1">
                 <p class="text-sm font-medium text-(--text-primary)">IP-адреса сервера</p>
-                <InfoTooltip
+                <AppTooltip
                   text="Укажите IP-адреса серверов, которым будет разрешен доступ к API. Заполняется только при выборе доступа по IP."
                 />
               </div>
@@ -169,7 +170,7 @@ function handleSubmit() {
             <div class="flex flex-col gap-1">
               <div class="flex items-center gap-1">
                 <p class="text-sm font-medium text-(--text-primary)">Среда</p>
-                <InfoTooltip
+                <AppTooltip
                   text="Укажите среду, для которой необходимо создать подключение. Используйте Development для тестирования и Production для рабочего окружения."
                 />
               </div>
