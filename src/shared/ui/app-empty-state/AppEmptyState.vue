@@ -5,9 +5,10 @@ defineOptions({
   name: 'AppEmptyState',
 });
 
-defineProps<{
+const props = defineProps<{
   title: string;
   description?: string;
+  illustrationSrc?: string;
 }>();
 </script>
 
@@ -17,7 +18,7 @@ defineProps<{
   >
     <div class="mb-6 flex h-65 w-65 items-center justify-center overflow-hidden">
       <img
-        :src="emptyState"
+        :src="props.illustrationSrc ?? emptyState"
         alt="empty-state"
         class="h-full w-full object-contain"
         loading="lazy"

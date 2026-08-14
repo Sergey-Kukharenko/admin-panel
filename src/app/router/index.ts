@@ -4,6 +4,7 @@ import { useUserStore } from '@/entities/user';
 import { BillingPage } from '@/pages/billing-page';
 import { DashboardPage } from '@/pages/dashboard-page';
 import { DatasetsPage } from '@/pages/datasets-page';
+import { IntegrationDetailPage } from '@/pages/integration-detail-page';
 import { IntegrationsPage } from '@/pages/integrations-page';
 import { PredictionsPage } from '@/pages/predictions-page';
 
@@ -19,6 +20,11 @@ export const router = createRouter({
     {
       path: '/integrations',
       component: IntegrationsPage,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/integrations/:type',
+      component: IntegrationDetailPage,
       meta: { requiresAuth: true },
     },
     {
