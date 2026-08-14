@@ -98,6 +98,11 @@ export const useIntegrationsStore = defineStore('integrations', () => {
     return { secret, secretValue };
   }
 
+  function revokeApiSecret(type: IntegrationType, secretId: string) {
+    const secret = apiSecrets[type].find((item) => item.id === secretId);
+    if (secret) secret.status = 'revoked';
+  }
+
   return {
     statuses,
     apiSecrets,
@@ -106,5 +111,6 @@ export const useIntegrationsStore = defineStore('integrations', () => {
     getClientCredentials,
     getApiSecrets,
     createApiSecret,
+    revokeApiSecret,
   };
 });

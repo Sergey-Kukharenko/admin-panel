@@ -33,11 +33,13 @@ export interface ApiSecretProductAccess {
   readResults: boolean;
 }
 
+export type ApiSecretStatus = 'active' | 'revoked';
+
 export interface ApiSecret {
   id: string;
   name: string;
   environment: IntegrationEnvironment;
   productAccess: ApiSecretProductAccess[];
   createdAt: string;
-  status: 'active';
+  status: ApiSecretStatus;
 }

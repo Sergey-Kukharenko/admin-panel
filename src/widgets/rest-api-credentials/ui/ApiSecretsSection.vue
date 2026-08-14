@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ChevronDown, ChevronsUpDown, CircleCheck, Plus, Trash2 } from 'lucide-vue-next';
+import { ChevronDown, ChevronsUpDown, CircleCheck, CircleX, Plus, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
-import type { IntegrationType } from '@/entities/integration';
+import type { ApiSecret, IntegrationType } from '@/entities/integration';
 import {
   ENVIRONMENT_OPTIONS,
   formatPermissionsSummary,
@@ -11,6 +11,7 @@ import {
   useIntegrationsStore,
 } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 
 import CreateApiSecretModal from './CreateApiSecretModal.vue';
 import SaveApiSecretModal from './SaveApiSecretModal.vue';
@@ -29,6 +30,7 @@ const secrets = computed(() => integrationsStore.getApiSecrets(props.integration
 
 const isCreateModalOpen = ref(false);
 const pendingSecretValue = ref<string | null>(null);
+const secretPendingRevoke = ref<ApiSecret | null>(null);
 
 function environmentLabel(value: string) {
   return ENVIRONMENT_OPTIONS.find((option) => option.value === value)?.label ?? value;
@@ -44,8 +46,16 @@ function handleSaveModalClose() {
   toast.success('API secret успешно создан');
 }
 
-function revokeSecret() {
-  // TODO: реализовать после появления макета флоу «Отозвать client_secret».
+function requestRevoke(secret: ApiSecret) {
+  secretPendingRevoke.value = secret;
+}
+
+function confirmRevoke() {
+  if (!secretPendingRevoke.value) return;
+
+  integrationsStore.revokeApiSecret(props.integrationType, secretPendingRevoke.value.id);
+  secretPendingRevoke.value = null;
+  toast.success('API secret отозван');
 }
 </script>
 
@@ -135,18 +145,27 @@ function revokeSecret() {
         </div>
         <div class="flex h-11 w-31 items-center border-r border-(--border-default) px-4">
           <span
+            v-if="secret.status === 'active'"
             class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-success) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-success-alt)"
           >
             <CircleCheck class="size-3.5" />
             Активен
           </span>
+          <span
+            v-else
+            class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-danger) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-error)"
+          >
+            <CircleX class="size-3.5" />
+            Отозван
+          </span>
         </div>
         <div class="flex h-11 w-26.75 items-center px-4">
           <button
+            v-if="secret.status === 'active'"
             type="button"
             aria-label="Отозвать API secret"
             class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-            @click="revokeSecret"
+            @click="requestRevoke(secret)"
           >
             <Trash2 class="size-4" />
           </button>
@@ -165,6 +184,14 @@ function revokeSecret() {
       :open="pendingSecretValue !== null"
       :secret-value="pendingSecretValue ?? ''"
       @close="handleSaveModalClose"
+    />
+
+    <AppConfirmDialog
+      :open="secretPendingRevoke !== null"
+      :title="`Отозвать API secret «${secretPendingRevoke?.name}»?`"
+      description="Ключ перестанет работать сразу после отзыва. Это действие нельзя отменить."
+      @close="secretPendingRevoke = null"
+      @confirm="confirmRevoke"
     />
   </div>
 </template>
