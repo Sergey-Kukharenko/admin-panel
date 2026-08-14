@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { ArrowUpRight, FileText } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 import type { Integration } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
+import { RestApiConnectionModal } from '@/widgets/rest-api-connection-modal';
 
 defineOptions({
   name: 'IntegrationDetail',
 });
 
-defineProps<{
+const props = defineProps<{
   integration: Integration;
 }>();
 
+const isConnectionModalOpen = ref(false);
+
 function requestConnection() {
+  if (props.integration.type === 'rest-api') {
+    isConnectionModalOpen.value = true;
+    return;
+  }
+
   // TODO: заменить на реальный вызов API, когда появится backend-эндпоинт запроса подключения.
 }
 </script>
@@ -52,5 +61,11 @@ function requestConnection() {
         </template>
       </AppEmptyState>
     </div>
+
+    <RestApiConnectionModal
+      v-if="integration.type === 'rest-api'"
+      :open="isConnectionModalOpen"
+      @close="isConnectionModalOpen = false"
+    />
   </div>
 </template>
