@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ChevronRight, PlusCircle, X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
-import { reactive, ref } from 'vue';
+import { ref } from 'vue';
 
+import type { IntegrationEnvironment } from '@/entities/integration';
+import type { ProductAccessMap } from '@/entities/integration';
+import { EnvironmentTabs, INTEGRATION_PRODUCTS, ProductAccessTable } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppCheckbox } from '@/shared/ui/app-checkbox';
-import { AppSwitch } from '@/shared/ui/app-switch';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
-
-import type { ConnectionEnvironment } from '../model/constants';
-import { CONNECTION_PRODUCTS, ENVIRONMENT_OPTIONS } from '../model/constants';
 
 defineOptions({
   name: 'RestApiConnectionModal',
@@ -29,11 +28,11 @@ const isPublicAccess = ref(false);
 const isIpRestricted = ref(false);
 const isIpSectionOpen = ref(true);
 const ipAddresses = ref<string[]>(['']);
-const environment = ref<ConnectionEnvironment>('production');
+const environment = ref<IntegrationEnvironment>('production');
 
-const productAccess = reactive<Record<string, { writeData: boolean; readResults: boolean }>>(
+const productAccess = ref<ProductAccessMap>(
   Object.fromEntries(
-    CONNECTION_PRODUCTS.map((product) => [product.id, { writeData: false, readResults: false }]),
+    INTEGRATION_PRODUCTS.map((product) => [product.id, { writeData: false, readResults: false }]),
   ),
 );
 
@@ -175,58 +174,13 @@ function handleSubmit() {
                 />
               </div>
 
-              <div class="flex items-center gap-0.5 rounded-(--radius-full) bg-(--bg-input) p-1">
-                <button
-                  v-for="option in ENVIRONMENT_OPTIONS"
-                  :key="option.value"
-                  type="button"
-                  class="flex-1 rounded-(--radius-xl) px-3 py-1.5 text-sm font-medium transition-colors"
-                  :class="
-                    environment === option.value
-                      ? 'bg-(--bg-surface-primary) text-(--text-primary) shadow-(--shadow-panel-short)'
-                      : 'text-(--text-secondary)'
-                  "
-                  @click="environment = option.value"
-                >
-                  {{ option.label }}
-                </button>
-              </div>
+              <EnvironmentTabs v-model="environment" />
             </div>
 
             <div class="flex flex-col gap-2 pb-4">
               <p class="text-sm font-medium text-(--text-primary)">Доступ к продуктам</p>
 
-              <div class="w-full overflow-hidden rounded-(--radius-lg) bg-(--bg-input)">
-                <div class="flex h-8 items-center gap-4 pl-3">
-                  <span class="w-48.5 font-mono text-xs font-medium uppercase text-(--text-secondary)">
-                    Продукт
-                  </span>
-                  <span class="flex-1 font-mono text-xs font-medium uppercase text-(--text-secondary)">
-                    Write data
-                  </span>
-                  <span class="w-28 text-right font-mono text-xs font-medium uppercase text-(--text-secondary)">
-                    Read results
-                  </span>
-                </div>
-
-                <div class="flex flex-col gap-1 p-1">
-                  <div
-                    v-for="product in CONNECTION_PRODUCTS"
-                    :key="product.id"
-                    class="flex h-9 items-center gap-4 rounded-(--radius-md) bg-(--bg-surface-primary) px-2"
-                  >
-                    <span class="w-48.5 text-sm text-(--text-primary)">{{ product.name }}</span>
-
-                    <span class="flex flex-1 justify-center">
-                      <AppSwitch v-model="productAccess[product.id]!.writeData" />
-                    </span>
-
-                    <span class="flex w-28 justify-center">
-                      <AppSwitch v-model="productAccess[product.id]!.readResults" />
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <ProductAccessTable v-model="productAccess" product-column-label="Продукт" />
             </div>
           </div>
 

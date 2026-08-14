@@ -1,4 +1,4 @@
-export const CONNECTION_PRODUCTS = [
+export const INTEGRATION_PRODUCTS = [
   { id: 'player-intelligence', name: 'Player Intelligence' },
   { id: 'recommender-system', name: 'Recommender System' },
 ];
@@ -8,4 +8,4 @@ export const ENVIRONMENT_OPTIONS = [
   { value: 'development', label: 'Development' },
 ] as const;
 
-export type ConnectionEnvironment = (typeof ENVIRONMENT_OPTIONS)[number]['value'];
+export type IntegrationEnvironment = (typeof ENVIRONMENT_OPTIONS)[number]['value'];

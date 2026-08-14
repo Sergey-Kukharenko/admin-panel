@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ArrowUpRight, FileText } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
 
@@ -9,6 +9,7 @@ import { useIntegrationsStore } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { RestApiConnectionModal } from '@/widgets/rest-api-connection-modal';
+import { RestApiCredentialsPanel } from '@/widgets/rest-api-credentials';
 
 defineOptions({
   name: 'IntegrationDetail',
@@ -20,6 +21,9 @@ const props = defineProps<{
 
 const router = useRouter();
 const integrationsStore = useIntegrationsStore();
+
+const status = computed(() => integrationsStore.getStatus(props.integration.type));
+const isConnected = computed(() => status.value === 'connected');
 
 const isConnectionModalOpen = ref(false);
 
@@ -61,7 +65,12 @@ function handleConnectionRequestSubmit() {
       </a>
     </div>
 
-    <div class="flex flex-1 items-center justify-center">
+    <RestApiCredentialsPanel
+      v-if="integration.type === 'rest-api' && isConnected"
+      :integration-type="integration.type"
+    />
+
+    <div v-else class="flex flex-1 items-center justify-center">
       <AppEmptyState
         :title="integration.detail.emptyStateTitle"
         :description="integration.detail.emptyStateDescription"

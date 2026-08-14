@@ -1,3 +1,5 @@
+import type { IntegrationEnvironment } from './constants';
+
 export type IntegrationType = 'rest-api' | 's3';
 
 export type IntegrationStatus = 'not_configured' | 'pending' | 'connected';
@@ -18,4 +20,24 @@ export interface Integration {
   features: string[];
   recommended?: boolean;
   detail: IntegrationDetail;
+}
+
+export interface ClientCredentials {
+  clientId: string;
+}
+
+export interface ApiSecretProductAccess {
+  productId: string;
+  productName: string;
+  writeData: boolean;
+  readResults: boolean;
+}
+
+export interface ApiSecret {
+  id: string;
+  name: string;
+  environment: IntegrationEnvironment;
+  productAccess: ApiSecretProductAccess[];
+  createdAt: string;
+  status: 'active';
 }

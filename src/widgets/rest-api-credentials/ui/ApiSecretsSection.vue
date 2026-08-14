@@ -1,0 +1,170 @@
+<script setup lang="ts">
+import { ChevronDown, ChevronsUpDown, CircleCheck, Plus, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
+
+import type { IntegrationType } from '@/entities/integration';
+import {
+  ENVIRONMENT_OPTIONS,
+  formatPermissionsSummary,
+  formatSecretDate,
+  useIntegrationsStore,
+} from '@/entities/integration';
+import { AppButton } from '@/shared/ui/app-button';
+
+import CreateApiSecretModal from './CreateApiSecretModal.vue';
+import SaveApiSecretModal from './SaveApiSecretModal.vue';
+
+defineOptions({
+  name: 'ApiSecretsSection',
+});
+
+const props = defineProps<{
+  integrationType: IntegrationType;
+}>();
+
+const integrationsStore = useIntegrationsStore();
+
+const secrets = computed(() => integrationsStore.getApiSecrets(props.integrationType));
+
+const isCreateModalOpen = ref(false);
+const pendingSecretValue = ref<string | null>(null);
+
+function environmentLabel(value: string) {
+  return ENVIRONMENT_OPTIONS.find((option) => option.value === value)?.label ?? value;
+}
+
+function handleSecretCreated(secretValue: string) {
+  isCreateModalOpen.value = false;
+  pendingSecretValue.value = secretValue;
+}
+
+function handleSaveModalClose() {
+  pendingSecretValue.value = null;
+  toast.success('API secret успешно создан');
+}
+
+function revokeSecret() {
+  // TODO: реализовать после появления макета флоу «Отозвать client_secret».
+}
+</script>
+
+<template>
+  <div class="flex flex-col gap-4">
+    <p class="text-base font-medium text-(--text-primary)">API Secrets</p>
+
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="flex h-8 items-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 text-sm font-medium text-(--foreground)"
+        >
+          Активные
+          <ChevronDown class="size-4" />
+        </button>
+        <button
+          type="button"
+          class="flex h-8 items-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 text-sm font-medium text-(--foreground)"
+        >
+          Все среды
+          <ChevronDown class="size-4" />
+        </button>
+      </div>
+
+      <AppButton size="small" @click="isCreateModalOpen = true">
+        <Plus class="size-4" />
+        Создать API secret
+      </AppButton>
+    </div>
+
+    <div class="w-full overflow-hidden rounded-(--radius-xl) border border-(--border-default)">
+      <div class="flex w-full items-center">
+        <div
+          class="flex h-9 flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+        >
+          Наименование
+          <ChevronsUpDown class="size-3.5" />
+        </div>
+        <div
+          class="flex h-9 w-35 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+        >
+          Среда
+          <ChevronsUpDown class="size-3.5" />
+        </div>
+        <div
+          class="flex h-9 w-81 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+        >
+          Права доступа
+          <ChevronsUpDown class="size-3.5" />
+        </div>
+        <div
+          class="flex h-9 w-37.5 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+        >
+          Создан
+          <ChevronsUpDown class="size-3.5" />
+        </div>
+        <div
+          class="flex h-9 w-31 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+        >
+          Статус
+          <ChevronsUpDown class="size-3.5" />
+        </div>
+        <div
+          class="flex h-9 w-26.75 items-center bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+        >
+          Действия
+        </div>
+      </div>
+
+      <div
+        v-for="secret in secrets"
+        :key="secret.id"
+        class="flex w-full items-center border-t border-(--border-default)"
+      >
+        <div class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+          {{ secret.name }}
+        </div>
+        <div class="flex h-11 w-35 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+          {{ environmentLabel(secret.environment) }}
+        </div>
+        <div class="flex h-11 w-81 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+          {{ formatPermissionsSummary(secret.productAccess) }}
+        </div>
+        <div class="flex h-11 w-37.5 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+          {{ formatSecretDate(secret.createdAt) }}
+        </div>
+        <div class="flex h-11 w-31 items-center border-r border-(--border-default) px-4">
+          <span
+            class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-success) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-success-alt)"
+          >
+            <CircleCheck class="size-3.5" />
+            Активен
+          </span>
+        </div>
+        <div class="flex h-11 w-26.75 items-center px-4">
+          <button
+            type="button"
+            aria-label="Отозвать API secret"
+            class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
+            @click="revokeSecret"
+          >
+            <Trash2 class="size-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <CreateApiSecretModal
+      :open="isCreateModalOpen"
+      :integration-type="integrationType"
+      @close="isCreateModalOpen = false"
+      @created="handleSecretCreated"
+    />
+
+    <SaveApiSecretModal
+      :open="pendingSecretValue !== null"
+      :secret-value="pendingSecretValue ?? ''"
+      @close="handleSaveModalClose"
+    />
+  </div>
+</template>
