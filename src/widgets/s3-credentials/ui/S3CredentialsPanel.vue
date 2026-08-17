@@ -4,6 +4,7 @@ import {
   ChevronDown,
   ChevronsUpDown,
   CircleCheck,
+  CircleX,
   Copy,
   Pause,
   Plus,
@@ -53,6 +54,7 @@ const isAtSecretLimit = computed(() => activeSecretsCount.value >= MAX_ACTIVE_KE
 const isCreateModalOpen = ref(false);
 const pendingSecretValue = ref<string | null>(null);
 const secretPendingDeactivate = ref<ApiSecret | null>(null);
+const secretPendingRevoke = ref<ApiSecret | null>(null);
 
 function environmentLabel(value: string) {
   return ENVIRONMENT_OPTIONS.find((option) => option.value === value)?.label ?? value;
@@ -90,8 +92,22 @@ function activateKeySecret(secret: ApiSecret) {
   toast.success('Key Secret активирован');
 }
 
-function deleteKeySecret() {
-  // TODO: реализовать после появления макета флоу удаления Key Secret.
+function requestRevoke(secret: ApiSecret) {
+  secretPendingRevoke.value = secret;
+}
+
+const revokeDescription = computed(() =>
+  secretPendingRevoke.value?.status === 'active'
+    ? 'Ключ сейчас активен и после отзыва сразу перестанет работать. Восстановить его будет невозможно.'
+    : 'После отзыва восстановить ключ будет невозможно.',
+);
+
+function confirmRevoke() {
+  if (!secretPendingRevoke.value) return;
+
+  integrationsStore.revokeApiSecret(props.integrationType, secretPendingRevoke.value.id);
+  secretPendingRevoke.value = null;
+  toast.success('Key Secret отозван');
 }
 </script>
 
@@ -218,40 +234,49 @@ function deleteKeySecret() {
               Активен
             </span>
             <span
-              v-else
+              v-else-if="secret.status === 'inactive'"
               class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--muted) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-tertiary)"
             >
               <Pause class="size-3.5" />
               Неактивен
             </span>
+            <span
+              v-else
+              class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-danger) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-error)"
+            >
+              <CircleX class="size-3.5" />
+              Отозван
+            </span>
           </div>
           <div class="flex h-11 w-45 items-center gap-1 px-4">
-            <button
-              v-if="secret.status === 'active'"
-              type="button"
-              aria-label="Деактивировать Key Secret"
-              class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-              @click="requestDeactivate(secret)"
-            >
-              <XCircle class="size-4" />
-            </button>
-            <button
-              v-else
-              type="button"
-              aria-label="Активировать Key Secret"
-              class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-              @click="activateKeySecret(secret)"
-            >
-              <CheckCircle2 class="size-4" />
-            </button>
-            <button
-              type="button"
-              aria-label="Удалить Key Secret"
-              class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-              @click="deleteKeySecret"
-            >
-              <Trash2 class="size-4" />
-            </button>
+            <template v-if="secret.status !== 'revoked'">
+              <button
+                v-if="secret.status === 'active'"
+                type="button"
+                aria-label="Деактивировать Key Secret"
+                class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
+                @click="requestDeactivate(secret)"
+              >
+                <XCircle class="size-4" />
+              </button>
+              <button
+                v-else
+                type="button"
+                aria-label="Активировать Key Secret"
+                class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
+                @click="activateKeySecret(secret)"
+              >
+                <CheckCircle2 class="size-4" />
+              </button>
+              <button
+                type="button"
+                aria-label="Отозвать Key Secret"
+                class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
+                @click="requestRevoke(secret)"
+              >
+                <Trash2 class="size-4" />
+              </button>
+            </template>
           </div>
         </div>
       </div>
@@ -279,6 +304,14 @@ function deleteKeySecret() {
       description="Ключ перестанет работать. Вы можете активировать его снова в любой момент."
       @close="secretPendingDeactivate = null"
       @confirm="confirmDeactivate"
+    />
+
+    <AppConfirmDialog
+      :open="secretPendingRevoke !== null"
+      :title="`Отозвать Key Secret «${secretPendingRevoke?.name}»?`"
+      :description="revokeDescription"
+      @close="secretPendingRevoke = null"
+      @confirm="confirmRevoke"
     />
   </div>
 </template>
