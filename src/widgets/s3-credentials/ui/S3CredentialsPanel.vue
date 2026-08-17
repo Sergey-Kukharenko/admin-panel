@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { ChevronDown, ChevronsUpDown, CircleCheck, Copy, Plus, Trash2, XCircle } from 'lucide-vue-next';
+import {
+  CheckCircle2,
+  ChevronDown,
+  ChevronsUpDown,
+  CircleCheck,
+  Copy,
+  Pause,
+  Plus,
+  Trash2,
+  XCircle,
+} from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
-import type { IntegrationType } from '@/entities/integration';
+import type { ApiSecret, IntegrationType } from '@/entities/integration';
 import {
   ConnectionStatusTag,
   ENVIRONMENT_OPTIONS,
@@ -12,6 +22,7 @@ import {
   useIntegrationsStore,
 } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
 
 import CreateKeySecretModal from './CreateKeySecretModal.vue';
@@ -41,6 +52,7 @@ const isAtSecretLimit = computed(() => activeSecretsCount.value >= MAX_ACTIVE_KE
 
 const isCreateModalOpen = ref(false);
 const pendingSecretValue = ref<string | null>(null);
+const secretPendingDeactivate = ref<ApiSecret | null>(null);
 
 function environmentLabel(value: string) {
   return ENVIRONMENT_OPTIONS.find((option) => option.value === value)?.label ?? value;
@@ -61,8 +73,21 @@ function handleSaveModalClose() {
   toast.success('Key secret успешно создан');
 }
 
-function revokeKeySecret() {
-  // TODO: реализовать после появления макета флоу отзыва Key Secret.
+function requestDeactivate(secret: ApiSecret) {
+  secretPendingDeactivate.value = secret;
+}
+
+function confirmDeactivate() {
+  if (!secretPendingDeactivate.value) return;
+
+  integrationsStore.deactivateApiSecret(props.integrationType, secretPendingDeactivate.value.id);
+  secretPendingDeactivate.value = null;
+  toast.success('Key Secret деактивирован');
+}
+
+function activateKeySecret(secret: ApiSecret) {
+  integrationsStore.activateApiSecret(props.integrationType, secret.id);
+  toast.success('Key Secret активирован');
 }
 
 function deleteKeySecret() {
@@ -194,19 +219,30 @@ function deleteKeySecret() {
             </span>
             <span
               v-else
-              class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-danger) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-error)"
+              class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--muted) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-tertiary)"
             >
-              Отозван
+              <Pause class="size-3.5" />
+              Неактивен
             </span>
           </div>
           <div class="flex h-11 w-45 items-center gap-1 px-4">
             <button
+              v-if="secret.status === 'active'"
               type="button"
-              aria-label="Отозвать Key Secret"
+              aria-label="Деактивировать Key Secret"
               class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-              @click="revokeKeySecret"
+              @click="requestDeactivate(secret)"
             >
               <XCircle class="size-4" />
+            </button>
+            <button
+              v-else
+              type="button"
+              aria-label="Активировать Key Secret"
+              class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
+              @click="activateKeySecret(secret)"
+            >
+              <CheckCircle2 class="size-4" />
             </button>
             <button
               type="button"
@@ -235,6 +271,14 @@ function deleteKeySecret() {
       warning-text="Ключ больше не будет показан. После закрытия этого окна восстановить ключ невозможно."
       :secret-value="pendingSecretValue ?? ''"
       @close="handleSaveModalClose"
+    />
+
+    <AppConfirmDialog
+      :open="secretPendingDeactivate !== null"
+      :title="`Деактивировать Key Secret «${secretPendingDeactivate?.name}»?`"
+      description="Ключ перестанет работать. Вы можете активировать его снова в любой момент."
+      @close="secretPendingDeactivate = null"
+      @confirm="confirmDeactivate"
     />
   </div>
 </template>

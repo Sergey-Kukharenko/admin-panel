@@ -34,7 +34,7 @@ export interface ApiSecretProductAccess {
   readResults: boolean;
 }
 
-export type ApiSecretStatus = 'active' | 'revoked';
+export type ApiSecretStatus = 'active' | 'revoked' | 'inactive';
 
 export interface ApiSecret {
   id: string;
