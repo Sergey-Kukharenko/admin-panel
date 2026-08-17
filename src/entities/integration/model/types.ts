@@ -7,6 +7,7 @@ export type IntegrationStatus = 'not_configured' | 'pending' | 'connected';
 export interface IntegrationDetail {
   description: string;
   docsUrl?: string;
+  docsLabel?: string;
   emptyStateTitle: string;
   emptyStateDescription: string;
   ctaLabel: string;

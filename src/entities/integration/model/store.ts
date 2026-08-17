@@ -47,7 +47,16 @@ const INITIAL_API_SECRETS: Record<IntegrationType, ApiSecret[]> = {
       status: 'active',
     },
   ],
-  s3: [],
+  s3: [
+    {
+      id: 'seed-temp-key',
+      name: 'Temp Key',
+      environment: 'production',
+      productAccess: [],
+      createdAt: '2026-05-20',
+      status: 'active',
+    },
+  ],
 };
 
 export const useIntegrationsStore = defineStore('integrations', () => {

@@ -15,6 +15,7 @@ export const INTEGRATIONS: Integration[] = [
     detail: {
       description: 'Прямая передача данных через HTTP API с поддержкой батч-загрузки и стриминга',
       docsUrl: 'https://docs.mico.team/rest-api',
+      docsLabel: 'Документация API',
       emptyStateTitle: 'Интеграция не подключена',
       emptyStateDescription:
         'Для получения доступа к API отправьте запрос на подключение. Команда платформы настроит интеграцию и выдаст учётные данные.',
@@ -32,10 +33,12 @@ export const INTEGRATIONS: Integration[] = [
       'Безопасное хранение с шифрованием данных',
     ],
     detail: {
-      description: 'Файловый обмен данными через облачное хранилище Amazon S3 с поддержкой периодической выгрузки',
+      description: 'Автоматическая загрузка файлов через S3-хранилище.',
+      docsUrl: 'https://docs.mico.team/s3-guide',
+      docsLabel: 'Документация S3 Guide',
       emptyStateTitle: 'Интеграция не подключена',
       emptyStateDescription:
-        'Для получения доступа к Amazon S3 отправьте запрос на подключение. Команда платформы настроит интеграцию и выдаст учётные данные.',
+        'Для получения доступа к Amazon S3 отправьте запрос на подключение. Настроим интеграцию и выдадим учётные данные.',
       ctaLabel: 'Запросить подключение',
     },
   },

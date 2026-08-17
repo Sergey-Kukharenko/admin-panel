@@ -10,6 +10,8 @@ import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { RestApiConnectionModal } from '@/widgets/rest-api-connection-modal';
 import { RestApiCredentialsPanel } from '@/widgets/rest-api-credentials';
+import { S3ConnectionModal } from '@/widgets/s3-connection-modal';
+import { S3CredentialsPanel } from '@/widgets/s3-credentials';
 
 defineOptions({
   name: 'IntegrationDetail',
@@ -28,12 +30,7 @@ const isConnected = computed(() => status.value === 'connected');
 const isConnectionModalOpen = ref(false);
 
 function requestConnection() {
-  if (props.integration.type === 'rest-api') {
-    isConnectionModalOpen.value = true;
-    return;
-  }
-
-  // TODO: заменить на реальный вызов API, когда появится backend-эндпоинт запроса подключения.
+  isConnectionModalOpen.value = true;
 }
 
 function handleConnectionRequestSubmit() {
@@ -60,13 +57,18 @@ function handleConnectionRequestSubmit() {
         class="inline-flex h-9 shrink-0 items-center gap-2 rounded-(--radius-lg) bg-(--muted) px-4 text-element-button font-medium text-(--foreground) hover:bg-(--muted-hover)"
       >
         <FileText class="size-4" />
-        Документация API
+        {{ integration.detail.docsLabel ?? 'Документация' }}
         <ArrowUpRight class="size-4" />
       </a>
     </div>
 
     <RestApiCredentialsPanel
       v-if="integration.type === 'rest-api' && isConnected"
+      :integration-type="integration.type"
+    />
+
+    <S3CredentialsPanel
+      v-else-if="integration.type === 's3' && isConnected"
       :integration-type="integration.type"
     />
 
@@ -86,6 +88,13 @@ function handleConnectionRequestSubmit() {
 
     <RestApiConnectionModal
       v-if="integration.type === 'rest-api'"
+      :open="isConnectionModalOpen"
+      @close="isConnectionModalOpen = false"
+      @submit="handleConnectionRequestSubmit"
+    />
+
+    <S3ConnectionModal
+      v-else-if="integration.type === 's3'"
       :open="isConnectionModalOpen"
       @close="isConnectionModalOpen = false"
       @submit="handleConnectionRequestSubmit"
