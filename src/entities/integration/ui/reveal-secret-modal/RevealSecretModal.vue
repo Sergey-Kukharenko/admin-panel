@@ -6,11 +6,14 @@ import { toast } from 'vue-sonner';
 import { AppButton } from '@/shared/ui/app-button';
 
 defineOptions({
-  name: 'SaveApiSecretModal',
+  name: 'RevealSecretModal',
 });
 
 const props = defineProps<{
   open: boolean;
+  title: string;
+  fieldLabel: string;
+  warningText: string;
   secretValue: string;
 }>();
 
@@ -57,7 +60,7 @@ async function copyAndClose() {
           class="fixed top-1/2 left-1/2 z-50 flex w-120 -translate-x-1/2 -translate-y-1/2 flex-col rounded-(--radius-xxl) bg-(--bg-surface-primary) shadow-(--shadow-panel) focus:outline-none"
         >
           <header class="flex w-full shrink-0 items-center gap-2 px-5 py-4">
-            <p class="flex-1 text-base font-medium text-(--text-primary)">Сохраните API secret</p>
+            <p class="flex-1 text-base font-medium text-(--text-primary)">{{ title }}</p>
 
             <AppButton variant="outline" size="icon" @click="emit('close')">
               <X class="size-4" />
@@ -66,16 +69,13 @@ async function copyAndClose() {
 
           <div class="flex flex-col gap-4 px-5 pb-5">
             <div class="flex flex-col gap-1">
-              <label class="text-sm font-medium text-(--text-primary)">API secret</label>
+              <label class="text-sm font-medium text-(--text-primary)">{{ fieldLabel }}</label>
               <div class="h-9 w-full truncate rounded-(--radius-lg) bg-(--bg-input) px-3 py-2 text-sm text-(--text-primary)">
                 {{ MASKED_SECRET }}
               </div>
             </div>
 
-            <p class="text-sm text-(--text-primary)">
-              API Secret больше не будет показан. После закрытия этого окна восстановить ключ
-              невозможно.
-            </p>
+            <p class="text-sm text-(--text-primary)">{{ warningText }}</p>
           </div>
 
           <footer class="flex w-full shrink-0 items-center justify-end gap-2 px-5 py-4">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronsUpDown, CircleCheck, Copy, Plus, Trash2, XCircle } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import type { IntegrationType } from '@/entities/integration';
@@ -8,13 +8,21 @@ import {
   ConnectionStatusTag,
   ENVIRONMENT_OPTIONS,
   formatSecretDate,
+  RevealSecretModal,
   useIntegrationsStore,
 } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppTooltip } from '@/shared/ui/app-tooltip';
+
+import CreateKeySecretModal from './CreateKeySecretModal.vue';
 
 defineOptions({
   name: 'S3CredentialsPanel',
 });
+
+const MAX_ACTIVE_KEY_SECRETS = 2;
+const SECRET_LIMIT_TOOLTIP_TEXT =
+  'У вас уже есть 2 активных ключа — это максимум.\nЕсли хотите создать новый, просто отзовите или удалите один из существующих.';
 
 const props = defineProps<{
   integrationType: IntegrationType;
@@ -26,6 +34,13 @@ const accessKeyId = computed(
   () => integrationsStore.getClientCredentials(props.integrationType).clientId,
 );
 const secrets = computed(() => integrationsStore.getApiSecrets(props.integrationType));
+const activeSecretsCount = computed(
+  () => secrets.value.filter((secret) => secret.status === 'active').length,
+);
+const isAtSecretLimit = computed(() => activeSecretsCount.value >= MAX_ACTIVE_KEY_SECRETS);
+
+const isCreateModalOpen = ref(false);
+const pendingSecretValue = ref<string | null>(null);
 
 function environmentLabel(value: string) {
   return ENVIRONMENT_OPTIONS.find((option) => option.value === value)?.label ?? value;
@@ -36,8 +51,14 @@ async function copyAccessKeyId() {
   toast.success('Скопировано');
 }
 
-function createKeySecret() {
-  // TODO: реализовать после появления макета формы «Создать Key Secret».
+function handleSecretCreated(secretValue: string) {
+  isCreateModalOpen.value = false;
+  pendingSecretValue.value = secretValue;
+}
+
+function handleSaveModalClose() {
+  pendingSecretValue.value = null;
+  toast.success('Key secret успешно создан');
 }
 
 function revokeKeySecret() {
@@ -101,7 +122,16 @@ function deleteKeySecret() {
           </button>
         </div>
 
-        <AppButton size="small" @click="createKeySecret">
+        <AppTooltip v-if="isAtSecretLimit" :icon="false" :text="SECRET_LIMIT_TOOLTIP_TEXT">
+          <span
+            class="inline-flex h-8 cursor-not-allowed items-center gap-1.5 rounded-(--radius-lg) bg-(--muted) px-3 text-sm font-medium text-(--text-tertiary)"
+          >
+            <Plus class="size-4" />
+            Создать Key Secret
+          </span>
+        </AppTooltip>
+
+        <AppButton v-else size="small" @click="isCreateModalOpen = true">
           <Plus class="size-4" />
           Создать Key Secret
         </AppButton>
@@ -190,5 +220,21 @@ function deleteKeySecret() {
         </div>
       </div>
     </div>
+
+    <CreateKeySecretModal
+      :open="isCreateModalOpen"
+      :integration-type="integrationType"
+      @close="isCreateModalOpen = false"
+      @created="handleSecretCreated"
+    />
+
+    <RevealSecretModal
+      :open="pendingSecretValue !== null"
+      title="Сохраните Key secret"
+      field-label="Key secret"
+      warning-text="Ключ больше не будет показан. После закрытия этого окна восстановить ключ невозможно."
+      :secret-value="pendingSecretValue ?? ''"
+      @close="handleSaveModalClose"
+    />
   </div>
 </template>

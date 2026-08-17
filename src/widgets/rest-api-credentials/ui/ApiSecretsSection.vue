@@ -8,13 +8,13 @@ import {
   ENVIRONMENT_OPTIONS,
   formatPermissionsSummary,
   formatSecretDate,
+  RevealSecretModal,
   useIntegrationsStore,
 } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 
 import CreateApiSecretModal from './CreateApiSecretModal.vue';
-import SaveApiSecretModal from './SaveApiSecretModal.vue';
 
 defineOptions({
   name: 'ApiSecretsSection',
@@ -180,8 +180,11 @@ function confirmRevoke() {
       @created="handleSecretCreated"
     />
 
-    <SaveApiSecretModal
+    <RevealSecretModal
       :open="pendingSecretValue !== null"
+      title="Сохраните API secret"
+      field-label="API secret"
+      warning-text="API Secret больше не будет показан. После закрытия этого окна восстановить ключ невозможно."
       :secret-value="pendingSecretValue ?? ''"
       @close="handleSaveModalClose"
     />
