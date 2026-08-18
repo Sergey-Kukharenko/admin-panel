@@ -7,6 +7,7 @@ import { DatasetsPage } from '@/pages/datasets-page';
 import { IntegrationDetailPage } from '@/pages/integration-detail-page';
 import { IntegrationsPage } from '@/pages/integrations-page';
 import { PredictionsPage } from '@/pages/predictions-page';
+import { ProfilePage } from '@/pages/profile-page';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -40,6 +41,11 @@ export const router = createRouter({
     {
       path: '/billing',
       component: BillingPage,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile',
+      component: ProfilePage,
       meta: { requiresAuth: true },
     },
   ],

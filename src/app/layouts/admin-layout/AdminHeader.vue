@@ -14,6 +14,7 @@ const routeTitles: Record<string, string> = {
   '/datasets': 'Загрузка данных',
   '/predictions': 'Предсказания',
   '/billing': 'Тарифы',
+  '/profile': 'Профиль',
 };
 
 interface BreadcrumbItem {
