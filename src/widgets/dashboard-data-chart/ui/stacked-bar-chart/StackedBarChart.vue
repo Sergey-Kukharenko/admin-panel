@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { ChartSeriesDef, DataChartBar } from '../../model/types';
+import type { ApexOptions, ApexTooltipCustomOpts } from 'apexcharts';
+import { onMounted, ref, watch } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
+
+import type { ChartSeriesDef, ChartSeriesKey, DataChartBar } from '../../model/types';
 
 defineOptions({
   name: 'StackedBarChart',
@@ -8,110 +12,201 @@ defineOptions({
 const props = defineProps<{
   bars: DataChartBar[];
   series: ChartSeriesDef[];
-  visibleSeriesKeys: Set<string>;
+  visibleSeriesKeys: Set<ChartSeriesKey>;
   maxValue: number;
   xAxisLabels: [string, string, string];
 }>();
 
-const GRID_STEPS = [200_000, 150_000, 100_000, 50_000, 0];
+// Порядок стека снизу вверх — как в макете (vip-users в основании, bets сверху).
+const STACK_ORDER: ChartSeriesKey[] = [
+  'vipUsers',
+  'payments',
+  'balanceDaily',
+  'betsDaily',
+  'users',
+  'bets',
+];
 
-function formatGridLabel(value: number) {
-  return value === 0 ? '0' : `${value / 1000}k`;
+const EMPTY_SERIES_NAME = '__empty';
+
+const chartOptions = ref<ApexOptions | null>(null);
+const apexSeries = ref<ApexOptions['series']>([]);
+
+function readToken(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-function formatValue(value: number) {
+function formatValue(value: number): string {
   return value.toLocaleString('ru-RU');
 }
 
-function segmentHeightPercent(value: number) {
-  return Math.min(100, (value / props.maxValue) * 100);
-}
-
-function visibleSeriesFor(bar: DataChartBar) {
-  if (!bar.values) return [];
-
-  return props.series.filter(
-    (series) => props.visibleSeriesKeys.has(series.key) && bar.values?.[series.key],
+function orderedVisibleSeries(): ChartSeriesDef[] {
+  return STACK_ORDER.map((key) => props.series.find((series) => series.key === key)).filter(
+    (series): series is ChartSeriesDef => Boolean(series) && props.visibleSeriesKeys.has(series!.key),
   );
 }
+
+function buildSeries(visible: ChartSeriesDef[]): ApexOptions['series'] {
+  const realSeries = visible.map((series) => ({
+    name: series.key,
+    data: props.bars.map((bar) => bar.values?.[series.key] ?? 0),
+  }));
+
+  const emptySeries = {
+    name: EMPTY_SERIES_NAME,
+    data: props.bars.map((bar) => (bar.values ? 0 : props.maxValue)),
+  };
+
+  return [...realSeries, emptySeries];
+}
+
+function buildCategories(): string[] {
+  const total = props.bars.length;
+  const middleIndex = Math.floor((total - 1) / 2);
+
+  return props.bars.map((_, index) => {
+    if (index === 0) return props.xAxisLabels[0];
+    if (index === middleIndex) return props.xAxisLabels[1];
+    if (index === total - 1) return props.xAxisLabels[2];
+
+    return '';
+  });
+}
+
+function buildOptions(visible: ChartSeriesDef[]): ApexOptions {
+  const colors = visible.map((series) => readToken(series.colorVar));
+  const emptyColor = readToken('--border-dash');
+  const borderColor = readToken('--border-default');
+  const tertiaryText = readToken('--text-tertiary');
+  const overlayBg = readToken('--bg-foreground-overlay');
+  const overlayText = readToken('--text-overlay');
+  const surfaceColor = readToken('--bg-surface-primary');
+
+  return {
+    chart: {
+      type: 'bar',
+      height: 236,
+      stacked: true,
+      toolbar: { show: false },
+      zoom: { enabled: false },
+      fontFamily: 'inherit',
+    },
+    colors: [...colors, emptyColor],
+    dataLabels: { enabled: false },
+    plotOptions: {
+      bar: {
+        columnWidth: '55%',
+        borderRadius: 2,
+        borderRadiusApplication: 'around',
+        borderRadiusWhenStacked: 'all',
+      },
+    },
+    stroke: {
+      show: true,
+      width: 2,
+      colors: [surfaceColor],
+    },
+    fill: {
+      type: [...visible.map(() => 'solid'), 'pattern'],
+      opacity: [...visible.map(() => 1), 0.6],
+      pattern: {
+        style: [...visible.map(() => 'solid'), 'slantedLines'],
+        width: 4,
+        height: 4,
+        strokeWidth: 1.5,
+      },
+    },
+    grid: {
+      borderColor,
+      strokeDashArray: 0,
+      padding: { left: 8, right: 8 },
+      xaxis: { lines: { show: false } },
+      yaxis: { lines: { show: true } },
+    },
+    xaxis: {
+      categories: buildCategories(),
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: {
+        style: { colors: tertiaryText, fontSize: '12px' },
+        rotate: 0,
+        hideOverlappingLabels: false,
+        trim: false,
+      },
+    },
+    yaxis: {
+      min: 0,
+      max: props.maxValue,
+      tickAmount: 4,
+      labels: {
+        style: { colors: tertiaryText, fontSize: '12px' },
+        formatter: (value: number) => (value === 0 ? '0' : `${value / 1000}k`),
+      },
+    },
+    legend: { show: false },
+    tooltip: {
+      shared: true,
+      intersect: false,
+      custom: ({ dataPointIndex }: ApexTooltipCustomOpts) => {
+        const bar = props.bars[dataPointIndex];
+        if (!bar?.values) return '';
+
+        const rows = props.series
+          .filter((series) => props.visibleSeriesKeys.has(series.key) && bar.values?.[series.key])
+          .map((series) => {
+            const value = bar.values?.[series.key] ?? 0;
+            const color = readToken(series.colorVar);
+
+            return `<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+              <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                <span style="width:8px;height:8px;flex-shrink:0;background:${color};display:inline-block;"></span>
+                <span style="font-size:12px;white-space:nowrap;">${series.label}</span>
+              </div>
+              <span style="font-size:12px;opacity:.7;white-space:nowrap;">${formatValue(value)}</span>
+            </div>`;
+          })
+          .join('');
+
+        return `<div style="display:flex;flex-direction:column;gap:4px;background:${overlayBg};color:${overlayText};border-radius:4px;padding:8px 12px;min-width:220px;box-shadow:0 2px 2px rgba(0,0,0,.04),0 1px 1px rgba(0,0,0,.06),0 0 0.5px rgba(0,0,0,.06);">
+          <div style="font-size:12px;opacity:.7;">${bar.tooltipLabel}</div>
+          ${rows}
+        </div>`;
+      },
+    },
+  };
+}
+
+function refresh(): void {
+  const visible = orderedVisibleSeries();
+
+  apexSeries.value = buildSeries(visible);
+  chartOptions.value = buildOptions(visible);
+}
+
+// ApexCharts' live updateOptions() doesn't reliably reapply formatter
+// functions (e.g. the y-axis "200k" labels revert to raw numbers) — force a
+// full remount via :key instead of relying on in-place option merging.
+const renderKey = ref(0);
+
+onMounted(refresh);
+
+watch(
+  () => [props.bars, Array.from(props.visibleSeriesKeys), props.maxValue, props.xAxisLabels],
+  () => {
+    refresh();
+    renderKey.value += 1;
+  },
+  { deep: true },
+);
 </script>
 
 <template>
-  <div class="flex h-59 gap-2">
-    <div
-      class="flex w-8 shrink-0 flex-col justify-between text-right text-body-xs text-(--text-tertiary)"
-    >
-      <span v-for="step in GRID_STEPS" :key="step">{{ formatGridLabel(step) }}</span>
-    </div>
-
-    <div class="relative flex flex-1 flex-col">
-      <div class="absolute inset-0 flex flex-col justify-between">
-        <div v-for="step in GRID_STEPS" :key="step" class="border-t border-(--border-default)" />
-      </div>
-
-      <div class="relative flex flex-1 items-end gap-2">
-        <div
-          v-for="bar in bars"
-          :key="bar.id"
-          class="group relative flex h-full flex-1 items-end overflow-hidden rounded-[2px]"
-        >
-          <div
-            v-if="bar.values"
-            class="flex w-full flex-col items-stretch justify-end gap-0.5"
-            style="height: 100%"
-          >
-            <div
-              v-for="series in visibleSeriesFor(bar)"
-              :key="series.key"
-              class="w-full rounded-[2px]"
-              :style="{
-                height: `${segmentHeightPercent(bar.values[series.key] ?? 0)}%`,
-                backgroundColor: `var(${series.colorVar})`,
-              }"
-            />
-          </div>
-
-          <div
-            v-else
-            class="h-full w-full rounded-[2px]"
-            style="
-              background-image: repeating-linear-gradient(
-                -45deg,
-                var(--border-dash),
-                var(--border-dash) 1px,
-                transparent 1px,
-                transparent 6px
-              );
-              background-color: var(--bg-surface-neutral);
-            "
-          />
-
-          <div
-            v-if="bar.values"
-            class="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-max -translate-x-1/2 rounded-(--radius-sm) bg-(--bg-foreground-overlay) px-2 py-1.5 opacity-0 shadow-(--shadow-panel-short) transition-opacity group-hover:opacity-100"
-          >
-            <p class="text-body-xs text-(--text-overlay) opacity-70">{{ bar.tooltipLabel }}</p>
-
-            <div
-              v-for="series in visibleSeriesFor(bar)"
-              :key="series.key"
-              class="mt-0.5 flex items-center gap-1.5"
-            >
-              <span
-                class="size-2 shrink-0 rounded-[2px]"
-                :style="{ backgroundColor: `var(${series.colorVar})` }"
-              />
-              <span class="text-body-xs font-medium text-(--text-overlay)">
-                {{ series.label }} — {{ formatValue(bar.values?.[series.key] ?? 0) }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-2 flex items-center justify-between pl-1 text-body-xs text-(--text-tertiary)">
-        <span v-for="label in xAxisLabels" :key="label">{{ label }}</span>
-      </div>
-    </div>
-  </div>
+  <VueApexCharts
+    v-if="chartOptions"
+    :key="renderKey"
+    type="bar"
+    height="236"
+    :options="chartOptions"
+    :series="apexSeries"
+  />
 </template>

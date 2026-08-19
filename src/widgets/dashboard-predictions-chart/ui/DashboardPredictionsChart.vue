@@ -98,11 +98,7 @@ const totalRows = computed(
       </div>
     </div>
 
-    <PredictionsLineChart
-      :series="PREDICTIONS_CHART_DATASET.series"
-      :max-value="CHART_MAX_VALUE"
-      :x-axis-labels="PREDICTIONS_CHART_DATASET.xAxisLabels"
-    />
+    <PredictionsLineChart :series="PREDICTIONS_CHART_DATASET.series" :max-value="CHART_MAX_VALUE" />
 
     <div class="flex flex-wrap items-center gap-5">
       <div

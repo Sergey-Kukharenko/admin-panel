@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import type { ApexOptions, ApexTooltipCustomOpts } from 'apexcharts';
+import { computed, onMounted, ref } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
 
 import type { PredictionSeries } from '../../model/types';
 
@@ -10,79 +12,147 @@ defineOptions({
 const props = defineProps<{
   series: PredictionSeries[];
   maxValue: number;
-  xAxisLabels: [string, string];
 }>();
 
-const GRID_STEPS = [200_000, 150_000, 100_000, 50_000, 0];
+const chartOptions = ref<ApexOptions | null>(null);
 
-function formatGridLabel(value: number) {
-  return value === 0 ? '0' : `${value / 1000}k`;
-}
-
-function pointCoords(series: PredictionSeries) {
-  const count = series.points.length;
-
-  return series.points.map((point, index) => ({
-    x: count > 1 ? (index / (count - 1)) * 100 : 0,
-    y: 100 - Math.min(100, (point.value / props.maxValue) * 100),
-  }));
-}
-
-const seriesLines = computed(() =>
+const apexSeries = computed(() =>
   props.series.map((series) => ({
-    series,
-    coords: pointCoords(series),
-    polylinePoints: pointCoords(series)
-      .map(({ x, y }) => `${x},${y}`)
-      .join(' '),
+    name: series.productName,
+    data: series.points.map((point) => point.value),
   })),
 );
+
+function readToken(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function buildEdgeAnnotations(colors: string[]): NonNullable<ApexOptions['annotations']>['points'] {
+  const points: NonNullable<ApexOptions['annotations']>['points'] = [];
+
+  props.series.forEach((series, seriesIndex) => {
+    const lastIndex = series.points.length - 1;
+
+    [0, lastIndex].forEach((pointIndex) => {
+      const point = series.points[pointIndex];
+      if (!point) return;
+
+      points!.push({
+        x: point.label,
+        y: point.value,
+        seriesIndex,
+        marker: {
+          size: 4,
+          fillColor: readToken('--bg-surface-primary'),
+          strokeColor: colors[seriesIndex],
+          strokeWidth: 2,
+        },
+      });
+    });
+  });
+
+  return points;
+}
+
+onMounted(() => {
+  const categories = props.series[0]?.points.map((point) => point.label) ?? [];
+  const colors = props.series.map((series) => readToken(series.colorVar));
+  const borderColor = readToken('--border-default');
+  const tertiaryText = readToken('--text-tertiary');
+  const overlayBg = readToken('--bg-foreground-overlay');
+  const overlayText = readToken('--text-overlay');
+
+  chartOptions.value = {
+    chart: {
+      type: 'line',
+      height: 200,
+      toolbar: { show: false },
+      zoom: { enabled: false },
+      fontFamily: 'inherit',
+      dropShadow: { enabled: false },
+    },
+    colors,
+    stroke: {
+      curve: 'smooth',
+      width: 2,
+    },
+    markers: {
+      size: 0,
+      strokeWidth: 0,
+      hover: { size: 6 },
+    },
+    grid: {
+      borderColor,
+      strokeDashArray: 0,
+      padding: { left: 8, right: 8, top: 8 },
+      xaxis: { lines: { show: false } },
+      yaxis: { lines: { show: true } },
+    },
+    xaxis: {
+      categories,
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      crosshairs: {
+        show: true,
+        stroke: { color: borderColor, width: 1, dashArray: 0 },
+      },
+      labels: {
+        style: { colors: tertiaryText, fontSize: '12px' },
+        formatter: (value: string) => {
+          const index = categories.indexOf(value);
+
+          return index === 0 || index === categories.length - 1 ? value : '';
+        },
+      },
+    },
+    yaxis: {
+      min: 0,
+      max: props.maxValue,
+      tickAmount: 4,
+      labels: {
+        style: { colors: tertiaryText, fontSize: '12px' },
+        formatter: (value: number) => (value === 0 ? '0' : `${value / 1000}k`),
+      },
+    },
+    legend: { show: false },
+    tooltip: {
+      shared: true,
+      intersect: false,
+      custom: ({ dataPointIndex, w }: ApexTooltipCustomOpts) => {
+        const rows = (w.globals.seriesNames as string[])
+          .map((name, index) => {
+            const value = w.globals.series[index]?.[dataPointIndex] ?? 0;
+            const color = w.globals.colors[index];
+
+            return `<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+              <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                <span style="width:8px;height:8px;border-radius:1px;flex-shrink:0;background:${color};display:inline-block;"></span>
+                <span style="font-size:12px;white-space:nowrap;">${name}</span>
+              </div>
+              <span style="font-size:12px;opacity:.7;white-space:nowrap;">${Number(value).toLocaleString('ru-RU')}</span>
+            </div>`;
+          })
+          .join('');
+
+        return `<div style="display:flex;flex-direction:column;gap:4px;background:${overlayBg};color:${overlayText};border-radius:4px;padding:8px 12px;min-width:220px;box-shadow:0 2px 2px rgba(0,0,0,.04),0 1px 1px rgba(0,0,0,.06),0 0 0.5px rgba(0,0,0,.06);">
+          <div style="font-size:12px;opacity:.7;">${categories[dataPointIndex] ?? ''}</div>
+          ${rows}
+        </div>`;
+      },
+    },
+    annotations: {
+      points: buildEdgeAnnotations(colors),
+    },
+  };
+});
 </script>
 
 <template>
-  <div class="flex h-50 gap-2">
-    <div
-      class="flex w-8 shrink-0 flex-col justify-between text-right text-body-xs text-(--text-tertiary)"
-    >
-      <span v-for="step in GRID_STEPS" :key="step">{{ formatGridLabel(step) }}</span>
-    </div>
-
-    <div class="relative flex flex-1 flex-col">
-      <div class="absolute inset-0 flex flex-col justify-between">
-        <div v-for="step in GRID_STEPS" :key="step" class="border-t border-(--border-default)" />
-      </div>
-
-      <div class="relative flex-1">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 size-full">
-          <polyline
-            v-for="{ series, polylinePoints } in seriesLines"
-            :key="series.productId"
-            :points="polylinePoints"
-            fill="none"
-            :stroke="`var(${series.colorVar})`"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            vector-effect="non-scaling-stroke"
-          />
-
-          <template v-for="{ series, coords } in seriesLines" :key="`dots-${series.productId}`">
-            <circle
-              v-for="(coord, index) in coords"
-              :key="index"
-              :cx="coord.x"
-              :cy="coord.y"
-              r="3"
-              :fill="`var(${series.colorVar})`"
-              vector-effect="non-scaling-stroke"
-            />
-          </template>
-        </svg>
-      </div>
-
-      <div class="mt-2 flex items-center justify-between pl-1 text-body-xs text-(--text-tertiary)">
-        <span v-for="label in xAxisLabels" :key="label">{{ label }}</span>
-      </div>
-    </div>
-  </div>
+  <VueApexCharts
+    v-if="chartOptions"
+    type="line"
+    height="200"
+    :options="chartOptions"
+    :series="apexSeries"
+  />
 </template>

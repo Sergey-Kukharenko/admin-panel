@@ -1,9 +1,26 @@
 import type { PredictionsChartDataset } from './types';
 
-const MONTHS = Array.from({ length: 12 }, (_, index) => `month-${index}`);
+const MONTH_LABELS = [
+  'Май 2026',
+  'Июнь 2026',
+  'Июль 2026',
+  'Август 2026',
+  'Сентябрь 2026',
+  'Октябрь 2026',
+  'Ноябрь 2026',
+  'Декабрь 2026',
+  'Январь 2027',
+  'Февраль 2027',
+  'Март 2027',
+  'Апрель 2027',
+];
 
 function buildPoints(values: number[]) {
-  return MONTHS.map((month, index) => ({ month, value: values[index] ?? 0 }));
+  return MONTH_LABELS.map((label, index) => ({
+    month: `month-${index}`,
+    label,
+    value: values[index] ?? 0,
+  }));
 }
 
 export const PREDICTIONS_CHART_DATASET: PredictionsChartDataset = {
@@ -11,7 +28,6 @@ export const PREDICTIONS_CHART_DATASET: PredictionsChartDataset = {
     'vip-intelligence': 282_219,
     'recommender-system': 194_530,
   },
-  xAxisLabels: ['май, 2026', 'июн, 2026'],
   series: [
     {
       productId: 'vip-intelligence',

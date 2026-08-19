@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.101.4",
+    "apexcharts": "^6.10.0",
     "axios": "^1.18.1",
     "dayjs": "^1.11.21",
     "lucide-vue-next": "^1.0.0",
@@ -24,7 +25,8 @@
     "radix-vue": "^1.9.17",
     "vue": "^3.5.31",
     "vue-router": "^5.0.4",
-    "vue-sonner": "^2.0.9"
+    "vue-sonner": "^2.0.9",
+    "vue3-apexcharts": "^1.11.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",

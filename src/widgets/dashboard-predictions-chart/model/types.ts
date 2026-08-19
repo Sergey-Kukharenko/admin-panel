@@ -1,5 +1,6 @@
 export interface PredictionPoint {
   month: string;
+  label: string;
   value: number;
 }
 
@@ -13,5 +14,4 @@ export interface PredictionSeries {
 export interface PredictionsChartDataset {
   totalRowsByProduct: Record<string, number>;
   series: PredictionSeries[];
-  xAxisLabels: [string, string];
 }
