@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { LogOut, User } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { MOCK_ORGANIZATION_MEMBERS } from '@/entities/organization';
 import { useUserStore } from '@/entities/user';
+import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 
 defineOptions({
@@ -14,6 +16,14 @@ const userStore = useUserStore();
 const router = useRouter();
 
 const email = computed(() => userStore.user?.email ?? '');
+const displayName = computed(() => MOCK_ORGANIZATION_MEMBERS[0]?.name ?? '');
+
+const isLogoutConfirmOpen = ref(false);
+
+function handleLogout(): void {
+  isLogoutConfirmOpen.value = false;
+  userStore.logout();
+}
 </script>
 
 <template>
@@ -25,7 +35,10 @@ const email = computed(() => userStore.user?.email ?? '');
     </template>
 
     <div class="flex flex-col gap-0.5 px-3 py-2">
-      <p class="truncate text-body-sm font-medium text-(--text-primary)">{{ email }}</p>
+      <p v-if="displayName" class="truncate text-body-sm font-medium text-(--text-primary)">
+        {{ displayName }}
+      </p>
+      <p class="truncate text-body-xs text-(--text-secondary)">{{ email }}</p>
     </div>
 
     <AppDropdownItem @select="router.push('/profile')">
@@ -33,9 +46,18 @@ const email = computed(() => userStore.user?.email ?? '');
       <span class="text-body-sm font-medium text-(--text-primary)">Профиль</span>
     </AppDropdownItem>
 
-    <AppDropdownItem @select="userStore.logout()">
+    <AppDropdownItem @select="isLogoutConfirmOpen = true">
       <LogOut class="size-4 text-(--text-secondary)" stroke-width="2" />
       <span class="text-body-sm font-medium text-(--text-primary)">Выйти</span>
     </AppDropdownItem>
   </AppDropdown>
+
+  <AppConfirmDialog
+    :open="isLogoutConfirmOpen"
+    title="Выйти из профиля?"
+    description="Для продолжения работы потребуется снова войти в систему."
+    confirm-label="Выйти"
+    @close="isLogoutConfirmOpen = false"
+    @confirm="handleLogout"
+  />
 </template>

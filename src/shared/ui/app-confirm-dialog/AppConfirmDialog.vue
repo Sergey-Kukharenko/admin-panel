@@ -8,11 +8,19 @@ defineOptions({
   name: 'AppConfirmDialog',
 });
 
-defineProps<{
-  open: boolean;
-  title: string;
-  description?: string;
-}>();
+withDefaults(
+  defineProps<{
+    open: boolean;
+    title: string;
+    description?: string;
+    confirmLabel?: string;
+    cancelLabel?: string;
+  }>(),
+  {
+    confirmLabel: 'Подтвердить',
+    cancelLabel: 'Отмена',
+  },
+);
 
 const emit = defineEmits<{
   close: [];
@@ -83,7 +91,9 @@ const emit = defineEmits<{
 
           <!-- Footer -->
           <footer class="flex w-full px-5 py-4 justify-end items-center gap-2 bg-(--surface)">
-            <AppButton variant="outline" size="medium" @click="emit('close')"> Отмена </AppButton>
+            <AppButton variant="outline" size="medium" @click="emit('close')">
+              {{ cancelLabel }}
+            </AppButton>
 
             <AppButton
               variant="primary"
@@ -91,7 +101,7 @@ const emit = defineEmits<{
               class="text-(--text-inverse-soft)"
               @click="emit('confirm')"
             >
-              Подтвердить
+              {{ confirmLabel }}
             </AppButton>
           </footer>
         </DialogContent>

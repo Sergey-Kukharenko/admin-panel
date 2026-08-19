@@ -1,0 +1,88 @@
+import type { RecentOperation } from './types';
+
+export const MOCK_RECENT_OPERATIONS: RecentOperation[] = [
+  {
+    id: 'op-1',
+    dateLabel: '1 июл 2026, 11:10',
+    type: 'Загрузка данных',
+    details: 'bets · CSV · 145,000 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-2',
+    dateLabel: '1 июл 2026, 09:42',
+    type: 'Прогон модели',
+    details: 'VIP Churn Predictor 30d · 145,000 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-3',
+    dateLabel: '30 июн 2026, 18:05',
+    type: 'Загрузка данных',
+    details: 'users · CSV · 98,200 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-4',
+    dateLabel: '30 июн 2026, 14:20',
+    type: 'Прогон модели',
+    details: 'Recommender System · 98,200 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-5',
+    dateLabel: '29 июн 2026, 20:15',
+    type: 'Загрузка данных',
+    details: 'payments · CSV · неверная структура колонок',
+    status: 'error',
+  },
+  {
+    id: 'op-6',
+    dateLabel: '29 июн 2026, 10:00',
+    type: 'Прогон модели',
+    details: 'VIP CLV Predictor · 145,000 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-7',
+    dateLabel: '28 июн 2026, 16:45',
+    type: 'Загрузка данных',
+    details: 'balance-daily · CSV · 54,000 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-8',
+    dateLabel: '28 июн 2026, 09:30',
+    type: 'Прогон модели',
+    details: 'Recommender System · 76,500 строк',
+    status: 'loading',
+  },
+  {
+    id: 'op-9',
+    dateLabel: '27 июн 2026, 13:12',
+    type: 'Загрузка данных',
+    details: 'vip-users · CSV · 12,300 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-10',
+    dateLabel: '26 июн 2026, 17:50',
+    type: 'Прогон модели',
+    details: 'VIP Churn Predictor 30d · 145,000 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-11',
+    dateLabel: '25 июн 2026, 08:05',
+    type: 'Загрузка данных',
+    details: 'bets-daily · CSV · 41,000 строк',
+    status: 'success',
+  },
+  {
+    id: 'op-12',
+    dateLabel: '24 июн 2026, 19:40',
+    type: 'Прогон модели',
+    details: 'Recommender System · 98,500 строк',
+    status: 'success',
+  },
+];
