@@ -1,13 +1,13 @@
 import { useQueryClient } from '@tanstack/vue-query';
 import { defineStore } from 'pinia';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import type { DatasetFile, DatasetTemplate, DatasetUpload } from '@/entities/dataset';
 import {
   DATASET_HISTORY_QUERY_KEY,
   datasetApi,
   getDatasetFileValidationError,
-  mapServerTemplate,
+  getDatasetTypeContent,
 } from '@/entities/dataset';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
@@ -30,7 +30,25 @@ function readSavedFiles(): SavedFilesState {
 export const useUploadDatasetStore = defineStore('uploadDataset', () => {
   const queryClient = useQueryClient();
 
-  const templates = ref<DatasetTemplate[]>([]);
+  // Храним сырой ответ бэкенда (id + системное имя), а не готовый title/description —
+  // они переводятся при чтении через getDatasetTypeContent, чтобы корректно
+  // реагировать на смену языка интерфейса, даже если шторка уже была открыта раньше
+  const rawTemplates = ref<Array<{ dataset_type_id: string; name: string }>>([]);
+
+  const templates = computed<DatasetTemplate[]>(() =>
+    rawTemplates.value.map((item) => {
+      const { title, description, icon } = getDatasetTypeContent(item.name);
+
+      return {
+        id: item.dataset_type_id,
+        title,
+        description,
+        icon,
+        count: 0,
+      };
+    }),
+  );
+
   const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
   const filesMap = ref<SavedFilesState>(readSavedFiles());
   const isCategoryUploading = ref<Record<string, boolean>>({});
@@ -52,7 +70,7 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
 
     try {
       const response = await datasetApi.getTemplates();
-      templates.value = response.data.map(mapServerTemplate);
+      rawTemplates.value = response.data;
     } catch (e) {
       console.error('Ошибка при загрузке шаблонов датасетов:', e);
     }

@@ -1,6 +1,6 @@
 import { i18n } from '@/shared/i18n';
 
-import type { DatasetIcon, DatasetTemplate } from './types';
+import type { DatasetIcon } from './types';
 
 interface TemplateStaticContent {
   title: string;
@@ -97,23 +97,5 @@ export function getDatasetTypeContent(
     title: content.title,
     description: i18n.global.t(content.descriptionKey),
     icon: content.icon,
-  };
-}
-
-/**
- * Преобразует сырой элемент с бэкенда в полную структуру DatasetTemplate для UI
- */
-export function mapServerTemplate(serverItem: {
-  dataset_type_id: string;
-  name: string;
-}): DatasetTemplate {
-  const { title, description, icon } = getDatasetTypeContent(serverItem.name);
-
-  return {
-    id: serverItem.dataset_type_id,
-    title,
-    description,
-    icon,
-    count: 0,
   };
 }
