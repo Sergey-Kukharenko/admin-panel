@@ -1,83 +1,86 @@
+import { i18n } from '@/shared/i18n';
+
 import type { DatasetIcon, DatasetTemplate } from './types';
 
 interface TemplateStaticContent {
   title: string;
-  description: string;
+  descriptionKey: string;
   icon: DatasetIcon;
 }
 
-// Словарь строго синхронизирован со всеми key-именами из Swagger
+// Названия типов данных не переводятся (технические имена, совпадают с Swagger),
+// перевод есть только у description — ключи см. shared/i18n/locales
 const TEMPLATE_CONTENT_MAP: Record<string, TemplateStaticContent> = {
   users: {
     title: 'Users',
-    description: 'Профили и регистрационные данные пользователей',
+    descriptionKey: 'datasets.templates.users.description',
     icon: 'users',
   },
   vip_users: {
     title: 'Vip-users',
-    description: 'Данные VIP-сегментации с уровнями и идентификаторами',
+    descriptionKey: 'datasets.templates.vip_users.description',
     icon: 'vip',
   },
   bets: {
     title: 'Bets',
-    description: 'Ставки и результаты игровых сессий',
+    descriptionKey: 'datasets.templates.bets.description',
     icon: 'bets',
   },
   bets_daily: {
     title: 'Bets-daily',
-    description: 'Дневной срез по ставкам и активности пользователей',
+    descriptionKey: 'datasets.templates.bets_daily.description',
     icon: 'bets',
   },
   cumulative_bets: {
     title: 'Cumulative-bets',
-    description: 'Кумулятивные (накопительные) показатели по ставкам',
+    descriptionKey: 'datasets.templates.cumulative_bets.description',
     icon: 'bets',
   },
   cumulative_sports_bets: {
     title: 'Cumulative-sports-bets',
-    description: 'Накопительные показатели по ставкам на спорт',
+    descriptionKey: 'datasets.templates.cumulative_sports_bets.description',
     icon: 'bets',
   },
   sports_bets: {
     title: 'Sports-bets',
-    description: 'Детальные данные по ставкам на спортивные события',
+    descriptionKey: 'datasets.templates.sports_bets.description',
     icon: 'bets',
   },
   balances_daily: {
     title: 'Balance-daily',
-    description: 'Дневной финансовый срез и изменения баланса',
+    descriptionKey: 'datasets.templates.balances_daily.description',
     icon: 'balance',
   },
   payments: {
     title: 'Payments',
-    description: 'Платежи и транзакции с деталями операций',
+    descriptionKey: 'datasets.templates.payments.description',
     icon: 'payments',
   },
   cumulative_payments: {
     title: 'Cumulative-payments',
-    description: 'Кумулятивные финансовые показатели и объемы платежей',
+    descriptionKey: 'datasets.templates.cumulative_payments.description',
     icon: 'payments',
   },
   providers_fees: {
     title: 'Providers-fees',
-    description: 'Комиссии провайдеров и операционные расходы',
+    descriptionKey: 'datasets.templates.providers_fees.description',
     icon: 'payments',
   },
   web_analytics: {
     title: 'Web-analytics',
-    description: 'Метрики веб-аналитики, трафик и поведение на платформе',
+    descriptionKey: 'datasets.templates.web_analytics.description',
     icon: 'balance', // Подставьте вашу иконку аналитики, если есть
   },
   wins: {
     title: 'Wins',
-    description: 'Данные по выигрышам и выплатам пользователям',
+    descriptionKey: 'datasets.templates.wins.description',
     icon: 'vip', // Подставьте вашу иконку выигрышей, если есть
   },
 };
 
 const DEFAULT_CONTENT: TemplateStaticContent = {
   title: 'Unknown Dataset',
-  description: 'Описание данного типа датасета подгружается...',
+  descriptionKey: 'datasets.templates.default.description',
   icon: 'users',
 };
 
@@ -85,8 +88,16 @@ const DEFAULT_CONTENT: TemplateStaticContent = {
  * Единая точка правды для title/description/icon датасета по его системному имени.
  * Если бэк пришлет что-то совсем новое, выведется его системное имя без перевода.
  */
-export function getDatasetTypeContent(name: string): TemplateStaticContent {
-  return TEMPLATE_CONTENT_MAP[name] ?? { ...DEFAULT_CONTENT, title: name };
+export function getDatasetTypeContent(
+  name: string,
+): { title: string; description: string; icon: DatasetIcon } {
+  const content = TEMPLATE_CONTENT_MAP[name] ?? { ...DEFAULT_CONTENT, title: name };
+
+  return {
+    title: content.title,
+    description: i18n.global.t(content.descriptionKey),
+    icon: content.icon,
+  };
 }
 
 /**

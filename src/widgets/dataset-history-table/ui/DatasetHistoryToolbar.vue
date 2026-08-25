@@ -1,17 +1,31 @@
 <script setup lang="ts">
 import { Calendar, FileText, PieChart } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { getDatasetTypeContent, useDatasetTemplates } from '@/entities/dataset';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppFilter } from '@/shared/ui/app-filter';
 
-import { DATASET_PERIOD_OPTIONS, DATASET_STATUS_OPTIONS } from '../model';
 import type { DatasetPeriod, DatasetStatus } from '../model/types';
 
 defineOptions({
   name: 'DatasetHistoryToolbar',
 });
+
+const { t } = useI18n({ useScope: 'global' });
+
+const periodOptions = computed(() => [
+  { label: t('datasets.filters.period.allTime'), value: '' },
+  { label: t('datasets.filters.period.last7Days'), value: 'week' },
+  { label: t('datasets.filters.period.last30Days'), value: 'month' },
+]);
+
+const statusOptions = computed(() => [
+  { label: t('datasets.status.loading'), value: 'LOADING' },
+  { label: t('datasets.status.success'), value: 'SUCCESS' },
+  { label: t('datasets.status.error'), value: 'ERROR' },
+]);
 
 const types = defineModel<string[]>('types', {
   default: [],
@@ -54,29 +68,29 @@ const dynamicTypeOptions = computed(() => {
       <AppFilter
         v-model="types"
         multiple
-        title="Тип данных"
+        :title="t('datasets.toolbar.dataType')"
         :icon="FileText"
         :options="dynamicTypeOptions"
       />
 
       <AppFilter
         v-model="status"
-        title="Статус"
+        :title="t('datasets.toolbar.status')"
         :icon="PieChart"
-        :options="DATASET_STATUS_OPTIONS"
+        :options="statusOptions"
       />
 
       <AppFilter
         v-model="period"
-        title="Период"
+        :title="t('datasets.toolbar.period')"
         :icon="Calendar"
-        :options="DATASET_PERIOD_OPTIONS"
+        :options="periodOptions"
       />
     </div>
 
     <div class="shrink-0">
       <AppButton variant="primary" size="small" @click="$emit('openUpload')">
-        Загрузить CSV
+        {{ t('datasets.toolbar.uploadButton') }}
       </AppButton>
     </div>
   </div>

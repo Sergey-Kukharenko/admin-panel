@@ -11,6 +11,7 @@ import {
   SelectViewport,
 } from 'radix-vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { PAGE_SIZE_OPTIONS } from '../model';
 import { getPaginationRange } from '../model/utils';
@@ -18,6 +19,8 @@ import { getPaginationRange } from '../model/utils';
 defineOptions({
   name: 'DatasetHistoryPagination',
 });
+
+const { t } = useI18n({ useScope: 'global' });
 
 const currentPage = defineModel<number>('page', { required: true });
 const pageSize = defineModel<number>('perPage', { required: true });
@@ -70,9 +73,9 @@ function handlePageSizeChange(value: unknown) {
     <div
       class="flex items-center gap-1 text-xs font-mono font-medium text-(--text-secondary) uppercase"
     >
-      <span>Показывать:</span>
+      <span>{{ t('datasets.pagination.showing') }}</span>
       <span class="text-(--text-primary)">{{ rangeStart }}-{{ rangeEnd }}</span>
-      <span>из</span>
+      <span>{{ t('datasets.pagination.of') }}</span>
       <span class="text-(--text-primary)">{{ totalItems }}</span>
     </div>
 
@@ -82,7 +85,7 @@ function handlePageSizeChange(value: unknown) {
       <div
         class="flex items-center gap-2 font-mono text-xs font-medium text-(--text-secondary) uppercase"
       >
-        <span>Строк на стр:</span>
+        <span>{{ t('datasets.pagination.rowsPerPage') }}</span>
 
         <SelectRoot
           :model-value="String(pageSize)"

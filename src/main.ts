@@ -7,6 +7,7 @@ import { createApp } from 'vue';
 import App from '@/App.vue';
 import { router } from '@/app/router';
 import { useUserStore } from '@/entities/user';
+import { i18n } from '@/shared/i18n';
 
 async function bootstrap() {
   const app = createApp(App);
@@ -14,6 +15,7 @@ async function bootstrap() {
   const pinia = createPinia();
 
   app.use(pinia);
+  app.use(i18n);
 
   // Создаем глобальный клиент кэша с базовыми настройками админ-панели
   const queryClient = new QueryClient({

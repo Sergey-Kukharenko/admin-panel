@@ -2,6 +2,7 @@
 import { Bell, CheckCircle2, Loader2, RotateCw, ShieldAlert, Sparkles } from 'lucide-vue-next';
 import { DropdownMenuContent, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'radix-vue';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import type { NotificationVariant } from '@/entities/notification';
 import { MOCK_NOTIFICATIONS } from '@/entities/notification';
@@ -9,6 +10,8 @@ import { MOCK_NOTIFICATIONS } from '@/entities/notification';
 defineOptions({
   name: 'NotificationsPanel',
 });
+
+const { t } = useI18n({ useScope: 'global' });
 
 const notifications = ref(MOCK_NOTIFICATIONS.map((notification) => ({ ...notification })));
 
@@ -38,7 +41,7 @@ function markAllAsRead(): void {
       <button
         type="button"
         class="relative flex size-8 items-center justify-center rounded-(--radius-sm) hover:bg-(--muted)"
-        aria-label="Уведомления"
+        :aria-label="t('layout.notifications.ariaLabel')"
       >
         <Bell class="size-4 text-(--icon-tertiary)" />
         <span
@@ -56,7 +59,7 @@ function markAllAsRead(): void {
       >
         <div class="flex items-center gap-2 px-4 pt-4 pb-2">
           <p class="flex-1 text-body-sm font-medium text-(--text-primary)">
-            Уведомления ({{ notifications.length }})
+            {{ t('layout.notifications.title', { count: notifications.length }) }}
           </p>
 
           <button
@@ -65,13 +68,13 @@ function markAllAsRead(): void {
             class="text-body-xs font-medium text-(--text-secondary) hover:text-(--text-primary)"
             @click="markAllAsRead"
           >
-            Прочитать все
+            {{ t('layout.notifications.markAllRead') }}
           </button>
         </div>
 
         <div v-if="notifications.length === 0" class="flex flex-col items-center gap-2 px-4 py-10">
           <Bell class="size-6 text-(--icon-disabled)" />
-          <p class="text-body-sm text-(--text-tertiary)">Уведомлений пока нет</p>
+          <p class="text-body-sm text-(--text-tertiary)">{{ t('layout.notifications.empty') }}</p>
         </div>
 
         <div v-else class="relative">
@@ -99,8 +102,8 @@ function markAllAsRead(): void {
               </div>
 
               <div class="flex flex-col gap-0.5">
-                <p class="text-body-sm font-medium text-(--text-primary)">{{ notification.title }}</p>
-                <p class="text-body-xs text-(--text-secondary)">{{ notification.timeLabel }}</p>
+                <p class="text-body-sm font-medium text-(--text-primary)">{{ t(notification.titleKey) }}</p>
+                <p class="text-body-xs text-(--text-secondary)">{{ t(notification.timeKey) }}</p>
               </div>
             </div>
           </div>

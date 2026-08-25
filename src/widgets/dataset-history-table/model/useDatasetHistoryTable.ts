@@ -4,6 +4,7 @@ import { computed, ref, watch } from 'vue';
 import type { FetchFilesBackendResponse } from '@/entities/dataset';
 import { DATASET_HISTORY_QUERY_KEY, datasetApi, useDatasetTemplates } from '@/entities/dataset';
 
+import { mapSourceTypeToLabel } from './sourceMapping';
 import { mapUiStatusToBackend } from './statusMapping';
 import { useDatasetHistoryFilters } from './useDatasetHistoryFilters';
 import { useDatasetHistoryPagination } from './useDatasetHistoryPagination';
@@ -98,13 +99,13 @@ export function useDatasetHistoryTable() {
       const queryData = query.state.data;
       if (!queryData?.items) return undefined;
 
-      const hasAwaitingFiles = queryData.items.some((day) =>
+      const hasUnfinishedFiles = queryData.items.some((day) =>
         day.dataset_groups?.some((group) =>
-          group.files?.some((file) => file.status === 'awaiting'),
+          group.files?.some((file) => file.status === 'awaiting' || file.status === 'processing'),
         ),
       );
 
-      return hasAwaitingFiles ? AWAITING_FILES_POLL_INTERVAL_MS : undefined;
+      return hasUnfinishedFiles ? AWAITING_FILES_POLL_INTERVAL_MS : undefined;
     },
   });
 
@@ -164,7 +165,7 @@ export function useDatasetHistoryTable() {
         const totalCount = datasetGroups.reduce((acc, group) => acc + group.files.length, 0);
 
         const firstFile = datasetGroups[0]?.files?.[0];
-        const source = (firstFile?.source_type ?? 'CSV').replace('_', ' ');
+        const source = mapSourceTypeToLabel(firstFile?.source_type ?? 'client_portal');
 
         return {
           id: dayGroup.uploaded_at,

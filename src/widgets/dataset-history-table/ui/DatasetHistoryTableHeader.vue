@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 defineOptions({
   name: 'DatasetHistoryTableHeader',
 });
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -11,7 +15,7 @@ defineOptions({
       <span
         class="font-mono text-element-tag font-medium uppercase text-(--text-secondary) select-none"
       >
-        Наименование
+        {{ t('datasets.table.header.name') }}
       </span>
     </div>
 
@@ -22,7 +26,7 @@ defineOptions({
       <span
         class="font-mono text-element-tag font-medium uppercase text-(--text-secondary) select-none"
       >
-        Объём строк
+        {{ t('datasets.table.header.rowCount') }}
       </span>
     </div>
 
@@ -31,7 +35,7 @@ defineOptions({
       <span
         class="font-mono text-element-tag font-medium uppercase text-(--text-secondary) select-none"
       >
-        Статус
+        {{ t('datasets.table.header.status') }}
       </span>
     </div>
   </div>

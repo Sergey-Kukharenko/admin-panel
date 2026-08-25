@@ -2,6 +2,7 @@
 import { Download } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { datasetApi } from '@/entities/dataset';
 import { DatasetTemplatesList, useUploadDatasetStore } from '@/features/upload-dataset';
@@ -21,6 +22,8 @@ const emit = defineEmits<{
   close: [];
   submit: [];
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 
 const uploadDatasetStore = useUploadDatasetStore();
 const { templates, filesMap, uploadsMap, isSubmitting } = storeToRefs(uploadDatasetStore);
@@ -94,17 +97,17 @@ const handleFinalConfirm = async () => {
 </script>
 
 <template>
-  <AppDrawer :open="open" title="Загрузка CSV" @close="emit('close')">
+  <AppDrawer :open="open" :title="t('datasets.upload.title')" @close="emit('close')">
     <div class="flex flex-col gap-6 text-left">
       <AppBanner
-        title="Шаблоны файлов"
-        description="Шаблоны и примеры для всех типов данных. Используйте их при подготовке файлов."
+        :title="t('datasets.upload.bannerTitle')"
+        :description="t('datasets.upload.bannerDescription')"
         @action="handleDownloadTemplates"
       >
         <template #icon>
           <img
             :src="sphereImageUrl"
-            alt="Шаблоны файлов"
+            alt=""
             class="size-full object-contain select-none mix-blend-darken"
           />
         </template>
@@ -117,11 +120,11 @@ const handleFinalConfirm = async () => {
       <section class="flex flex-col gap-4">
         <header class="flex flex-col gap-1">
           <h3 class="text-sm font-medium text-(--text-primary)">
-            Загруженные файлы {{ totalUploadedFiles }}
+            {{ t('datasets.upload.sectionTitle', { count: totalUploadedFiles }) }}
           </h3>
           <p class="text-xs text-(--text-secondary) leading-relaxed">
-            Загрузите один или несколько типов данных для обучения моделей. <br />
-            Максимальный размер: 500 МБ на файл, формат CSV.
+            {{ t('datasets.upload.sectionDescriptionLine1') }} <br />
+            {{ t('datasets.upload.sectionDescriptionLine2') }}
           </p>
         </header>
 
@@ -148,8 +151,9 @@ const handleFinalConfirm = async () => {
 
   <AppConfirmDialog
     :open="isConfirmOpen"
-    title="Подтвердите отправку"
-    description="Действие нельзя отменить. Файлы будут отправлены для обучения ML-моделей. После отправки данные нельзя будет отозвать. Процесс обучения займёт от 5 до 14 дней."
+    :title="t('datasets.upload.confirmDialog.title')"
+    :description="t('datasets.upload.confirmDialog.description')"
+    :confirm-label="t('datasets.upload.confirmDialog.confirmLabel')"
     @close="isConfirmOpen = false"
     @confirm="handleFinalConfirm"
   />

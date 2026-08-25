@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { CheckCircle2, Trash2, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import type { DatasetFile, DatasetUpload } from '@/entities/dataset';
 import { DatasetUploadSpinner } from '@/entities/dataset';
@@ -8,6 +9,8 @@ import { DatasetUploadSpinner } from '@/entities/dataset';
 defineOptions({
   name: 'DatasetFilesList',
 });
+
+const { t } = useI18n({ useScope: 'global' });
 
 const props = withDefaults(
   defineProps<{
@@ -136,7 +139,8 @@ const getProgressStyle = (upload: DatasetUpload) => ({
 
       <template v-else-if="isQueued(item.upload)">
         <div class="shrink-0 flex items-center justify-center pt-0.75 w-4 h-4">
-          <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
+          <!-- ⚡ Файл ещё не отправлен — пустое кольцо, а не галочка «успешно» -->
+          <DatasetUploadSpinner :progress="0" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
@@ -169,7 +173,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
           </span>
 
           <span class="text-xs font-normal text-(--danger) leading-4 mt-0.5 select-none">
-            {{ item.upload.error }}
+            {{ item.upload.error ? t(item.upload.error) : '' }}
           </span>
         </div>
 

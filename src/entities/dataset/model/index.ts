@@ -5,3 +5,4 @@ export * from './templateMapper';
 export * from './types';
 export * from './upload';
 export * from './useDatasetTemplates';
+export * from './useHasProcessingFiles';

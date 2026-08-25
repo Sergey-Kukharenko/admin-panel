@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+import { AppButton } from '@/shared/ui/app-button';
 import { UploadsEmptyState } from '@/widgets/uploads-empty-state';
 
 import { useDatasetHistoryTable } from '../model';
@@ -14,6 +16,8 @@ import DatasetHistoryToolbar from './DatasetHistoryToolbar.vue';
 defineOptions({
   name: 'DatasetHistoryTable',
 });
+
+const { t } = useI18n({ useScope: 'global' });
 
 const emit = defineEmits<{
   openUploadDrawer: [];
@@ -35,6 +39,12 @@ const {
 } = useDatasetHistoryTable();
 
 watch(showHistoryTable, (value) => emit('update:hasHistory', value), { immediate: true });
+
+function handleResetFilters(): void {
+  filters.types.value = [];
+  filters.status.value = '';
+  filters.period.value = '';
+}
 </script>
 
 <template>
@@ -48,7 +58,7 @@ watch(showHistoryTable, (value) => emit('update:hasHistory', value), { immediate
         v-if="isFetching && !isLoading"
         class="absolute top-2 right-2 text-xs text-(--text-secondary) animate-pulse font-mono"
       >
-        Обновление...
+        {{ t('datasets.table.updating') }}
       </div>
 
       <DatasetHistoryToolbar
@@ -65,14 +75,21 @@ watch(showHistoryTable, (value) => emit('update:hasHistory', value), { immediate
           v-if="isLoading"
           class="w-full py-20 flex justify-center items-center text-sm text-(--text-secondary) font-mono"
         >
-          Синхронизация данных с бэкендом...
+          {{ t('datasets.table.syncing') }}
         </div>
 
         <div
           v-else-if="renderedGroups.length === 0"
-          class="w-full py-16 text-center text-sm text-(--text-secondary) border border-dashed border-(--border-subtle) rounded-(--radius-xl)"
+          class="flex w-full flex-col items-center gap-4 py-16 text-center border border-dashed border-(--border-subtle) rounded-(--radius-xl)"
         >
-          Ничего не найдено
+          <div class="flex flex-col gap-1">
+            <p class="text-sm font-medium text-(--text-primary)">{{ t('datasets.table.emptyNotFound.title') }}</p>
+            <p class="text-sm text-(--text-secondary)">{{ t('datasets.table.emptyNotFound.description') }}</p>
+          </div>
+
+          <AppButton variant="secondary" size="small" @click="handleResetFilters">
+            {{ t('datasets.table.emptyNotFound.resetButton') }}
+          </AppButton>
         </div>
 
         <template v-else>

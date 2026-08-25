@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LogOut, User } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 import { MOCK_ORGANIZATION_MEMBERS } from '@/entities/organization';
@@ -14,6 +15,7 @@ defineOptions({
 
 const userStore = useUserStore();
 const router = useRouter();
+const { t } = useI18n({ useScope: 'global' });
 
 const email = computed(() => userStore.user?.email ?? '');
 const displayName = computed(() => MOCK_ORGANIZATION_MEMBERS[0]?.name ?? '');
@@ -29,8 +31,11 @@ function handleLogout(): void {
 <template>
   <AppDropdown align="end" :side-offset="8">
     <template #trigger>
-      <button type="button" class="flex size-8 shrink-0 items-center justify-center rounded-(--radius-full)">
-        <img src="https://i.pravatar.cc/32" alt="avatar" class="size-8 rounded-(--radius-full)" />
+      <button
+        type="button"
+        class="flex size-8 shrink-0 items-center justify-center rounded-(--radius-full) bg-(--success)"
+      >
+        <User class="size-4 text-white" stroke-width="2" />
       </button>
     </template>
 
@@ -43,20 +48,20 @@ function handleLogout(): void {
 
     <AppDropdownItem @select="router.push('/profile')">
       <User class="size-4 text-(--text-secondary)" stroke-width="2" />
-      <span class="text-body-sm font-medium text-(--text-primary)">Профиль</span>
+      <span class="text-body-sm font-medium text-(--text-primary)">{{ t('layout.userMenu.profile') }}</span>
     </AppDropdownItem>
 
     <AppDropdownItem @select="isLogoutConfirmOpen = true">
       <LogOut class="size-4 text-(--text-secondary)" stroke-width="2" />
-      <span class="text-body-sm font-medium text-(--text-primary)">Выйти</span>
+      <span class="text-body-sm font-medium text-(--text-primary)">{{ t('layout.userMenu.logout') }}</span>
     </AppDropdownItem>
   </AppDropdown>
 
   <AppConfirmDialog
     :open="isLogoutConfirmOpen"
-    title="Выйти из профиля?"
-    description="Для продолжения работы потребуется снова войти в систему."
-    confirm-label="Выйти"
+    :title="t('layout.userMenu.logoutConfirmTitle')"
+    :description="t('layout.userMenu.logoutConfirmDescription')"
+    :confirm-label="t('layout.userMenu.logout')"
     @close="isLogoutConfirmOpen = false"
     @confirm="handleLogout"
   />

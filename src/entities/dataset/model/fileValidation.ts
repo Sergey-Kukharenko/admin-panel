@@ -3,10 +3,12 @@ export const DATASET_MAX_FILE_SIZE_BYTES = 512 * 1024 * 1024;
 export const DATASET_ALLOWED_FILE_EXTENSION = '.csv';
 export const DATASET_ALLOWED_MIME_TYPE = 'text/csv';
 
+// Значения — ключи i18n, а не готовый текст: ошибка может пролежать в очереди
+// дольше, чем пользователь остаётся на одном языке интерфейса (см. datasets.validation.*)
 export const DATASET_FILE_ERRORS = {
-  tooLarge: 'Размер превышает 512 МБ',
-  empty: 'Файл не содержит данных',
-  unsupportedFormat: 'Поддерживается только CSV',
+  tooLarge: 'datasets.validation.tooLarge',
+  empty: 'datasets.validation.empty',
+  unsupportedFormat: 'datasets.validation.unsupportedFormat',
 } as const;
 
 export const getDatasetFileValidationError = (file: File): string | undefined => {

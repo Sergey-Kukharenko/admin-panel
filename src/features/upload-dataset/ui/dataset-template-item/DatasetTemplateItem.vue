@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ChevronRight, Download, MoreHorizontal, PlusCircle, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import type { DatasetTemplate, DatasetUpload } from '@/entities/dataset';
 import { DatasetTemplateIcon } from '@/entities/dataset';
@@ -13,6 +14,8 @@ import { DatasetUploadZone } from '../dataset-upload-zone';
 defineOptions({
   name: 'DatasetTemplateItem',
 });
+
+const { t } = useI18n({ useScope: 'global' });
 
 const DATASET_FILE_ACCEPT = '.csv,text/csv';
 
@@ -119,7 +122,7 @@ const handleFilesChange = (event: Event) => {
           </template>
           <AppDropdownItem @select="emit('downloadTemplate')">
             <Download class="size-4 text-(--text-secondary)" stroke-width="2" />
-            <span class="text-body-sm font-medium text-(--text-primary)">Скачать шаблон</span>
+            <span class="text-body-sm font-medium text-(--text-primary)">{{ t('datasets.upload.templateItem.getTemplate') }}</span>
           </AppDropdownItem>
           <AppDropdownItem
             :disabled="!hasListItems"
@@ -127,7 +130,7 @@ const handleFilesChange = (event: Event) => {
             @select="emit('clearAll')"
           >
             <Trash2 class="size-4 text-(--danger)" stroke-width="2" />
-            <span class="text-body-sm font-medium text-(--danger)">Удалить файлы</span>
+            <span class="text-body-sm font-medium text-(--danger)">{{ t('datasets.upload.templateItem.removeFiles') }}</span>
           </AppDropdownItem>
         </AppDropdown>
 

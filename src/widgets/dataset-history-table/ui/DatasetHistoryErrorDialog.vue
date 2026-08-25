@@ -2,12 +2,15 @@
 import { X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'radix-vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
 
 defineOptions({
   name: 'DatasetHistoryErrorDialog',
 });
+
+const { t } = useI18n({ useScope: 'global' });
 
 export interface ErrorDetails {
   uploadDate: string;
@@ -36,27 +39,27 @@ const detailsRows = computed(() => {
 
   return [
     {
-      label: 'Дата загрузки',
+      label: t('datasets.errorDialog.uploadDate'),
       value: props.details.uploadDate,
     },
     {
-      label: 'Файл',
+      label: t('datasets.errorDialog.file'),
       value: props.details.fileNames,
     },
     {
-      label: 'Тип данных',
+      label: t('datasets.errorDialog.dataType'),
       value: props.details.dataType,
     },
     {
-      label: 'Проверено строк',
+      label: t('datasets.errorDialog.checkedRows'),
       value: props.details.checkedRows,
     },
     {
-      label: 'Колонок с ошибками',
+      label: t('datasets.errorDialog.errorColumns'),
       value: props.details.errorColumns,
     },
     {
-      label: 'Найдено ошибок',
+      label: t('datasets.errorDialog.errorsFound'),
       value: props.details.errorsFound,
     },
   ];
@@ -99,7 +102,7 @@ const detailsRows = computed(() => {
             class="flex w-full px-5 py-4 justify-between items-center bg-(--background) select-none"
           >
             <DialogTitle class="font-sans text-base font-medium leading-6 text-(--text-primary)">
-              {{ title || 'Ошибки валидации' }}
+              {{ title || t('datasets.errorDialog.defaultTitle') }}
             </DialogTitle>
 
             <AppButton variant="outline" size="icon" @click="emit('close')">
@@ -141,7 +144,7 @@ const detailsRows = computed(() => {
           <!-- Footer: Кнопка «Скачать файл» со скруглением -->
           <footer class="flex w-full px-5 py-4 justify-end items-center bg-(--background)">
             <AppButton class="flex-1" variant="primary" size="medium" @click="emit('download')">
-              Скачать файл
+              {{ t('datasets.errorDialog.downloadFile') }}
             </AppButton>
           </footer>
         </DialogContent>

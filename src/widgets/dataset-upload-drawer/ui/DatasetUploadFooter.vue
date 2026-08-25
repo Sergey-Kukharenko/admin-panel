@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 import { AppButton } from '@/shared/ui/app-button';
 
 defineProps<{
@@ -10,6 +12,8 @@ const emit = defineEmits<{
   cancel: [];
   submit: [];
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -20,11 +24,11 @@ const emit = defineEmits<{
       :disabled="submitting"
       @click="emit('cancel')"
     >
-      Отмена
+      {{ t('datasets.upload.footer.cancel') }}
     </AppButton>
 
     <AppButton variant="primary" size="medium" :disabled="disabled" @click="emit('submit')">
-      {{ submitting ? 'Загрузка...' : 'Загрузить и обработать' }}
+      {{ submitting ? t('datasets.upload.footer.submitting') : t('datasets.upload.footer.submit') }}
     </AppButton>
   </div>
 </template>

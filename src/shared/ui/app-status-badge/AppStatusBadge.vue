@@ -11,6 +11,8 @@ defineOptions({
 const props = defineProps<{
   status: AppStatusBadgeStatus;
   clickable?: boolean;
+  /** Переопределяет текст по умолчанию для контекстов со своей терминологией статусов */
+  label?: string;
 }>();
 
 defineEmits<{
@@ -58,7 +60,7 @@ const config = computed(() => STATUS_CONFIG[props.status]);
     />
 
     <span class="text-xs font-medium uppercase" :class="config.color">
-      {{ config.text }}
+      {{ label ?? config.text }}
     </span>
   </div>
 </template>

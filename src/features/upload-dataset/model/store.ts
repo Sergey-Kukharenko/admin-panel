@@ -135,7 +135,7 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
     } catch {
       upload.status = 'error';
       upload.progress = null;
-      upload.error = 'Ошибка загрузки файла';
+      upload.error = 'datasets.validation.uploadFailed';
     }
 
     isCategoryUploading.value[templateId] = false;

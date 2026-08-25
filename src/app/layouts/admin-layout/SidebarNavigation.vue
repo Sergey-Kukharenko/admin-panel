@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import CreditCardIcon from '@/shared/assets/icons/navigation/billing.svg?component';
 import DatabaseIcon from '@/shared/assets/icons/navigation/datasets.svg?component';
@@ -17,33 +19,35 @@ interface NavigationItem {
   icon: Component;
 }
 
-const items: NavigationItem[] = [
+const { t } = useI18n({ useScope: 'global' });
+
+const items = computed<NavigationItem[]>(() => [
   {
-    label: 'Главная',
+    label: t('layout.nav.dashboard'),
     to: '/dashboard',
     icon: HomeIcon,
   },
   {
-    label: 'Интеграции',
+    label: t('layout.nav.integrations'),
     to: '/integrations',
     icon: PlugIcon,
   },
   {
-    label: 'Загрузка данных',
+    label: t('layout.nav.datasets'),
     to: '/datasets',
     icon: DatabaseIcon,
   },
   {
-    label: 'Предсказания',
+    label: t('layout.nav.predictions'),
     to: '/predictions',
     icon: SparklesIcon,
   },
   {
-    label: 'Тарифы',
+    label: t('layout.nav.billing'),
     to: '/billing',
     icon: CreditCardIcon,
   },
-];
+]);
 </script>
 
 <template>

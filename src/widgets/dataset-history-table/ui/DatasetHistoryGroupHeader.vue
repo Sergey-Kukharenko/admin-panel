@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ChevronDown, FileText, PieChart } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { formatDatasetGroupDate } from '../model/utils';
 
@@ -19,6 +20,8 @@ const props = defineProps<{
 defineEmits<{
   toggle: [];
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 
 const formattedDate = computed(() => formatDatasetGroupDate(props.date));
 </script>
@@ -67,7 +70,7 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
           <span
             class="font-mono text-element-tag font-medium uppercase text-(--text-primary) pl-0.5"
           >
-            Источник: {{ source }}
+            {{ t('datasets.table.source', { source }) }}
           </span>
         </div>
       </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
 
@@ -22,6 +23,8 @@ const props = withDefaults(defineProps<DatasetUploadZoneProps>(), {
 const emit = defineEmits<{
   upload: [File[]];
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 
 const inputRef = ref<HTMLInputElement>();
 const isDragOver = ref(false);
@@ -85,10 +88,10 @@ const handleDragLeave = () => {
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
   >
-    <p class="text-body-sm text-(--text-secondary) mb-3 select-none">Нет добавленных файлов</p>
+    <p class="text-body-sm text-(--text-secondary) mb-3 select-none">{{ t('datasets.upload.zone.empty') }}</p>
 
     <AppButton variant="outline" size="medium" :disabled="disabled" @click="handleSelect">
-      Выбрать файлы
+      {{ t('datasets.upload.zone.chooseFiles') }}
     </AppButton>
 
     <input

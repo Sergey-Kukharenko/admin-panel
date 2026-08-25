@@ -19,7 +19,7 @@ export interface UploadedDatasetFile {
   project_id: string;
   dataset_type: string;
   rows_count: number;
-  status: 'succeeded' | 'failed' | 'awaiting';
+  status: 'succeeded' | 'failed' | 'awaiting' | 'processing';
   file_name: string;
   file_name_csv: string;
   s3_bucket: string;
