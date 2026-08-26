@@ -41,9 +41,7 @@ const {
 watch(showHistoryTable, (value) => emit('update:hasHistory', value), { immediate: true });
 
 function handleResetFilters(): void {
-  filters.types.value = [];
-  filters.status.value = '';
-  filters.period.value = '';
+  filters.resetFilters();
 }
 </script>
 
@@ -80,7 +78,7 @@ function handleResetFilters(): void {
 
         <div
           v-else-if="renderedGroups.length === 0"
-          class="flex w-full flex-col items-center gap-4 py-16 text-center border border-dashed border-(--border-subtle) rounded-(--radius-xl)"
+          class="flex w-full flex-col items-center gap-4 py-16 text-center"
         >
           <div class="flex flex-col gap-1">
             <p class="text-sm font-medium text-(--text-primary)">{{ t('datasets.table.emptyNotFound.title') }}</p>
@@ -93,41 +91,52 @@ function handleResetFilters(): void {
         </div>
 
         <template v-else>
-          <!-- Список групп файлов -->
-          <div
-            v-for="group in renderedGroups"
-            :key="group.id"
-            class="flex w-full flex-col items-center overflow-hidden rounded-(--radius-xl) bg-(--bg-surface-neutral) self-stretch mb-1"
+          <!-- Список групп файлов. TransitionGroup сглаживает появление/исчезновение
+               целых day-групп при смене фильтров (ключ — дата), чтобы список не
+               «схлопывался» рывком, когда отфильтрованный результат короче исходного. -->
+          <TransitionGroup
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="max-h-0 opacity-0"
+            enter-to-class="max-h-(--collapsible-content-max-height) opacity-100"
+            leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="max-h-(--collapsible-content-max-height) opacity-100"
+            leave-to-class="max-h-0 opacity-0"
           >
-            <div class="w-full transition-all duration-150">
-              <DatasetHistoryGroupHeader
-                :date="group.date"
-                :uploaded-count="group.uploadedCount"
-                :total-count="group.totalCount"
-                :source="group.source"
-                :expanded="expandedGroups.includes(group.id)"
-                @toggle="toggleGroup(group.id)"
-              />
-            </div>
-
-            <Transition
-              enter-active-class="transition-all duration-300 ease-out overflow-hidden"
-              enter-from-class="max-h-0 opacity-0"
-              enter-to-class="max-h-(--collapsible-content-max-height) opacity-100"
-              leave-active-class="transition-all duration-200 ease-in overflow-hidden"
-              leave-from-class="max-h-(--collapsible-content-max-height) opacity-100"
-              leave-to-class="max-h-0 opacity-0"
+            <div
+              v-for="group in renderedGroups"
+              :key="group.id"
+              class="flex w-full flex-col items-center overflow-hidden rounded-(--radius-xl) bg-(--bg-surface-neutral) self-stretch mb-1"
             >
-              <div v-if="expandedGroups.includes(group.id)" class="w-full">
-                <DatasetHistoryGroupContent
-                  :dataset-groups="group.datasetGroups"
-                  :group-date="group.date"
-                  :sort-by="filters.sortBy.value"
-                  :sort-order="filters.sortOrder.value"
+              <div class="w-full transition-all duration-150">
+                <DatasetHistoryGroupHeader
+                  :date="group.date"
+                  :uploaded-count="group.uploadedCount"
+                  :total-count="group.totalCount"
+                  :source="group.source"
+                  :expanded="expandedGroups.includes(group.id)"
+                  @toggle="toggleGroup(group.id)"
                 />
               </div>
-            </Transition>
-          </div>
+
+              <Transition
+                enter-active-class="transition-all duration-300 ease-out overflow-hidden"
+                enter-from-class="max-h-0 opacity-0"
+                enter-to-class="max-h-(--collapsible-content-max-height) opacity-100"
+                leave-active-class="transition-all duration-200 ease-in overflow-hidden"
+                leave-from-class="max-h-(--collapsible-content-max-height) opacity-100"
+                leave-to-class="max-h-0 opacity-0"
+              >
+                <div v-if="expandedGroups.includes(group.id)" class="w-full">
+                  <DatasetHistoryGroupContent
+                    :dataset-groups="group.datasetGroups"
+                    :group-date="group.date"
+                    :sort-by="filters.sortBy.value"
+                    :sort-order="filters.sortOrder.value"
+                  />
+                </div>
+              </Transition>
+            </div>
+          </TransitionGroup>
 
           <DatasetHistoryPagination
             v-model:page="page"

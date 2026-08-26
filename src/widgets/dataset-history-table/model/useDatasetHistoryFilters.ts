@@ -17,6 +17,20 @@ export function useDatasetHistoryFilters() {
     });
   }
 
+  // ⚡ Сбрасываем все фильтры одним вызовом replaceQuery, а не тремя отдельными
+  // присваиваниями (types.value = [], status.value = '', ...): каждое присваивание
+  // читает route.query и вызывает router.replace() независимо, а Vue Router обновляет
+  // route.query только после разрешения навигации — три синхронных вызова подряд читают
+  // один и тот же «устаревший» route.query, и побеждает только последний replace,
+  // откатывая изменения, сделанные предыдущими двумя.
+  function resetFilters() {
+    replaceQuery({
+      [QUERY_KEYS.types]: undefined,
+      [QUERY_KEYS.status]: undefined,
+      [QUERY_KEYS.period]: undefined,
+    });
+  }
+
   const types = computed<string[]>({
     get() {
       const value = route.query[QUERY_KEYS.types];
@@ -90,5 +104,6 @@ export function useDatasetHistoryFilters() {
     sortBy,
     sortOrder,
     setSort,
+    resetFilters,
   };
 }
