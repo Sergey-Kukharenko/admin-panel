@@ -81,7 +81,6 @@ const visibleCategories = computed(() => {
         count: files.length,
         icon,
         files,
-        hasError: files.some((file) => file.status === 'ERROR'),
       };
     })
     .filter((category) => category.files.length > 0);
@@ -96,7 +95,7 @@ const visibleCategories = computed(() => {
       class="flex w-full flex-col overflow-hidden rounded-(--radius-lg) bg-(--surface)"
     >
       <!-- HEADER -->
-      <div class="flex h-11 w-full items-center justify-between border-b border-(--border-default) pl-4 pr-4">
+      <div class="flex h-11 w-full items-center border-b border-(--border-default) pl-4">
         <div class="flex flex-1 items-center gap-2">
           <DatasetTemplateIcon :icon="category.icon" class="h-4 w-4" />
 
@@ -110,8 +109,6 @@ const visibleCategories = computed(() => {
             </span>
           </div>
         </div>
-
-        <AppStatusBadge v-if="category.hasError" status="error" :label="badgeLabelMap.ERROR" />
       </div>
 
       <!-- FILES -->

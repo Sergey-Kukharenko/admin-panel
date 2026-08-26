@@ -139,8 +139,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
 
       <template v-else-if="isQueued(item.upload)">
         <div class="shrink-0 flex items-center justify-center pt-0.75 w-4 h-4">
-          <!-- ⚡ Файл ещё не отправлен — пустое кольцо, а не галочка «успешно» -->
-          <DatasetUploadSpinner :progress="0" />
+          <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
