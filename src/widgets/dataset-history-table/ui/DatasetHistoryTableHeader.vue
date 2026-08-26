@@ -30,18 +30,13 @@ const { t } = useI18n({ useScope: 'global' });
       </span>
     </div>
 
-    <!-- 3. Ячейка: СТАТУС -->
-    <div
-      class="flex h-9 w-40 items-center border-r border-(--border-subtle) pl-4 pr-3 text-left"
-    >
+    <!-- 3. Ячейка: СТАТУС (включает переход к деталям ошибки — без отдельной колонки) -->
+    <div class="flex h-9 w-40 items-center pl-4 pr-3 text-left">
       <span
         class="font-mono text-element-tag font-medium uppercase text-(--text-secondary) select-none"
       >
         {{ t('datasets.table.header.status') }}
       </span>
     </div>
-
-    <!-- 4. Ячейка: переход к деталям ошибки (без заголовка, только под иконку-стрелку) -->
-    <div class="flex h-9 w-11 shrink-0 items-center justify-center" />
   </div>
 </template>

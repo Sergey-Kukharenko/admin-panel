@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n';
 
 import type { DatasetGroup } from '@/entities/dataset';
 import { DatasetTemplateIcon, getDatasetTypeContent } from '@/entities/dataset';
-import { AppButton } from '@/shared/ui/app-button';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
 import { mapBackendStatusToUi } from '../model/statusMapping';
@@ -135,22 +134,19 @@ const visibleCategories = computed(() => {
           </span>
         </div>
 
-        <!-- STATUS -->
-        <div class="flex h-11 w-40 items-center border-r border-(--border-default) pl-4">
+        <!-- STATUS (+ переход к деталям ошибки в той же ячейке, без разделителя) -->
+        <div class="flex h-11 w-40 items-center gap-1 pl-4">
           <AppStatusBadge :status="badgeStatusMap[file.status]" :label="badgeLabelMap[file.status]" />
-        </div>
 
-        <!-- ПЕРЕХОД К ДЕТАЛЯМ ОШИБКИ -->
-        <div class="flex h-11 w-11 shrink-0 items-center justify-center">
-          <AppButton
+          <button
             v-if="file.status === 'ERROR'"
-            variant="ghost"
-            size="icon"
+            type="button"
+            class="flex items-center justify-center text-(--text-secondary) transition-colors hover:text-(--text-primary)"
             :aria-label="t('datasets.table.viewErrorDetails')"
             @click="errors.open(file.rawFile, category.title)"
           >
-            <ChevronRight />
-          </AppButton>
+            <ChevronRight class="size-4" />
+          </button>
         </div>
       </div>
     </div>
