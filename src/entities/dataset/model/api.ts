@@ -25,10 +25,12 @@ export interface UploadedDatasetFile {
   s3_bucket: string;
   source_type: string;
   validation_errors: {
-    missing_columns?: string[];
+    missing_required_columns?: string[];
     missing_values?: string[];
-    wrong_column_type?: Record<string, { required: string; actual: string }>;
+    wrong_column_type?: Record<string, { required: string | string[]; actual?: string | null }>;
     not_allowed_values?: Record<string, string[]>;
+    extra_columns?: string[];
+    header_errors?: string[];
   } | null;
   uploaded_at: string;
   deleted_at: string | null;

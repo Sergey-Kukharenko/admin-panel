@@ -14,19 +14,21 @@ interface ErrorFile {
   validation_errors: UploadedDatasetFile['validation_errors'];
 }
 
-// Считаем реальное число ошибок из validation_errors вместо заглушки —
-// суммируем все категории (missing_columns/missing_values/wrong_column_type/not_allowed_values)
-// без дедупликации по колонкам.
+// Считаем реальное число ошибок из validation_errors вместо заглушки — суммируем все
+// категории (missing_required_columns/missing_values/wrong_column_type/not_allowed_values/
+// extra_columns/header_errors) без дедупликации по колонкам.
 function countValidationErrors(errors: UploadedDatasetFile['validation_errors']): number {
   if (!errors) {
     return 0;
   }
 
   return (
-    (errors.missing_columns?.length ?? 0) +
+    (errors.missing_required_columns?.length ?? 0) +
     (errors.missing_values?.length ?? 0) +
     Object.keys(errors.wrong_column_type ?? {}).length +
-    Object.keys(errors.not_allowed_values ?? {}).length
+    Object.keys(errors.not_allowed_values ?? {}).length +
+    (errors.extra_columns?.length ?? 0) +
+    (errors.header_errors?.length ?? 0)
   );
 }
 
@@ -56,10 +58,11 @@ export function useDatasetHistoryGroupErrors(groupDate: string) {
     if (!activeFile.value) return;
 
     try {
-      const response = await datasetApi.downloadFile(activeFile.value.file_id);
-      downloadBlob(response.data, activeFile.value.name);
+      const response = await datasetApi.downloadFileErrors(activeFile.value.file_id);
+      const errorsFileName = activeFile.value.name.replace(/\.csv$/i, '_errors.csv');
+      downloadBlob(response.data, errorsFileName);
     } catch (e) {
-      console.error('Не удалось скачать файл с ошибками:', e);
+      console.error('Не удалось скачать отчет с ошибками:', e);
     }
   }
 

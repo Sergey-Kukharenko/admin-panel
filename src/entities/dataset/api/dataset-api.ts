@@ -56,6 +56,11 @@ export const datasetApi = {
     return apiClient.get<Blob>(`/data-load/files/${fileId}`, { responseType: 'blob' });
   },
 
+  /** Скачать CSV с ошибками валидации файла */
+  downloadFileErrors(fileId: string) {
+    return apiClient.get<Blob>(`/data-load/files/${fileId}/errors`, { responseType: 'blob' });
+  },
+
   /**
    * Удалить загруженный файл по ID
    * Метод заработает, когда бэкенд добавит DELETE эндпоинт
