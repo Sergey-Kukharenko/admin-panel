@@ -12,6 +12,9 @@ import {
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
 const SAVED_FILES_STORAGE_KEY = 'dataset_uploaded_files';
+// Ограничивает число одновременных запросов загрузки файлов (по всем категориям сразу),
+// чтобы при загрузке нескольких тяжёлых файлов не перегружать сеть и бэк параллельными запросами
+const MAX_CONCURRENT_UPLOADS = 1;
 
 export type SavedFilesState = Record<string, DatasetFile[]>;
 
@@ -99,16 +102,31 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
     });
   }
 
-  async function processQueue(templateId: string): Promise<void> {
-    if (isCategoryUploading.value[templateId]) {
+  /** Ищет первый файл в очереди среди всех категорий (в порядке их добавления) */
+  function findNextQueuedUpload(): { templateId: string; upload: DatasetUpload } | null {
+    for (const templateId of Object.keys(uploadsMap.value)) {
+      const upload = uploadsMap.value[templateId]?.find((item) => item.status === 'queued');
+      if (upload) {
+        return { templateId, upload };
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Воркер разбирает общую очередь файлов по одному, независимо от категории —
+   * несколько воркеров, запущенных параллельно (см. submitQueuedFiles), дают
+   * ограниченную конкурентность загрузки на весь набор файлов, а не на категорию.
+   */
+  async function runUploadWorker(): Promise<void> {
+    const next = findNextQueuedUpload();
+
+    if (!next) {
       return;
     }
 
-    const upload = uploadsMap.value[templateId]?.find((item) => item.status === 'queued');
-
-    if (!upload) {
-      return;
-    }
+    const { templateId, upload } = next;
 
     isCategoryUploading.value[templateId] = true;
 
@@ -158,7 +176,7 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
 
     isCategoryUploading.value[templateId] = false;
 
-    await processQueue(templateId);
+    await runUploadWorker();
   }
 
   /** Отправляет на бэк все файлы, добавленные локально (по клику на кнопку в футере) */
@@ -166,7 +184,7 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
     isSubmitting.value = true;
 
     try {
-      await Promise.all(Object.keys(uploadsMap.value).map((templateId) => processQueue(templateId)));
+      await Promise.all(Array.from({ length: MAX_CONCURRENT_UPLOADS }, () => runUploadWorker()));
     } finally {
       isSubmitting.value = false;
     }
