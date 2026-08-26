@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { DatasetHistoryTable } from '@/widgets/dataset-history-table';
@@ -11,11 +11,26 @@ defineOptions({
 
 const { t } = useI18n({ useScope: 'global' });
 
+// Отмечает, что шторка первичного онбординга уже была показана в этом браузере —
+// не даём ей всплывать повторно при каждом визите на пустую историю загрузок
+const ONBOARDING_DRAWER_SHOWN_KEY = 'dataset_onboarding_drawer_shown';
+
 // Флаг открытия шторки
 const isDrawerOpen = ref(false);
 
 // Есть ли реальная история загрузок (шаблоны и файлы) — решает виджет DatasetHistoryTable
 const hasHistory = ref(true);
+
+// Первичный онбординг: когда виджет подтверждает отсутствие истории загрузок
+// (после реального ответа бэкенда, а не во время загрузки), открываем шторку
+// автоматически один раз — повторные визиты на пустую историю её не триггерят
+watch(hasHistory, (value) => {
+  if (value) return;
+  if (localStorage.getItem(ONBOARDING_DRAWER_SHOWN_KEY)) return;
+
+  localStorage.setItem(ONBOARDING_DRAWER_SHOWN_KEY, 'true');
+  isDrawerOpen.value = true;
+});
 </script>
 
 <template>
