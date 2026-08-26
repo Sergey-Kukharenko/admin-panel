@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { ChevronRight } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import type { DatasetGroup } from '@/entities/dataset';
 import { DatasetTemplateIcon, getDatasetTypeContent } from '@/entities/dataset';
+import { AppButton } from '@/shared/ui/app-button';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
 import { mapBackendStatusToUi } from '../model/statusMapping';
@@ -132,14 +134,21 @@ const visibleCategories = computed(() => {
         </div>
 
         <!-- STATUS -->
-        <div class="flex h-11 w-40 items-center pl-4">
-          <!-- ⚡ Передаем строго оригинальный file.rawFile для контроллера ошибок -->
-          <AppStatusBadge
-            :status="badgeStatusMap[file.status]"
-            :label="badgeLabelMap[file.status]"
-            :clickable="file.status === 'ERROR'"
-            @click="file.status === 'ERROR' && errors.open(file.rawFile, category.title)"
-          />
+        <div class="flex h-11 w-40 items-center border-r border-(--border-default) pl-4">
+          <AppStatusBadge :status="badgeStatusMap[file.status]" :label="badgeLabelMap[file.status]" />
+        </div>
+
+        <!-- ПЕРЕХОД К ДЕТАЛЯМ ОШИБКИ -->
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center">
+          <AppButton
+            v-if="file.status === 'ERROR'"
+            variant="ghost"
+            size="icon"
+            :aria-label="t('datasets.table.viewErrorDetails')"
+            @click="errors.open(file.rawFile, category.title)"
+          >
+            <ChevronRight />
+          </AppButton>
         </div>
       </div>
     </div>

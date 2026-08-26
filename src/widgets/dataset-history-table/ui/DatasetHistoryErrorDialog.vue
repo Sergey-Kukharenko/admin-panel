@@ -13,11 +13,9 @@ defineOptions({
 const { t } = useI18n({ useScope: 'global' });
 
 export interface ErrorDetails {
-  uploadDate: string;
-  fileNames: string[];
+  checkDate: string;
   dataType: string;
   checkedRows: number;
-  errorColumns: number;
   errorsFound: number;
 }
 
@@ -39,12 +37,8 @@ const detailsRows = computed(() => {
 
   return [
     {
-      label: t('datasets.errorDialog.uploadDate'),
-      value: props.details.uploadDate,
-    },
-    {
-      label: t('datasets.errorDialog.file'),
-      value: props.details.fileNames,
+      label: t('datasets.errorDialog.checkDate'),
+      value: props.details.checkDate,
     },
     {
       label: t('datasets.errorDialog.dataType'),
@@ -53,10 +47,6 @@ const detailsRows = computed(() => {
     {
       label: t('datasets.errorDialog.checkedRows'),
       value: props.details.checkedRows,
-    },
-    {
-      label: t('datasets.errorDialog.errorColumns'),
-      value: props.details.errorColumns,
     },
     {
       label: t('datasets.errorDialog.errorsFound'),
@@ -124,24 +114,14 @@ const detailsRows = computed(() => {
                   {{ row.label }}
                 </span>
 
-                <div v-if="Array.isArray(row.value)" class="flex flex-col flex-1 min-w-0">
-                  <span
-                    v-for="name in row.value"
-                    :key="name"
-                    class="font-sans text-sm font-normal leading-5 text-(--text-primary) break-all"
-                  >
-                    {{ name }}
-                  </span>
-                </div>
-
-                <span v-else class="font-sans text-sm font-normal leading-5 text-(--text-primary)">
+                <span class="font-sans text-sm font-normal leading-5 text-(--text-primary)">
                   {{ row.value }}
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- Footer: Кнопка «Скачать файл» со скруглением -->
+          <!-- Footer -->
           <footer class="flex w-full px-5 py-4 justify-end items-center bg-(--background)">
             <AppButton class="flex-1" variant="primary" size="medium" @click="emit('download')">
               {{ t('datasets.errorDialog.downloadFile') }}

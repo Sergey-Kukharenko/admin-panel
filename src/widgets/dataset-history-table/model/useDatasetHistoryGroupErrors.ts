@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 
+import type { UploadedDatasetFile } from '@/entities/dataset';
 import { datasetApi } from '@/entities/dataset';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
@@ -10,6 +11,23 @@ interface ErrorFile {
   file_id: string;
   name: string;
   rowsCount: number;
+  validation_errors: UploadedDatasetFile['validation_errors'];
+}
+
+// Считаем реальное число ошибок из validation_errors вместо заглушки —
+// суммируем все категории (missing_columns/missing_values/wrong_column_type/not_allowed_values)
+// без дедупликации по колонкам.
+function countValidationErrors(errors: UploadedDatasetFile['validation_errors']): number {
+  if (!errors) {
+    return 0;
+  }
+
+  return (
+    (errors.missing_columns?.length ?? 0) +
+    (errors.missing_values?.length ?? 0) +
+    Object.keys(errors.wrong_column_type ?? {}).length +
+    Object.keys(errors.not_allowed_values ?? {}).length
+  );
 }
 
 export function useDatasetHistoryGroupErrors(groupDate: string) {
@@ -21,12 +39,10 @@ export function useDatasetHistoryGroupErrors(groupDate: string) {
     activeFile.value = file;
 
     details.value = {
-      uploadDate: formatDatasetGroupDate(groupDate),
-      fileNames: [file.name],
-      dataType: categoryTitle.toLowerCase(),
+      checkDate: formatDatasetGroupDate(groupDate),
+      dataType: categoryTitle,
       checkedRows: file.rowsCount,
-      errorColumns: 3,
-      errorsFound: 3,
+      errorsFound: countValidationErrors(file.validation_errors),
     };
 
     isOpen.value = true;
