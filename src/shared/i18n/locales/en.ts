@@ -47,11 +47,17 @@ export const en: MessageSchema = {
     },
   },
   notificationsMock: {
-    n1: { title: 'VIP Churn Predictor 30d finished training and is ready to launch', time: '5 min ago' },
+    n1: {
+      title: 'VIP Churn Predictor 30d finished training and is ready to launch',
+      time: '5 min ago',
+    },
     n2: { title: 'Run completed', time: '2 h ago' },
     n3: { title: 'Data successfully uploaded via CSV (145,000 rows)', time: '5 h ago' },
     n4: { title: 'Failed to upload payments.csv — invalid column structure', time: '1 d ago' },
-    n5: { title: 'VIP Churn Predictor 30d finished training and is ready to launch', time: '1 d ago' },
+    n5: {
+      title: 'VIP Churn Predictor 30d finished training and is ready to launch',
+      time: '1 d ago',
+    },
     n6: { title: 'VIP CLV Predictor run completed (145,000 rows)', time: '2 d ago' },
     n7: { title: 'Recommender System finished training and is ready to launch', time: '3 d ago' },
     n8: { title: 'Recommender System run completed (98,500 rows)', time: '4 d ago' },
@@ -104,7 +110,8 @@ export const en: MessageSchema = {
     upload: {
       title: 'Data Upload',
       bannerTitle: 'Template Pack',
-      bannerDescription: 'Templates and sample files for all data types. Use them as a reference when preparing your data.',
+      bannerDescription:
+        'Templates and sample files for all data types. Use them as a reference when preparing your data.',
       sectionTitle: 'Uploaded Files {count}',
       sectionDescriptionLine1: 'Upload data required for ML-products.',
       sectionDescriptionLine2: 'CSV only, up to 512 MB.',
@@ -146,6 +153,7 @@ export const en: MessageSchema = {
       empty: 'File contains no data',
       unsupportedFormat: 'Only CSV files are supported',
       uploadFailed: 'Failed to upload file',
+      totalSizeExceeded: 'Upload limit reached — 100 GB per client',
     },
     templates: {
       users: { description: 'User profiles and registration data' },

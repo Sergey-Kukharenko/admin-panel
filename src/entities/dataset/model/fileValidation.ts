@@ -1,4 +1,7 @@
 export const DATASET_MAX_FILE_SIZE_BYTES = 512 * 1024 * 1024;
+// Ограничение на суммарный объём файлов, загружаемых клиентом через портал:
+// CSV-загрузка рассчитана только на демо/POC, для реальных объёмов — интеграции
+export const DATASET_MAX_TOTAL_SIZE_BYTES = 100 * 1024 * 1024 * 1024;
 
 export const DATASET_ALLOWED_FILE_EXTENSION = '.csv';
 export const DATASET_ALLOWED_MIME_TYPE = 'text/csv';
@@ -9,6 +12,7 @@ export const DATASET_FILE_ERRORS = {
   tooLarge: 'datasets.validation.tooLarge',
   empty: 'datasets.validation.empty',
   unsupportedFormat: 'datasets.validation.unsupportedFormat',
+  totalSizeExceeded: 'datasets.validation.totalSizeExceeded',
 } as const;
 
 export const getDatasetFileValidationError = (file: File): string | undefined => {

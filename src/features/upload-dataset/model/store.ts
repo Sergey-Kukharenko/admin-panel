@@ -4,7 +4,9 @@ import { computed, ref, watch } from 'vue';
 
 import type { DatasetFile, DatasetTemplate, DatasetUpload } from '@/entities/dataset';
 import {
+  DATASET_FILE_ERRORS,
   DATASET_HISTORY_QUERY_KEY,
+  DATASET_MAX_TOTAL_SIZE_BYTES,
   datasetApi,
   getDatasetFileValidationError,
   getDatasetTypeContent,
@@ -79,6 +81,23 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
     }
   }
 
+  /** Суммарный объём файлов, уже занимающих квоту клиента: загруженные + ожидающие/грузящиеся */
+  function getReservedTotalSize(): number {
+    let total = 0;
+
+    for (const files of Object.values(filesMap.value)) {
+      total += (files ?? []).reduce((sum, file) => sum + file.size, 0);
+    }
+
+    for (const uploads of Object.values(uploadsMap.value)) {
+      total += (uploads ?? [])
+        .filter((upload) => upload.status !== 'error')
+        .reduce((sum, upload) => sum + upload.source.size, 0);
+    }
+
+    return total;
+  }
+
   function addFiles(templateId: string, newFiles: File[]) {
     if (!uploadsMap.value[templateId]) {
       uploadsMap.value[templateId] = [];
@@ -87,8 +106,20 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
     const currentUploads = uploadsMap.value[templateId];
     if (!currentUploads) return;
 
+    // Общий лимит на клиента (см. DATASET_MAX_TOTAL_SIZE_BYTES) — CSV-загрузка через
+    // портал рассчитана на демо/POC, для больших объёмов клиент должен использовать интеграции
+    let runningTotal = getReservedTotalSize();
+
     newFiles.forEach((file) => {
-      const validationError = getDatasetFileValidationError(file);
+      let validationError = getDatasetFileValidationError(file);
+
+      if (!validationError) {
+        if (runningTotal + file.size > DATASET_MAX_TOTAL_SIZE_BYTES) {
+          validationError = DATASET_FILE_ERRORS.totalSizeExceeded;
+        } else {
+          runningTotal += file.size;
+        }
+      }
 
       // Добавление файла — чисто локальная операция, ничего не читается и не
       // грузится: реальная отправка на бэк стартует только из submitQueuedFiles.

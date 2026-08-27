@@ -45,7 +45,10 @@ export const ru = {
     },
   },
   notificationsMock: {
-    n1: { title: 'VIP Churn Predictor 30d завершил обучение и готов к запуску', time: '5 мин назад' },
+    n1: {
+      title: 'VIP Churn Predictor 30d завершил обучение и готов к запуску',
+      time: '5 мин назад',
+    },
     n2: { title: 'Прогон завершён', time: '2 ч назад' },
     n3: { title: 'Данные успешно загружены через CSV (145,000 строк)', time: '5 ч назад' },
     n4: {
@@ -106,7 +109,8 @@ export const ru = {
     upload: {
       title: 'Загрузка данных',
       bannerTitle: 'Архив шаблонов',
-      bannerDescription: 'Шаблоны и примеры для всех типов данных. Используйте их при подготовке файлов.',
+      bannerDescription:
+        'Шаблоны и примеры для всех типов данных. Используйте их при подготовке файлов.',
       sectionTitle: 'Загруженные файлы {count}',
       sectionDescriptionLine1: 'Загрузите данные для запуска и работы ML-продуктов.',
       sectionDescriptionLine2: 'CSV-файлы до 512 МБ.',
@@ -148,6 +152,7 @@ export const ru = {
       empty: 'Файл не содержит данных',
       unsupportedFormat: 'Поддерживается только CSV',
       uploadFailed: 'Ошибка загрузки файла',
+      totalSizeExceeded: 'Превышен лимит загрузки — 100 ГБ на клиента',
     },
     templates: {
       users: { description: 'Профили и регистрационные данные пользователей' },
