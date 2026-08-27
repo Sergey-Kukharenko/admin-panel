@@ -8,6 +8,7 @@ import { UploadsEmptyState } from '@/widgets/uploads-empty-state';
 import { useDatasetHistoryTable } from '../model';
 import DatasetHistoryGroupContent from './DatasetHistoryGroupContent.vue';
 import DatasetHistoryGroupHeader from './DatasetHistoryGroupHeader.vue';
+import DatasetHistoryGroupSkeleton from './DatasetHistoryGroupSkeleton.vue';
 import DatasetHistoryPagination from './DatasetHistoryPagination.vue';
 import DatasetHistoryTableHeader from './DatasetHistoryTableHeader.vue';
 import DatasetHistoryTableSkeleton from './DatasetHistoryTableSkeleton.vue';
@@ -69,12 +70,7 @@ function handleResetFilters(): void {
       <div class="flex w-full flex-col gap-1 self-stretch">
         <DatasetHistoryTableHeader />
 
-        <div
-          v-if="isLoading"
-          class="w-full py-20 flex justify-center items-center text-sm text-(--text-secondary) font-mono"
-        >
-          {{ t('datasets.table.syncing') }}
-        </div>
+        <DatasetHistoryGroupSkeleton v-if="isLoading" />
 
         <div
           v-else-if="renderedGroups.length === 0"

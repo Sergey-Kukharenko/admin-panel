@@ -94,7 +94,6 @@ export const ru = {
       viewErrorDetails: 'Посмотреть детали ошибки',
       source: 'Источник: {source}',
       updating: 'Обновление...',
-      syncing: 'Синхронизация данных с бэкендом...',
       emptyNotFound: {
         title: 'Ничего не найдено',
         description: 'Попробуйте изменить параметры фильтров',
