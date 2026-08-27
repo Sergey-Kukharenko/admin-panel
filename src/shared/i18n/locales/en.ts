@@ -95,7 +95,6 @@ export const en: MessageSchema = {
       viewErrorDetails: 'View error details',
       source: 'Source: {source}',
       updating: 'Updating...',
-      syncing: 'Syncing data with backend...',
       emptyNotFound: {
         title: 'No results found',
         description: 'Try adjusting your filters',
