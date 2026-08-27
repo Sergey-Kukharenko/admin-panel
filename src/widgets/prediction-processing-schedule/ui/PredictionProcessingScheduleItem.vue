@@ -12,7 +12,7 @@ defineProps<{
 
 <template>
   <article
-    class="h-[60px] p-2 bg-[var(--bg-surface-primary)] rounded-(--radius-lg) inline-flex justify-start items-center gap-3"
+    class="h-[60px] p-2 bg-[var(--bg-surface-primary)] rounded-lg inline-flex justify-start items-center gap-3"
   >
     <div
       class="w-11 self-stretch shrink-0 border-r border-[var(--border-default)] pr-2 inline-flex flex-col justify-center items-center gap-0.5"
@@ -22,7 +22,7 @@ defineProps<{
       </div>
 
       <div
-        class="text-center justify-start font-mono text-[var(--text-primary)] text-element-date-number font-normal"
+        class="text-center justify-start font-mono text-[var(--text-primary)] text-lg font-normal leading-5"
       >
         {{ item.dayOfMonth }}
       </div>

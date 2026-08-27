@@ -13,9 +13,7 @@ import chevronDownIcon from '../assets/icons/chevron-down.svg';
 import { getDayCellClasses } from '../model/calendarCellClasses';
 import { monthShortNames } from '../model/constants';
 import { useScheduleCalendar } from '../model/useScheduleCalendar';
-import PredictionProcessingScheduleErrorState from './PredictionProcessingScheduleErrorState.vue';
 import PredictionProcessingScheduleItem from './PredictionProcessingScheduleItem.vue';
-import PredictionProcessingScheduleSkeleton from './PredictionProcessingScheduleSkeleton.vue';
 import ScheduleMonthPicker from './ScheduleMonthPicker.vue';
 
 defineOptions({
@@ -33,9 +31,6 @@ const {
   toggleCalendar,
   toggleMonthPicker,
   selectMonth,
-  isLoading,
-  isError,
-  refetch,
 } = useScheduleCalendar();
 
 const isPaddingBottomRemoved = computed(
@@ -43,16 +38,13 @@ const isPaddingBottomRemoved = computed(
 );
 
 const asideClasses = computed(() => [
-  'w-[332px] pt-2 bg-[var(--bg-surface-neutral)] rounded-(--radius-xl) relative inline-flex flex-col justify-start items-start gap-3 overflow-hidden shrink-0',
+  'w-[332px] pt-2 bg-[var(--bg-surface-neutral)] rounded-xl relative inline-flex flex-col justify-start items-start gap-3 overflow-hidden shrink-0',
   !isPaddingBottomRemoved.value && 'pb-4',
 ]);
 </script>
 
 <template>
-  <PredictionProcessingScheduleSkeleton v-if="isLoading" />
-  <PredictionProcessingScheduleErrorState v-else-if="isError" @retry="refetch" />
-
-  <aside v-else :class="asideClasses">
+  <aside :class="asideClasses">
     <CollapsibleRoot v-model:open="calendarOpened" class="w-full">
       <div class="self-stretch flex flex-col justify-start items-start gap-3">
         <header class="self-stretch h-8 px-5 pt-2 flex flex-col justify-start items-start gap-2">
@@ -65,7 +57,7 @@ const asideClasses = computed(() => [
 
             <button
               type="button"
-              class="h-6 py-1 rounded-(--radius-4xl) flex justify-start items-center gap-1"
+              class="h-6 py-1 rounded-[32px] flex justify-start items-center gap-1"
               aria-label="Показать или скрыть календарь расписания обработки"
               @click="toggleCalendar"
             >
@@ -131,13 +123,6 @@ const asideClasses = computed(() => [
               :key="item.id"
               :item="item"
             />
-
-            <p
-              v-if="sortedScheduleItems.length === 0"
-              class="px-3 py-6 text-center text-sm text-(--text-secondary)"
-            >
-              Событий в этом месяце нет
-            </p>
           </div>
         </ScrollAreaViewport>
 
@@ -146,7 +131,7 @@ const asideClasses = computed(() => [
           class="flex select-none touch-none p-0.5 bg-transparent w-1.5 absolute right-1 top-0 bottom-0 transition-colors hover:bg-black/5"
           orientation="vertical"
         >
-          <ScrollAreaThumb class="flex-1 bg-[var(--text-secondary)] opacity-30 rounded-(--radius-full)" />
+          <ScrollAreaThumb class="flex-1 bg-[var(--text-secondary)] opacity-30 rounded-full" />
         </ScrollAreaScrollbar>
       </ScrollAreaRoot>
     </div>

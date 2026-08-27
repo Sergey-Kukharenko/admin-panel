@@ -6,6 +6,7 @@ import {
   CircleCheck,
   CircleX,
   Download,
+  Globe,
 } from 'lucide-vue-next';
 import { toRef } from 'vue';
 
@@ -38,7 +39,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 </script>
 
 <template>
-  <div class="w-full overflow-clip rounded-(--radius-xl) border border-(--border-default)">
+  <div class="w-full overflow-clip rounded-[var(--radius-md)] border border-(--border-default)">
     <!-- HEADER -->
     <div class="flex w-full items-center">
       <button
@@ -46,7 +47,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 w-26 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('id')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span class="font-mono text-xs font-medium uppercase leading-5 text-(--text-secondary)">
           ID
         </span>
         <component :is="sortIconFor('id')" class="size-3.5" :class="sortIconClassFor('id')" />
@@ -57,7 +58,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('product')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span class="font-mono text-xs font-medium uppercase leading-5 text-(--text-secondary)">
           Продукт
         </span>
         <component
@@ -72,7 +73,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('service')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span class="font-mono text-xs font-medium uppercase leading-5 text-(--text-secondary)">
           Сервис
         </span>
         <component
@@ -87,7 +88,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('startedAt')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span class="font-mono text-xs font-medium uppercase leading-5 text-(--text-secondary)">
           Начало расчета
         </span>
         <component
@@ -102,7 +103,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('finishedAt')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span class="font-mono text-xs font-medium uppercase leading-5 text-(--text-secondary)">
           Завершение расчета
         </span>
         <component
@@ -117,7 +118,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 w-30 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('recordsCount')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span class="font-mono text-xs font-medium uppercase leading-5 text-(--text-secondary)">
           Записей
         </span>
         <component
@@ -132,7 +133,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 w-30 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('status')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span class="font-mono text-xs font-medium uppercase leading-5 text-(--text-secondary)">
           Статус
         </span>
         <component
@@ -143,7 +144,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
       </button>
 
       <div class="flex h-9 w-[91px] shrink-0 items-center gap-1.5 bg-(--bg-surface-neutral) px-4">
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span class="font-mono text-xs font-medium uppercase leading-5 text-(--text-secondary)">
           Результат
         </span>
       </div>
@@ -152,13 +153,8 @@ function sortIconClassFor(field: PredictionRunSortField) {
     <!-- ROWS -->
     <div class="flex w-full flex-col divide-y divide-(--border-default)">
       <div v-for="item in sortedItems" :key="item.id" class="flex w-full items-center">
-        <div
-          class="flex h-11 w-26 shrink-0 items-center border-r border-(--border-default) px-4"
-          :title="item.id"
-        >
-          <span class="truncate text-sm font-medium leading-5 text-(--text-primary)">
-            {{ item.id.slice(0, 8) }}
-          </span>
+        <div class="flex h-11 w-26 shrink-0 items-center border-r border-(--border-default) px-4">
+          <span class="text-sm font-medium leading-5 text-(--text-primary)">{{ item.id }}</span>
         </div>
 
         <div class="flex h-11 min-w-px flex-1 items-center border-r border-(--border-default) px-4">
@@ -193,7 +189,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
         <div class="flex h-11 w-30 shrink-0 items-center border-r border-(--border-default) px-4">
           <div
-            class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) py-1 pl-1.5 pr-2"
+            class="inline-flex h-5.75 items-center gap-1 rounded-full py-1 pl-1.5 pr-2"
             :class="item.status === 'ready' ? 'bg-(--bg-badge-success)' : 'bg-(--bg-badge-danger)'"
           >
             <CircleCheck
@@ -204,7 +200,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
             <CircleX v-else class="size-3.5 text-(--danger-failed)" :stroke-width="2" />
 
             <span
-              class="font-mono text-element-tag font-medium uppercase"
+              class="font-mono text-xs font-medium uppercase leading-5"
               :class="item.status === 'ready' ? 'text-(--success-alt)' : 'text-(--danger-failed)'"
             >
               {{ item.status === 'ready' ? 'Ready' : 'Failed' }}
@@ -214,13 +210,15 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
         <div class="flex h-11 w-[91px] shrink-0 items-center justify-center px-2">
           <button
-            v-if="item.isDownloadable"
+            v-if="item.resultType"
             type="button"
-            class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
+            class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
             @click="$emit('download', item)"
           >
-            <Download class="size-4" />
-            <span class="text-sm font-medium leading-5">CSV</span>
+            <component :is="item.resultType === 'csv' ? Download : Globe" class="size-4" />
+            <span class="text-sm font-medium leading-5">
+              {{ item.resultType === 'csv' ? 'CSV' : 'API' }}
+            </span>
           </button>
         </div>
       </div>

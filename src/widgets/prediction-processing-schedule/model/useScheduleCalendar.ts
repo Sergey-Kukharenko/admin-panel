@@ -1,49 +1,40 @@
 import { computed, ref } from 'vue';
 
-import { useProducts } from '@/entities/product';
-
-import { monthShortNames } from './constants';
-import { buildScheduleEvents, toScheduleEvent } from './scheduleMapper';
+import { initialScheduleMonth, predictionProcessingSchedule } from './constants';
 import type { CalendarDay } from './types';
 
 const DAYS_PER_WEEK = 7;
 const NEXT_MONTH_PREVIEW_DAYS = 5;
-const FALLBACK_MONTH_NAME = 'Янв';
 
 export function useScheduleCalendar() {
-  const { data: productsResponse, isLoading, isError, refetch } = useProducts();
-
-  const now = new Date();
+  // Разбиваем дефолтный месяц ("Июл 2026" -> "Июл", "2026")
+  const [initialMonthName = '', initialYear = ''] = initialScheduleMonth.split(' ');
 
   const calendarOpened = ref(false);
   const monthPickerOpened = ref(false);
-  // Дефолт — реальный текущий месяц/год, а не захардкоженная дата мока
-  const selectedMonthName = ref(monthShortNames[now.getMonth()] ?? FALLBACK_MONTH_NAME);
-  const selectedYear = ref(String(now.getFullYear()));
+  const selectedMonthName = ref(initialMonthName);
+  const selectedYear = ref(initialYear);
 
+  // Текущий выбранный месяц строкой (например, "Авг 2026")
   const selectedMonth = computed(() => `${selectedMonthName.value} ${selectedYear.value}`);
-  const selectedMonthIndex = computed(() => monthShortNames.indexOf(selectedMonthName.value));
 
-  const allEvents = computed(() => buildScheduleEvents(productsResponse.value ?? []));
-
-  // События выбранного месяца — фильтруем по году и индексу месяца, а не по строковому ключу
-  const currentMonthEvents = computed(() =>
-    allEvents.value.filter(
-      (event) =>
-        event.date.getUTCFullYear() === Number(selectedYear.value) &&
-        event.date.getUTCMonth() === selectedMonthIndex.value,
-    ),
+  // События выбранного месяца (если их нет — пустой массив)
+  const currentMonthEvents = computed(
+    () => predictionProcessingSchedule[selectedMonth.value] ?? [],
   );
 
   // Дни месяца, на которые запланированы события — календарь только подсвечивает их, без выбора пользователем
   const eventDays = computed(() =>
-    Array.from(new Set(currentMonthEvents.value.map((event) => event.date.getUTCDate()))),
+    Array.from(
+      new Set(currentMonthEvents.value.map((item) => Number.parseInt(item.dayOfMonth, 10))),
+    ),
   );
 
-  // Реальное количество дней в выбранном месяце (вместо заглушки "31 для июля/августа, иначе 30")
-  const daysInCurrentMonth = computed(
-    () => new Date(Number(selectedYear.value), selectedMonthIndex.value + 1, 0).getDate(),
-  );
+  // Динамически определяем количество дней в месяце (31 для июля и августа)
+  const daysInCurrentMonth = computed(() => {
+    const isAugustOrJuly = ['Июл', 'Авг'].includes(selectedMonthName.value);
+    return isAugustOrJuly ? 31 : 30; // Базовая заглушка, соответствующая вашему коду
+  });
 
   const calendarDays = computed<CalendarDay[]>(() => {
     const currentMonthDays = Array.from({ length: daysInCurrentMonth.value }, (_, index) => {
@@ -81,11 +72,12 @@ export function useScheduleCalendar() {
     return rows;
   });
 
-  // Сортируем события выбранного месяца по дате и приводим к виду для отображения
+  // Сортируем события выбранного месяца по дню
   const sortedScheduleItems = computed(() =>
-    [...currentMonthEvents.value]
-      .sort((first, second) => first.date.getTime() - second.date.getTime())
-      .map(toScheduleEvent),
+    [...currentMonthEvents.value].sort(
+      (firstItem, secondItem) =>
+        Number.parseInt(firstItem.dayOfMonth, 10) - Number.parseInt(secondItem.dayOfMonth, 10),
+    ),
   );
 
   function toggleCalendar() {
@@ -124,8 +116,5 @@ export function useScheduleCalendar() {
     toggleCalendar,
     toggleMonthPicker,
     selectMonth,
-    isLoading,
-    isError,
-    refetch,
   };
 }

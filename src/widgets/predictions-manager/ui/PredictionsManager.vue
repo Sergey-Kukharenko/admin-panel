@@ -1,25 +1,31 @@
 <script setup lang="ts">
 import { TooltipProvider } from 'radix-vue';
+import { computed } from 'vue';
 
-import { usePredictionsManager } from '../model/usePredictionsManager';
+import { predictionIntegrations } from '../model/constants';
+import type { PredictionIntegration } from '../model/types';
 import PredictionIntegrationCard from './PredictionIntegrationCard.vue';
-import PredictionsManagerEmptyState from './PredictionsManagerEmptyState.vue';
-import PredictionsManagerErrorState from './PredictionsManagerErrorState.vue';
-import PredictionsManagerSkeleton from './PredictionsManagerSkeleton.vue';
 
 defineOptions({
   name: 'PredictionsManager',
 });
 
-const { groupedIntegrations, hasData, isLoading, isError, refetch } = usePredictionsManager();
+const groupedIntegrations = computed(() => {
+  return predictionIntegrations.reduce<Record<string, PredictionIntegration[]>>(
+    (groups, integration) => {
+      const group = (groups[integration.category] ??= []);
+      group.push(integration);
+
+      return groups;
+    },
+    {},
+  );
+});
 </script>
 
 <template>
   <TooltipProvider :delay-duration="100">
-    <PredictionsManagerSkeleton v-if="isLoading" />
-    <PredictionsManagerErrorState v-else-if="isError" @retry="refetch" />
-
-    <div v-else-if="hasData" class="flex w-full flex-col items-start gap-16">
+    <div class="flex w-full flex-col items-start gap-16">
       <section
         v-for="(items, categoryName) in groupedIntegrations"
         :key="categoryName"
@@ -27,7 +33,7 @@ const { groupedIntegrations, hasData, isLoading, isError, refetch } = usePredict
       >
         <header class="w-full inline-flex justify-start items-center gap-1">
           <h2
-            class="justify-start font-mono text-element-tag font-medium uppercase text-[var(--text-secondary)]"
+            class="justify-start font-mono text-xs font-medium uppercase leading-5 text-[var(--text-secondary)]"
           >
             {{ categoryName }}
           </h2>
@@ -43,7 +49,5 @@ const { groupedIntegrations, hasData, isLoading, isError, refetch } = usePredict
         </div>
       </section>
     </div>
-
-    <PredictionsManagerEmptyState v-else />
   </TooltipProvider>
 </template>
