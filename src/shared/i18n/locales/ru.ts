@@ -158,7 +158,6 @@ export const ru = {
       users: { description: 'Профили и регистрационные данные пользователей' },
       vip_users: { description: 'Данные VIP-сегментации с уровнями и идентификаторами' },
       bets: { description: 'Ставки и результаты' },
-      bets_daily: { description: 'Дневной срез по ставкам и активности пользователей' },
       cumulative_bets: { description: 'Кумулятивные (накопительные) показатели по ставкам' },
       cumulative_sports_bets: { description: 'Накопительные показатели по ставкам на спорт' },
       sports_bets: { description: 'Детальные данные по ставкам на спортивные события' },

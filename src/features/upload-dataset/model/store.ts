@@ -8,6 +8,7 @@ import {
   DATASET_HISTORY_QUERY_KEY,
   DATASET_MAX_TOTAL_SIZE_BYTES,
   datasetApi,
+  filterVisibleDatasetTemplates,
   getDatasetFileValidationError,
   getDatasetTypeContent,
 } from '@/entities/dataset';
@@ -75,7 +76,7 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
 
     try {
       const response = await datasetApi.getTemplates();
-      rawTemplates.value = response.data;
+      rawTemplates.value = filterVisibleDatasetTemplates(response.data);
     } catch (e) {
       console.error('Ошибка при загрузке шаблонов датасетов:', e);
     }

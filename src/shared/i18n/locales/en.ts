@@ -159,7 +159,6 @@ export const en: MessageSchema = {
       users: { description: 'User profiles and registration data' },
       vip_users: { description: 'VIP segmentation data with tiers and IDs' },
       bets: { description: 'Betting activity and outcomes' },
-      bets_daily: { description: 'Daily snapshot of betting activity and user engagement' },
       cumulative_bets: { description: 'Cumulative betting metrics' },
       cumulative_sports_bets: { description: 'Cumulative sports betting metrics' },
       sports_bets: { description: 'Detailed data on sports betting events' },

@@ -26,11 +26,6 @@ const TEMPLATE_CONTENT_MAP: Record<string, TemplateStaticContent> = {
     descriptionKey: 'datasets.templates.bets.description',
     icon: 'bets',
   },
-  bets_daily: {
-    title: 'Bets-daily',
-    descriptionKey: 'datasets.templates.bets_daily.description',
-    icon: 'bets',
-  },
   cumulative_bets: {
     title: 'Cumulative-bets',
     descriptionKey: 'datasets.templates.cumulative_bets.description',
@@ -84,13 +79,24 @@ const DEFAULT_CONTENT: TemplateStaticContent = {
   icon: 'users',
 };
 
+// Типы датасетов, от которых отказался бэкенд — на случай, если /data-load/templates
+// всё ещё их отдаёт, убираем их из выбора при загрузке и из фильтра в истории вручную
+const HIDDEN_DATASET_TEMPLATE_TYPES = new Set(['bets_daily']);
+
+/** Убирает отключённые типы датасетов из списка шаблонов, пришедшего с бэкенда */
+export function filterVisibleDatasetTemplates<T extends { name: string }>(templates: T[]): T[] {
+  return templates.filter((template) => !HIDDEN_DATASET_TEMPLATE_TYPES.has(template.name));
+}
+
 /**
  * Единая точка правды для title/description/icon датасета по его системному имени.
  * Если бэк пришлет что-то совсем новое, выведется его системное имя без перевода.
  */
-export function getDatasetTypeContent(
-  name: string,
-): { title: string; description: string; icon: DatasetIcon } {
+export function getDatasetTypeContent(name: string): {
+  title: string;
+  description: string;
+  icon: DatasetIcon;
+} {
   const content = TEMPLATE_CONTENT_MAP[name] ?? { ...DEFAULT_CONTENT, title: name };
 
   return {
