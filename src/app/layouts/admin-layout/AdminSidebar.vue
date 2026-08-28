@@ -72,36 +72,38 @@ function handleCloseBanner(): void {
       </CollapsibleTrigger>
     </div>
 
-    <CollapsibleContent class="flex min-w-0 flex-1 flex-col">
-      <SidebarNavigation />
+    <div class="flex min-w-0 flex-1 flex-col">
+      <SidebarNavigation :is-expanded="isExpanded" />
 
-      <div class="mt-auto p-3 min-h-35 flex flex-col justify-end">
-        <Transition
-          appear
-          enter-active-class="transition-all duration-300 ease-out"
-          enter-from-class="opacity-0 translate-y-4 scale-95"
-          enter-to-class="opacity-100 translate-y-0 scale-100"
-          leave-active-class="transition-all duration-200 ease-in"
-          leave-from-class="opacity-100 scale-100 max-h-(--sidebar-banner-max-height)"
-          leave-to-class="opacity-0 scale-95 max-h-0 p-0 margin-0 overflow-hidden"
-        >
-          <AppSidebarBanner
-            v-if="isBannerVisible"
-            :title="bannerContent.title"
-            :description="bannerContent.description"
-            @click="handleBannerClick"
-            @close="handleCloseBanner"
+      <CollapsibleContent class="mt-auto">
+        <div class="p-3 min-h-35 flex flex-col justify-end">
+          <Transition
+            appear
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="opacity-0 translate-y-4 scale-95"
+            enter-to-class="opacity-100 translate-y-0 scale-100"
+            leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="opacity-100 scale-100 max-h-(--sidebar-banner-max-height)"
+            leave-to-class="opacity-0 scale-95 max-h-0 p-0 margin-0 overflow-hidden"
           >
-            <template #icon>
-              <img
-                :src="sphereImageUrl"
-                alt=""
-                class="size-full object-contain select-none mix-blend-darken"
-              />
-            </template>
-          </AppSidebarBanner>
-        </Transition>
-      </div>
-    </CollapsibleContent>
+            <AppSidebarBanner
+              v-if="isBannerVisible"
+              :title="bannerContent.title"
+              :description="bannerContent.description"
+              @click="handleBannerClick"
+              @close="handleCloseBanner"
+            >
+              <template #icon>
+                <img
+                  :src="sphereImageUrl"
+                  alt=""
+                  class="size-full object-contain select-none mix-blend-darken"
+                />
+              </template>
+            </AppSidebarBanner>
+          </Transition>
+        </div>
+      </CollapsibleContent>
+    </div>
   </CollapsibleRoot>
 </template>

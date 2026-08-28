@@ -4,7 +4,7 @@ import type { DatasetPeriod } from './types';
 
 /**
  * Переводит ISO-дату с бэкенда, например "2026-07-24T09:57:23.585609Z",
- * в формат "24 июл. 2026 г., 11:57"
+ * в формат "24 июл. 2026 г."
  */
 export function formatDatasetGroupDate(dateIso: string): string {
   if (!dateIso) return '';
@@ -13,8 +13,6 @@ export function formatDatasetGroupDate(dateIso: string): string {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
   }).format(new Date(dateIso));
 }
 
