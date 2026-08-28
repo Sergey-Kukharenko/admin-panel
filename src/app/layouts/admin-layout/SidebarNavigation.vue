@@ -19,6 +19,15 @@ interface NavigationItem {
   icon: Component;
 }
 
+withDefaults(
+  defineProps<{
+    isExpanded?: boolean;
+  }>(),
+  {
+    isExpanded: true,
+  },
+);
+
 const { t } = useI18n({ useScope: 'global' });
 
 const items = computed<NavigationItem[]>(() => [
@@ -51,17 +60,21 @@ const items = computed<NavigationItem[]>(() => [
 </script>
 
 <template>
-  <nav class="px-3">
+  <nav :class="isExpanded ? 'px-3' : 'px-2'">
     <ul class="flex flex-col gap-1">
       <li v-for="item in items" :key="item.to">
         <RouterLink
           :to="item.to"
-          class="group flex h-9 items-center gap-3 rounded-(--radius-sm) px-3 text-[14px] leading-5 font-medium text-(--muted-foreground) transition-all hover:bg-(--muted) hover:text-(--foreground)"
+          :title="!isExpanded ? item.label : undefined"
+          :class="[
+            'group flex h-9 items-center gap-3 rounded-(--radius-sm) text-[14px] leading-5 font-medium text-(--muted-foreground) transition-all hover:bg-(--muted) hover:text-(--foreground)',
+            isExpanded ? 'px-3' : 'justify-center px-0',
+          ]"
           active-class="bg-(--sidebar-item-active) !text-(--sidebar-item-active-foreground)"
         >
           <component :is="item.icon" class="h-4.5 w-4.5 shrink-0" />
 
-          <span>
+          <span v-if="isExpanded">
             {{ item.label }}
           </span>
         </RouterLink>
