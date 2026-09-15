@@ -133,6 +133,9 @@ export const en: MessageSchema = {
         empty: 'No files added',
         chooseFiles: 'Choose Files',
       },
+      status: {
+        queued: 'In progress',
+      },
     },
     errorDialog: {
       defaultTitle: 'Validation errors',

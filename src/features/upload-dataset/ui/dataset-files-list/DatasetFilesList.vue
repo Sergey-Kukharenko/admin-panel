@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckCircle2, Trash2, XCircle } from 'lucide-vue-next';
+import { CheckCircle2, LoaderCircle, Trash2, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -138,8 +138,8 @@ const getProgressStyle = (upload: DatasetUpload) => ({
       </template>
 
       <template v-else-if="isQueued(item.upload)">
-        <div class="shrink-0 flex items-center justify-center pt-0.75 w-4 h-4">
-          <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
+        <div class="shrink-0 flex items-center justify-center h-5">
+          <LoaderCircle class="size-3.5 text-(--text-secondary)" stroke-width="1.5" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
@@ -148,15 +148,21 @@ const getProgressStyle = (upload: DatasetUpload) => ({
           >
             {{ item.upload.source.name }}
           </span>
+
+          <span class="text-xs font-normal text-(--text-secondary) leading-4 mt-0.5 select-none">
+            {{ t('datasets.upload.status.queued') }}
+          </span>
         </div>
 
-        <button
-          type="button"
-          class="size-4 aspect-square flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer mt-0.5"
-          @click="emit('remove', item.upload.id)"
-        >
-          <Trash2 class="size-4 aspect-square" stroke-width="2" />
-        </button>
+        <div class="shrink-0 flex items-center justify-center h-5">
+          <button
+            type="button"
+            class="size-4 flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer"
+            @click="emit('remove', item.upload.id)"
+          >
+            <Trash2 class="size-4 aspect-square" stroke-width="2" />
+          </button>
+        </div>
       </template>
 
       <template v-else-if="isError(item.upload)">

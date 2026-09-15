@@ -132,6 +132,9 @@ export const ru = {
         empty: 'Нет добавленных файлов',
         chooseFiles: 'Выбрать файлы',
       },
+      status: {
+        queued: 'В процессе',
+      },
     },
     errorDialog: {
       defaultTitle: 'Ошибки валидации',
