@@ -8,7 +8,7 @@ import { mapSourceTypeToLabel } from './sourceMapping';
 import { mapUiStatusToBackend } from './statusMapping';
 import { useDatasetHistoryFilters } from './useDatasetHistoryFilters';
 import { useDatasetHistoryPagination } from './useDatasetHistoryPagination';
-import { getPeriodDates } from './utils';
+import { getDatasetGroupDayKey, getPeriodDates } from './utils';
 
 const AWAITING_FILES_POLL_INTERVAL_MS = 4000;
 
@@ -22,6 +22,10 @@ export function useDatasetHistoryTable() {
   } = useDatasetTemplates();
 
   const expandedGroups = ref<string[]>([]);
+  // Id верхней (самой свежей) группы, которую мы уже авто-раскрыли — нужен,
+  // чтобы не переоткрывать её на каждый рефетч, но раскрыть заново, если
+  // наверху списка оказался другой день (см. WT-448)
+  const autoExpandedTopGroupId = ref<string | null>(null);
 
   const offset = computed(() => (page.value - 1) * perPage.value);
 
@@ -43,12 +47,14 @@ export function useDatasetHistoryTable() {
     () => {
       page.value = 1;
       expandedGroups.value = [];
+      autoExpandedTopGroupId.value = null;
     },
   );
 
   // Переход на другую страницу (в т.ч. из-за смены размера страницы) сворачивает группы предыдущей страницы
   watch(page, () => {
     expandedGroups.value = [];
+    autoExpandedTopGroupId.value = null;
   });
 
   const {
@@ -136,14 +142,22 @@ export function useDatasetHistoryTable() {
     (newData) => {
       if (!newData?.items || newData.items.length === 0) {
         expandedGroups.value = [];
+        autoExpandedTopGroupId.value = null;
         return;
       }
 
-      if (expandedGroups.value.length === 0) {
-        const firstGroupDate = newData.items.at(0)?.uploaded_at;
-        if (firstGroupDate) {
-          expandedGroups.value = [firstGroupDate];
+      const firstGroupDate = newData.items.at(0)?.uploaded_at;
+      const topGroupId = firstGroupDate ? getDatasetGroupDayKey(firstGroupDate) : null;
+
+      // Раскрываем верхнюю группу автоматически только когда наверху списка
+      // реально сменился день (новая загрузка сегодня, смена суток) — а не на
+      // каждый рефетч, иначе мы бы принудительно открывали то, что пользователь
+      // сам свернул
+      if (topGroupId && topGroupId !== autoExpandedTopGroupId.value) {
+        if (!expandedGroups.value.includes(topGroupId)) {
+          expandedGroups.value = [...expandedGroups.value, topGroupId];
         }
+        autoExpandedTopGroupId.value = topGroupId;
       }
     },
     { immediate: true },
@@ -168,7 +182,7 @@ export function useDatasetHistoryTable() {
         const source = mapSourceTypeToLabel(firstFile?.source_type ?? 'client_portal');
 
         return {
-          id: dayGroup.uploaded_at,
+          id: getDatasetGroupDayKey(dayGroup.uploaded_at),
           date: dayGroup.uploaded_at,
           uploadedCount,
           totalCount,
