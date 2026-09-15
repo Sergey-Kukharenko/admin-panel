@@ -4,7 +4,6 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import type { DatasetFile, DatasetUpload } from '@/entities/dataset';
-import { DatasetUploadSpinner } from '@/entities/dataset';
 
 defineOptions({
   name: 'DatasetFilesList',
@@ -16,10 +15,14 @@ const props = withDefaults(
   defineProps<{
     files?: DatasetFile[];
     uploads?: DatasetUpload[];
+    // Идёт ли реальная отправка на бэк (submitQueuedFiles): пока файлы только
+    // добавлены локально, "queued" ещё показываем как обычный добавленный файл
+    isSubmitting?: boolean;
   }>(),
   {
     files: () => [],
     uploads: () => [],
+    isSubmitting: false,
   },
 );
 
@@ -107,9 +110,9 @@ const getProgressStyle = (upload: DatasetUpload) => ({
         >
           <div class="flex w-full items-center justify-between gap-2 z-10 self-stretch pl-2 pr-3">
             <div class="flex items-center gap-2 min-w-0">
-              <DatasetUploadSpinner
-                :progress="item.upload.progress ?? 0"
-                class="text-(--progress-fill) pt-0.5"
+              <LoaderCircle
+                class="size-3.5 shrink-0 animate-spin text-(--progress-fill)"
+                stroke-width="1.5"
               />
 
               <span
@@ -137,9 +140,35 @@ const getProgressStyle = (upload: DatasetUpload) => ({
         </div>
       </template>
 
+      <!-- Файл ещё только добавлен локально и ждёт нажатия "Отправить" —
+           показываем как обычный добавленный файл, реальной отправки на бэк ещё нет -->
+      <template v-else-if="isQueued(item.upload) && !isSubmitting">
+        <div class="shrink-0 flex items-center justify-center pt-0.75 w-4 h-4">
+          <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
+        </div>
+
+        <div class="flex flex-col items-start flex-1 min-w-0">
+          <span
+            class="text-sm font-medium leading-5 truncate w-full select-none text-(--text-primary)"
+          >
+            {{ item.upload.source.name }}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          class="size-4 aspect-square flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer mt-0.5"
+          @click="emit('remove', item.upload.id)"
+        >
+          <Trash2 class="size-4 aspect-square" stroke-width="2" />
+        </button>
+      </template>
+
+      <!-- Реальная отправка на бэк уже идёт (submitQueuedFiles), но до этого
+           файла очередь ещё не дошла -->
       <template v-else-if="isQueued(item.upload)">
         <div class="shrink-0 flex items-center justify-center h-5">
-          <LoaderCircle class="size-3.5 text-(--text-secondary)" stroke-width="1.5" />
+          <LoaderCircle class="size-3.5 text-(--text-tertiary)" stroke-width="1.5" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">

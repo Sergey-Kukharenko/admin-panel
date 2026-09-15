@@ -162,7 +162,13 @@ const handleFilesChange = (event: Event) => {
         @upload="emit('upload', $event)"
       />
 
-      <DatasetFilesList v-else :files="files" :uploads="uploads" @remove="emit('remove', $event)" />
+      <DatasetFilesList
+        v-else
+        :files="files"
+        :uploads="uploads"
+        :is-submitting="disabled"
+        @remove="emit('remove', $event)"
+      />
     </div>
   </li>
 </template>
