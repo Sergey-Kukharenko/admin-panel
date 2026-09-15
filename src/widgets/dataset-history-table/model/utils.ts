@@ -16,6 +16,17 @@ export function formatDatasetGroupDate(dateIso: string): string {
   }).format(new Date(dateIso));
 }
 
+/**
+ * Стабильный ключ дня для day-группы. В отличие от сырого uploaded_at с бэка,
+ * который пересчитывается на любое изменение внутри группы (например, когда
+ * в неё дозагружается файл), этот ключ не меняется, пока группа остаётся тем
+ * же календарным днём — иначе :key и expandedGroups теряют группу между
+ * рефетчами и уже раскрытая секция неожиданно схлопывается (см. WT-448).
+ */
+export function getDatasetGroupDayKey(dateIso: string): string {
+  return dayjs(dateIso).format('YYYY-MM-DD');
+}
+
 export type PaginationItem = number | 'ellipsis';
 
 const PAGINATION_MAX_SLOTS = 7;
