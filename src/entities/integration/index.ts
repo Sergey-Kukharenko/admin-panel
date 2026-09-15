@@ -1,3 +1,4 @@
+export { projectApiCredentialApi } from './api/project-api-credential-api';
 export * from './model';
 export * from './ui/connection-status-tag';
 export * from './ui/environment-tabs';
