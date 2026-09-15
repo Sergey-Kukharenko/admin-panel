@@ -85,12 +85,17 @@ const handleDrawerSubmit = () => {
   }
 };
 
-const handleFinalConfirm = async () => {
+const handleFinalConfirm = () => {
   isConfirmOpen.value = false;
 
-  await uploadDatasetStore.submitQueuedFiles();
+  // Не ждём здесь ответа бэка по всем файлам (WT-450: раньше шторка держала
+  // пользователя перед закрытым окном все ~10с, пока грузился большой файл).
+  // Стор глобальный и не привязан к шторке, поэтому очередь долетит в фоне;
+  // таблица истории сама поллит awaiting/processing и подхватит результат.
+  void uploadDatasetStore.submitQueuedFiles().finally(() => {
+    uploadDatasetStore.resetAll();
+  });
 
-  uploadDatasetStore.resetAll();
   emit('submit');
   emit('close');
 };

@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/vue-query';
 import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { toast } from 'vue-sonner';
 
 import type { DatasetFile, DatasetTemplate, DatasetUpload } from '@/entities/dataset';
 import {
@@ -35,6 +37,7 @@ function readSavedFiles(): SavedFilesState {
 
 export const useUploadDatasetStore = defineStore('uploadDataset', () => {
   const queryClient = useQueryClient();
+  const { t } = useI18n({ useScope: 'global' });
 
   // Храним сырой ответ бэкенда (id + системное имя), а не готовый title/description —
   // они переводятся при чтении через getDatasetTypeContent, чтобы корректно
@@ -205,6 +208,11 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
       upload.status = 'error';
       upload.progress = null;
       upload.error = 'datasets.validation.uploadFailed';
+
+      // Шторка теперь закрывается сразу после старта отправки (см. WT-450) и не
+      // ждёт ответа бэка, поэтому инлайн-ошибка в списке файлов может остаться
+      // незамеченной — дублируем её тостом, который виден и после закрытия шторки.
+      toast.error(`${t('datasets.validation.uploadFailed')} «${upload.source.name}»`);
     }
 
     isCategoryUploading.value[templateId] = false;
