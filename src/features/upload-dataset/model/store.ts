@@ -186,7 +186,8 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
         file: upload.source,
         name: upload.source.name,
         size: upload.source.size,
-        uploadedAt: responseData.uploaded_at,
+        // uploaded_at может отсутствовать, пока файл ещё обрабатывается на бэкенде
+        uploadedAt: responseData.uploaded_at ?? responseData.created_at,
         progress: 100,
         status: 'success',
         serverFileId: responseData.file_id,

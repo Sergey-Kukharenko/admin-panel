@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-import type { UploadedDatasetFile } from '@/entities/dataset';
+import type { ValidationErrors } from '@/entities/dataset';
 import { datasetApi } from '@/entities/dataset';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
@@ -11,13 +11,13 @@ interface ErrorFile {
   file_id: string;
   name: string;
   rowsCount: number;
-  validation_errors: UploadedDatasetFile['validation_errors'];
+  validation_errors?: ValidationErrors | null;
 }
 
 // Считаем реальное число ошибок из validation_errors вместо заглушки — суммируем все
 // категории (missing_required_columns/missing_values/wrong_column_type/not_allowed_values/
 // extra_columns/header_errors) без дедупликации по колонкам.
-function countValidationErrors(errors: UploadedDatasetFile['validation_errors']): number {
+function countValidationErrors(errors: ValidationErrors | null | undefined): number {
   if (!errors) {
     return 0;
   }

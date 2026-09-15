@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import { sessionApi } from '@/shared/api';
+import { authorizationApi, sessionApi } from '@/shared/api';
 import { API_URL } from '@/shared/config/api';
 import { IS_DEV } from '@/shared/config/env';
 
@@ -31,16 +31,22 @@ export const useUserStore = defineStore('user', () => {
     const url = new URL(`${API_URL}/authorization/login`);
 
     if (IS_DEV) {
-      url.searchParams.set('mode', 'local');
+      url.searchParams.set('frontend', 'local');
     }
 
     window.location.href = url.toString();
   }
 
-  function logout() {
+  async function logout() {
     user.value = null;
 
-    window.location.href = `${API_URL}/authorization/logout`;
+    try {
+      const { data } = await authorizationApi.logout();
+
+      window.location.href = data.authentik_logout_url ?? '/';
+    } catch {
+      window.location.href = '/';
+    }
   }
 
   return {

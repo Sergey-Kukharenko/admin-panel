@@ -1,6 +1,8 @@
 import { computed, onUnmounted, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
+import { userApi } from '@/entities/user';
+
 const COOLDOWN_SECONDS = 15 * 60;
 
 export function usePasswordChange() {
@@ -50,10 +52,16 @@ export function usePasswordChange() {
     isModalOpen.value = false;
   }
 
-  function confirmSend() {
+  async function confirmSend() {
     isModalOpen.value = false;
-    toast.success('Письмо направлено! Проверьте почту.');
-    startCooldown();
+
+    try {
+      await userApi.requestPasswordChange();
+      toast.success('Письмо направлено! Проверьте почту.');
+      startCooldown();
+    } catch {
+      toast.error('Не удалось отправить письмо. Попробуйте позже.');
+    }
   }
 
   onUnmounted(stopCooldownTimer);
