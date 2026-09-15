@@ -24,10 +24,12 @@ const props = withDefaults(
     template: DatasetTemplate;
     uploads?: DatasetUpload[];
     expanded?: boolean;
+    disabled?: boolean;
   }>(),
   {
     uploads: () => [],
     expanded: false,
+    disabled: false,
   },
 );
 
@@ -53,6 +55,8 @@ const hasListItems = computed(() => hasFiles.value || hasUploads.value);
 const headerClasses = computed(() => ['flex items-center', props.expanded ? 'pt-3 pb-0' : 'py-3']);
 
 const openFilePicker = () => {
+  if (props.disabled) return;
+
   inputRef.value?.click();
 };
 
@@ -134,7 +138,7 @@ const handleFilesChange = (event: Event) => {
           </AppDropdownItem>
         </AppDropdown>
 
-        <AppButton variant="ghost" size="icon" @click="openFilePicker">
+        <AppButton variant="ghost" size="icon" :disabled="disabled" @click="openFilePicker">
           <PlusCircle class="text-(--text-secondary)" stroke-width="2" />
         </AppButton>
         <input
@@ -143,6 +147,7 @@ const handleFilesChange = (event: Event) => {
           type="file"
           multiple
           :accept="DATASET_FILE_ACCEPT"
+          :disabled="disabled"
           @change="handleFilesChange"
         />
       </div>
@@ -153,6 +158,7 @@ const handleFilesChange = (event: Event) => {
       <DatasetUploadZone
         v-if="!hasListItems"
         :accept="DATASET_FILE_ACCEPT"
+        :disabled="disabled"
         @upload="emit('upload', $event)"
       />
 

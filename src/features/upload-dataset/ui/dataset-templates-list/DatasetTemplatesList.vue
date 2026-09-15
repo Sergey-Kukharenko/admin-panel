@@ -12,6 +12,7 @@ defineOptions({
 defineProps<{
   templates: DatasetTemplate[];
   uploadsMap?: Record<string, DatasetUpload[]>; // Добавили мапу загрузок
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -36,6 +37,7 @@ const toggle = (id: string) => {
       :template="template"
       :uploads="uploadsMap?.[template.id] ?? []"
       :expanded="expandedId === template.id"
+      :disabled="disabled"
       @toggle="toggle(template.id)"
       @upload="emit('upload', template.id, $event)"
       @remove="emit('remove', template.id, $event)"

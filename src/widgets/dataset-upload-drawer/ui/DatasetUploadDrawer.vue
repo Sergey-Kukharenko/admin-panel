@@ -136,6 +136,7 @@ const handleFinalConfirm = () => {
         <DatasetTemplatesList
           :templates="templatesWithFiles"
           :uploads-map="uploadsMap"
+          :disabled="isSubmitting"
           @upload="handleUpload"
           @remove="handleRemove"
           @clear-all="handleClearAll"
