@@ -19,26 +19,28 @@ defineEmits<{
   click: [];
 }>();
 
+// Цвета взяты из макетов (Figma) под соответствующие статусы — bg-badge-*/icon-*
+// токены под это уже были в дизайн-системе, просто не использовались здесь
 const STATUS_CONFIG = {
   loading: {
     text: 'Загрузка',
     icon: Loader2,
     bg: 'bg-(--bg-badge-loading)',
-    color: 'text-(--text-badge-loading)',
+    color: 'text-(--icon-loading)',
     animate: true,
   },
   success: {
     text: 'Успешно',
     icon: Check,
-    bg: 'bg-(--color-green-100)',
-    color: 'text-(--success)',
+    bg: 'bg-(--bg-badge-success)',
+    color: 'text-(--icon-success-alt)',
     animate: false,
   },
   error: {
     text: 'Ошибка',
     icon: CircleAlert,
-    bg: 'bg-(--color-red-200)',
-    color: 'text-(--danger)',
+    bg: 'bg-(--bg-badge-danger)',
+    color: 'text-(--icon-error)',
     animate: false,
   },
 } as const;
