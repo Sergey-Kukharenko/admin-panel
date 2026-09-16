@@ -11,10 +11,6 @@ export const ru = {
     sidebar: {
       collapse: 'Свернуть меню',
       expand: 'Развернуть меню',
-      processingBanner: {
-        title: 'Обработка данных может занять от 5 до 14 дней.',
-        description: 'Статус доступен для отслеживания в платформе.',
-      },
     },
     userMenu: {
       profile: 'Профиль',
