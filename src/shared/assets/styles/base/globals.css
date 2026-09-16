@@ -23,6 +23,18 @@ body {
   font-family: var(--font-geist);
 }
 
+/* Tailwind Preflight больше не ставит cursor: pointer кликабельным элементам
+   (в отличие от нативного <a href>) — без этого правила стрелка не меняется
+   на "руку" везде, где кликабельность оформлена через <button>/role="button",
+   а не через ссылку. Лежит в @layer base, чтобы явные cursor-* утилиты
+   (например cursor-not-allowed) по-прежнему могли его переопределить. См. WT-445. */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+}
+
 @theme {
   --animate-shimmer: shimmer 1.6s ease-in-out infinite;
 }
