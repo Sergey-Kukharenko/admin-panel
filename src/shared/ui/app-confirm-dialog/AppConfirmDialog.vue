@@ -82,7 +82,7 @@ const emit = defineEmits<{
               </h3>
               <p
                 v-if="description"
-                class="text-sm font-normal text-(--text-secondary) leading-5 select-none"
+                class="text-sm font-normal text-(--text-secondary) leading-5 select-none whitespace-pre-line"
               >
                 {{ description }}
               </p>

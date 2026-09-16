@@ -109,7 +109,7 @@ export const en: MessageSchema = {
       confirmDialog: {
         title: 'Confirm submission',
         description:
-          'Once submitted, the data will be used for processing and launching ML processes. This cannot be cancelled or changed.',
+          'Once submitted, the data will be used for processing and launching ML processes.\nThis cannot be cancelled or changed.',
         confirmLabel: 'Yes, submit',
       },
       footer: {
