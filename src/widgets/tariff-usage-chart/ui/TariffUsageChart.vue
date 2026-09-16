@@ -38,7 +38,10 @@ const chartPoints = computed(() => TARIFF_MONTHLY_USAGE[selectedProductId.value]
         <p class="text-body-sm text-(--text-secondary)">Уникальные пользователи, обработанные моделями</p>
       </div>
 
-      <DropdownMenuRoot>
+      <!-- modal=false: иначе radix блокирует скролл body и добавляет компенсирующий
+           padding-right поверх уже зарезервированного html { scrollbar-gutter: stable },
+           из-за чего страница дёргается вправо при каждом открытии дропдауна -->
+      <DropdownMenuRoot :modal="false">
         <DropdownMenuTrigger as-child>
           <button
             type="button"

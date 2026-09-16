@@ -17,7 +17,10 @@ defineProps<{
 </script>
 
 <template>
-  <DropdownMenuRoot>
+  <!-- modal=false: иначе radix блокирует скролл body и добавляет компенсирующий
+       padding-right поверх уже зарезервированного html { scrollbar-gutter: stable },
+       из-за чего страница дёргается вправо при каждом открытии дропдауна -->
+  <DropdownMenuRoot :modal="false">
     <DropdownMenuTrigger as-child>
       <slot name="trigger" />
     </DropdownMenuTrigger>
