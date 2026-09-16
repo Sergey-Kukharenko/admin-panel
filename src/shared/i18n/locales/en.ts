@@ -73,11 +73,6 @@ export const en: MessageSchema = {
         last30Days: 'Last 30 Days',
       },
     },
-    status: {
-      loading: 'Processing',
-      success: 'Validated',
-      error: 'Issue',
-    },
     table: {
       header: {
         name: 'Name',
