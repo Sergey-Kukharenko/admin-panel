@@ -72,11 +72,6 @@ export const ru = {
         last30Days: 'Последние 30 дней',
       },
     },
-    status: {
-      loading: 'Обработка',
-      success: 'Валидно',
-      error: 'Ошибка',
-    },
     table: {
       header: {
         name: 'Наименование',

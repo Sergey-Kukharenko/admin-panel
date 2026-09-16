@@ -21,11 +21,13 @@ const periodOptions = computed(() => [
   { label: t('datasets.filters.period.last30Days'), value: 'month' },
 ]);
 
-const statusOptions = computed(() => [
-  { label: t('datasets.status.loading'), value: 'LOADING' },
-  { label: t('datasets.status.success'), value: 'SUCCESS' },
-  { label: t('datasets.status.error'), value: 'ERROR' },
-]);
+// Статусы всегда на английском независимо от языка интерфейса — в макете нет
+// русской версии этой терминологии (см. WT-439)
+const statusOptions = [
+  { label: 'Processing', value: 'LOADING' },
+  { label: 'Validated', value: 'SUCCESS' },
+  { label: 'Issue', value: 'ERROR' },
+];
 
 const types = defineModel<string[]>('types', {
   default: [],

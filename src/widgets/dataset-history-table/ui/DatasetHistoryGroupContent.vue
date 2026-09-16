@@ -38,13 +38,15 @@ const badgeStatusMap = {
 
 /**
  * В истории загрузок статусы файлов называются по-другому, чем в остальном интерфейсе
- * (см. WT-425) — используем свою терминологию вместо текста по умолчанию у AppStatusBadge
+ * (см. WT-425) — используем свою терминологию вместо текста по умолчанию у AppStatusBadge.
+ * Всегда на английском независимо от языка интерфейса — в макете нет русской версии
+ * этой терминологии (см. WT-439)
  */
-const badgeLabelMap = computed(() => ({
-  LOADING: t('datasets.status.loading'),
-  SUCCESS: t('datasets.status.success'),
-  ERROR: t('datasets.status.error'),
-}));
+const badgeLabelMap = {
+  LOADING: 'Processing',
+  SUCCESS: 'Validated',
+  ERROR: 'Issue',
+} as const;
 
 const visibleCategories = computed(() => {
   return props.datasetGroups
@@ -136,7 +138,10 @@ const visibleCategories = computed(() => {
 
         <!-- STATUS (+ переход к деталям ошибки в той же ячейке, без разделителя) -->
         <div class="flex h-11 w-40 items-center gap-1 pl-4">
-          <AppStatusBadge :status="badgeStatusMap[file.status]" :label="badgeLabelMap[file.status]" />
+          <AppStatusBadge
+            :status="badgeStatusMap[file.status]"
+            :label="badgeLabelMap[file.status]"
+          />
 
           <button
             v-if="file.status === 'ERROR'"
