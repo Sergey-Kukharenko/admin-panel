@@ -74,11 +74,15 @@ function handleResetFilters(): void {
 
         <div
           v-else-if="renderedGroups.length === 0"
-          class="flex w-full flex-col items-center gap-4 py-16 text-center"
+          class="flex w-full flex-col items-center gap-4 py-8 text-center"
         >
           <div class="flex flex-col gap-1">
-            <p class="text-sm font-medium text-(--text-primary)">{{ t('datasets.table.emptyNotFound.title') }}</p>
-            <p class="text-sm text-(--text-secondary)">{{ t('datasets.table.emptyNotFound.description') }}</p>
+            <p class="text-title-sm font-medium text-(--text-primary)">
+              {{ t('datasets.table.emptyNotFound.title') }}
+            </p>
+            <p class="text-sm text-(--text-secondary)">
+              {{ t('datasets.table.emptyNotFound.description') }}
+            </p>
           </div>
 
           <AppButton variant="secondary" size="small" @click="handleResetFilters">
