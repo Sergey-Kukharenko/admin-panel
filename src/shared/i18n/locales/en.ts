@@ -113,7 +113,7 @@ export const en: MessageSchema = {
       confirmDialog: {
         title: 'Confirm submission',
         description:
-          'This action cannot be undone. Files will be sent for ML model training. Once submitted, the data cannot be withdrawn. Training will take 5 to 14 days.',
+          'Once submitted, the data will be used for processing and launching ML processes. This cannot be cancelled or changed.',
         confirmLabel: 'Yes, submit',
       },
       footer: {
