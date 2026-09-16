@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router';
 
 import { MOCK_ORGANIZATION_MEMBERS } from '@/entities/organization';
 import { useUserStore } from '@/entities/user';
+import avatarPlaceholderUrl from '@/shared/assets/images/avatar-placeholder.png';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 
@@ -33,9 +34,14 @@ function handleLogout(): void {
     <template #trigger>
       <button
         type="button"
-        class="flex size-8 shrink-0 items-center justify-center rounded-(--radius-full) bg-(--success)"
+        class="relative size-7 shrink-0 overflow-hidden rounded-(--radius-full)"
+        style="background-image: linear-gradient(146deg, #bfed85 21.5%, #e4ffc3 94.33%)"
       >
-        <User class="size-4 text-white" stroke-width="2" />
+        <img
+          :src="avatarPlaceholderUrl"
+          alt=""
+          class="absolute left-[3.91px] top-[7.23px] h-[21.64px] w-[20.18px]"
+        />
       </button>
     </template>
 
