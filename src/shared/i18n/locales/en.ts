@@ -13,10 +13,6 @@ export const en: MessageSchema = {
     sidebar: {
       collapse: 'Collapse menu',
       expand: 'Expand menu',
-      templatesBanner: {
-        title: 'Template Pack',
-        description: 'Archive with templates for all data types. Fill in what you need and upload.',
-      },
       processingBanner: {
         title: 'Data processing may take 5-14 days',
         description: 'Track progress directly in the platform',

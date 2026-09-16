@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PanelLeft } from 'lucide-vue-next';
 import { CollapsibleContent, CollapsibleRoot, CollapsibleTrigger } from 'radix-vue';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -24,29 +24,12 @@ const isExpanded = ref(true);
 
 const isBannerVisible = ref<boolean>(true);
 
-// Пока где-то идёт обработка загруженных данных, баннер напоминает об этом вместо
-// предложения скачать шаблоны — оба варианта используют один и тот же слот для иллюстрации
+// Баннер с шаблонами файлов убрали (WT-441, заменяется гайд-туром в отдельном
+// эпике) — сайдбар теперь напоминает только про обработку загруженных данных
 const { hasProcessingFiles } = useHasProcessingFiles();
 
-const bannerContent = computed(() =>
-  hasProcessingFiles.value
-    ? {
-        title: t('layout.sidebar.processingBanner.title'),
-        description: t('layout.sidebar.processingBanner.description'),
-      }
-    : {
-        title: t('layout.sidebar.templatesBanner.title'),
-        description: t('layout.sidebar.templatesBanner.description'),
-      },
-);
-
 function handleBannerClick(): void {
-  if (hasProcessingFiles.value) {
-    router.push('/datasets');
-    return;
-  }
-
-  console.log('Клик по баннеру: скачивание шаблонов...');
+  router.push('/datasets');
 }
 
 function handleCloseBanner(): void {
@@ -87,9 +70,9 @@ function handleCloseBanner(): void {
             leave-to-class="opacity-0 scale-95 max-h-0 p-0 margin-0 overflow-hidden"
           >
             <AppSidebarBanner
-              v-if="isBannerVisible"
-              :title="bannerContent.title"
-              :description="bannerContent.description"
+              v-if="isBannerVisible && hasProcessingFiles"
+              :title="t('layout.sidebar.processingBanner.title')"
+              :description="t('layout.sidebar.processingBanner.description')"
               @click="handleBannerClick"
               @close="handleCloseBanner"
             >
