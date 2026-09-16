@@ -13,10 +13,6 @@ export const en: MessageSchema = {
     sidebar: {
       collapse: 'Collapse menu',
       expand: 'Expand menu',
-      processingBanner: {
-        title: 'Data processing may take 5-14 days',
-        description: 'Track progress directly in the platform',
-      },
     },
     userMenu: {
       profile: 'Profile',
