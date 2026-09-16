@@ -8,6 +8,12 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Резервируем место под вертикальный скроллбар всегда — иначе, когда высота
+     страницы переходит порог появления/исчезновения скроллбара (например, при
+     переходе от скелетона к реальным данным на /datasets), контент справа
+     дёргается на его ширину. См. WT-446. */
+  scrollbar-gutter: stable;
 }
 
 body {
