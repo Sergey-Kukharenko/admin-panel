@@ -74,7 +74,7 @@ export const ru = {
     },
     status: {
       loading: 'Обработка',
-      success: 'Загружено',
+      success: 'Валидно',
       error: 'Ошибка',
     },
     table: {
