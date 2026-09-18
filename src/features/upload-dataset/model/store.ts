@@ -212,7 +212,7 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
       // Шторка теперь закрывается сразу после старта отправки (см. WT-450) и не
       // ждёт ответа бэка, поэтому инлайн-ошибка в списке файлов может остаться
       // незамеченной — дублируем её тостом, который виден и после закрытия шторки.
-      toast.error(`${t('datasets.validation.uploadFailed')} «${upload.source.name}»`);
+      toast.error(t('datasets.validation.uploadFailedFile', { fileName: upload.source.name }));
     }
 
     isCategoryUploading.value[templateId] = false;

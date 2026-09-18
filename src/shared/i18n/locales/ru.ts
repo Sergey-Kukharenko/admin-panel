@@ -141,6 +141,7 @@ export const ru = {
       empty: 'Файл не содержит данных',
       unsupportedFormat: 'Поддерживается только CSV',
       uploadFailed: 'Ошибка загрузки файла',
+      uploadFailedFile: 'Ошибка загрузки файла «{fileName}»',
       totalSizeExceeded: 'Превышен лимит загрузки — 100 ГБ на клиента',
     },
     templates: {

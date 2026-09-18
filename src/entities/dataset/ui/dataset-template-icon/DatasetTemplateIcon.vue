@@ -24,5 +24,8 @@ const icons: Record<DatasetIcon, string> = {
 </script>
 
 <template>
-  <img :src="icons[props.icon]" :alt="icon" class="size-4 shrink-0" />
+  <!-- Декоративная иконка — рядом всегда есть видимое название типа данных текстом,
+       поэтому alt пустой, а не технический идентификатор (icon), чтобы скринридер
+       не дублировал объявление -->
+  <img :src="icons[props.icon]" alt="" class="size-4 shrink-0" />
 </template>
