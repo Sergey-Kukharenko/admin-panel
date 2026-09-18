@@ -142,6 +142,7 @@ export const en: MessageSchema = {
       empty: 'File contains no data',
       unsupportedFormat: 'Only CSV files are supported',
       uploadFailed: 'Failed to upload file',
+      uploadFailedFile: 'Failed to upload file "{fileName}"',
       totalSizeExceeded: 'Upload limit reached — 100 GB per client',
     },
     templates: {
