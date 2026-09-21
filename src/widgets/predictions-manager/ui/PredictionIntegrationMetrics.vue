@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { Download } from 'lucide-vue-next';
+import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
+import { computed } from 'vue';
+
 import { predictionStatusIconByStatus } from '../model/constants';
 import type { PredictionIntegration } from '../model/types';
 
@@ -6,9 +10,16 @@ defineOptions({
   name: 'PredictionIntegrationMetrics',
 });
 
-defineProps<{
+const props = defineProps<{
   integration: PredictionIntegration;
 }>();
+
+const hasPreviousResult = computed(() => props.integration.lastCalculation !== null);
+
+const computationTooltipText = computed(() => {
+  if (props.integration.status !== 'generating') return null;
+  return hasPreviousResult.value ? 'Generating' : 'Training';
+});
 </script>
 
 <template>
@@ -23,7 +34,48 @@ defineProps<{
         Статус результата
       </div>
 
+      <TooltipRoot v-if="computationTooltipText">
+        <TooltipTrigger as-child>
+          <div
+            :data-status="integration.status"
+            data-type="results"
+            class="max-h-5 rounded-sm inline-flex justify-end items-center gap-[3.25px] cursor-help"
+          >
+            <div class="size-3 relative overflow-hidden flex items-center justify-center">
+              <img
+                :src="predictionStatusIconByStatus[integration.status]"
+                alt=""
+                class="size-2.5 object-contain animate-spin"
+              />
+            </div>
+
+            <div
+              class="justify-start font-mono text-[9.74px] font-medium uppercase leading-4 text-[var(--text-primary)] truncate"
+            >
+              {{ integration.status }}
+            </div>
+          </div>
+        </TooltipTrigger>
+
+        <TooltipContent
+          side="top"
+          :side-offset="6"
+          class="z-50 animate-in fade-in-0 zoom-in-95 duration-100 select-none"
+        >
+          <div
+            class="px-2 py-1.5 bg-(--bg-foreground-overlay) rounded-sm shadow-(--shadow-panel) backdrop-blur-[20px] flex flex-col justify-center items-center"
+          >
+            <p class="text-(--text-overlay) text-xs font-normal leading-4">
+              {{ computationTooltipText }}
+            </p>
+          </div>
+
+          <TooltipArrow class="fill-(--bg-foreground-overlay)" :width="8" :height="4" />
+        </TooltipContent>
+      </TooltipRoot>
+
       <div
+        v-else
         :data-status="integration.status"
         data-type="results"
         class="max-h-5 rounded-sm inline-flex justify-end items-center gap-[3.25px]"
@@ -33,7 +85,6 @@ defineProps<{
             :src="predictionStatusIconByStatus[integration.status]"
             alt=""
             class="size-2.5 object-contain"
-            :class="{ 'animate-spin': integration.status === 'generating' }"
           />
         </div>
 
@@ -79,8 +130,18 @@ defineProps<{
       <div
         class="justify-start font-mono text-[9.74px] font-medium uppercase leading-4 text-[var(--text-primary)] whitespace-nowrap"
       >
-        {{ integration.lastCalculation }}
+        {{ integration.lastCalculation ?? '-' }}
       </div>
     </div>
+
+    <!-- Кнопка скачивания: предохранитель — заблокирована, пока не было ни одного успешного расчета -->
+    <button
+      type="button"
+      :disabled="!hasPreviousResult"
+      :aria-label="`Скачать результат ${integration.name}`"
+      class="ml-auto size-9 shrink-0 flex items-center justify-center rounded-(--radius-lg) bg-(--bg-button-secondary) transition-opacity hover:bg-(--bg-button-secondary-hover) disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-(--bg-button-secondary)"
+    >
+      <Download class="size-4 text-(--text-primary)" />
+    </button>
   </div>
 </template>

@@ -10,7 +10,8 @@ export interface PredictionIntegration {
   name: string;
   status: PredictionStatus;
   nextCalculation: string;
-  lastCalculation: string;
+  /** null, если у сервиса еще не было ни одного успешного расчета (первое обучение, фаза POC) */
+  lastCalculation: string | null;
   tooltipText: string;
   iconName: PredictionIconName;
   tooltipIcon: PredictionTooltipIconName;
