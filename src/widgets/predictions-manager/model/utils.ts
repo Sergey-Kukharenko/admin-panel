@@ -25,7 +25,9 @@ export function formatNextCalculation(value: string | null): string {
   return formatDisplayDate(value, false);
 }
 
-/** last_prediction_at — полноценный date-time */
-export function formatLastCalculation(value: string | null): string {
+/** last_prediction_at — полноценный date-time; null, если успешных расчетов еще не было */
+export function formatLastCalculation(value: string | null): string | null {
+  if (!value) return null;
+
   return formatDisplayDate(value, true);
 }
