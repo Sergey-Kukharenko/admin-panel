@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Download } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { datasetApi } from '@/entities/dataset';
@@ -99,6 +99,13 @@ const hasPendingTransfer = computed(() =>
 
 const isWaitingToClose = ref(false);
 
+// Чисто визуальная пауза перед закрытием — без неё при мелких/быстрых файлах прогресс-бар
+// успевает долететь до 100% быстрее, чем глаз это заметит, и шторка закрывается как будто
+// внезапно. Не привязана к бэку (в отличие от старого бага) — просто даёт кадру с 100%
+// побыть на экране
+const CLOSE_DELAY_MS = 400;
+let closeTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
 // WT-450 (уточнение от PM): гэп был не между кликом "Отправить" и закрытием, а между
 // визуальным завершением загрузки (100% прогресс-бара) и закрытием окна — окно ждало
 // ещё и полной обработки/валидации на бэке. Поэтому не закрываем шторку сразу по клику
@@ -108,9 +115,15 @@ const isWaitingToClose = ref(false);
 watch(hasPendingTransfer, (pending) => {
   if (isWaitingToClose.value && !pending) {
     isWaitingToClose.value = false;
-    emit('submit');
-    emit('close');
+    closeTimeoutId = setTimeout(() => {
+      emit('submit');
+      emit('close');
+    }, CLOSE_DELAY_MS);
   }
+});
+
+onBeforeUnmount(() => {
+  clearTimeout(closeTimeoutId);
 });
 
 const handleFinalConfirm = () => {
