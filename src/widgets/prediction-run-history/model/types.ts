@@ -1,5 +1,7 @@
 export type PredictionRunStatus = 'ready' | 'failed';
 
+export type PredictionRunResultType = 'csv' | 'api';
+
 export interface PredictionRunRecord {
   id: string;
   productId: string;
@@ -12,7 +14,8 @@ export interface PredictionRunRecord {
   /** null, если прогон завершился ошибкой и записей нет */
   recordsCount: number | null;
   status: PredictionRunStatus;
-  isDownloadable: boolean;
+  /** null, если результата нет (например, при статусе 'failed') */
+  resultType: PredictionRunResultType | null;
 }
 
 export type PredictionRunSortField =
