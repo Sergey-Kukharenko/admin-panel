@@ -38,7 +38,7 @@ const { groupedIntegrations, hasData, isLoading, isError, refetch } = usePredict
             v-for="item in items"
             :key="item.id"
             :integration="item"
-            class="w-full min-[1455px]:w-[382px]"
+            class="w-full min-[1100px]:w-[382px]"
           />
         </div>
       </section>

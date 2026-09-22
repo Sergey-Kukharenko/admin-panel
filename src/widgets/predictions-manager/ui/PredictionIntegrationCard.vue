@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
+import { computed } from 'vue';
 
 import { predictionIntegrationIconByName, predictionTooltipIconByName } from '../model/constants';
 import type { PredictionIntegration } from '../model/types';
@@ -9,14 +10,21 @@ defineOptions({
   name: 'PredictionIntegrationCard',
 });
 
-defineProps<{
+const props = defineProps<{
   integration: PredictionIntegration;
 }>();
+
+// Полная блокировка карточки: сервис в ERROR и ни разу не было успешного расчета (фаза POC, WT-291)
+const isBlocked = computed(
+  () => props.integration.tooltipIcon === 'error' && props.integration.lastCalculation === null,
+);
 </script>
 
 <template>
   <article
     class="min-h-32 shrink-0 px-2 pb-2 bg-(--bg-surface-neutral) rounded-(--radius-md) flex flex-col justify-start items-start"
+    :class="{ 'opacity-60': isBlocked }"
+    :data-blocked="isBlocked || undefined"
   >
     <div class="self-stretch p-3 inline-flex justify-start items-center gap-4">
       <div class="flex-1 flex justify-start items-center gap-3 min-w-0">

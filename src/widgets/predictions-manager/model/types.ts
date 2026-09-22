@@ -2,7 +2,11 @@ export type PredictionStatus = 'awaiting' | 'generating' | 'ready' | 'failed';
 
 export type PredictionIconName = 'player-intelligence' | 'game-recommendations';
 
-export type PredictionTooltipIconName = 'service-ready' | 'not-yet-loaded' | 'has-been-validated';
+export type PredictionTooltipIconName =
+  | 'service-ready'
+  | 'not-yet-loaded'
+  | 'has-been-validated'
+  | 'error';
 
 export interface PredictionIntegration {
   id: string;
@@ -15,4 +19,6 @@ export interface PredictionIntegration {
   tooltipText: string;
   iconName: PredictionIconName;
   tooltipIcon: PredictionTooltipIconName;
+  /** id сервиса, от которого зависит текущий — при его падении в ERROR текущий каскадно тоже переходит в ERROR (WT-291) */
+  dependsOnId?: string;
 }

@@ -10,9 +10,21 @@ import { formatLastCalculation, formatNextCalculation } from './utils';
 
 // Статичная информационная подсказка про сам механизм расчета — в моке она была
 // одинаковой для всех карточек независимо от статуса, поэтому не завязана на бэкенд
-const TOOLTIP_TEXT =
-  'Модель производит расчет и генерацию новых прогнозов на основе свежих логов.';
+const TOOLTIP_TEXT = 'Модель производит расчет и генерацию новых прогнозов на основе свежих логов.';
 const TOOLTIP_ICON: PredictionTooltipIconName = 'service-ready';
+
+// При статусе failed бейдж и info-иконка переключаются в ERROR (WT-291) — красная
+// иконка и текст тултипа "Error", вместо общего статичного описания механизма расчета
+function resolveTooltip(status: PredictionStatus): {
+  icon: PredictionTooltipIconName;
+  text: string;
+} {
+  if (status === 'failed') {
+    return { icon: 'error', text: 'Error' };
+  }
+
+  return { icon: TOOLTIP_ICON, text: TOOLTIP_TEXT };
+}
 
 // Бэкенд отдает только название продукта, а не его "тип" — иконки же всего две
 // (player-intelligence.png/recommender-system.png), поэтому категоризируем по названию.
@@ -41,15 +53,20 @@ function resolveStatus(service: ProductService): PredictionStatus {
 }
 
 export function mapProductToIntegrations(product: Product): PredictionIntegration[] {
-  return product.services.map((service) => ({
-    id: service.ml_service_id,
-    category: product.name,
-    name: service.name,
-    status: resolveStatus(service),
-    nextCalculation: formatNextCalculation(service.next_prediction_date),
-    lastCalculation: formatLastCalculation(service.last_prediction_at),
-    tooltipText: TOOLTIP_TEXT,
-    iconName: resolveIconName(product.name),
-    tooltipIcon: TOOLTIP_ICON,
-  }));
+  return product.services.map((service) => {
+    const status = resolveStatus(service);
+    const tooltip = resolveTooltip(status);
+
+    return {
+      id: service.ml_service_id,
+      category: product.name,
+      name: service.name,
+      status,
+      nextCalculation: formatNextCalculation(service.next_prediction_date),
+      lastCalculation: formatLastCalculation(service.last_prediction_at),
+      tooltipText: tooltip.text,
+      iconName: resolveIconName(product.name),
+      tooltipIcon: tooltip.icon,
+    };
+  });
 }

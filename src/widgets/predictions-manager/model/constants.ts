@@ -19,6 +19,7 @@ export const predictionTooltipIconByName: Record<PredictionTooltipIconName, stri
   'service-ready': serviceReadyIcon,
   'not-yet-loaded': notYetLoadedIcon,
   'has-been-validated': hasBeenValidatedIcon,
+  error: statusFailedIcon,
 };
 
 export const predictionStatusIconByStatus: Record<PredictionStatus, string> = {
