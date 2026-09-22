@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Download } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { datasetApi } from '@/entities/dataset';
@@ -85,19 +85,41 @@ const handleDrawerSubmit = () => {
   }
 };
 
+// true, пока хотя бы один файл ещё не долетел до бэка целиком (байты не отправлены):
+// либо ждёт своей очереди, либо грузится и прогресс ещё не 100%
+const hasPendingTransfer = computed(() =>
+  Object.values(uploadsMap.value).some((uploads) =>
+    uploads.some(
+      (upload) =>
+        upload.status === 'queued' ||
+        (upload.status === 'uploading' && (upload.progress ?? 0) < 100),
+    ),
+  ),
+);
+
+const isWaitingToClose = ref(false);
+
+// WT-450 (уточнение от PM): гэп был не между кликом "Отправить" и закрытием, а между
+// визуальным завершением загрузки (100% прогресс-бара) и закрытием окна — окно ждало
+// ещё и полной обработки/валидации на бэке. Поэтому не закрываем шторку сразу по клику
+// (тогда пропадает весь прогресс и обратная связь) и не ждём полного ответа бэка (это и
+// был баг) — закрываем ровно в момент, когда все файлы физически догружены (100%), а
+// обработку на бэке таблица истории подхватит сама через поллинг awaiting/processing.
+watch(hasPendingTransfer, (pending) => {
+  if (isWaitingToClose.value && !pending) {
+    isWaitingToClose.value = false;
+    emit('submit');
+    emit('close');
+  }
+});
+
 const handleFinalConfirm = () => {
   isConfirmOpen.value = false;
+  isWaitingToClose.value = true;
 
-  // Не ждём здесь ответа бэка по всем файлам (WT-450: раньше шторка держала
-  // пользователя перед закрытым окном все ~10с, пока грузился большой файл).
-  // Стор глобальный и не привязан к шторке, поэтому очередь долетит в фоне;
-  // таблица истории сама поллит awaiting/processing и подхватит результат.
   void uploadDatasetStore.submitQueuedFiles().finally(() => {
     uploadDatasetStore.resetAll();
   });
-
-  emit('submit');
-  emit('close');
 };
 </script>
 
