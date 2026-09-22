@@ -24,6 +24,7 @@ export const predictionTooltipIconByName: Record<PredictionTooltipIconName, stri
   'service-ready': serviceReadyIcon,
   'not-yet-loaded': notYetLoadedIcon,
   'has-been-validated': hasBeenValidatedIcon,
+  error: statusFailedIcon,
 };
 
 export const predictionStatusIconByStatus: Record<PredictionStatus, string> = {
@@ -63,9 +64,9 @@ export const predictionIntegrations: PredictionIntegration[] = [
     status: 'failed',
     nextCalculation: '26 июл, 2026',
     lastCalculation: null,
-    tooltipText: 'Модель производит расчет и генерацию новых прогнозов на основе свежих логов.',
+    tooltipText: 'Error',
     iconName: 'player-intelligence',
-    tooltipIcon: 'service-ready',
+    tooltipIcon: 'error',
   },
   {
     id: 'pi-004',
@@ -77,6 +78,9 @@ export const predictionIntegrations: PredictionIntegration[] = [
     tooltipText: 'Модель производит расчет и генерацию новых прогнозов на основе свежих логов.',
     iconName: 'player-intelligence',
     tooltipIcon: 'service-ready',
+    // Зависит от pi-003: при его падении в ERROR каскадно тоже переходит в ERROR (WT-291),
+    // но т.к. у сервиса уже был успешный расчет, интерфейс не блокируется — только меняется иконка
+    dependsOnId: 'pi-003',
   },
   {
     id: 'pi-005',

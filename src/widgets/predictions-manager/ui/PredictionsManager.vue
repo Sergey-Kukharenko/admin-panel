@@ -2,6 +2,7 @@
 import { TooltipProvider } from 'radix-vue';
 import { computed } from 'vue';
 
+import { applyCascadingErrors } from '../model/cascade';
 import { predictionIntegrations } from '../model/constants';
 import type { PredictionIntegration } from '../model/types';
 import PredictionIntegrationCard from './PredictionIntegrationCard.vue';
@@ -11,15 +12,14 @@ defineOptions({
 });
 
 const groupedIntegrations = computed(() => {
-  return predictionIntegrations.reduce<Record<string, PredictionIntegration[]>>(
-    (groups, integration) => {
-      const group = (groups[integration.category] ??= []);
-      group.push(integration);
+  const cascaded = applyCascadingErrors(predictionIntegrations);
 
-      return groups;
-    },
-    {},
-  );
+  return cascaded.reduce<Record<string, PredictionIntegration[]>>((groups, integration) => {
+    const group = (groups[integration.category] ??= []);
+    group.push(integration);
+
+    return groups;
+  }, {});
 });
 </script>
 
@@ -44,7 +44,7 @@ const groupedIntegrations = computed(() => {
             v-for="item in items"
             :key="item.id"
             :integration="item"
-            class="w-full min-[1455px]:w-[382px]"
+            class="w-full min-[1100px]:w-[382px]"
           />
         </div>
       </section>

@@ -8,6 +8,7 @@ import {
   Download,
   Globe,
 } from 'lucide-vue-next';
+import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
 import { toRef } from 'vue';
 
 import type { PredictionRunRecord, PredictionRunSortField } from '../model/types';
@@ -189,23 +190,43 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
         <div class="flex h-11 w-30 shrink-0 items-center border-r border-(--border-default) px-4">
           <div
-            class="inline-flex h-5.75 items-center gap-1 rounded-full py-1 pl-1.5 pr-2"
-            :class="item.status === 'ready' ? 'bg-(--bg-badge-success)' : 'bg-(--bg-badge-danger)'"
+            v-if="item.status === 'ready'"
+            class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-success) py-1 pl-1.5 pr-2"
           >
-            <CircleCheck
-              v-if="item.status === 'ready'"
-              class="size-3.5 text-(--success-alt)"
-              :stroke-width="2"
-            />
-            <CircleX v-else class="size-3.5 text-(--danger-failed)" :stroke-width="2" />
-
-            <span
-              class="font-mono text-xs font-medium uppercase leading-5"
-              :class="item.status === 'ready' ? 'text-(--success-alt)' : 'text-(--danger-failed)'"
-            >
-              {{ item.status === 'ready' ? 'Ready' : 'Failed' }}
+            <CircleCheck class="size-3.5 text-(--success-alt)" :stroke-width="2" />
+            <span class="font-mono text-xs font-medium uppercase leading-5 text-(--success-alt)">
+              Ready
             </span>
           </div>
+
+          <TooltipRoot v-else>
+            <TooltipTrigger as-child>
+              <div
+                class="inline-flex h-5.75 cursor-help items-center gap-1 rounded-full bg-(--bg-badge-danger) py-1 pl-1.5 pr-2"
+              >
+                <CircleX class="size-3.5 text-(--danger-failed)" :stroke-width="2" />
+                <span
+                  class="font-mono text-xs font-medium uppercase leading-5 text-(--danger-failed)"
+                >
+                  Failed
+                </span>
+              </div>
+            </TooltipTrigger>
+
+            <TooltipContent
+              side="top"
+              :side-offset="6"
+              class="z-50 animate-in fade-in-0 zoom-in-95 duration-100 select-none"
+            >
+              <div
+                class="flex flex-col items-center justify-center rounded-sm bg-(--bg-foreground-overlay) px-2 py-1.5 shadow-(--shadow-panel) backdrop-blur-[20px]"
+              >
+                <p class="text-xs font-normal leading-4 text-(--text-overlay)">Error</p>
+              </div>
+
+              <TooltipArrow class="fill-(--bg-foreground-overlay)" :width="8" :height="4" />
+            </TooltipContent>
+          </TooltipRoot>
         </div>
 
         <div class="flex h-11 w-[91px] shrink-0 items-center justify-center px-2">
