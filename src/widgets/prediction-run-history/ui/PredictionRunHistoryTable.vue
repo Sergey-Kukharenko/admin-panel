@@ -10,6 +10,9 @@ import {
 } from 'lucide-vue-next';
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
 import { toRef } from 'vue';
+import { toast } from 'vue-sonner';
+
+import { useIntegrationsStore } from '@/entities/integration';
 
 import type { PredictionRunRecord, PredictionRunSortField } from '../model/types';
 import { useRunHistorySort } from '../model/useRunHistorySort';
@@ -23,11 +26,26 @@ const props = defineProps<{
   items: PredictionRunRecord[];
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   download: [item: PredictionRunRecord];
 }>();
 
 const { sortField, sortOrder, toggleSort, sortedItems } = useRunHistorySort(toRef(props, 'items'));
+
+const integrationsStore = useIntegrationsStore();
+
+// Для результатов с типом 'api' (продукты секции рекомендаций) кнопка не скачивает файл,
+// а копирует токен интеграции в буфер обмена — своего результата для скачивания у API нет
+async function handleResultClick(item: PredictionRunRecord) {
+  if (item.resultType === 'api') {
+    const { clientId } = integrationsStore.getClientCredentials('rest-api');
+    await navigator.clipboard.writeText(clientId);
+    toast.success('Скопировано');
+    return;
+  }
+
+  emit('download', item);
+}
 
 function sortIconFor(field: PredictionRunSortField) {
   if (sortField.value !== field) return ChevronsUpDown;
@@ -233,8 +251,9 @@ function sortIconClassFor(field: PredictionRunSortField) {
           <button
             v-if="item.resultType"
             type="button"
+            :aria-label="item.resultType === 'api' ? 'Скопировать токен интеграции' : 'Скачать CSV'"
             class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
-            @click="$emit('download', item)"
+            @click="handleResultClick(item)"
           >
             <component :is="item.resultType === 'csv' ? Download : Globe" class="size-4" />
             <span class="text-sm font-medium leading-5">
