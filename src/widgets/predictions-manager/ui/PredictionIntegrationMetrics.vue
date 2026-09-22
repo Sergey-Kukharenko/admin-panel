@@ -16,9 +16,22 @@ const props = defineProps<{
 
 const hasPreviousResult = computed(() => props.integration.lastCalculation !== null);
 
-const computationTooltipText = computed(() => {
-  if (props.integration.status !== 'generating') return null;
-  return hasPreviousResult.value ? 'Generating' : 'Training';
+// Тултип над бейджем: для generating — текст статуса вычисления (Training/Generating,
+// по макетам), для failed — сообщение об ошибке обновления с датой последнего успешного
+// расчета, если он был (PRD: "Мониторинг готовности результата по продуктам/Сервисам")
+const badgeTooltipText = computed(() => {
+  if (props.integration.status === 'generating') {
+    return hasPreviousResult.value ? 'Generating' : 'Training';
+  }
+
+  if (props.integration.status === 'failed') {
+    const base = 'Последняя попытка обновления завершилась ошибкой';
+    return hasPreviousResult.value
+      ? `${base}. Последний доступный результат: ${props.integration.lastCalculation}`
+      : base;
+  }
+
+  return null;
 });
 </script>
 
@@ -34,7 +47,7 @@ const computationTooltipText = computed(() => {
         Статус результата
       </div>
 
-      <TooltipRoot v-if="computationTooltipText">
+      <TooltipRoot v-if="badgeTooltipText">
         <TooltipTrigger as-child>
           <div
             :data-status="integration.status"
@@ -45,12 +58,17 @@ const computationTooltipText = computed(() => {
               <img
                 :src="predictionStatusIconByStatus[integration.status]"
                 alt=""
-                class="size-2.5 object-contain animate-spin"
+                class="size-2.5 object-contain"
+                :class="{ 'animate-spin': integration.status === 'generating' }"
               />
             </div>
 
             <div
-              class="justify-start font-mono text-[9.74px] font-medium uppercase leading-4 text-[var(--text-primary)] truncate"
+              class="justify-start font-mono text-[9.74px] font-medium uppercase leading-4 truncate"
+              :class="{
+                'text-[var(--danger-failed)]': integration.status === 'failed',
+                'text-[var(--text-primary)]': integration.status !== 'failed',
+              }"
             >
               {{ integration.status }}
             </div>
@@ -66,7 +84,7 @@ const computationTooltipText = computed(() => {
             class="px-2 py-1.5 bg-(--bg-foreground-overlay) rounded-(--radius-sm) shadow-(--shadow-panel) backdrop-blur-[20px] flex flex-col justify-center items-center"
           >
             <p class="text-(--text-overlay) text-xs font-normal leading-4">
-              {{ computationTooltipText }}
+              {{ badgeTooltipText }}
             </p>
           </div>
 
