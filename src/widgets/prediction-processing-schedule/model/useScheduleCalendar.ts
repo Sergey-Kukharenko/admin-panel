@@ -11,7 +11,10 @@ const NEXT_MONTH_PREVIEW_DAYS = 5;
 const FALLBACK_MONTH_NAME = 'Янв';
 
 export function useScheduleCalendar() {
-  const { data: productsResponse, isLoading, isError, refetch } = useProducts();
+  const { data: productsResponse, isLoading, isError: isRequestError, refetch } = useProducts();
+
+  // Ошибка фонового поллинга не прячет уже загруженное расписание — error-state только без данных
+  const isError = computed(() => isRequestError.value && !productsResponse.value);
 
   const now = new Date();
 

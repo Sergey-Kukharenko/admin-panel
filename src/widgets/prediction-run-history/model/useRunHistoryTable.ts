@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { computed } from 'vue';
 
 import { predictionApi } from '@/entities/prediction';
+import { PREDICTIONS_POLLING_INTERVAL } from '@/entities/product';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
 import { mapPredictionResultToRunRecord } from './mapper';
@@ -18,7 +19,7 @@ export function useRunHistoryTable() {
   const {
     data: predictionsResponse,
     isLoading,
-    isError,
+    isError: isRequestError,
     refetch,
   } = useQuery({
     queryKey: PREDICTIONS_QUERY_KEY,
@@ -29,7 +30,12 @@ export function useRunHistoryTable() {
       );
       return response.data;
     },
+    // Статусы прогонов (Generating -> Ready/Failed) обновляются тем же поллингом, что и карточки
+    refetchInterval: PREDICTIONS_POLLING_INTERVAL,
   });
+
+  // Ошибка фонового поллинга не скрывает уже загруженную таблицу — error-state только без данных
+  const isError = computed(() => isRequestError.value && !predictionsResponse.value);
 
   const allRecords = computed<PredictionRunRecord[]>(() =>
     (predictionsResponse.value?.items ?? []).map(mapPredictionResultToRunRecord),

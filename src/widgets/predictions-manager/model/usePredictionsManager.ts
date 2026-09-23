@@ -6,7 +6,11 @@ import { mapProductToIntegrations } from './mapper';
 import type { PredictionIntegration } from './types';
 
 export function usePredictionsManager() {
-  const { data: productsResponse, isLoading, isError, refetch } = useProducts();
+  const { data: productsResponse, isLoading, isError: isRequestError, refetch } = useProducts();
+
+  // Ошибка фонового поллинга не должна переключать уже отрисованные карточки в
+  // error-state — показываем его, только если данных нет совсем (graceful degradation, WT-298)
+  const isError = computed(() => isRequestError.value && !productsResponse.value);
 
   const integrations = computed<PredictionIntegration[]>(() =>
     (productsResponse.value ?? []).flatMap(mapProductToIntegrations),

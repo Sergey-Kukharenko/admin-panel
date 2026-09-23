@@ -13,6 +13,8 @@ export interface PredictionIntegration {
   category: string;
   name: string;
   status: PredictionStatus;
+  /** true, если generating вызван первичным обучением (service_status = TRAINING), а не инференсом */
+  isTraining: boolean;
   nextCalculation: string;
   /** null, если у сервиса еще не было ни одного успешного расчета (первое обучение, фаза POC) */
   lastCalculation: string | null;

@@ -1,4 +1,4 @@
-export type PredictionRunStatus = 'ready' | 'failed';
+export type PredictionRunStatus = 'ready' | 'generating' | 'failed';
 
 export type PredictionRunResultType = 'csv' | 'api';
 
@@ -14,7 +14,7 @@ export interface PredictionRunRecord {
   /** null, если прогон завершился ошибкой и записей нет */
   recordsCount: number | null;
   status: PredictionRunStatus;
-  /** null, если результата нет (например, при статусе 'failed') */
+  /** null, если результата нет (например, при статусе 'failed' или 'generating') */
   resultType: PredictionRunResultType | null;
 }
 

@@ -17,11 +17,11 @@ const props = defineProps<{
 const hasPreviousResult = computed(() => props.integration.lastCalculation !== null);
 
 // Тултип над бейджем: для generating — текст статуса вычисления (Training/Generating,
-// по макетам), для failed — сообщение об ошибке обновления с датой последнего успешного
+// по макетам; Training — по service_status из бэкенда), для failed — сообщение об ошибке обновления с датой последнего успешного
 // расчета, если он был (PRD: "Мониторинг готовности результата по продуктам/Сервисам")
 const badgeTooltipText = computed(() => {
   if (props.integration.status === 'generating') {
-    return hasPreviousResult.value ? 'Generating' : 'Training';
+    return props.integration.isTraining ? 'Training' : 'Generating';
   }
 
   if (props.integration.status === 'failed') {

@@ -7,6 +7,7 @@ import {
   CircleX,
   Download,
   Globe,
+  Loader2,
 } from 'lucide-vue-next';
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
 import { toRef } from 'vue';
@@ -222,6 +223,16 @@ function sortIconClassFor(field: PredictionRunSortField) {
             </span>
           </div>
 
+          <div
+            v-else-if="item.status === 'generating'"
+            class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) bg-(--bg-badge-loading) py-1 pl-1.5 pr-2"
+          >
+            <Loader2 class="size-3.5 animate-spin text-(--icon-loading)" :stroke-width="2" />
+            <span class="font-mono text-element-tag font-medium uppercase text-(--icon-loading)">
+              Generating
+            </span>
+          </div>
+
           <TooltipRoot v-else>
             <TooltipTrigger as-child>
               <div
@@ -265,6 +276,13 @@ function sortIconClassFor(field: PredictionRunSortField) {
               {{ item.resultType === 'csv' ? 'CSV' : 'API' }}
             </span>
           </button>
+
+          <span
+            v-else-if="item.status === 'generating'"
+            class="text-center text-xs font-normal leading-4 text-(--text-secondary)"
+          >
+            Расчет в процессе
+          </span>
         </div>
       </div>
     </div>

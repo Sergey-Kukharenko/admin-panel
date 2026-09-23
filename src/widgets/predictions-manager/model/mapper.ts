@@ -39,22 +39,37 @@ function resolveIconName(productName: string): PredictionIconName {
   return 'player-intelligence';
 }
 
-// service_status/last_service_run_status не задокументированы как enum (в OpenAPI-схеме
-// это произвольная строка), поэтому статус распознаем эвристикой: явный провал/выполнение
-// по подстроке, а если сервис еще не считал прогнозы — "в ожидании"
-function resolveStatus(service: ProductService): PredictionStatus {
-  const normalized = (service.last_service_run_status ?? '').toLowerCase();
+// Статусы — строки без enum в OpenAPI; значения берем из RFC "Мониторинг готовности продукта/результата":
+// service_status — статус обучения (AWAITING / TRAINING / ACTIVE / ERROR),
+// last_service_run_status — статус инференса (PROCESSING / COMPLETED / ERROR).
+// Сравниваем по подстроке без учета регистра, чтобы не зависеть от точного написания
+const FAILED_PATTERN = /fail|error/;
+const IN_PROGRESS_PATTERN = /process|progress|run|generat|pending/;
 
-  if (/fail|error/.test(normalized)) return 'failed';
-  if (/run|progress|generat|pending/.test(normalized)) return 'generating';
-  if (!service.last_prediction_at) return 'awaiting';
+function resolveStatus(service: ProductService): { status: PredictionStatus; isTraining: boolean } {
+  const training = service.service_status.toLowerCase();
+  const inference = (service.last_service_run_status ?? '').toLowerCase();
+  const hasPreviousResult = Boolean(service.last_prediction_at);
 
-  return 'ready';
+  // Пока нет ни одного результата, статус карточки определяется первичным обучением.
+  // При переобучении с уже готовыми результатами они остаются доступны (PRD), поэтому
+  // статус обучения не перекрывает статус инференса
+  if (!hasPreviousResult) {
+    if (FAILED_PATTERN.test(training)) return { status: 'failed', isTraining: false };
+    if (/train/.test(training)) return { status: 'generating', isTraining: true };
+    if (/await/.test(training)) return { status: 'awaiting', isTraining: false };
+  }
+
+  if (FAILED_PATTERN.test(inference)) return { status: 'failed', isTraining: false };
+  if (IN_PROGRESS_PATTERN.test(inference)) return { status: 'generating', isTraining: false };
+  if (!hasPreviousResult) return { status: 'awaiting', isTraining: false };
+
+  return { status: 'ready', isTraining: false };
 }
 
 export function mapProductToIntegrations(product: Product): PredictionIntegration[] {
   return product.services.map((service) => {
-    const status = resolveStatus(service);
+    const { status, isTraining } = resolveStatus(service);
     const tooltip = resolveTooltip(status);
 
     return {
@@ -62,6 +77,7 @@ export function mapProductToIntegrations(product: Product): PredictionIntegratio
       category: product.name,
       name: service.name,
       status,
+      isTraining,
       nextCalculation: formatNextCalculation(service.next_prediction_date),
       lastCalculation: formatLastCalculation(service.last_prediction_at),
       tooltipText: tooltip.text,
