@@ -15,9 +15,13 @@ const PRODUCT_NAME_IDS: Record<string, string> = {
   'game-recommender': 'recommenderSystem',
 };
 
+// Recommender System — названия согласованы с PM (тред по неймингу, 25.09.2026);
+// Player Intelligence — пока предположение, ждет подтверждения
 const SERVICE_NAME_IDS: Record<string, string> = {
   'previp-detection': 'earlyVip',
-  main: 'gameRecommendations',
+  main: 'recommendedForYou',
+  new_for_user: 'newForYou',
+  similar_to_user_top_games: 'similarToYourTop',
   similar: 'similarGames',
 };
 
