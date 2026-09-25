@@ -58,21 +58,18 @@ describe('mapServiceRunToRunRecord', () => {
     expect(record).toMatchObject({ status: 'failed', resultType: null });
   });
 
-  it('completed, но файл еще не готов — Ready без кнопки (данные со стенда)', () => {
-    const record = mapServiceRunToRunRecord(
-      { ...baseRun, finished_at: null, is_downloadable: false },
-      resolvers,
-    );
+  it('completed без файла — результат через API (is_downloadable = false, договоренность WT-511)', () => {
+    const record = mapServiceRunToRunRecord({ ...baseRun, is_downloadable: false }, resolvers);
 
-    expect(record).toMatchObject({ status: 'ready', resultType: null });
+    expect(record).toMatchObject({ status: 'ready', resultType: 'api' });
   });
 
-  it('продукт рекомендаций отдает результат через API', () => {
+  it('тип результата не зависит от имени продукта', () => {
     const record = mapServiceRunToRunRecord(
       { ...baseRun, product_name: 'game-recommender', ml_service_name: 'similar' },
       resolvers,
     );
 
-    expect(record.resultType).toBe('api');
+    expect(record.resultType).toBe('csv');
   });
 });
