@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
 
-import { useProducts } from '@/entities/product';
+import { useProductDisplayNames, useProducts } from '@/entities/product';
 
 /**
  * Список продуктов для фильтра берём из /products (общий кэш entities/product),
@@ -11,10 +11,11 @@ export function useRunHistoryFilters() {
   const selectedProductId = ref('');
 
   const { data: productsResponse } = useProducts();
+  const { productName } = useProductDisplayNames();
 
   const productOptions = computed(() =>
     (productsResponse.value ?? [])
-      .map((product) => ({ id: product.product_id, name: product.name }))
+      .map((product) => ({ id: product.product_id, name: productName(product.name) }))
       .sort((first, second) => first.name.localeCompare(second.name, 'ru')),
   );
 

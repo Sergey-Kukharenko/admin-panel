@@ -160,6 +160,93 @@ export const ru = {
       default: { description: 'Описание данного типа датасета подгружается...' },
     },
   },
+  predictions: {
+    // Системные названия продуктов/сервисов из бэкенда -> человекочитаемые (WT-296).
+    // Ключи — id из entities/product/model/displayNames.ts, а не сырые slug'и бэкенда
+    names: {
+      products: {
+        playerIntelligence: 'Player Intelligence',
+        recommenderSystem: 'Recommender System',
+      },
+      services: {
+        earlyVip: 'Early VIP Identification',
+        churnPrediction: 'Churn Prediction',
+        nonPromisingVip: 'Non-promising VIP',
+        growingVip: 'Growing VIP',
+        gameRecommendations: 'Game Recommendations',
+        similarGames: 'Similar Games',
+        newGames: 'New Games',
+        similarToSelectedGame: 'Similar to Selected Game',
+      },
+    },
+    manager: {
+      resultStatus: 'Статус результата',
+      nextRun: 'Следующий расчет',
+      lastRun: 'Последний расчет',
+      serviceInfoAriaLabel: 'Информация о статусе {name}',
+      // Тултипы info-иконки сервиса — отражают статус подготовки/обучения (макеты Figma)
+      serviceTooltip: {
+        awaitingData:
+          'Мы ожидаем полный набор данных для запуска продукта. После загрузки начнется его подготовка.',
+        training:
+          'Подготовка продукта уже началась. Сейчас выполняется обучение модели и обработка данных.',
+        ready:
+          'Продукт полностью готов к работе. Новые результаты будут формироваться после обработки поступающих данных.',
+        trainingFailed:
+          'Не удалось завершить подготовку продукта и обучить модель.\n\nМы уже разбираемся в причинах и отправим вам уведомление на почту, как только всё будет готово.',
+      },
+      // Тултипы бейджа «Статус результата»
+      badgeTooltip: {
+        training: 'Training',
+        generating: 'Generating',
+        failed:
+          'Ошибка генерации результата.\n\nМы уже ищем причину. Пришлем вам на email разбор ошибки или уведомление о том, что всё успешно исправлено.',
+      },
+      empty: {
+        title: 'Продукты пока недоступны',
+        description: 'Продукты и сервисы появятся здесь после настройки проекта',
+      },
+      error: {
+        title: 'Не удалось загрузить менеджер прогнозов',
+        description: 'Проверьте соединение и повторите попытку',
+        retry: 'Повторить',
+      },
+    },
+    history: {
+      title: 'История результатов',
+      allProducts: 'Все продукты',
+      columns: {
+        id: 'ID',
+        product: 'Продукт',
+        service: 'Сервис',
+        startedAt: 'Начало расчета',
+        finishedAt: 'Завершение расчета',
+        records: 'Записей',
+        status: 'Статус',
+        result: 'Результат',
+      },
+      status: {
+        ready: 'Ready',
+        generating: 'Generating',
+        failed: 'Failed',
+      },
+      failedTooltip:
+        'Ошибка генерации результата.\n\nМы уже ищем причину. Пришлем вам на email разбор ошибки или уведомление о том, что всё успешно исправлено.',
+      inProgress: 'Расчет в процессе',
+      downloadCsvAriaLabel: 'Скачать CSV',
+      copyTokenAriaLabel: 'Скопировать токен интеграции',
+      copied: 'Скопировано',
+      empty: {
+        title: 'Результаты пока недоступны',
+        description: 'Результаты появятся после завершения обработки данных',
+      },
+      error: {
+        title: 'Не удалось загрузить историю результатов',
+        description: 'Проверьте соединение и повторите попытку',
+        retry: 'Повторить',
+      },
+    },
+  },
 };
 
 export type MessageSchema = typeof ru;

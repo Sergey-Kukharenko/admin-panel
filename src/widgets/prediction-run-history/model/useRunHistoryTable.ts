@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { computed } from 'vue';
 
 import { predictionApi } from '@/entities/prediction';
-import { PREDICTIONS_POLLING_INTERVAL } from '@/entities/product';
+import { PREDICTIONS_POLLING_INTERVAL, useProductDisplayNames } from '@/entities/product';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
 import { mapPredictionResultToRunRecord } from './mapper';
@@ -37,8 +37,13 @@ export function useRunHistoryTable() {
   // Ошибка фонового поллинга не скрывает уже загруженную таблицу — error-state только без данных
   const isError = computed(() => isRequestError.value && !predictionsResponse.value);
 
+  const nameResolvers = useProductDisplayNames();
+
+  // Названия зависят от языка интерфейса (t внутри резолверов) — computed пересчитается при смене
   const allRecords = computed<PredictionRunRecord[]>(() =>
-    (predictionsResponse.value?.items ?? []).map(mapPredictionResultToRunRecord),
+    (predictionsResponse.value?.items ?? []).map((item) =>
+      mapPredictionResultToRunRecord(item, nameResolvers),
+    ),
   );
 
   // GET /predictions пока поддерживает только limit/offset (без фильтра по продукту),

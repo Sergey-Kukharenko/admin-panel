@@ -1,4 +1,5 @@
 import type { PredictionResult } from '@/entities/prediction';
+import { resolveProductIconName } from '@/entities/product';
 
 import type { PredictionRunRecord, PredictionRunResultType, PredictionRunStatus } from './types';
 
@@ -17,27 +18,33 @@ function mapRunStatus(item: PredictionResult): PredictionRunStatus {
 }
 
 // Бэкенд не отдает тип результата отдельным полем, поэтому продукты секции рекомендаций
-// (доступ только через REST API, без файла) распознаем по названию продукта — та же
-// эвристика, что и в predictions-manager/model/mapper.ts для выбора иконки продукта
+// (доступ только через REST API, без файла) распознаем по системному имени продукта — та же
+// эвристика, что и для выбора иконки продукта в карточках
 function resolveResultType(
   item: PredictionResult,
   status: PredictionRunStatus,
 ): PredictionRunResultType | null {
   if (!item.is_downloadable || status !== 'ready') return null;
 
-  const normalized = item.product_name.toLowerCase();
-
-  return /recommend|game/.test(normalized) ? 'api' : 'csv';
+  return resolveProductIconName(item.product_name) === 'game-recommendations' ? 'api' : 'csv';
 }
 
-export function mapPredictionResultToRunRecord(item: PredictionResult): PredictionRunRecord {
+export interface RunRecordNameResolvers {
+  productName: (slug: string) => string;
+  serviceName: (slug: string) => string;
+}
+
+export function mapPredictionResultToRunRecord(
+  item: PredictionResult,
+  { productName, serviceName }: RunRecordNameResolvers,
+): PredictionRunRecord {
   const status = mapRunStatus(item);
 
   return {
     id: item.prediction_result_id,
     productId: item.product_id,
-    product: item.product_name,
-    service: item.ml_service_name ?? '-',
+    product: productName(item.product_name),
+    service: item.ml_service_name ? serviceName(item.ml_service_name) : '-',
     startedAt: item.started_at,
     finishedAt: item.finished_at,
     recordsCount: item.total_predictions,
