@@ -28,8 +28,10 @@ describe('useProductDisplayNames', () => {
   });
 
   it('переводит сервисы и дописывает вариант модели в скобках', () => {
+    expect(serviceName('main')).toBe('Recommended for You');
+    expect(serviceName('new_for_user')).toBe('New for You');
+    expect(serviceName('similar_to_user_top_games')).toBe('Similar to Your Top');
     expect(serviceName('similar')).toBe('Similar Games');
-    expect(serviceName('main')).toBe('Game Recommendations');
     expect(serviceName('previp-detection_micoformer')).toBe(
       'Early VIP Identification (micoformer)',
     );

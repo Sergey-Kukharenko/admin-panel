@@ -172,10 +172,10 @@ export const en: MessageSchema = {
         churnPrediction: 'Churn Prediction',
         nonPromisingVip: 'Non-promising VIP',
         growingVip: 'Growing VIP',
-        gameRecommendations: 'Game Recommendations',
+        recommendedForYou: 'Recommended for You',
+        newForYou: 'New for You',
+        similarToYourTop: 'Similar to Your Top',
         similarGames: 'Similar Games',
-        newGames: 'New Games',
-        similarToSelectedGame: 'Similar to Selected Game',
       },
     },
     manager: {
