@@ -1,6 +1,12 @@
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-import { useProducts, useProductsRequiredFilesStatus } from '@/entities/product';
+import {
+  useProductDisplayNames,
+  useProducts,
+  useProductsRequiredFilesStatus,
+} from '@/entities/product';
+import { toIntlLocale } from '@/shared/i18n';
 
 import { mapProductToIntegrations } from './mapper';
 import type { PredictionIntegration } from './types';
@@ -17,11 +23,22 @@ export function usePredictionsManager() {
   );
   const { statusByProductId } = useProductsRequiredFilesStatus(productIds);
 
-  const integrations = computed<PredictionIntegration[]>(() =>
-    (productsResponse.value ?? []).flatMap((product) =>
-      mapProductToIntegrations(product, statusByProductId.value.get(product.product_id)?.is_ready),
-    ),
-  );
+  const { locale } = useI18n({ useScope: 'global' });
+  const { productName, serviceName } = useProductDisplayNames();
+
+  // Зависит от locale — названия и даты перестраиваются при переключении языка
+  const integrations = computed<PredictionIntegration[]>(() => {
+    const intlLocale = toIntlLocale(locale.value);
+
+    return (productsResponse.value ?? []).flatMap((product) =>
+      mapProductToIntegrations(product, {
+        isDataReady: statusByProductId.value.get(product.product_id)?.is_ready,
+        intlLocale,
+        productName,
+        serviceName,
+      }),
+    );
+  });
 
   const groupedIntegrations = computed(() =>
     integrations.value.reduce<Record<string, PredictionIntegration[]>>((groups, integration) => {

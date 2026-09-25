@@ -1,53 +1,12 @@
-import type { Product, ProductService } from '@/entities/product';
+import { type Product, type ProductService, resolveProductIconName } from '@/entities/product';
 
 import type {
-  PredictionIconName,
   PredictionIntegration,
+  PredictionServiceState,
   PredictionStatus,
   PredictionTooltipIconName,
 } from './types';
 import { formatLastCalculation, formatNextCalculation } from './utils';
-
-// Статичная информационная подсказка про сам механизм расчета — в моке она была
-// одинаковой для всех карточек независимо от статуса, поэтому не завязана на бэкенд
-const TOOLTIP_TEXT = 'Модель производит расчет и генерацию новых прогнозов на основе свежих логов.';
-const TOOLTIP_ICON: PredictionTooltipIconName = 'service-ready';
-// Текст из исходного мока для состояния «данные еще не загружены/не прошли валидацию»
-const AWAITING_DATA_TOOLTIP_TEXT =
-  'Мы ожидаем полный набор данных для запуска продукта. После загрузки начнется его подготовка.';
-
-// При статусе failed бейдж и info-иконка переключаются в ERROR (WT-291) — красная
-// иконка и текст тултипа "Error", вместо общего статичного описания механизма расчета
-function resolveTooltip(
-  status: PredictionStatus,
-  isAwaitingData: boolean,
-): {
-  icon: PredictionTooltipIconName;
-  text: string;
-} {
-  if (status === 'failed') {
-    return { icon: 'error', text: 'Error' };
-  }
-
-  if (isAwaitingData) {
-    return { icon: 'not-yet-loaded', text: AWAITING_DATA_TOOLTIP_TEXT };
-  }
-
-  return { icon: TOOLTIP_ICON, text: TOOLTIP_TEXT };
-}
-
-// Бэкенд отдает только название продукта, а не его "тип" — иконки же всего две
-// (player-intelligence.png/recommender-system.png), поэтому категоризируем по названию.
-// Если появится третий продукт с непредсказуемым названием, он попадет в дефолтную ветку
-function resolveIconName(productName: string): PredictionIconName {
-  const normalized = productName.toLowerCase();
-
-  if (normalized.includes('recommend') || normalized.includes('game')) {
-    return 'game-recommendations';
-  }
-
-  return 'player-intelligence';
-}
 
 // Статусы — строки без enum в OpenAPI; значения берем из RFC "Мониторинг готовности продукта/результата":
 // service_status — статус обучения (AWAITING / TRAINING / ACTIVE / ERROR),
@@ -55,6 +14,33 @@ function resolveIconName(productName: string): PredictionIconName {
 // Сравниваем по подстроке без учета регистра, чтобы не зависеть от точного написания
 const FAILED_PATTERN = /fail|error/;
 const IN_PROGRESS_PATTERN = /process|progress|run|generat|pending/;
+
+// Info-иконка рядом с названием отражает подготовку/обучение сервиса, а не результат:
+// в макете «Результат с ошибкой» бейдж FAILED, а иконка остается зеленой
+const TOOLTIP_ICON_BY_SERVICE_STATE: Record<PredictionServiceState, PredictionTooltipIconName> = {
+  awaitingData: 'not-yet-loaded',
+  training: 'has-been-validated',
+  ready: 'service-ready',
+  trainingFailed: 'error',
+};
+
+function resolveServiceState(
+  service: ProductService,
+  isDataReady: boolean | undefined,
+): PredictionServiceState {
+  const training = service.service_status.toLowerCase();
+
+  if (FAILED_PATTERN.test(training)) return 'trainingFailed';
+  if (/train/.test(training)) return 'training';
+  if (/active|ready/.test(training)) return 'ready';
+
+  // AWAITING (или неизвестное значение): если сервис уже выдавал результаты — он рабочий;
+  // иначе смотрим на Core Data Validator — данные провалидированы, значит подготовка стартует
+  if (service.last_prediction_at) return 'ready';
+  if (isDataReady === true) return 'training';
+
+  return 'awaitingData';
+}
 
 function resolveStatus(
   service: ProductService,
@@ -84,32 +70,39 @@ function resolveStatus(
   return { status: 'ready', isTraining: false };
 }
 
+export interface MapProductOptions {
+  /** is_ready из /products/{id}/required-files/status; undefined, пока статус не загружен */
+  isDataReady?: boolean;
+  intlLocale: string;
+  productName: (slug: string) => string;
+  serviceName: (slug: string) => string;
+}
+
 /**
- * isDataReady — флаг is_ready из /products/{id}/required-files/status; undefined, пока
- * статус не загружен (тогда не блокируем). Блокировка действует только на первом запуске:
- * при повторной загрузке (новая группа файлов в обработке) уже готовые результаты остаются
- * доступны и карточка не должна откатываться в AWAITING (PRD, макеты «Повторная загрузка CSV»)
+ * Блокировка AWAITING по валидатору действует только на первом запуске: при повторной
+ * загрузке (новая группа файлов в обработке) уже готовые результаты остаются доступны и
+ * карточка не должна откатываться в AWAITING (PRD, макеты «Повторная загрузка CSV»)
  */
 export function mapProductToIntegrations(
   product: Product,
-  isDataReady?: boolean,
+  { isDataReady, intlLocale, productName, serviceName }: MapProductOptions,
 ): PredictionIntegration[] {
   return product.services.map((service) => {
     const isAwaitingData = isDataReady === false && !service.last_prediction_at;
     const { status, isTraining } = resolveStatus(service, isAwaitingData);
-    const tooltip = resolveTooltip(status, isAwaitingData);
+    const serviceState = resolveServiceState(service, isDataReady);
 
     return {
       id: service.ml_service_id,
-      category: product.name,
-      name: service.name,
+      category: productName(product.name),
+      name: serviceName(service.name),
       status,
       isTraining,
-      nextCalculation: formatNextCalculation(service.next_prediction_date),
-      lastCalculation: formatLastCalculation(service.last_prediction_at),
-      tooltipText: tooltip.text,
-      iconName: resolveIconName(product.name),
-      tooltipIcon: tooltip.icon,
+      nextCalculation: formatNextCalculation(service.next_prediction_date, intlLocale),
+      lastCalculation: formatLastCalculation(service.last_prediction_at, intlLocale),
+      serviceState,
+      iconName: resolveProductIconName(product.name),
+      tooltipIcon: TOOLTIP_ICON_BY_SERVICE_STATE[serviceState],
     };
   });
 }

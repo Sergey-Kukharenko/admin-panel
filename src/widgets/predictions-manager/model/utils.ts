@@ -1,33 +1,32 @@
-function formatDisplayDate(value: string | null, withTime: boolean): string {
-  if (!value) return '-';
-
-  const date = new Date(value);
-
-  const parts = new Intl.DateTimeFormat('ru-RU', {
+function formatDisplayDate(value: string, intlLocale: string): string {
+  const parts = new Intl.DateTimeFormat(intlLocale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-    ...(withTime ? { hour: '2-digit' as const, minute: '2-digit' as const } : {}),
     timeZone: 'UTC',
-  }).formatToParts(date);
+  }).formatToParts(new Date(value));
 
   const getPart = (type: Intl.DateTimeFormatPartTypes) =>
     parts.find((part) => part.type === type)?.value ?? '';
 
   const month = getPart('month').replace(/\.$/, '');
-  const timeSuffix = withTime ? `, ${getPart('hour')}:${getPart('minute')}` : '';
 
-  return `${getPart('day')} ${month}, ${getPart('year')}${timeSuffix}`;
+  return `${getPart('day')} ${month}, ${getPart('year')}`;
 }
 
 /** next_prediction_date — дата без времени (format: date в схеме бэкенда) */
-export function formatNextCalculation(value: string | null): string {
-  return formatDisplayDate(value, false);
+export function formatNextCalculation(value: string | null, intlLocale: string): string {
+  if (!value) return '-';
+
+  return formatDisplayDate(value, intlLocale);
 }
 
-/** last_prediction_at — полноценный date-time; null, если успешных расчетов еще не было */
-export function formatLastCalculation(value: string | null): string | null {
+/**
+ * last_prediction_at — date-time, но в карточке по макетам только дата, без времени;
+ * null, если успешных расчетов еще не было
+ */
+export function formatLastCalculation(value: string | null, intlLocale: string): string | null {
   if (!value) return null;
 
-  return formatDisplayDate(value, true);
+  return formatDisplayDate(value, intlLocale);
 }

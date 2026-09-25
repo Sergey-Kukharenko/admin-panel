@@ -2,6 +2,7 @@
 import { Check } from 'lucide-vue-next';
 import { TooltipProvider } from 'radix-vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 
@@ -28,6 +29,8 @@ const {
   downloadRecord,
 } = useRunHistoryTable();
 
+const { t } = useI18n({ useScope: 'global' });
+
 const showDropdown = computed(() => !isLoading.value && !isError.value && hasData.value);
 </script>
 
@@ -35,7 +38,9 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
   <TooltipProvider :delay-duration="100">
     <section class="flex w-full flex-1 flex-col items-start gap-4 pt-3">
       <header class="flex w-full items-center justify-between">
-        <h2 class="text-lg font-medium leading-6 text-(--text-primary)">История результатов</h2>
+        <h2 class="text-lg font-medium leading-6 text-(--text-primary)">
+          {{ t('predictions.history.title') }}
+        </h2>
 
         <AppDropdown v-if="showDropdown" align="end">
           <template #trigger>
@@ -44,7 +49,7 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
               class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 py-1.5 transition-colors hover:bg-(--muted-hover)"
             >
               <span class="text-sm font-medium leading-5 text-[#18181b]">
-                {{ selectedProductName || 'Все продукты' }}
+                {{ selectedProductName || t('predictions.history.allProducts') }}
               </span>
               <span
                 class="relative flex size-4 shrink-0 items-center justify-center overflow-hidden"
@@ -55,7 +60,9 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
           </template>
 
           <AppDropdownItem @select="selectedProductId = ''">
-            <span class="flex-1 text-sm font-medium text-(--text-primary)">Все продукты</span>
+            <span class="flex-1 text-sm font-medium text-(--text-primary)">
+              {{ t('predictions.history.allProducts') }}
+            </span>
             <Check v-if="!selectedProductId" class="size-4 shrink-0 text-(--text-secondary)" />
           </AppDropdownItem>
 

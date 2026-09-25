@@ -161,4 +161,87 @@ export const en: MessageSchema = {
       default: { description: 'Loading description for this dataset type...' },
     },
   },
+  predictions: {
+    names: {
+      products: {
+        playerIntelligence: 'Player Intelligence',
+        recommenderSystem: 'Recommender System',
+      },
+      services: {
+        earlyVip: 'Early VIP Identification',
+        churnPrediction: 'Churn Prediction',
+        nonPromisingVip: 'Non-promising VIP',
+        growingVip: 'Growing VIP',
+        gameRecommendations: 'Game Recommendations',
+        similarGames: 'Similar Games',
+        newGames: 'New Games',
+        similarToSelectedGame: 'Similar to Selected Game',
+      },
+    },
+    manager: {
+      resultStatus: 'Result status',
+      nextRun: 'Next run',
+      lastRun: 'Last run',
+      serviceInfoAriaLabel: '{name} status info',
+      serviceTooltip: {
+        awaitingData:
+          "We're waiting for the complete dataset. Product preparation will begin as soon as all required data is available.",
+        training:
+          "Product preparation is in progress. We're currently training the models and processing your data.",
+        ready:
+          'The product is fully operational. New results will be generated automatically as new data is processed.',
+        trainingFailed:
+          "Product preparation couldn't be completed.\n\nWe're already investigating the issue and will notify you by email as soon as everything is ready.",
+      },
+      badgeTooltip: {
+        training: 'Training',
+        generating: 'Generating',
+        failed:
+          "Result generation failed.\n\nWe're already investigating the issue and will notify you by email as soon as it's resolved.",
+      },
+      empty: {
+        title: 'No products available yet',
+        description: 'Products and services will appear here once your project is set up',
+      },
+      error: {
+        title: "Couldn't load the predictions manager",
+        description: 'Check your connection and try again',
+        retry: 'Retry',
+      },
+    },
+    history: {
+      title: 'Result History',
+      allProducts: 'All Products',
+      columns: {
+        id: 'ID',
+        product: 'Product',
+        service: 'Service',
+        startedAt: 'Run Started',
+        finishedAt: 'Run Completed',
+        records: 'Records',
+        status: 'Status',
+        result: 'Output',
+      },
+      status: {
+        ready: 'Ready',
+        generating: 'Generating',
+        failed: 'Failed',
+      },
+      failedTooltip:
+        "Result generation failed.\n\nWe're already investigating the issue and will notify you by email as soon as it's resolved.",
+      inProgress: 'Run in progress',
+      downloadCsvAriaLabel: 'Download CSV',
+      copyTokenAriaLabel: 'Copy integration token',
+      copied: 'Copied',
+      empty: {
+        title: 'No results yet',
+        description: 'Results will appear once data processing is complete',
+      },
+      error: {
+        title: "Couldn't load result history",
+        description: 'Check your connection and try again',
+        retry: 'Retry',
+      },
+    },
+  },
 };

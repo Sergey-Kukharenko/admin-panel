@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { predictionIntegrationIconByName, predictionTooltipIconByName } from '../model/constants';
 import type { PredictionIntegration } from '../model/types';
@@ -13,6 +14,8 @@ defineOptions({
 const props = defineProps<{
   integration: PredictionIntegration;
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 
 // Полная блокировка карточки: сервис в ERROR и ни разу не было успешного расчета (фаза POC, WT-291)
 const isBlocked = computed(
@@ -43,7 +46,9 @@ const isBlocked = computed(
           <TooltipTrigger as-child>
             <button
               type="button"
-              :aria-label="`Информация о статусе ${integration.name}`"
+              :aria-label="
+                t('predictions.manager.serviceInfoAriaLabel', { name: integration.name })
+              "
               class="size-3.5 shrink-0 relative flex items-center justify-center cursor-help focus:outline-none group"
             >
               <img
@@ -62,8 +67,10 @@ const isBlocked = computed(
             <div
               class="px-2 py-1.5 bg-(--bg-foreground-overlay) rounded-(--radius-sm) shadow-(--shadow-panel) backdrop-blur-[20px] flex flex-col justify-center items-center"
             >
-              <p class="text-(--text-overlay) text-xs font-normal font-['Geist'] leading-4">
-                {{ integration.tooltipText }}
+              <p
+                class="text-(--text-overlay) text-xs font-normal font-['Geist'] leading-4 whitespace-pre-line"
+              >
+                {{ t(`predictions.manager.serviceTooltip.${integration.serviceState}`) }}
               </p>
             </div>
 

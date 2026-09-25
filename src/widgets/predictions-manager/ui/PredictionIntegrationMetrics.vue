@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Download } from 'lucide-vue-next';
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { predictionStatusIconByStatus } from '../model/constants';
 import type { PredictionIntegration } from '../model/types';
@@ -14,21 +14,22 @@ const props = defineProps<{
   integration: PredictionIntegration;
 }>();
 
-const hasPreviousResult = computed(() => props.integration.lastCalculation !== null);
+const { t } = useI18n({ useScope: 'global' });
 
 // Тултип над бейджем: для generating — текст статуса вычисления (Training/Generating,
-// по макетам; Training — по service_status из бэкенда), для failed — сообщение об ошибке обновления с датой последнего успешного
-// расчета, если он был (PRD: "Мониторинг готовности результата по продуктам/Сервисам")
+// по макетам; Training — по service_status из бэкенда), для failed — текст из макета
+// «Ошибка при генерации предикта»
 const badgeTooltipText = computed(() => {
   if (props.integration.status === 'generating') {
-    return props.integration.isTraining ? 'Training' : 'Generating';
+    return t(
+      props.integration.isTraining
+        ? 'predictions.manager.badgeTooltip.training'
+        : 'predictions.manager.badgeTooltip.generating',
+    );
   }
 
   if (props.integration.status === 'failed') {
-    const base = 'Последняя попытка обновления завершилась ошибкой';
-    return hasPreviousResult.value
-      ? `${base}. Последний доступный результат: ${props.integration.lastCalculation}`
-      : base;
+    return t('predictions.manager.badgeTooltip.failed');
   }
 
   return null;
@@ -44,7 +45,7 @@ const badgeTooltipText = computed(() => {
       <div
         class="self-stretch font-mono text-[8.11px] font-normal uppercase leading-4 text-[var(--text-secondary)] truncate"
       >
-        Статус результата
+        {{ t('predictions.manager.resultStatus') }}
       </div>
 
       <TooltipRoot v-if="badgeTooltipText">
@@ -78,12 +79,12 @@ const badgeTooltipText = computed(() => {
         <TooltipContent
           side="top"
           :side-offset="6"
-          class="z-50 animate-in fade-in-0 zoom-in-95 duration-100 select-none"
+          class="max-w-56 z-50 animate-in fade-in-0 zoom-in-95 duration-100 select-none"
         >
           <div
             class="px-2 py-1.5 bg-(--bg-foreground-overlay) rounded-(--radius-sm) shadow-(--shadow-panel) backdrop-blur-[20px] flex flex-col justify-center items-center"
           >
-            <p class="text-(--text-overlay) text-xs font-normal leading-4">
+            <p class="text-(--text-overlay) text-xs font-normal leading-4 whitespace-pre-line">
               {{ badgeTooltipText }}
             </p>
           </div>
@@ -125,7 +126,7 @@ const badgeTooltipText = computed(() => {
       <div
         class="self-stretch font-mono text-[8.11px] font-normal uppercase leading-4 text-[var(--text-secondary)] whitespace-nowrap"
       >
-        Следующий расчет
+        {{ t('predictions.manager.nextRun') }}
       </div>
 
       <div class="inline-flex justify-start items-center gap-1.5">
@@ -142,7 +143,7 @@ const badgeTooltipText = computed(() => {
       <div
         class="self-stretch font-mono text-[8.11px] font-normal uppercase leading-4 text-[var(--text-secondary)] whitespace-nowrap"
       >
-        Последний расчет
+        {{ t('predictions.manager.lastRun') }}
       </div>
 
       <div
@@ -151,15 +152,5 @@ const badgeTooltipText = computed(() => {
         {{ integration.lastCalculation ?? '-' }}
       </div>
     </div>
-
-    <!-- Кнопка скачивания: предохранитель — заблокирована, пока не было ни одного успешного расчета -->
-    <button
-      type="button"
-      :disabled="!hasPreviousResult"
-      :aria-label="`Скачать результат ${integration.name}`"
-      class="ml-auto size-9 shrink-0 flex items-center justify-center rounded-(--radius-lg) bg-(--bg-button-secondary) transition-opacity hover:bg-(--bg-button-secondary-hover) disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-(--bg-button-secondary)"
-    >
-      <Download class="size-4 text-(--text-primary)" />
-    </button>
   </div>
 </template>

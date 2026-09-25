@@ -33,3 +33,14 @@ export function setAppLocale(locale: AppLocale): void {
 export function getAppLocale(): AppLocale {
   return i18n.global.locale.value;
 }
+
+// Тег для Intl.* — даты/числа форматируются в языке интерфейса. en-US, а не en-GB:
+// у en-GB сокращение сентября "Sept", а в макетах везде трехбуквенные месяцы
+const INTL_LOCALE_BY_APP_LOCALE: Record<AppLocale, string> = {
+  ru: 'ru-RU',
+  en: 'en-US',
+};
+
+export function toIntlLocale(locale: string): string {
+  return isAppLocale(locale) ? INTL_LOCALE_BY_APP_LOCALE[locale] : INTL_LOCALE_BY_APP_LOCALE.ru;
+}

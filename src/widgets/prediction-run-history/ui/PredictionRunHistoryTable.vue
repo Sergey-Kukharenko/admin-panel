@@ -10,10 +10,12 @@ import {
   Loader2,
 } from 'lucide-vue-next';
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
-import { toRef } from 'vue';
+import { computed, toRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
 import { useIntegrationsStore } from '@/entities/integration';
+import { toIntlLocale } from '@/shared/i18n';
 
 import type { PredictionRunRecord, PredictionRunSortField } from '../model/types';
 import { useRunHistorySort } from '../model/useRunHistorySort';
@@ -35,13 +37,16 @@ const { sortField, sortOrder, toggleSort, sortedItems } = useRunHistorySort(toRe
 
 const integrationsStore = useIntegrationsStore();
 
+const { t, locale } = useI18n({ useScope: 'global' });
+const intlLocale = computed(() => toIntlLocale(locale.value));
+
 // Для результатов с типом 'api' (продукты секции рекомендаций) кнопка не скачивает файл,
 // а копирует токен интеграции в буфер обмена — своего результата для скачивания у API нет
 async function handleResultClick(item: PredictionRunRecord) {
   if (item.resultType === 'api') {
     const { clientId } = integrationsStore.getClientCredentials('rest-api');
     await navigator.clipboard.writeText(clientId);
-    toast.success('Скопировано');
+    toast.success(t('predictions.history.copied'));
     return;
   }
 
@@ -68,7 +73,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         @click="toggleSort('id')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
-          ID
+          {{ t('predictions.history.columns.id') }}
         </span>
         <component :is="sortIconFor('id')" class="size-3.5" :class="sortIconClassFor('id')" />
       </button>
@@ -79,7 +84,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         @click="toggleSort('product')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
-          Продукт
+          {{ t('predictions.history.columns.product') }}
         </span>
         <component
           :is="sortIconFor('product')"
@@ -94,7 +99,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         @click="toggleSort('service')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
-          Сервис
+          {{ t('predictions.history.columns.service') }}
         </span>
         <component
           :is="sortIconFor('service')"
@@ -109,7 +114,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         @click="toggleSort('startedAt')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
-          Начало расчета
+          {{ t('predictions.history.columns.startedAt') }}
         </span>
         <component
           :is="sortIconFor('startedAt')"
@@ -124,7 +129,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         @click="toggleSort('finishedAt')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
-          Завершение расчета
+          {{ t('predictions.history.columns.finishedAt') }}
         </span>
         <component
           :is="sortIconFor('finishedAt')"
@@ -139,7 +144,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         @click="toggleSort('recordsCount')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
-          Записей
+          {{ t('predictions.history.columns.records') }}
         </span>
         <component
           :is="sortIconFor('recordsCount')"
@@ -154,7 +159,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
         @click="toggleSort('status')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
-          Статус
+          {{ t('predictions.history.columns.status') }}
         </span>
         <component
           :is="sortIconFor('status')"
@@ -165,7 +170,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
       <div class="flex h-9 w-[91px] shrink-0 items-center gap-1.5 bg-(--bg-surface-neutral) px-4">
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
-          Результат
+          {{ t('predictions.history.columns.result') }}
         </span>
       </div>
     </div>
@@ -196,19 +201,19 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
         <div class="flex h-11 min-w-px flex-1 items-center border-r border-(--border-default) px-4">
           <span class="truncate text-sm font-medium leading-5 text-(--text-primary)">
-            {{ formatRunTimestamp(item.startedAt) }}
+            {{ formatRunTimestamp(item.startedAt, intlLocale) }}
           </span>
         </div>
 
         <div class="flex h-11 min-w-px flex-1 items-center border-r border-(--border-default) px-4">
           <span class="truncate text-sm font-medium leading-5 text-(--text-primary)">
-            {{ formatRunTimestamp(item.finishedAt) }}
+            {{ formatRunTimestamp(item.finishedAt, intlLocale) }}
           </span>
         </div>
 
         <div class="flex h-11 w-30 shrink-0 items-center border-r border-(--border-default) px-4">
           <span class="font-mono text-sm font-medium leading-5 text-(--text-primary)">
-            {{ formatRunRecordsCount(item.recordsCount) }}
+            {{ formatRunRecordsCount(item.recordsCount, intlLocale) }}
           </span>
         </div>
 
@@ -219,7 +224,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
           >
             <CircleCheck class="size-3.5 text-(--success-alt)" :stroke-width="2" />
             <span class="font-mono text-element-tag font-medium uppercase text-(--success-alt)">
-              Ready
+              {{ t('predictions.history.status.ready') }}
             </span>
           </div>
 
@@ -229,7 +234,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
           >
             <Loader2 class="size-3.5 animate-spin text-(--icon-loading)" :stroke-width="2" />
             <span class="font-mono text-element-tag font-medium uppercase text-(--icon-loading)">
-              Generating
+              {{ t('predictions.history.status.generating') }}
             </span>
           </div>
 
@@ -242,7 +247,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
                 <span
                   class="font-mono text-element-tag font-medium uppercase text-(--danger-failed)"
                 >
-                  Failed
+                  {{ t('predictions.history.status.failed') }}
                 </span>
               </div>
             </TooltipTrigger>
@@ -250,12 +255,16 @@ function sortIconClassFor(field: PredictionRunSortField) {
             <TooltipContent
               side="top"
               :side-offset="6"
-              class="z-50 animate-in fade-in-0 zoom-in-95 duration-100 select-none"
+              class="max-w-56 z-50 animate-in fade-in-0 zoom-in-95 duration-100 select-none"
             >
               <div
                 class="flex flex-col items-center justify-center rounded-(--radius-sm) bg-(--bg-foreground-overlay) px-2 py-1.5 shadow-(--shadow-panel) backdrop-blur-[20px]"
               >
-                <p class="text-xs font-normal leading-4 text-(--text-overlay)">Error</p>
+                <p
+                  class="max-w-56 text-xs font-normal leading-4 text-(--text-overlay) whitespace-pre-line"
+                >
+                  {{ t('predictions.history.failedTooltip') }}
+                </p>
               </div>
 
               <TooltipArrow class="fill-(--bg-foreground-overlay)" :width="8" :height="4" />
@@ -267,7 +276,11 @@ function sortIconClassFor(field: PredictionRunSortField) {
           <button
             v-if="item.resultType"
             type="button"
-            :aria-label="item.resultType === 'api' ? 'Скопировать токен интеграции' : 'Скачать CSV'"
+            :aria-label="
+              item.resultType === 'api'
+                ? t('predictions.history.copyTokenAriaLabel')
+                : t('predictions.history.downloadCsvAriaLabel')
+            "
             class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
             @click="handleResultClick(item)"
           >
@@ -281,7 +294,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
             v-else-if="item.status === 'generating'"
             class="text-center text-xs font-normal leading-4 text-(--text-secondary)"
           >
-            Расчет в процессе
+            {{ t('predictions.history.inProgress') }}
           </span>
         </div>
       </div>
