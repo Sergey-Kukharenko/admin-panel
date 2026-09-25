@@ -1,9 +1,9 @@
-import { type MLServiceRunListItem, resolveProductIconName } from '@/entities/product';
+import type { MLServiceRunListItem } from '@/entities/product';
 
 import type { PredictionRunRecord, PredictionRunResultType, PredictionRunStatus } from './types';
 
-// status не задокументирован backend'ом как enum (в OpenAPI-схеме это произвольная строка);
-// на стенде и по RFC инференса значения — processing / completed / error
+// status — MLServiceRunStatusName на бэке: processing / completed / error (подтверждено в WT-511);
+// в OpenAPI пока описан строкой, поэтому сравниваем без учета регистра
 function mapRunStatus(item: MLServiceRunListItem): PredictionRunStatus {
   const normalizedStatus = item.status.toLowerCase();
 
@@ -13,16 +13,15 @@ function mapRunStatus(item: MLServiceRunListItem): PredictionRunStatus {
   return 'ready';
 }
 
-// Бэкенд не отдает тип результата отдельным полем, поэтому продукты секции рекомендаций
-// (доступ только через REST API, без файла) распознаем по системному имени продукта — та же
-// эвристика, что и для выбора иконки продукта в карточках
+// Способ получения результата определяется флагом is_downloadable (договоренность с бэком, WT-511):
+// у завершенного прогона true — файл CSV, false — результат забирается через REST API
 function resolveResultType(
   item: MLServiceRunListItem,
   status: PredictionRunStatus,
 ): PredictionRunResultType | null {
-  if (status !== 'ready' || !item.is_downloadable || !item.prediction_result_id) return null;
+  if (status !== 'ready') return null;
 
-  return resolveProductIconName(item.product_name) === 'game-recommendations' ? 'api' : 'csv';
+  return item.is_downloadable && item.prediction_result_id ? 'csv' : 'api';
 }
 
 export interface RunRecordNameResolvers {
