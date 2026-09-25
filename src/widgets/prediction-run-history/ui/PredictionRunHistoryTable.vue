@@ -70,12 +70,12 @@ function sortIconClassFor(field: PredictionRunSortField) {
       <button
         type="button"
         class="flex h-9 w-26 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
-        @click="toggleSort('id')"
+        @click="toggleSort('runId')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
           {{ t('predictions.history.columns.id') }}
         </span>
-        <component :is="sortIconFor('id')" class="size-3.5" :class="sortIconClassFor('id')" />
+        <component :is="sortIconFor('runId')" class="size-3.5" :class="sortIconClassFor('runId')" />
       </button>
 
       <button
@@ -180,10 +180,10 @@ function sortIconClassFor(field: PredictionRunSortField) {
       <div v-for="item in sortedItems" :key="item.id" class="flex w-full items-center">
         <div
           class="flex h-11 w-26 shrink-0 items-center border-r border-(--border-default) px-4"
-          :title="item.id"
+          :title="item.runId"
         >
           <span class="truncate text-sm font-medium leading-5 text-(--text-primary)">
-            {{ item.id.slice(0, 8) }}
+            {{ item.runId.slice(0, 8) }}
           </span>
         </div>
 

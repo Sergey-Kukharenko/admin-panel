@@ -55,14 +55,55 @@ export interface MLServiceRun {
   ml_service_run_id: string;
   product_run_id: string;
   ml_service_id: string;
-  status_id: string;
-  status: MLServiceRunStatus | null;
+  /** Строка без enum в OpenAPI; на стенде — processing / completed / error */
+  status: string;
   service_version: string | null;
   started_at: string | null;
   finished_at: string | null;
   error_status_message: string | null;
   event_occurred_at: string | null;
+  product_id: string;
+  product_name: string;
+  ml_service_name: string;
+  prediction_result_id: string | null;
+  total_predictions: number | null;
+  is_downloadable: boolean;
   deleted_at: string | null;
   created_at: string;
   updated_at: string | null;
+}
+
+export interface MLServiceRunListItem {
+  ml_service_run_id: string;
+  /** Общий для всех сервисов одного прогона продукта (единый run_id пайплайна, WT-300) */
+  product_run_id: string;
+  product_id: string;
+  product_name: string;
+  ml_service_id: string;
+  ml_service_name: string;
+  status: string;
+  service_version: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+  error_status_message: string | null;
+  total_predictions: number | null;
+  /** id результата для /predictions/{id}/download; null, пока прогон не дал результат */
+  prediction_result_id: string | null;
+  is_downloadable: boolean;
+  created_at: string;
+}
+
+export interface MLServiceRunListResponse {
+  items: MLServiceRunListItem[];
+  total_count: number;
+  next_page_offset: number | null;
+}
+
+export interface MLServiceRunFilters {
+  /** Список product_id через запятую */
+  product_id__in?: string;
+  /** Поля через запятую, "-" — по убыванию; по умолчанию на бэке -created_at */
+  order_by?: string;
+  limit?: number;
+  offset?: number;
 }

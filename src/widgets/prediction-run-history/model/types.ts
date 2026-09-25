@@ -3,7 +3,12 @@ export type PredictionRunStatus = 'ready' | 'generating' | 'failed';
 export type PredictionRunResultType = 'csv' | 'api';
 
 export interface PredictionRunRecord {
+  /** ml_service_run_id — уникален для строки */
   id: string;
+  /** product_run_id — общий для сервисов одного прогона продукта, колонка «ID» (WT-300) */
+  runId: string;
+  /** prediction_result_id для скачивания; null, пока результата нет */
+  predictionResultId: string | null;
   productId: string;
   product: string;
   service: string;
@@ -19,7 +24,7 @@ export interface PredictionRunRecord {
 }
 
 export type PredictionRunSortField =
-  | 'id'
+  | 'runId'
   | 'product'
   | 'service'
   | 'startedAt'

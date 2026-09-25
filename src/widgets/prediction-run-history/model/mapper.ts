@@ -1,15 +1,11 @@
-import type { PredictionResult } from '@/entities/prediction';
-import { resolveProductIconName } from '@/entities/product';
+import { type MLServiceRunListItem, resolveProductIconName } from '@/entities/product';
 
 import type { PredictionRunRecord, PredictionRunResultType, PredictionRunStatus } from './types';
 
-// service_run_status не задокументирован backend'ом как enum (в OpenAPI-схеме это
-// произвольная строка); по RFC инференса значения — PROCESSING / COMPLETED / ERROR.
-// is_downloadable используем как основной сигнал готовности результата
-function mapRunStatus(item: PredictionResult): PredictionRunStatus {
-  if (item.is_downloadable) return 'ready';
-
-  const normalizedStatus = item.service_run_status?.toLowerCase() ?? '';
+// status не задокументирован backend'ом как enum (в OpenAPI-схеме это произвольная строка);
+// на стенде и по RFC инференса значения — processing / completed / error
+function mapRunStatus(item: MLServiceRunListItem): PredictionRunStatus {
+  const normalizedStatus = item.status.toLowerCase();
 
   if (/fail|error/.test(normalizedStatus)) return 'failed';
   if (/process|progress|run|generat|pending/.test(normalizedStatus)) return 'generating';
@@ -21,10 +17,10 @@ function mapRunStatus(item: PredictionResult): PredictionRunStatus {
 // (доступ только через REST API, без файла) распознаем по системному имени продукта — та же
 // эвристика, что и для выбора иконки продукта в карточках
 function resolveResultType(
-  item: PredictionResult,
+  item: MLServiceRunListItem,
   status: PredictionRunStatus,
 ): PredictionRunResultType | null {
-  if (!item.is_downloadable || status !== 'ready') return null;
+  if (status !== 'ready' || !item.is_downloadable || !item.prediction_result_id) return null;
 
   return resolveProductIconName(item.product_name) === 'game-recommendations' ? 'api' : 'csv';
 }
@@ -34,17 +30,19 @@ export interface RunRecordNameResolvers {
   serviceName: (slug: string) => string;
 }
 
-export function mapPredictionResultToRunRecord(
-  item: PredictionResult,
+export function mapServiceRunToRunRecord(
+  item: MLServiceRunListItem,
   { productName, serviceName }: RunRecordNameResolvers,
 ): PredictionRunRecord {
   const status = mapRunStatus(item);
 
   return {
-    id: item.prediction_result_id,
+    id: item.ml_service_run_id,
+    runId: item.product_run_id,
+    predictionResultId: item.prediction_result_id,
     productId: item.product_id,
     product: productName(item.product_name),
-    service: item.ml_service_name ? serviceName(item.ml_service_name) : '-',
+    service: serviceName(item.ml_service_name),
     startedAt: item.started_at,
     finishedAt: item.finished_at,
     recordsCount: item.total_predictions,
