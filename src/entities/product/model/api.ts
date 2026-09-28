@@ -4,12 +4,22 @@ export interface ProductService {
   service_status: string;
   last_service_run_status: string | null;
   last_prediction_at: string | null;
+  /** Сейчас date (`2026-09-26`), бэк переводит на date-time (`2026-09-26T00:00:00Z`) — формат дат переваривает оба */
   next_prediction_date: string;
 }
 
 export interface Product {
   product_id: string;
   name: string;
+  /**
+   * Агрегированный статус продукта (awaiting / training / active / error) — бэк считает его
+   * сам с учетом каскада ошибок зависимых сервисов (WT-299). Опциональные поля — анонсированы
+   * бэком, но еще не выкачены в /products
+   */
+  product_status?: string;
+  last_product_run_status?: string | null;
+  last_prediction_at?: string | null;
+  next_prediction_date?: string;
   services: ProductService[];
 }
 
