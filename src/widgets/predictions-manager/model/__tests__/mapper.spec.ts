@@ -119,4 +119,59 @@ describe('mapProductToIntegrations', () => {
 
     expect(card?.lastCalculation).toBe('23 Sep, 2026');
   });
+
+  // Пример будущего ответа /products от бэка (25.09.2026): агрегированный статус продукта,
+  // next_prediction_date в формате date-time
+  describe('новый формат /products', () => {
+    const vipIntelligence: Product = {
+      product_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+      name: 'VIP Intelligence',
+      product_status: 'active',
+      last_product_run_status: 'completed',
+      last_prediction_at: '2026-09-22T14:12:05.123456Z',
+      next_prediction_date: '2026-09-26T00:00:00.000000Z',
+      services: [
+        {
+          ml_service_id: '11111111-1111-1111-1111-111111111111',
+          name: 'vip_churn',
+          service_status: 'active',
+          last_service_run_status: 'processing',
+          last_prediction_at: null,
+          next_prediction_date: '2026-09-25T00:00:00.000000Z',
+        },
+        {
+          ml_service_id: '22222222-2222-2222-2222-222222222222',
+          name: 'retention',
+          service_status: 'training',
+          last_service_run_status: 'completed',
+          last_prediction_at: '2026-09-22T14:12:05.123456Z',
+          next_prediction_date: '2026-09-26T00:00:00.000000Z',
+        },
+      ],
+    };
+
+    it('обученный сервис с идущим первым расчетом — generating, иконка «готов»', () => {
+      const [card] = mapProductToIntegrations(vipIntelligence, options);
+
+      expect(card).toMatchObject({
+        status: 'generating',
+        isTraining: false,
+        serviceState: 'ready',
+        nextCalculation: '25 сент, 2026',
+        lastCalculation: null,
+      });
+    });
+
+    it('переобучение с готовым результатом — результат ready, иконка «идет обучение»', () => {
+      const [, card] = mapProductToIntegrations(vipIntelligence, options);
+
+      expect(card).toMatchObject({
+        status: 'ready',
+        serviceState: 'training',
+        tooltipIcon: 'has-been-validated',
+        nextCalculation: '26 сент, 2026',
+        lastCalculation: '22 сент, 2026',
+      });
+    });
+  });
 });
