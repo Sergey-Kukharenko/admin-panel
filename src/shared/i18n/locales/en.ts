@@ -1,6 +1,11 @@
 import type { MessageSchema } from './ru';
 
 export const en: MessageSchema = {
+  pagination: {
+    showing: 'Showing:',
+    of: 'of',
+    rowsPerPage: 'Rows per page:',
+  },
   layout: {
     nav: {
       dashboard: 'Dashboard',
@@ -131,11 +136,6 @@ export const en: MessageSchema = {
       checkedRows: 'Records checked',
       errorsFound: 'Errors found',
       downloadFile: 'Download error report',
-    },
-    pagination: {
-      showing: 'Showing:',
-      of: 'of',
-      rowsPerPage: 'Rows per page:',
     },
     validation: {
       tooLarge: 'File size exceeds 512 MB',

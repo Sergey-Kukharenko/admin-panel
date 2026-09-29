@@ -13,11 +13,10 @@ import {
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { PAGE_SIZE_OPTIONS } from '../model';
-import { getPaginationRange } from '../model/utils';
+import { getPaginationRange } from './model/getPaginationRange';
 
 defineOptions({
-  name: 'DatasetHistoryPagination',
+  name: 'AppPagination',
 });
 
 const { t } = useI18n({ useScope: 'global' });
@@ -27,7 +26,10 @@ const pageSize = defineModel<number>('perPage', { required: true });
 
 const props = defineProps<{
   totalItems: number;
+  /** Сколько строк реально отрисовано на текущей странице — для диапазона «1-20 из N» */
   renderedCount: number;
+  /** Варианты «Строк на стр.» */
+  pageSizeOptions: number[];
 }>();
 
 const totalPages = computed(() => Math.ceil(props.totalItems / pageSize.value) || 1);
@@ -73,9 +75,9 @@ function handlePageSizeChange(value: unknown) {
     <div
       class="flex items-center gap-1 text-xs font-mono font-medium text-(--text-secondary) uppercase"
     >
-      <span>{{ t('datasets.pagination.showing') }}</span>
+      <span>{{ t('pagination.showing') }}</span>
       <span class="text-(--text-primary)">{{ rangeStart }}-{{ rangeEnd }}</span>
-      <span>{{ t('datasets.pagination.of') }}</span>
+      <span>{{ t('pagination.of') }}</span>
       <span class="text-(--text-primary)">{{ totalItems }}</span>
     </div>
 
@@ -85,12 +87,9 @@ function handlePageSizeChange(value: unknown) {
       <div
         class="flex items-center gap-2 font-mono text-xs font-medium text-(--text-secondary) uppercase"
       >
-        <span>{{ t('datasets.pagination.rowsPerPage') }}</span>
+        <span>{{ t('pagination.rowsPerPage') }}</span>
 
-        <SelectRoot
-          :model-value="String(pageSize)"
-          @update:model-value="handlePageSizeChange"
-        >
+        <SelectRoot :model-value="String(pageSize)" @update:model-value="handlePageSizeChange">
           <SelectTrigger
             class="flex items-center gap-1.5 rounded-(--radius-lg) bg-(--muted) px-2.5 py-1 outline-hidden hover:bg-(--muted-hover-soft) data-[state=open]:bg-(--muted-hover-soft) cursor-pointer transition-colors"
           >
@@ -106,7 +105,7 @@ function handlePageSizeChange(value: unknown) {
             >
               <SelectViewport class="flex flex-col gap-0.5">
                 <SelectItem
-                  v-for="size in PAGE_SIZE_OPTIONS"
+                  v-for="size in pageSizeOptions"
                   :key="size"
                   :value="String(size)"
                   class="flex h-8 cursor-pointer items-center justify-center rounded-(--radius-lg) font-sans text-xs font-medium text-(--text-primary) outline-none data-highlighted:bg-(--muted) data-[state=checked]:bg-(--muted)"

@@ -1,4 +1,9 @@
 export const ru = {
+  pagination: {
+    showing: 'Показывать:',
+    of: 'из',
+    rowsPerPage: 'Строк на стр:',
+  },
   layout: {
     nav: {
       dashboard: 'Главная',
@@ -130,11 +135,6 @@ export const ru = {
       checkedRows: 'Проверено записей',
       errorsFound: 'Найдено ошибок',
       downloadFile: 'Скачать отчет с ошибками',
-    },
-    pagination: {
-      showing: 'Показывать:',
-      of: 'из',
-      rowsPerPage: 'Строк на стр:',
     },
     validation: {
       tooLarge: 'Размер превышает 512 МБ',
