@@ -17,11 +17,17 @@ const QUERY_KEYS = {
   order: 'order',
 } as const;
 
-// Поле сортировки в URL и в order_by бэка. GET /ml-service-runs сортирует только по
-// created_at / started_at / finished_at (422 на остальные) — сортируемые колонки — даты
+// Колонка таблицы -> поле order_by в GET /ml-service-runs (оно же пишется в URL).
+// Продукт и сервис бэк сортирует по системному имени (product_name / ml_service_name),
+// поэтому порядок может не совпадать с алфавитом переведенных названий в таблице
 export const RUN_HISTORY_SORT_API_FIELD: Record<PredictionRunSortField, string> = {
+  runId: 'product_run_id',
+  product: 'product_name',
+  service: 'ml_service_name',
   startedAt: 'started_at',
   finishedAt: 'finished_at',
+  recordsCount: 'total_predictions',
+  status: 'status',
 };
 
 const SORT_FIELD_BY_API_FIELD = Object.fromEntries(

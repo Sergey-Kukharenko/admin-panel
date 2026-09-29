@@ -29,7 +29,8 @@ defineOptions({
 });
 
 // Сортировка серверная (по всей истории, а не по текущей странице) — состояние приходит
-// сверху, таблица только сообщает, по какой колонке кликнули
+// сверху, таблица только сообщает, по какой колонке кликнули. Сортируются все колонки,
+// кроме «Результат»
 const props = defineProps<{
   items: PredictionRunRecord[];
   sortField: PredictionRunSortField | null;
@@ -79,35 +80,52 @@ function sortIconClassFor(field: PredictionRunSortField) {
   <div class="w-full overflow-clip rounded-(--radius-xl) border border-(--border-default)">
     <!-- HEADER -->
     <div class="flex w-full items-center">
-      <div
-        class="flex h-9 w-[78px] shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
+      <button
+        type="button"
+        class="flex h-9 w-[78px] shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        @click="emit('sort', 'runId')"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.id') }}
         </span>
-      </div>
+        <component :is="sortIconFor('runId')" class="size-3.5" :class="sortIconClassFor('runId')" />
+      </button>
 
-      <div
-        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
+      <button
+        type="button"
+        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        @click="emit('sort', 'product')"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.product') }}
         </span>
-      </div>
+        <component
+          :is="sortIconFor('product')"
+          class="size-3.5"
+          :class="sortIconClassFor('product')"
+        />
+      </button>
 
-      <div
-        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
+      <button
+        type="button"
+        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        @click="emit('sort', 'service')"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.service') }}
         </span>
-      </div>
+        <component
+          :is="sortIconFor('service')"
+          class="size-3.5"
+          :class="sortIconClassFor('service')"
+        />
+      </button>
 
       <button
         type="button"
@@ -143,25 +161,39 @@ function sortIconClassFor(field: PredictionRunSortField) {
         />
       </button>
 
-      <div
-        class="flex h-9 w-25 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
+      <button
+        type="button"
+        class="flex h-9 w-25 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        @click="emit('sort', 'recordsCount')"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.records') }}
         </span>
-      </div>
+        <component
+          :is="sortIconFor('recordsCount')"
+          class="size-3.5"
+          :class="sortIconClassFor('recordsCount')"
+        />
+      </button>
 
-      <div
-        class="flex h-9 w-35 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
+      <button
+        type="button"
+        class="flex h-9 w-35 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        @click="emit('sort', 'status')"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.status') }}
         </span>
-      </div>
+        <component
+          :is="sortIconFor('status')"
+          class="size-3.5"
+          :class="sortIconClassFor('status')"
+        />
+      </button>
 
       <div class="flex h-9 w-[91px] shrink-0 items-center gap-1.5 bg-(--bg-surface-neutral) px-4">
         <span

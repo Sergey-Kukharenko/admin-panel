@@ -23,7 +23,13 @@ export interface PredictionRunRecord {
   resultType: PredictionRunResultType | null;
 }
 
-// Сортировать можно только по датам — остальные поля GET /ml-service-runs не поддерживает
-export type PredictionRunSortField = 'startedAt' | 'finishedAt';
+export type PredictionRunSortField =
+  | 'runId'
+  | 'product'
+  | 'service'
+  | 'startedAt'
+  | 'finishedAt'
+  | 'recordsCount'
+  | 'status';
 
 export type PredictionRunSortOrder = 'asc' | 'desc';
