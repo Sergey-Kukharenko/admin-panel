@@ -33,6 +33,9 @@ export interface WrongColumnTypeDetail {
   actual?: string | null;
 }
 
+/** Язык отчета об ошибках валидации — ReportLocale в API */
+export type ReportLocale = 'en' | 'ru';
+
 export interface ValidationErrors {
   /** ML or portal: required CSV columns absent from upload. */
   missing_required_columns?: string[];
@@ -46,6 +49,8 @@ export interface ValidationErrors {
   not_allowed_values?: Record<string, string[]>;
   /** ML: per-value error_count and sample_rows for not_allowed_values. */
   not_allowed_values_details?: Record<string, NotAllowedValueDetail[]>;
+  /** ML: expected whitelist per column (for not_allowed_values report). */
+  expected_values?: Record<string, string[]>;
   /** Portal prevalidation: CSV columns not in the dataset template. */
   extra_columns?: string[];
   /** Portal prevalidation: malformed CSV header row. */

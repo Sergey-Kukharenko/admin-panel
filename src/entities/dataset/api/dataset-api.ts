@@ -3,6 +3,7 @@ import { apiClient } from '@/shared/api';
 import type {
   DatasetFilesFilters,
   FetchFilesBackendResponse,
+  ReportLocale,
   UploadDatasetRequest,
   UploadedDatasetFile,
 } from '../model/api';
@@ -56,9 +57,12 @@ export const datasetApi = {
     return apiClient.get<Blob>(`/data-load/files/${fileId}`, { responseType: 'blob' });
   },
 
-  /** Скачать CSV с ошибками валидации файла */
-  downloadFileErrors(fileId: string) {
-    return apiClient.get<Blob>(`/data-load/files/${fileId}/errors`, { responseType: 'blob' });
+  /** Скачать отчет об ошибках валидации файла (XLSX) на выбранном языке */
+  downloadFileErrors(fileId: string, lang?: ReportLocale) {
+    return apiClient.get<Blob>(`/data-load/files/${fileId}/errors`, {
+      params: { lang },
+      responseType: 'blob',
+    });
   },
 
   /**
