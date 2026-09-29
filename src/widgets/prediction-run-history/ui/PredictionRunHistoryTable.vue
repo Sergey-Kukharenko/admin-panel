@@ -33,6 +33,9 @@ const emit = defineEmits<{
   download: [item: PredictionRunRecord];
 }>();
 
+// Гибкие колонки делят место поровну (при 1440px — 182px, как в макете) и растут на широких
+// экранах. У колонок с датами минимум 182px, как в макете: на узком экране сжимаются «Продукт»
+// и «Сервис» (длинные названия обрезаются многоточием), а даты и заголовки остаются целыми.
 // Колонка ID по макету 78px — влезает 5 символов product_run_id, полный id — в title ячейки
 const RUN_ID_PREVIEW_LENGTH = 5;
 
@@ -75,7 +78,9 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 w-[78px] shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('runId')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span
+          class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
+        >
           {{ t('predictions.history.columns.id') }}
         </span>
         <component :is="sortIconFor('runId')" class="size-3.5" :class="sortIconClassFor('runId')" />
@@ -86,7 +91,9 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('product')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span
+          class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
+        >
           {{ t('predictions.history.columns.product') }}
         </span>
         <component
@@ -101,7 +108,9 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('service')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span
+          class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
+        >
           {{ t('predictions.history.columns.service') }}
         </span>
         <component
@@ -113,10 +122,12 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
       <button
         type="button"
-        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        class="flex h-9 min-w-[182px] flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('startedAt')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span
+          class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
+        >
           {{ t('predictions.history.columns.startedAt') }}
         </span>
         <component
@@ -128,10 +139,12 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
       <button
         type="button"
-        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        class="flex h-9 min-w-[182px] flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('finishedAt')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span
+          class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
+        >
           {{ t('predictions.history.columns.finishedAt') }}
         </span>
         <component
@@ -146,7 +159,9 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 w-25 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('recordsCount')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span
+          class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
+        >
           {{ t('predictions.history.columns.records') }}
         </span>
         <component
@@ -161,7 +176,9 @@ function sortIconClassFor(field: PredictionRunSortField) {
         class="flex h-9 w-35 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('status')"
       >
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span
+          class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
+        >
           {{ t('predictions.history.columns.status') }}
         </span>
         <component
@@ -172,7 +189,9 @@ function sortIconClassFor(field: PredictionRunSortField) {
       </button>
 
       <div class="flex h-9 w-[91px] shrink-0 items-center gap-1.5 bg-(--bg-surface-neutral) px-4">
-        <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
+        <span
+          class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
+        >
           {{ t('predictions.history.columns.result') }}
         </span>
       </div>
@@ -202,13 +221,17 @@ function sortIconClassFor(field: PredictionRunSortField) {
           </span>
         </div>
 
-        <div class="flex h-11 min-w-px flex-1 items-center border-r border-(--border-default) px-4">
+        <div
+          class="flex h-11 min-w-[182px] flex-1 items-center border-r border-(--border-default) px-4"
+        >
           <span class="truncate text-sm font-medium leading-5 text-(--text-primary)">
             {{ formatRunTimestamp(item.startedAt, intlLocale) }}
           </span>
         </div>
 
-        <div class="flex h-11 min-w-px flex-1 items-center border-r border-(--border-default) px-4">
+        <div
+          class="flex h-11 min-w-[182px] flex-1 items-center border-r border-(--border-default) px-4"
+        >
           <span class="truncate text-sm font-medium leading-5 text-(--text-primary)">
             {{ formatRunTimestamp(item.finishedAt, intlLocale) }}
           </span>
