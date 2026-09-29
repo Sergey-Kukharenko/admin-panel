@@ -5,8 +5,10 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
+import { AppPagination } from '@/shared/ui/app-pagination';
 
 import chevronDownIcon from '../assets/icons/chevron-down.svg';
+import { RUN_HISTORY_PAGE_SIZE_OPTIONS } from '../model/useRunHistoryFilters';
 import { useRunHistoryTable } from '../model/useRunHistoryTable';
 import PredictionRunHistoryEmptyState from './PredictionRunHistoryEmptyState.vue';
 import PredictionRunHistoryErrorState from './PredictionRunHistoryErrorState.vue';
@@ -19,6 +21,12 @@ defineOptions({
 
 const {
   records,
+  totalCount,
+  page,
+  perPage,
+  sortField,
+  sortOrder,
+  toggleSort,
   hasData,
   isLoading,
   isError,
@@ -84,7 +92,23 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
 
       <PredictionRunHistorySkeleton v-if="isLoading" />
       <PredictionRunHistoryErrorState v-else-if="isError" @retry="refetch" />
-      <PredictionRunHistoryTable v-else-if="hasData" :items="records" @download="downloadRecord" />
+      <template v-else-if="hasData">
+        <PredictionRunHistoryTable
+          :items="records"
+          :sort-field="sortField"
+          :sort-order="sortOrder"
+          @sort="toggleSort"
+          @download="downloadRecord"
+        />
+
+        <AppPagination
+          v-model:page="page"
+          v-model:per-page="perPage"
+          :total-items="totalCount"
+          :rendered-count="records.length"
+          :page-size-options="RUN_HISTORY_PAGE_SIZE_OPTIONS"
+        />
+      </template>
       <PredictionRunHistoryEmptyState v-else />
     </section>
   </TooltipProvider>

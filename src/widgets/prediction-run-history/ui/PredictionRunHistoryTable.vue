@@ -10,27 +10,35 @@ import {
   Loader2,
 } from 'lucide-vue-next';
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
-import { computed, toRef } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
 import { useIntegrationsStore } from '@/entities/integration';
 import { toIntlLocale } from '@/shared/i18n';
 
-import type { PredictionRunRecord, PredictionRunSortField } from '../model/types';
-import { useRunHistorySort } from '../model/useRunHistorySort';
+import type {
+  PredictionRunRecord,
+  PredictionRunSortField,
+  PredictionRunSortOrder,
+} from '../model/types';
 import { formatRunRecordsCount, formatRunTimestamp } from '../model/utils';
 
 defineOptions({
   name: 'PredictionRunHistoryTable',
 });
 
+// Сортировка серверная (по всей истории, а не по текущей странице) — состояние приходит
+// сверху, таблица только сообщает, по какой колонке кликнули
 const props = defineProps<{
   items: PredictionRunRecord[];
+  sortField: PredictionRunSortField | null;
+  sortOrder: PredictionRunSortOrder;
 }>();
 
 const emit = defineEmits<{
   download: [item: PredictionRunRecord];
+  sort: [field: PredictionRunSortField];
 }>();
 
 // Гибкие колонки делят место поровну (при 1440px — 182px, как в макете) и растут на широких
@@ -38,8 +46,6 @@ const emit = defineEmits<{
 // и «Сервис» (длинные названия обрезаются многоточием), а даты и заголовки остаются целыми.
 // Колонка ID по макету 78px — влезает 5 символов product_run_id, полный id — в title ячейки
 const RUN_ID_PREVIEW_LENGTH = 5;
-
-const { sortField, sortOrder, toggleSort, sortedItems } = useRunHistorySort(toRef(props, 'items'));
 
 const integrationsStore = useIntegrationsStore();
 
@@ -60,12 +66,12 @@ async function handleResultClick(item: PredictionRunRecord) {
 }
 
 function sortIconFor(field: PredictionRunSortField) {
-  if (sortField.value !== field) return ChevronsUpDown;
-  return sortOrder.value === 'asc' ? ChevronUp : ChevronDown;
+  if (props.sortField !== field) return ChevronsUpDown;
+  return props.sortOrder === 'asc' ? ChevronUp : ChevronDown;
 }
 
 function sortIconClassFor(field: PredictionRunSortField) {
-  return sortField.value === field ? 'text-(--icon-primary)' : 'text-(--icon-secondary)';
+  return props.sortField === field ? 'text-(--icon-primary)' : 'text-(--icon-secondary)';
 }
 </script>
 
@@ -73,57 +79,40 @@ function sortIconClassFor(field: PredictionRunSortField) {
   <div class="w-full overflow-clip rounded-(--radius-xl) border border-(--border-default)">
     <!-- HEADER -->
     <div class="flex w-full items-center">
-      <button
-        type="button"
-        class="flex h-9 w-[78px] shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
-        @click="toggleSort('runId')"
+      <div
+        class="flex h-9 w-[78px] shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.id') }}
         </span>
-        <component :is="sortIconFor('runId')" class="size-3.5" :class="sortIconClassFor('runId')" />
-      </button>
+      </div>
 
-      <button
-        type="button"
-        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
-        @click="toggleSort('product')"
+      <div
+        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.product') }}
         </span>
-        <component
-          :is="sortIconFor('product')"
-          class="size-3.5"
-          :class="sortIconClassFor('product')"
-        />
-      </button>
+      </div>
 
-      <button
-        type="button"
-        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
-        @click="toggleSort('service')"
+      <div
+        class="flex h-9 min-w-px flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.service') }}
         </span>
-        <component
-          :is="sortIconFor('service')"
-          class="size-3.5"
-          :class="sortIconClassFor('service')"
-        />
-      </button>
+      </div>
 
       <button
         type="button"
         class="flex h-9 min-w-[182px] flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
-        @click="toggleSort('startedAt')"
+        @click="emit('sort', 'startedAt')"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
@@ -140,7 +129,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
       <button
         type="button"
         class="flex h-9 min-w-[182px] flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
-        @click="toggleSort('finishedAt')"
+        @click="emit('sort', 'finishedAt')"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
@@ -154,39 +143,25 @@ function sortIconClassFor(field: PredictionRunSortField) {
         />
       </button>
 
-      <button
-        type="button"
-        class="flex h-9 w-25 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
-        @click="toggleSort('recordsCount')"
+      <div
+        class="flex h-9 w-25 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.records') }}
         </span>
-        <component
-          :is="sortIconFor('recordsCount')"
-          class="size-3.5"
-          :class="sortIconClassFor('recordsCount')"
-        />
-      </button>
+      </div>
 
-      <button
-        type="button"
-        class="flex h-9 w-35 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
-        @click="toggleSort('status')"
+      <div
+        class="flex h-9 w-35 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4"
       >
         <span
           class="whitespace-nowrap font-mono text-element-tag font-medium uppercase text-(--text-secondary)"
         >
           {{ t('predictions.history.columns.status') }}
         </span>
-        <component
-          :is="sortIconFor('status')"
-          class="size-3.5"
-          :class="sortIconClassFor('status')"
-        />
-      </button>
+      </div>
 
       <div class="flex h-9 w-[91px] shrink-0 items-center gap-1.5 bg-(--bg-surface-neutral) px-4">
         <span
@@ -199,7 +174,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
     <!-- ROWS -->
     <div class="flex w-full flex-col divide-y divide-(--border-default)">
-      <div v-for="item in sortedItems" :key="item.id" class="flex w-full items-center">
+      <div v-for="item in items" :key="item.id" class="flex w-full items-center">
         <div
           class="flex h-11 w-[78px] shrink-0 items-center border-r border-(--border-default) px-4"
           :title="item.runId"
