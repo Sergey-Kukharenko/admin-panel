@@ -2,6 +2,7 @@ import { ref } from 'vue';
 
 import type { ValidationErrors } from '@/entities/dataset';
 import { datasetApi } from '@/entities/dataset';
+import { getAppLocale } from '@/shared/i18n';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
 import type { ErrorDetails } from '../ui/DatasetHistoryErrorDialog.vue';
@@ -32,6 +33,11 @@ function countValidationErrors(errors: ValidationErrors | null | undefined): num
   );
 }
 
+// players.csv -> players_errors.xlsx; имя без расширения тоже получает суффикс
+export function toErrorsReportFileName(fileName: string): string {
+  return `${fileName.replace(/\.[^./]+$/, '')}_errors.xlsx`;
+}
+
 export function useDatasetHistoryGroupErrors(groupDate: string) {
   const isOpen = ref(false);
   const details = ref<ErrorDetails | null>(null);
@@ -58,8 +64,12 @@ export function useDatasetHistoryGroupErrors(groupDate: string) {
     if (!activeFile.value) return;
 
     try {
-      const response = await datasetApi.downloadFileErrors(activeFile.value.file_id);
-      const errorsFileName = activeFile.value.name.replace(/\.csv$/i, '_errors.csv');
+      // Бэк отдает отчет в XLSX и на языке из lang — берем язык интерфейса
+      const response = await datasetApi.downloadFileErrors(
+        activeFile.value.file_id,
+        getAppLocale(),
+      );
+      const errorsFileName = toErrorsReportFileName(activeFile.value.name);
       downloadBlob(response.data, errorsFileName);
     } catch (e) {
       console.error('Не удалось скачать отчет с ошибками:', e);
