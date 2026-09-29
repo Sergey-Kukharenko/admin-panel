@@ -33,6 +33,9 @@ const emit = defineEmits<{
   download: [item: PredictionRunRecord];
 }>();
 
+// Колонка ID по макету 78px — влезает 5 символов product_run_id, полный id — в title ячейки
+const RUN_ID_PREVIEW_LENGTH = 5;
+
 const { sortField, sortOrder, toggleSort, sortedItems } = useRunHistorySort(toRef(props, 'items'));
 
 const integrationsStore = useIntegrationsStore();
@@ -69,7 +72,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
     <div class="flex w-full items-center">
       <button
         type="button"
-        class="flex h-9 w-26 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        class="flex h-9 w-[78px] shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('runId')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
@@ -140,7 +143,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
       <button
         type="button"
-        class="flex h-9 w-30 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        class="flex h-9 w-25 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('recordsCount')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
@@ -155,7 +158,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
       <button
         type="button"
-        class="flex h-9 w-30 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        class="flex h-9 w-35 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="toggleSort('status')"
       >
         <span class="font-mono text-element-tag font-medium uppercase text-(--text-secondary)">
@@ -179,11 +182,11 @@ function sortIconClassFor(field: PredictionRunSortField) {
     <div class="flex w-full flex-col divide-y divide-(--border-default)">
       <div v-for="item in sortedItems" :key="item.id" class="flex w-full items-center">
         <div
-          class="flex h-11 w-26 shrink-0 items-center border-r border-(--border-default) px-4"
+          class="flex h-11 w-[78px] shrink-0 items-center border-r border-(--border-default) px-4"
           :title="item.runId"
         >
           <span class="truncate text-sm font-medium leading-5 text-(--text-primary)">
-            {{ item.runId.slice(0, 8) }}
+            {{ item.runId.slice(0, RUN_ID_PREVIEW_LENGTH) }}
           </span>
         </div>
 
@@ -211,13 +214,13 @@ function sortIconClassFor(field: PredictionRunSortField) {
           </span>
         </div>
 
-        <div class="flex h-11 w-30 shrink-0 items-center border-r border-(--border-default) px-4">
-          <span class="font-mono text-sm font-medium leading-5 text-(--text-primary)">
+        <div class="flex h-11 w-25 shrink-0 items-center border-r border-(--border-default) px-4">
+          <span class="text-sm font-medium leading-5 text-(--text-primary)">
             {{ formatRunRecordsCount(item.recordsCount, intlLocale) }}
           </span>
         </div>
 
-        <div class="flex h-11 w-30 shrink-0 items-center border-r border-(--border-default) px-4">
+        <div class="flex h-11 w-35 shrink-0 items-center border-r border-(--border-default) px-4">
           <div
             v-if="item.status === 'ready'"
             class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) bg-(--bg-badge-success) py-1 pl-1.5 pr-2"
