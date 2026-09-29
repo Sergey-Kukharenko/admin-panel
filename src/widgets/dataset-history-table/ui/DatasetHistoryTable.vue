@@ -3,13 +3,13 @@ import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
+import { AppPagination } from '@/shared/ui/app-pagination';
 import { UploadsEmptyState } from '@/widgets/uploads-empty-state';
 
-import { useDatasetHistoryTable } from '../model';
+import { PAGE_SIZE_OPTIONS, useDatasetHistoryTable } from '../model';
 import DatasetHistoryGroupContent from './DatasetHistoryGroupContent.vue';
 import DatasetHistoryGroupHeader from './DatasetHistoryGroupHeader.vue';
 import DatasetHistoryGroupSkeleton from './DatasetHistoryGroupSkeleton.vue';
-import DatasetHistoryPagination from './DatasetHistoryPagination.vue';
 import DatasetHistoryTableHeader from './DatasetHistoryTableHeader.vue';
 import DatasetHistoryTableSkeleton from './DatasetHistoryTableSkeleton.vue';
 import DatasetHistoryToolbar from './DatasetHistoryToolbar.vue';
@@ -138,11 +138,12 @@ function handleResetFilters(): void {
             </div>
           </TransitionGroup>
 
-          <DatasetHistoryPagination
+          <AppPagination
             v-model:page="page"
             v-model:perPage="perPage"
             :total-items="totalItems"
             :rendered-count="renderedGroups.length"
+            :page-size-options="PAGE_SIZE_OPTIONS"
           />
         </template>
       </div>

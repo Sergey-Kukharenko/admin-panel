@@ -1,8 +1,9 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
+
 import { QUERY_KEYS } from './queryKeys';
-import { createQueryPatch } from './queryPatch';
 
 export const PAGE_SIZE_OPTIONS = [2, 10, 20, 50, 100];
 export const DEFAULT_PAGE_SIZE = 10;

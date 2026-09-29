@@ -1,14 +1,99 @@
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import { useProductDisplayNames, useProducts } from '@/entities/product';
+import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
+
+import type { PredictionRunSortField, PredictionRunSortOrder } from './types';
+
+export const RUN_HISTORY_PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
+export const RUN_HISTORY_DEFAULT_PAGE_SIZE = 20;
+
+const QUERY_KEYS = {
+  product: 'product',
+  page: 'page',
+  perPage: 'per_page',
+  sort: 'sort',
+  order: 'order',
+} as const;
+
+// Поле сортировки в URL и в order_by бэка. GET /ml-service-runs сортирует только по
+// created_at / started_at / finished_at (422 на остальные) — сортируемые колонки — даты
+export const RUN_HISTORY_SORT_API_FIELD: Record<PredictionRunSortField, string> = {
+  startedAt: 'started_at',
+  finishedAt: 'finished_at',
+};
+
+const SORT_FIELD_BY_API_FIELD = Object.fromEntries(
+  Object.entries(RUN_HISTORY_SORT_API_FIELD).map(([field, apiField]) => [apiField, field]),
+) as Record<string, PredictionRunSortField>;
 
 /**
- * Список продуктов для фильтра берём из /products (общий кэш entities/product),
- * а не из уже загруженной истории прогонов — так пункты фильтра не «сжимаются»
- * до одного продукта после того, как выбор применится к запросу истории.
+ * Фильтр, сортировка и пагинация истории прогонов живут в URL (как на «Загрузке данных»):
+ * переживают перезагрузку и открываются по ссылке. Смена фильтра, сортировки или размера
+ * страницы возвращает на первую страницу.
+ *
+ * Список продуктов для фильтра берём из /products (общий кэш entities/product), а не из
+ * загруженной истории — так пункты фильтра не «сжимаются» до одного продукта.
  */
 export function useRunHistoryFilters() {
-  const selectedProductId = ref('');
+  const route = useRoute();
+  const router = useRouter();
+  const replaceQuery = createQueryPatch(route, router);
+
+  const selectedProductId = computed<string>({
+    get: () => route.query[QUERY_KEYS.product]?.toString() ?? '',
+    set: (value) =>
+      replaceQuery({ [QUERY_KEYS.product]: value || undefined, [QUERY_KEYS.page]: undefined }),
+  });
+
+  const page = computed<number>({
+    get() {
+      const value = Number(route.query[QUERY_KEYS.page]);
+      return Number.isInteger(value) && value > 0 ? value : 1;
+    },
+    set: (value) => replaceQuery({ [QUERY_KEYS.page]: value > 1 ? String(value) : undefined }),
+  });
+
+  const perPage = computed<number>({
+    get() {
+      const value = Number(route.query[QUERY_KEYS.perPage]);
+      return RUN_HISTORY_PAGE_SIZE_OPTIONS.includes(value) ? value : RUN_HISTORY_DEFAULT_PAGE_SIZE;
+    },
+    set: (value) =>
+      replaceQuery({
+        [QUERY_KEYS.perPage]: value !== RUN_HISTORY_DEFAULT_PAGE_SIZE ? String(value) : undefined,
+        [QUERY_KEYS.page]: undefined,
+      }),
+  });
+
+  const sortField = computed<PredictionRunSortField | null>(
+    () => SORT_FIELD_BY_API_FIELD[route.query[QUERY_KEYS.sort]?.toString() ?? ''] ?? null,
+  );
+
+  const sortOrder = computed<PredictionRunSortOrder>(() =>
+    route.query[QUERY_KEYS.order] === 'desc' ? 'desc' : 'asc',
+  );
+
+  // Первый клик по колонке — по возрастанию, повторный — по убыванию
+  function toggleSort(field: PredictionRunSortField) {
+    const order: PredictionRunSortOrder =
+      sortField.value === field && sortOrder.value === 'asc' ? 'desc' : 'asc';
+
+    replaceQuery({
+      [QUERY_KEYS.sort]: RUN_HISTORY_SORT_API_FIELD[field],
+      [QUERY_KEYS.order]: order,
+      [QUERY_KEYS.page]: undefined,
+    });
+  }
+
+  // order_by для бэка; без выбранной колонки — дефолт бэка (-created_at, новые сверху)
+  const orderBy = computed(() => {
+    if (!sortField.value) return undefined;
+
+    const apiField = RUN_HISTORY_SORT_API_FIELD[sortField.value];
+    return sortOrder.value === 'desc' ? `-${apiField}` : apiField;
+  });
 
   const { data: productsResponse } = useProducts();
   const { productName } = useProductDisplayNames();
@@ -24,5 +109,15 @@ export function useRunHistoryFilters() {
       productOptions.value.find((product) => product.id === selectedProductId.value)?.name ?? '',
   );
 
-  return { selectedProductId, selectedProductName, productOptions };
+  return {
+    selectedProductId,
+    selectedProductName,
+    productOptions,
+    page,
+    perPage,
+    sortField,
+    sortOrder,
+    toggleSort,
+    orderBy,
+  };
 }
