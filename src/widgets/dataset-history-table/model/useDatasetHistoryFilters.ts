@@ -1,8 +1,9 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
+
 import { QUERY_KEYS } from './queryKeys';
-import { createQueryPatch } from './queryPatch';
 import type { DatasetPeriod, DatasetSort, DatasetSortOrder, DatasetStatus } from './types';
 
 export function useDatasetHistoryFilters() {
