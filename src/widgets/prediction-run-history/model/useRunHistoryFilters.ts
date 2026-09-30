@@ -36,7 +36,7 @@ const SORT_FIELD_BY_API_FIELD = Object.fromEntries(
 
 /**
  * Фильтр, сортировка и пагинация истории прогонов живут в URL (как на «Загрузке данных»):
- * переживают перезагрузку и открываются по ссылке. Смена фильтра, сортировки или размера
+ * переживают перезагрузку и открываются по ссылке. Смена фильтра или размера
  * страницы возвращает на первую страницу.
  *
  * Список продуктов для фильтра берём из /products (общий кэш entities/product), а не из
@@ -86,10 +86,11 @@ export function useRunHistoryFilters() {
     const order: PredictionRunSortOrder =
       sortField.value === field && sortOrder.value === 'asc' ? 'desc' : 'asc';
 
+    // Страницу не сбрасываем: число записей от сортировки не меняется, пользователь остается
+    // на той же странице, просто с другим порядком строк
     replaceQuery({
       [QUERY_KEYS.sort]: RUN_HISTORY_SORT_API_FIELD[field],
       [QUERY_KEYS.order]: order,
-      [QUERY_KEYS.page]: undefined,
     });
   }
 
