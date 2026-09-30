@@ -55,6 +55,10 @@ router.beforeEach((to) => {
   const userStore = useUserStore();
 
   if (to.meta.requiresAuth && !userStore.isAuthenticated) {
+    // Бэк уже вернул ошибку авторизации — показываем экран ошибки (App.vue), а не уходим
+    // на логин снова: иначе при живой сессии Authentik страница перезагружается по кругу
+    if (userStore.authError) return true;
+
     userStore.login();
 
     return false;

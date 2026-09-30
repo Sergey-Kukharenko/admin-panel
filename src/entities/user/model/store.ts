@@ -14,7 +14,21 @@ export const useUserStore = defineStore('user', () => {
 
   const isAuthenticated = computed(() => user.value?.authenticated ?? false);
 
+  // Бэк после неудачного OIDC-callback возвращает на фронт с ?auth=error&error=<код>.
+  // Запоминаем ошибку, чтобы показать экран ошибки вместо повторного редиректа на логин:
+  // сессия в Authentik жива, и повторный login() сразу вернул бы ту же ошибку — бесконечный цикл
+  const authError = ref<string | null>(null);
+
+  function readAuthErrorFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('auth') !== 'error') return null;
+
+    return params.get('error') || 'UnknownAuthError';
+  }
+
   async function initAuth() {
+    authError.value = readAuthErrorFromUrl();
+
     try {
       const { data } = await sessionApi.me();
 
@@ -53,6 +67,7 @@ export const useUserStore = defineStore('user', () => {
     user,
     isLoading,
     isAuthenticated,
+    authError,
     initAuth,
     login,
     logout,
