@@ -8,6 +8,10 @@ import { mapProductToIntegrations } from '../mapper';
 const playerIntelligence: Product = {
   product_id: 'caef651a-5af9-4330-b087-55a144e0abc6',
   name: 'player-intelligence',
+  product_status: 'awaiting',
+  last_product_run_status: 'processing',
+  last_prediction_at: '2026-09-23T21:23:45.792395Z',
+  next_prediction_date: '2026-09-25T00:00:00Z',
   services: [
     {
       ml_service_id: '9a54bebd-835b-4f5b-bef5-9f6763f86615',
@@ -23,6 +27,10 @@ const playerIntelligence: Product = {
 const gameRecommender: Product = {
   product_id: '71b354e5-ee3f-4fa0-a49a-b933d3c071a1',
   name: 'game-recommender',
+  product_status: 'awaiting',
+  last_product_run_status: null,
+  last_prediction_at: null,
+  next_prediction_date: '2026-09-26T00:00:00Z',
   services: [
     {
       ml_service_id: '31612a9d-0784-4cd3-9e12-70c70ae83d1f',
