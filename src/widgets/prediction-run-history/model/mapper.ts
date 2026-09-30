@@ -1,4 +1,4 @@
-import type { MLServiceRunListItem } from '@/entities/product';
+import { type MLServiceRunListItem, resolveServiceDocsUrl } from '@/entities/product';
 
 import type { PredictionRunRecord, PredictionRunResultType, PredictionRunStatus } from './types';
 
@@ -47,5 +47,6 @@ export function mapServiceRunToRunRecord(
     recordsCount: item.total_predictions,
     status,
     resultType: resolveResultType(item, status),
+    apiDocsUrl: resolveServiceDocsUrl(item.product_name, item.ml_service_name),
   };
 }
