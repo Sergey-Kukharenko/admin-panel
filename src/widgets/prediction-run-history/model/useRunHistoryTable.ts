@@ -6,6 +6,7 @@ import {
   mlServiceRunApi,
   PREDICTIONS_POLLING_INTERVAL,
   useProductDisplayNames,
+  useProducts,
 } from '@/entities/product';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 
@@ -19,6 +20,20 @@ export function useRunHistoryTable() {
   const filters = useRunHistoryFilters();
   const { selectedProductId, page, perPage, orderBy } = filters;
 
+  // Скрытые сервисы (entities/product/hiddenServices) убираем на сервере, передавая список
+  // видимых ml_service_id: фильтр на клиенте сломал бы пагинацию и счетчик «1-20 из N».
+  // /products уже без скрытых сервисов (select в useProducts), поэтому ждем его загрузки —
+  // иначе на первом кадре мелькнули бы скрытые прогоны
+  const { data: products, isError: isProductsError } = useProducts();
+  const visibleServiceIds = computed(() =>
+    (products.value ?? [])
+      .filter(
+        (product) => !selectedProductId.value || product.product_id === selectedProductId.value,
+      )
+      .flatMap((product) => product.services.map((service) => service.ml_service_id))
+      .join(','),
+  );
+
   const {
     data: runsResponse,
     isLoading,
@@ -28,6 +43,7 @@ export function useRunHistoryTable() {
     queryKey: computed(() => [
       RUN_HISTORY_QUERY_KEY,
       selectedProductId.value,
+      visibleServiceIds.value,
       orderBy.value,
       page.value,
       perPage.value,
@@ -36,6 +52,7 @@ export function useRunHistoryTable() {
       const response = await mlServiceRunApi.getMLServiceRuns(
         {
           product_id__in: selectedProductId.value || undefined,
+          ml_service_id__in: visibleServiceIds.value || undefined,
           order_by: orderBy.value,
           limit: perPage.value,
           offset: (page.value - 1) * perPage.value,
@@ -44,6 +61,8 @@ export function useRunHistoryTable() {
       );
       return response.data;
     },
+    // Если /products не загрузился, историю все равно показываем (без фильтра по сервисам)
+    enabled: computed(() => products.value !== undefined || isProductsError.value),
     // При смене фильтра, сортировки или страницы оставляем прошлую таблицу до ответа —
     // без мигания скелетоном
     placeholderData: keepPreviousData,

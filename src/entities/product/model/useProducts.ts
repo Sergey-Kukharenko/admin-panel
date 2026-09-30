@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/vue-query';
 
 import { productApi } from '../api/product-api';
+import { withoutHiddenServices } from './hiddenServices';
 
 export const PRODUCTS_QUERY_KEY = ['products'];
 // Push-канала (WS/SSE) у бэкенда нет, поэтому статусы сервисов обновляем поллингом —
@@ -22,6 +23,9 @@ export function useProducts() {
       const response = await productApi.getProducts();
       return response.data;
     },
+    // Скрытые сервисы (hiddenServices.ts) убираем один раз здесь — так их не видят ни карточки,
+    // ни фильтры, ни история прогонов, которая берет из /products список видимых сервисов
+    select: withoutHiddenServices,
     refetchInterval: PREDICTIONS_POLLING_INTERVAL,
   });
 }
