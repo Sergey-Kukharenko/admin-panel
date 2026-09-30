@@ -1,6 +1,18 @@
 import type { MessageSchema } from './ru';
 
 export const en: MessageSchema = {
+  auth: {
+    error: {
+      title: 'Sign-in failed',
+      descriptions: {
+        PortalUserNotProvisionedError:
+          "Your account isn't connected to the portal yet. Contact your MICo manager to get access.",
+        default: 'Something went wrong while signing in. Please try again.',
+      },
+      retry: 'Try again',
+      code: 'Error code',
+    },
+  },
   pagination: {
     showing: 'Showing:',
     of: 'of',
