@@ -16,12 +16,14 @@ const PRODUCT_DOCS_PATHS: Record<string, string> = {
 const SERVICE_DOCS_PATHS: Record<string, string> = {
   // Якоря GitBook: у main есть свой (по эндпоинту), у остальных — общий раздел рекомендаций
   main: '/game-recommender#post-v1-recommendations-main',
+  personal: '/game-recommender#post-v1-recommendations-main',
   new_for_user: '/game-recommender#get-recommendations',
   similar_to_user_top_games: '/game-recommender#get-recommendations',
   similar: '/game-recommender/similar-games',
   'previp-detection': '/vip-intelligence/early-vip-detection',
   'vip-churn': '/vip-intelligence/vip-churn',
   'vip-segment-prediction': '/vip-intelligence/vip-segment-prediction',
+  'stable-vip-prediction': '/vip-intelligence/non-promising-vip-filtering',
 };
 
 /** Страница сервиса; нет своей — обзор продукта; неизвестный продукт — главная документации */
