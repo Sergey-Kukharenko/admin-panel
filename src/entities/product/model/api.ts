@@ -115,6 +115,8 @@ export interface MLServiceRunListResponse {
 export interface MLServiceRunFilters {
   /** Список product_id через запятую */
   product_id__in?: string;
+  /** Список ml_service_id через запятую */
+  ml_service_id__in?: string;
   /** Поля через запятую, "-" — по убыванию; по умолчанию на бэке -created_at */
   order_by?: string;
   limit?: number;
