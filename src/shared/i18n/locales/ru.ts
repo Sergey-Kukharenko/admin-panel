@@ -1,4 +1,16 @@
 export const ru = {
+  auth: {
+    error: {
+      title: 'Не удалось войти',
+      descriptions: {
+        PortalUserNotProvisionedError:
+          'Ваш аккаунт ещё не подключён к порталу. Обратитесь к менеджеру MICo, чтобы получить доступ.',
+        default: 'Во время входа произошла ошибка. Попробуйте войти снова.',
+      },
+      retry: 'Попробовать снова',
+      code: 'Код ошибки',
+    },
+  },
   pagination: {
     showing: 'Показывать:',
     of: 'из',
