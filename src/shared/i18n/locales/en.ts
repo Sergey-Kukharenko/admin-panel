@@ -231,8 +231,7 @@ export const en: MessageSchema = {
         "Result generation failed.\n\nWe're already investigating the issue and will notify you by email as soon as it's resolved.",
       inProgress: 'Run in progress',
       downloadCsvAriaLabel: 'Download CSV',
-      copyTokenAriaLabel: 'Copy integration token',
-      copied: 'Copied',
+      openApiDocsAriaLabel: 'Open service API documentation',
       empty: {
         title: 'No results yet',
         description: 'Results will appear once data processing is complete',

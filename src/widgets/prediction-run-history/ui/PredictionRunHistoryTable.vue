@@ -12,9 +12,7 @@ import {
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { toast } from 'vue-sonner';
 
-import { useIntegrationsStore } from '@/entities/integration';
 import { toIntlLocale } from '@/shared/i18n';
 
 import type {
@@ -48,23 +46,8 @@ const emit = defineEmits<{
 // Колонка ID по макету 78px — влезает 5 символов product_run_id, полный id — в title ячейки
 const RUN_ID_PREVIEW_LENGTH = 5;
 
-const integrationsStore = useIntegrationsStore();
-
 const { t, locale } = useI18n({ useScope: 'global' });
 const intlLocale = computed(() => toIntlLocale(locale.value));
-
-// Для результатов с типом 'api' (продукты секции рекомендаций) кнопка не скачивает файл,
-// а копирует токен интеграции в буфер обмена — своего результата для скачивания у API нет
-async function handleResultClick(item: PredictionRunRecord) {
-  if (item.resultType === 'api') {
-    const { clientId } = integrationsStore.getClientCredentials('rest-api');
-    await navigator.clipboard.writeText(clientId);
-    toast.success(t('predictions.history.copied'));
-    return;
-  }
-
-  emit('download', item);
-}
 
 function sortIconFor(field: PredictionRunSortField) {
   if (props.sortField !== field) return ChevronsUpDown;
@@ -306,22 +289,29 @@ function sortIconClassFor(field: PredictionRunSortField) {
         </div>
 
         <div class="flex h-11 w-[91px] shrink-0 items-center justify-center px-2">
+          <!-- CSV — скачивание файла результата; API — документация сервиса (решение PM, WT-301) -->
           <button
-            v-if="item.resultType"
+            v-if="item.resultType === 'csv'"
             type="button"
-            :aria-label="
-              item.resultType === 'api'
-                ? t('predictions.history.copyTokenAriaLabel')
-                : t('predictions.history.downloadCsvAriaLabel')
-            "
+            :aria-label="t('predictions.history.downloadCsvAriaLabel')"
             class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
-            @click="handleResultClick(item)"
+            @click="emit('download', item)"
           >
-            <component :is="item.resultType === 'csv' ? Download : Globe" class="size-4" />
-            <span class="text-sm font-medium leading-5">
-              {{ item.resultType === 'csv' ? 'CSV' : 'API' }}
-            </span>
+            <Download class="size-4" />
+            <span class="text-sm font-medium leading-5">CSV</span>
           </button>
+
+          <a
+            v-else-if="item.resultType === 'api'"
+            :href="item.apiDocsUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            :aria-label="t('predictions.history.openApiDocsAriaLabel')"
+            class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) px-3 py-1.5 text-(--text-secondary) transition-colors hover:bg-(--muted)"
+          >
+            <Globe class="size-4" />
+            <span class="text-sm font-medium leading-5">API</span>
+          </a>
 
           <span
             v-else-if="item.status === 'generating'"

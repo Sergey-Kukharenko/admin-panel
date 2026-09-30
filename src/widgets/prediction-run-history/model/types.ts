@@ -21,6 +21,8 @@ export interface PredictionRunRecord {
   status: PredictionRunStatus;
   /** null, если результата нет (например, при статусе 'failed' или 'generating') */
   resultType: PredictionRunResultType | null;
+  /** Документация API сервиса — куда ведет кнопка «API» (WT-301) */
+  apiDocsUrl: string;
 }
 
 export type PredictionRunSortField =
