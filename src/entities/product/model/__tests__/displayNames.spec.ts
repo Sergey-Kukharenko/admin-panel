@@ -32,9 +32,16 @@ describe('useProductDisplayNames', () => {
     expect(serviceName('new_for_user')).toBe('New for You');
     expect(serviceName('similar_to_user_top_games')).toBe('Similar to Your Top');
     expect(serviceName('similar')).toBe('Similar Games');
-    expect(serviceName('previp-detection_micoformer')).toBe(
-      'Early VIP Identification (micoformer)',
-    );
+    expect(serviceName('personal')).toBe('Recommended for You');
+  });
+
+  it('названия Player Intelligence согласованы с PM', () => {
+    expect(serviceName('previp-detection_micoformer')).toBe('Early VIP Detection');
+    expect(serviceName('vip-churn')).toBe('VIP Churn');
+    expect(serviceName('stable-vip-prediction')).toBe('Non-Promising VIP Filtering');
+    expect(serviceName('vip-segment-prediction')).toBe('VIP Segment Prediction');
+    // горизонты 3/5/7 дней — пока базовое имя с суффиксом, названия обсуждаются
+    expect(serviceName('previp-detection_3')).toBe('Early VIP Detection (3)');
   });
 
   it('неизвестный slug показывает очеловеченным, а не падает', () => {

@@ -15,10 +15,19 @@ const PRODUCT_NAME_IDS: Record<string, string> = {
   'game-recommender': 'recommenderSystem',
 };
 
-// Recommender System — названия согласованы с PM (тред по неймингу, 25.09.2026);
-// Player Intelligence — пока предположение, ждет подтверждения
+// Названия согласованы с PM (25.09 — Recommender System, 30.09 — Player Intelligence).
+// Early VIP Detection — это previp-detection_micoformer (основная модель PreVIP), поэтому
+// он сопоставлен точно и без суффикса. previp-detection_3/_5/_7 (горизонты 3/5/7 дней) пока
+// попадают на базовое имя с суффиксом — названия для них еще обсуждаются.
+// personal — имя сервиса рекомендаций в каталоге продуктов бэка, main — на стенде; оба —
+// Recommended for You
 const SERVICE_NAME_IDS: Record<string, string> = {
-  'previp-detection': 'earlyVip',
+  'previp-detection_micoformer': 'earlyVipDetection',
+  'previp-detection': 'earlyVipDetection',
+  'vip-churn': 'vipChurn',
+  'stable-vip-prediction': 'nonPromisingVipFiltering',
+  'vip-segment-prediction': 'vipSegmentPrediction',
+  personal: 'recommendedForYou',
   main: 'recommendedForYou',
   new_for_user: 'newForYou',
   similar_to_user_top_games: 'similarToYourTop',

@@ -24,7 +24,7 @@ describe('resolveServiceDocsUrl', () => {
   });
 
   it('без страницы сервиса — обзор продукта, без продукта — главная документации', () => {
-    expect(resolveServiceDocsUrl('player-intelligence', 'stable-vip-prediction')).toBe(
+    expect(resolveServiceDocsUrl('player-intelligence', 'unknown-service')).toBe(
       `${BASE}/vip-intelligence/overview`,
     );
     expect(resolveServiceDocsUrl('new-product', 'unknown')).toBe(BASE);
