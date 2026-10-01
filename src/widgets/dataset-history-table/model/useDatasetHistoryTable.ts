@@ -7,14 +7,17 @@ import { DATASET_HISTORY_QUERY_KEY, datasetApi, useDatasetTemplates } from '@/en
 import { mapSourceTypeToLabel } from './sourceMapping';
 import { mapUiStatusToBackend } from './statusMapping';
 import { useDatasetHistoryFilters } from './useDatasetHistoryFilters';
-import { useDatasetHistoryPagination } from './useDatasetHistoryPagination';
+import {
+  DATASET_HISTORY_PAGE_SIZE,
+  useDatasetHistoryPagination,
+} from './useDatasetHistoryPagination';
 import { getDatasetGroupDayKey, getPeriodDates } from './utils';
 
 const AWAITING_FILES_POLL_INTERVAL_MS = 4000;
 
 export function useDatasetHistoryTable() {
   const filters = useDatasetHistoryFilters();
-  const { page, perPage } = useDatasetHistoryPagination();
+  const { page } = useDatasetHistoryPagination();
   const {
     data: templatesResponse,
     isSuccess: isTemplatesLoaded,
@@ -27,7 +30,7 @@ export function useDatasetHistoryTable() {
   // наверху списка оказался другой день (см. WT-448)
   const autoExpandedTopGroupId = ref<string | null>(null);
 
-  const offset = computed(() => (page.value - 1) * perPage.value);
+  const offset = computed(() => (page.value - 1) * DATASET_HISTORY_PAGE_SIZE);
 
   const totalItems = computed(() => serverResponse.value?.total_count ?? 0);
 
@@ -69,7 +72,6 @@ export function useDatasetHistoryTable() {
       () => filters.status.value,
       () => filters.period.value,
       () => orderByParam.value,
-      () => perPage.value,
       () => offset.value,
     ],
     queryFn: async ({ signal }) => {
@@ -83,7 +85,7 @@ export function useDatasetHistoryTable() {
 
       const response = await datasetApi.getFiles(
         {
-          limit: perPage.value,
+          limit: DATASET_HISTORY_PAGE_SIZE,
           offset: offset.value,
           order_by: orderByParam.value,
           dataset_type_id__in: backendUuids.length ? backendUuids.join(',') : undefined,
@@ -121,7 +123,9 @@ export function useDatasetHistoryTable() {
   // и должно обрабатываться существующим сообщением «Ничего не найдено».
   const isDefaultFilters = computed(
     () =>
-      filters.types.value.length === 0 && filters.status.value === '' && filters.period.value === '',
+      filters.types.value.length === 0 &&
+      filters.status.value === '' &&
+      filters.period.value === '',
   );
 
   const hasTemplates = computed(() => (templatesResponse.value?.length ?? 0) > 0);
@@ -210,7 +214,6 @@ export function useDatasetHistoryTable() {
     expandedGroups,
     toggleGroup,
     page,
-    perPage,
     totalItems,
     showHistoryTable,
   };

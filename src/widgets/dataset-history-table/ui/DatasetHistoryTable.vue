@@ -6,7 +6,7 @@ import { AppButton } from '@/shared/ui/app-button';
 import { AppPagination } from '@/shared/ui/app-pagination';
 import { UploadsEmptyState } from '@/widgets/uploads-empty-state';
 
-import { PAGE_SIZE_OPTIONS, useDatasetHistoryTable } from '../model';
+import { DATASET_HISTORY_PAGE_SIZE, useDatasetHistoryTable } from '../model';
 import DatasetHistoryGroupContent from './DatasetHistoryGroupContent.vue';
 import DatasetHistoryGroupHeader from './DatasetHistoryGroupHeader.vue';
 import DatasetHistoryGroupSkeleton from './DatasetHistoryGroupSkeleton.vue';
@@ -34,7 +34,6 @@ const {
   expandedGroups,
   toggleGroup,
   page,
-  perPage,
   totalItems,
   showHistoryTable,
 } = useDatasetHistoryTable();
@@ -140,10 +139,8 @@ function handleResetFilters(): void {
 
           <AppPagination
             v-model:page="page"
-            v-model:perPage="perPage"
             :total-items="totalItems"
-            :rendered-count="renderedGroups.length"
-            :page-size-options="PAGE_SIZE_OPTIONS"
+            :page-size="DATASET_HISTORY_PAGE_SIZE"
           />
         </template>
       </div>

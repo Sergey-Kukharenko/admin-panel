@@ -12,13 +12,13 @@ import { downloadBlob } from '@/shared/lib/downloadBlob';
 
 import { mapServiceRunToRunRecord } from './mapper';
 import type { PredictionRunRecord } from './types';
-import { useRunHistoryFilters } from './useRunHistoryFilters';
+import { RUN_HISTORY_PAGE_SIZE, useRunHistoryFilters } from './useRunHistoryFilters';
 
 const RUN_HISTORY_QUERY_KEY = 'prediction-run-history';
 
 export function useRunHistoryTable() {
   const filters = useRunHistoryFilters();
-  const { selectedProductId, page, perPage, orderBy } = filters;
+  const { selectedProductId, page, orderBy } = filters;
 
   // Скрытые сервисы (entities/product/hiddenServices) убираем на сервере, передавая список
   // видимых ml_service_id: фильтр на клиенте сломал бы пагинацию и счетчик «1-20 из N».
@@ -46,7 +46,6 @@ export function useRunHistoryTable() {
       visibleServiceIds.value,
       orderBy.value,
       page.value,
-      perPage.value,
     ]),
     queryFn: async ({ signal }) => {
       const response = await mlServiceRunApi.getMLServiceRuns(
@@ -54,8 +53,8 @@ export function useRunHistoryTable() {
           product_id__in: selectedProductId.value || undefined,
           ml_service_id__in: visibleServiceIds.value || undefined,
           order_by: orderBy.value,
-          limit: perPage.value,
-          offset: (page.value - 1) * perPage.value,
+          limit: RUN_HISTORY_PAGE_SIZE,
+          offset: (page.value - 1) * RUN_HISTORY_PAGE_SIZE,
         },
         signal,
       );
@@ -91,7 +90,7 @@ export function useRunHistoryTable() {
   // Страница из URL может оказаться за пределами истории (старая ссылка, история
   // сократилась) — переводим на последнюю существующую
   watch(totalCount, (total) => {
-    const lastPage = Math.max(1, Math.ceil(total / perPage.value));
+    const lastPage = Math.max(1, Math.ceil(total / RUN_HISTORY_PAGE_SIZE));
     if (runsResponse.value && page.value > lastPage) page.value = lastPage;
   });
 
