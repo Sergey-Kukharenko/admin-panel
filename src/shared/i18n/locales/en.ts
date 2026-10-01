@@ -14,9 +14,8 @@ export const en: MessageSchema = {
     },
   },
   pagination: {
-    showing: 'Showing:',
-    of: 'of',
-    rowsPerPage: 'Rows per page:',
+    previousPage: 'Previous page',
+    nextPage: 'Next page',
   },
   layout: {
     nav: {

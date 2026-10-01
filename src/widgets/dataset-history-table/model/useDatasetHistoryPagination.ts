@@ -5,8 +5,8 @@ import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
 
 import { QUERY_KEYS } from './queryKeys';
 
-export const PAGE_SIZE_OPTIONS = [2, 10, 20, 50, 100];
-export const DEFAULT_PAGE_SIZE = 10;
+// Размер страницы фиксированный: выбора «Строк на стр.» в UI-ките нет (решение PM)
+export const DATASET_HISTORY_PAGE_SIZE = 10;
 
 export function useDatasetHistoryPagination() {
   const route = useRoute();
@@ -26,20 +26,5 @@ export function useDatasetHistoryPagination() {
     },
   });
 
-  const perPage = computed<number>({
-    get() {
-      const value = Number(route.query[QUERY_KEYS.perPage]);
-      return PAGE_SIZE_OPTIONS.includes(value) ? value : DEFAULT_PAGE_SIZE;
-    },
-
-    set(value) {
-      // Смена размера страницы возвращает список к первой странице
-      replaceQuery({
-        [QUERY_KEYS.perPage]: value !== DEFAULT_PAGE_SIZE ? String(value) : undefined,
-        [QUERY_KEYS.page]: undefined,
-      });
-    },
-  });
-
-  return { page, perPage };
+  return { page };
 }

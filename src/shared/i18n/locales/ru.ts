@@ -12,9 +12,8 @@ export const ru = {
     },
   },
   pagination: {
-    showing: 'Показывать:',
-    of: 'из',
-    rowsPerPage: 'Строк на стр:',
+    previousPage: 'Предыдущая страница',
+    nextPage: 'Следующая страница',
   },
   layout: {
     nav: {
