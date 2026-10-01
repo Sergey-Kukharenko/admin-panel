@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { ChevronDown } from 'lucide-vue-next';
 import {
   SelectContent,
   SelectItem,
@@ -13,6 +13,8 @@ import {
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import ArrowLeftIcon from './assets/arrow-left-s-line.svg?component';
+import ArrowRightIcon from './assets/arrow-right-s-line.svg?component';
 import { getPaginationRange } from './model/getPaginationRange';
 
 defineOptions({
@@ -126,7 +128,7 @@ function handlePageSizeChange(value: unknown) {
           class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
           @click="handlePrevPage"
         >
-          <ChevronLeft class="size-4" stroke-width="2.5" />
+          <ArrowLeftIcon class="size-4" />
         </button>
 
         <template v-for="(item, index) in paginationRange" :key="`${item}-${index}`">
@@ -140,10 +142,10 @@ function handlePageSizeChange(value: unknown) {
           <button
             v-else
             type="button"
-            class="flex h-8 min-w-8 items-center justify-center rounded-(--radius-lg) px-3 py-1.5 font-sans text-sm font-medium normal-case transition-colors cursor-pointer hover:bg-(--muted-hover-soft) focus-visible:outline-none"
+            class="flex h-8 min-w-8 items-center justify-center rounded-(--radius-lg) px-3 py-1.5 font-sans text-sm font-medium transition-colors cursor-pointer hover:bg-(--muted-hover-soft) focus-visible:outline-none"
             :class="
               item === currentPage
-                ? 'bg-(--muted) text-(--text-primary)'
+                ? 'bg-(--bg-button-secondary) text-(--text-primary)'
                 : 'text-(--text-secondary)'
             "
             @click="goToPage(item)"
@@ -158,7 +160,7 @@ function handlePageSizeChange(value: unknown) {
           class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
           @click="handleNextPage"
         >
-          <ChevronRight class="size-4" stroke-width="2.5" />
+          <ArrowRightIcon class="size-4" />
         </button>
       </div>
     </div>
