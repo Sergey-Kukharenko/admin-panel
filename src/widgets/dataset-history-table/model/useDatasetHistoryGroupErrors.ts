@@ -4,6 +4,7 @@ import type { ValidationErrors } from '@/entities/dataset';
 import { datasetApi } from '@/entities/dataset';
 import { getAppLocale } from '@/shared/i18n';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
+import { getContentDispositionFilename } from '@/shared/lib/getContentDispositionFilename';
 
 import type { ErrorDetails } from '../ui/DatasetHistoryErrorDialog.vue';
 import { formatDatasetGroupDate } from './utils';
@@ -69,7 +70,10 @@ export function useDatasetHistoryGroupErrors(groupDate: string) {
         activeFile.value.file_id,
         getAppLocale(),
       );
-      const errorsFileName = toErrorsReportFileName(activeFile.value.name);
+      // Имя отчета задает бэк (Content-Disposition); свое — только если заголовка нет
+      const errorsFileName =
+        getContentDispositionFilename(response.headers['content-disposition']) ??
+        toErrorsReportFileName(activeFile.value.name);
       downloadBlob(response.data, errorsFileName);
     } catch (e) {
       console.error('Не удалось скачать отчет с ошибками:', e);
