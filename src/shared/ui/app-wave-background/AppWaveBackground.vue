@@ -59,8 +59,17 @@ const perm = new Uint8Array(512);
 for (let i = 0; i < 512; i++) perm[i] = p[i & 255] ?? 0;
 const G2 = 0.2113248654;
 
-// Разрешаем undefined для пустых слотов модуляции
-const g2: ([number, number] | undefined)[] = [, [-1, 1], [1, -1], [-1, -1], , [-1, 0], , [0, -1]];
+// undefined — пустые слоты модуляции (dot() считает их нулевым вектором)
+const g2: ([number, number] | undefined)[] = [
+  undefined,
+  [-1, 1],
+  [1, -1],
+  [-1, -1],
+  undefined,
+  [-1, 0],
+  undefined,
+  [0, -1],
+];
 
 const dot = (g: [number, number] | undefined, x: number, y: number) => {
   const g0 = g?.[0] ?? 0;
