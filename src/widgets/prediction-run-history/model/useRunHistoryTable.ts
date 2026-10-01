@@ -9,6 +9,7 @@ import {
   useProducts,
 } from '@/entities/product';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
+import { getContentDispositionFilename } from '@/shared/lib/getContentDispositionFilename';
 
 import { mapServiceRunToRunRecord } from './mapper';
 import type { PredictionRunRecord } from './types';
@@ -99,7 +100,11 @@ export function useRunHistoryTable() {
 
     try {
       const response = await predictionApi.downloadPrediction(record.predictionResultId);
-      downloadBlob(response.data, `prediction_${record.predictionResultId}.csv`);
+      // Имя файла задает бэк (Content-Disposition); свое — только если заголовка нет
+      const filename =
+        getContentDispositionFilename(response.headers['content-disposition']) ??
+        `prediction_${record.predictionResultId}.csv`;
+      downloadBlob(response.data, filename);
     } catch (e) {
       console.error('Не удалось скачать результат прогноза:', e);
     }
