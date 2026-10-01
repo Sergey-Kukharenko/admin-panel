@@ -6,13 +6,12 @@ import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
 
 import type { PredictionRunSortField, PredictionRunSortOrder } from './types';
 
-export const RUN_HISTORY_PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
-export const RUN_HISTORY_DEFAULT_PAGE_SIZE = 20;
+// Размер страницы фиксированный: выбора «Строк на стр.» в UI-ките нет (решение PM)
+export const RUN_HISTORY_PAGE_SIZE = 20;
 
 const QUERY_KEYS = {
   product: 'product',
   page: 'page',
-  perPage: 'per_page',
   sort: 'sort',
   order: 'order',
 } as const;
@@ -36,8 +35,8 @@ const SORT_FIELD_BY_API_FIELD = Object.fromEntries(
 
 /**
  * Фильтр, сортировка и пагинация истории прогонов живут в URL (как на «Загрузке данных»):
- * переживают перезагрузку и открываются по ссылке. Смена фильтра или размера
- * страницы возвращает на первую страницу.
+ * переживают перезагрузку и открываются по ссылке. Смена фильтра возвращает
+ * на первую страницу.
  *
  * Список продуктов для фильтра берём из /products (общий кэш entities/product), а не из
  * загруженной истории — так пункты фильтра не «сжимаются» до одного продукта.
@@ -59,18 +58,6 @@ export function useRunHistoryFilters() {
       return Number.isInteger(value) && value > 0 ? value : 1;
     },
     set: (value) => replaceQuery({ [QUERY_KEYS.page]: value > 1 ? String(value) : undefined }),
-  });
-
-  const perPage = computed<number>({
-    get() {
-      const value = Number(route.query[QUERY_KEYS.perPage]);
-      return RUN_HISTORY_PAGE_SIZE_OPTIONS.includes(value) ? value : RUN_HISTORY_DEFAULT_PAGE_SIZE;
-    },
-    set: (value) =>
-      replaceQuery({
-        [QUERY_KEYS.perPage]: value !== RUN_HISTORY_DEFAULT_PAGE_SIZE ? String(value) : undefined,
-        [QUERY_KEYS.page]: undefined,
-      }),
   });
 
   const sortField = computed<PredictionRunSortField | null>(
@@ -121,7 +108,6 @@ export function useRunHistoryFilters() {
     selectedProductName,
     productOptions,
     page,
-    perPage,
     sortField,
     sortOrder,
     toggleSort,

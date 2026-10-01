@@ -8,7 +8,7 @@ import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 import { AppPagination } from '@/shared/ui/app-pagination';
 
 import chevronDownIcon from '../assets/icons/chevron-down.svg';
-import { RUN_HISTORY_PAGE_SIZE_OPTIONS } from '../model/useRunHistoryFilters';
+import { RUN_HISTORY_PAGE_SIZE } from '../model/useRunHistoryFilters';
 import { useRunHistoryTable } from '../model/useRunHistoryTable';
 import PredictionRunHistoryEmptyState from './PredictionRunHistoryEmptyState.vue';
 import PredictionRunHistoryErrorState from './PredictionRunHistoryErrorState.vue';
@@ -23,7 +23,6 @@ const {
   records,
   totalCount,
   page,
-  perPage,
   sortField,
   sortOrder,
   toggleSort,
@@ -103,10 +102,8 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
 
         <AppPagination
           v-model:page="page"
-          v-model:per-page="perPage"
           :total-items="totalCount"
-          :rendered-count="records.length"
-          :page-size-options="RUN_HISTORY_PAGE_SIZE_OPTIONS"
+          :page-size="RUN_HISTORY_PAGE_SIZE"
         />
       </template>
       <PredictionRunHistoryEmptyState v-else />

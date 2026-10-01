@@ -5,5 +5,4 @@ export const QUERY_KEYS = {
   sort: 'sort',
   order: 'order',
   page: 'page',
-  perPage: 'per_page',
 } as const;
