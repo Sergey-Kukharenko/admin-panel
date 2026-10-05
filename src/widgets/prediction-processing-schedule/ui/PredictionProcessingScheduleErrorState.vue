@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { AlertOctagon } from 'lucide-vue-next';
-
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'PredictionProcessingScheduleErrorState',
@@ -16,7 +15,7 @@ defineEmits<{
   <aside
     class="w-[332px] shrink-0 flex flex-col items-center justify-center gap-3 rounded-(--radius-xl) bg-[var(--bg-surface-neutral)] px-5 py-8 text-center"
   >
-    <AlertOctagon class="size-5 text-(--danger-failed)" stroke-width="2" />
+    <AppIcon name="spam-2-line" class="size-5 text-(--danger-failed)" />
     <p class="text-sm font-medium leading-5 text-(--text-primary)">
       Не удалось загрузить расписание
     </p>

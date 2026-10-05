@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Check, ChevronDown } from 'lucide-vue-next';
 import {
   DropdownMenuContent,
   DropdownMenuPortal,
@@ -11,6 +10,7 @@ import {
 import { computed, reactive, ref } from 'vue';
 
 import { TARIFF_USAGE_LIMITS } from '@/entities/tariff';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import { DATA_CHART_BY_PRODUCT, DATA_CHART_SERIES } from '../model/data';
 import type { ChartSeriesKey } from '../model/types';
@@ -39,7 +39,9 @@ const dataset = computed(
     },
 );
 
-const visibleSeriesKeys = reactive(new Set<ChartSeriesKey>(DATA_CHART_SERIES.map((series) => series.key)));
+const visibleSeriesKeys = reactive(
+  new Set<ChartSeriesKey>(DATA_CHART_SERIES.map((series) => series.key)),
+);
 
 function toggleSeries(key: ChartSeriesKey): void {
   if (visibleSeriesKeys.has(key)) {
@@ -76,7 +78,7 @@ function toggleSeries(key: ChartSeriesKey): void {
               class="flex h-8 shrink-0 items-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) bg-(--bg-button-secondary) px-3 text-body-sm font-medium text-(--text-primary) transition-colors hover:bg-(--bg-button-secondary-hover)"
             >
               {{ selectedProductName }}
-              <ChevronDown class="size-4 text-(--text-primary)" />
+              <AppIcon name="large-line-arrow-down" class="size-4 text-(--text-primary)" />
             </button>
           </DropdownMenuTrigger>
 
@@ -96,10 +98,13 @@ function toggleSeries(key: ChartSeriesKey): void {
                   :value="limit.productId"
                   class="flex h-8 cursor-pointer items-center justify-between rounded-(--radius-lg) px-3 py-1.5 outline-none hover:bg-(--muted) data-highlighted:bg-(--muted)"
                 >
-                  <span class="text-sm font-medium text-(--text-primary)">{{ limit.productName }}</span>
+                  <span class="text-sm font-medium text-(--text-primary)">{{
+                    limit.productName
+                  }}</span>
 
-                  <Check
+                  <AppIcon
                     v-if="selectedProductId === limit.productId"
+                    name="check-line"
                     class="size-4 text-(--text-secondary)"
                   />
                 </DropdownMenuRadioItem>
@@ -136,13 +141,15 @@ function toggleSeries(key: ChartSeriesKey): void {
         <span
           class="flex size-4 items-center justify-center rounded-(--radius-md) shadow-(--shadow-field)"
           :style="{
-            backgroundColor: visibleSeriesKeys.has(series.key) ? `var(${series.colorVar})` : 'var(--muted)',
+            backgroundColor: visibleSeriesKeys.has(series.key)
+              ? `var(${series.colorVar})`
+              : 'var(--muted)',
           }"
         >
-          <Check
+          <AppIcon
             v-if="visibleSeriesKeys.has(series.key)"
-            class="size-2.5 text-(--bg-surface-primary)"
-            :stroke-width="3"
+            name="check-2"
+            class="size-3 text-(--bg-surface-primary)"
           />
         </span>
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ChevronDown, FileText, PieChart } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import { formatDatasetGroupDate } from '../model/utils';
 
@@ -34,12 +35,12 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
   >
     <div class="flex min-w-0 items-center gap-3">
       <div class="flex shrink-0 items-center gap-2">
-        <ChevronDown
+        <AppIcon
+          name="arrow-down-s-fill"
           :class="[
             'size-4 text-(--text-primary) transition-transform duration-200',
             { '-rotate-90': !expanded },
           ]"
-          stroke-width="2.5"
         />
       </div>
       <!-- Выводим готовую красивую дату из computed -->
@@ -53,7 +54,11 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
         <div
           class="flex h-5.75 items-center gap-0.5 rounded-(--radius-full) bg-(--muted) pl-1.5 pr-2 py-1 select-none"
         >
-          <PieChart class="size-3.5 shrink-0 text-(--text-primary)" stroke-width="2" />
+          <!-- По макету: пока группа обрабатывается — progress-2-line, когда всё загружено — checkbox-circle-line -->
+          <AppIcon
+            :name="uploadedCount === totalCount ? 'checkbox-circle-line' : 'progress-2-line'"
+            class="size-3.5 text-(--text-primary)"
+          />
           <span
             class="font-mono text-element-tag font-medium uppercase text-(--text-primary) pl-0.5"
           >
@@ -66,7 +71,7 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
         <div
           class="flex h-5.75 items-center gap-0.5 rounded-(--radius-full) bg-(--muted) pl-1.5 pr-2 py-1 select-none"
         >
-          <FileText class="size-3.5 shrink-0 text-(--text-primary)" stroke-width="2" />
+          <AppIcon name="file-text-line" class="size-3.5 shrink-0 text-(--text-primary)" />
           <span
             class="font-mono text-element-tag font-medium uppercase text-(--text-primary) pl-0.5"
           >

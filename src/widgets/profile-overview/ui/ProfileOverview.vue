@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ArrowUpRight } from 'lucide-vue-next';
-
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
 
 import MembersSection from './MembersSection.vue';
@@ -30,7 +29,7 @@ const CONTACT_MANAGER_TOOLTIP_TEXT =
     <div class="flex w-full justify-end">
       <AppTooltip :icon="false" :text="CONTACT_MANAGER_TOOLTIP_TEXT">
         <AppButton variant="secondary" size="small">
-          <ArrowUpRight class="size-4" />
+          <AppIcon name="arrow-right-up-line" class="size-4" />
           Связаться с менеджером
         </AppButton>
       </AppTooltip>

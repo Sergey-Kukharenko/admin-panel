@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { Pencil } from 'lucide-vue-next';
-
 import { MOCK_ORGANIZATION_MEMBERS } from '@/entities/organization';
 import { ChangePasswordModal, usePasswordChange } from '@/features/change-password';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import { ProfileInfoRow } from './profile-info-row';
 
@@ -25,12 +24,19 @@ const { isModalOpen, isOnCooldown, cooldownLabel, openModal, closeModal, confirm
   >
     <p class="px-4 text-base font-medium text-[#181818]">Безопасность</p>
 
-    <div class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4">
+    <div
+      class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4"
+    >
       <p v-if="isOnCooldown" class="text-xs text-(--text-secondary)">
         Повторный запрос на смену пароля будет доступен через {{ cooldownLabel }}
       </p>
 
-      <ProfileInfoRow label="Пароль" :value="MASKED_PASSWORD" label-width-class="w-35" :copyable="false">
+      <ProfileInfoRow
+        label="Пароль"
+        :value="MASKED_PASSWORD"
+        label-width-class="w-35"
+        :copyable="false"
+      >
         <template #action>
           <AppButton
             variant="outline"
@@ -39,7 +45,7 @@ const { isModalOpen, isOnCooldown, cooldownLabel, openModal, closeModal, confirm
             aria-label="Изменить пароль"
             @click="openModal"
           >
-            <Pencil class="size-4" />
+            <AppIcon name="pencil" class="size-4" />
           </AppButton>
         </template>
       </ProfileInfoRow>

@@ -51,6 +51,7 @@ Within a slice, code is grouped by segment: `model/` (types, composables, stores
 - Shared UI components (`shared/ui/app-*`) follow a consistent shape: a `<ComponentName>.vue`, an optional `<ComponentName>.types.ts` for exported prop types, and an `index.ts` re-export. Variant/size styling is done with `computed()` functions returning class arrays switched on props, not a separate CVA-style library.
 - Radix Vue (`radix-vue`) underlies interactive primitives (dropdowns, dialogs, drawers).
 - SVGs are imported either as URLs (default) or as Vue components via the `?component` suffix — see `vite-svg-loader` config in `vite.config.ts` and the module declarations in `env.d.ts`.
+- UI icons come from the design-system set (Figma "Icons", node 52:4927) via `<AppIcon name="..." />` from `@/shared/ui/app-icon` — an SVG sprite with a typed `IconName`. Default size 16px (override with `size-*`), color is `currentColor` (`text-*`). To add/update an icon, drop the raw Figma SVG export into `src/shared/assets/icons/ui/<name>.svg` and run `npm run icons:sprite` (regenerates `sprite.svg` + `iconNames.ts`). Don't add icon libraries (lucide was removed) or one-off icon SVGs; only logos/illustrations stay as local assets.
 
 ### Vue/ESLint conventions enforced by config
 

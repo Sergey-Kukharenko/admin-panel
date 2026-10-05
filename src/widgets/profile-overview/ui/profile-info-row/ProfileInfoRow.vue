@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Copy } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
+
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'ProfileInfoRow',
@@ -37,7 +38,7 @@ async function copyValue() {
       class="flex size-8 shrink-0 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
       @click="copyValue"
     >
-      <Copy class="size-4" />
+      <AppIcon name="file-copy-line" class="size-4" />
     </button>
     <slot v-else name="action" />
   </div>

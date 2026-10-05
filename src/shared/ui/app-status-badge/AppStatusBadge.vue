@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Check, CircleAlert, Loader2 } from 'lucide-vue-next';
 import { computed } from 'vue';
+
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import type { AppStatusBadgeStatus } from './model/types';
 
@@ -24,21 +25,21 @@ defineEmits<{
 const STATUS_CONFIG = {
   loading: {
     text: 'Загрузка',
-    icon: Loader2,
+    icon: 'loader-2-line',
     bg: 'bg-(--bg-badge-loading)',
     color: 'text-(--icon-loading)',
     animate: true,
   },
   success: {
     text: 'Успешно',
-    icon: Check,
+    icon: 'checkbox-circle-line',
     bg: 'bg-(--bg-badge-success)',
     color: 'text-(--icon-success-alt)',
     animate: false,
   },
   error: {
     text: 'Ошибка',
-    icon: CircleAlert,
+    icon: 'close-circle-line',
     bg: 'bg-(--bg-badge-danger)',
     color: 'text-(--icon-error)',
     animate: false,
@@ -54,11 +55,10 @@ const config = computed(() => STATUS_CONFIG[props.status]);
     :class="[config.bg, clickable && 'cursor-pointer hover:bg-opacity-80 active:scale-95']"
     @click="$emit('click')"
   >
-    <component
-      :is="config.icon"
+    <AppIcon
+      :name="config.icon"
       class="size-3.5"
       :class="[config.color, config.animate && 'animate-spin']"
-      :stroke-width="2.5"
     />
 
     <span class="text-xs font-medium uppercase" :class="config.color">

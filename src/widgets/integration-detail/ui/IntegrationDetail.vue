@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ArrowUpRight, FileText } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
@@ -8,6 +7,7 @@ import type { Integration } from '@/entities/integration';
 import { useIntegrationsStore } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
+import { AppIcon } from '@/shared/ui/app-icon';
 import { RestApiConnectionModal } from '@/widgets/rest-api-connection-modal';
 import { RestApiCredentialsPanel } from '@/widgets/rest-api-credentials';
 import { S3ConnectionModal } from '@/widgets/s3-connection-modal';
@@ -56,9 +56,9 @@ function handleConnectionRequestSubmit() {
         rel="noopener noreferrer"
         class="inline-flex h-9 shrink-0 items-center gap-2 rounded-(--radius-lg) bg-(--muted) px-4 text-element-button font-medium text-(--foreground) hover:bg-(--muted-hover)"
       >
-        <FileText class="size-4" />
+        <AppIcon name="file-text-line" class="size-4" />
         {{ integration.detail.docsLabel ?? 'Документация' }}
-        <ArrowUpRight class="size-4" />
+        <AppIcon name="arrow-right-up-line" class="size-4" />
       </a>
     </div>
 

@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import type { Component } from 'vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import CreditCardIcon from '@/shared/assets/icons/navigation/billing.svg?component';
-import DatabaseIcon from '@/shared/assets/icons/navigation/datasets.svg?component';
-import HomeIcon from '@/shared/assets/icons/navigation/home.svg?component';
-import PlugIcon from '@/shared/assets/icons/navigation/integrations.svg?component';
-import SparklesIcon from '@/shared/assets/icons/navigation/predictions.svg?component';
+import { AppIcon, type IconName } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'SidebarNavigation',
@@ -16,7 +11,7 @@ defineOptions({
 interface NavigationItem {
   label: string;
   to: string;
-  icon: Component;
+  icon: IconName;
 }
 
 withDefaults(
@@ -34,27 +29,27 @@ const items = computed<NavigationItem[]>(() => [
   {
     label: t('layout.nav.dashboard'),
     to: '/dashboard',
-    icon: HomeIcon,
+    icon: 'function-line',
   },
   {
     label: t('layout.nav.integrations'),
     to: '/integrations',
-    icon: PlugIcon,
+    icon: 'connector-line',
   },
   {
     label: t('layout.nav.datasets'),
     to: '/datasets',
-    icon: DatabaseIcon,
+    icon: 'folder-check-line',
   },
   {
     label: t('layout.nav.predictions'),
     to: '/predictions',
-    icon: SparklesIcon,
+    icon: 'sparkling-line',
   },
   {
     label: t('layout.nav.billing'),
     to: '/billing',
-    icon: CreditCardIcon,
+    icon: 'receipt-line',
   },
 ]);
 </script>
@@ -72,7 +67,7 @@ const items = computed<NavigationItem[]>(() => [
           ]"
           active-class="bg-(--sidebar-item-active) !text-(--sidebar-item-active-foreground)"
         >
-          <component :is="item.icon" class="h-4.5 w-4.5 shrink-0" />
+          <AppIcon :name="item.icon" class="size-4.5" />
 
           <span v-if="isExpanded">
             {{ item.label }}

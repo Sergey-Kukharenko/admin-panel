@@ -3,6 +3,8 @@ import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import { AppIcon } from '@/shared/ui/app-icon';
+
 import { predictionIntegrationIconByName, predictionTooltipIconByName } from '../model/constants';
 import type { PredictionIntegration } from '../model/types';
 import PredictionIntegrationMetrics from './PredictionIntegrationMetrics.vue';
@@ -51,10 +53,10 @@ const isBlocked = computed(
               "
               class="size-3.5 shrink-0 relative flex items-center justify-center cursor-help focus:outline-none group"
             >
-              <img
-                :src="predictionTooltipIconByName[integration.tooltipIcon]"
-                alt=""
-                class="opacity-80 group-hover:opacity-100 transition-opacity object-contain"
+              <AppIcon
+                :name="predictionTooltipIconByName[integration.tooltipIcon].name"
+                class="size-3.5 opacity-80 group-hover:opacity-100 transition-opacity"
+                :class="predictionTooltipIconByName[integration.tooltipIcon].colorClass"
               />
             </button>
           </TooltipTrigger>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
 import { ref } from 'vue';
 
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'S3ConnectionModal',
@@ -59,7 +59,7 @@ function handleSubmit() {
             <p class="flex-1 text-sm font-medium text-(--text-primary)">Подключение Amazon S3</p>
 
             <AppButton variant="outline" size="icon" @click="emit('close')">
-              <X class="size-4" />
+              <AppIcon name="close-line" class="size-4" />
             </AppButton>
           </header>
 

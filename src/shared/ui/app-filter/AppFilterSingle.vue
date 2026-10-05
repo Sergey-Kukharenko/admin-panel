@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Check } from 'lucide-vue-next';
 import {
   DropdownMenuContent,
   DropdownMenuPortal,
@@ -9,6 +8,8 @@ import {
   DropdownMenuTrigger,
 } from 'radix-vue';
 import { computed } from 'vue';
+
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import AppFilterTrigger from './AppFilterTrigger.vue';
 import type { AppFilterSingleProps } from './model/types';
@@ -57,7 +58,11 @@ const selectedLabel = computed(() => {
               {{ option.label }}
             </span>
 
-            <Check v-if="modelValue === option.value" class="size-4 text-(--text-secondary)" />
+            <AppIcon
+              v-if="modelValue === option.value"
+              name="check-line"
+              class="size-4 text-(--text-secondary)"
+            />
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

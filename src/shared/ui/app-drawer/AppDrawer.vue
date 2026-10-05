@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
 
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 export interface AppDrawerProps {
   open: boolean;
@@ -23,7 +23,6 @@ const emit = defineEmits<{
 <template>
   <DialogRoot :open="open" @update:open="(value) => !value && emit('close')">
     <DialogPortal>
-
       <!-- Overlay -->
       <Transition
         enter-from-class="opacity-0"
@@ -60,7 +59,7 @@ const emit = defineEmits<{
             </h2>
 
             <AppButton variant="outline" size="icon" @click="$emit('close')">
-              <X />
+              <AppIcon name="close-line" />
             </AppButton>
           </header>
 

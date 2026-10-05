@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { AlertOctagon } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { useUserStore } from '@/entities/user';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'AuthErrorScreen',
@@ -34,7 +34,7 @@ function retry() {
 <template>
   <div class="flex h-screen w-screen items-center justify-center bg-(--background) px-4">
     <div class="flex max-w-100 flex-col items-center gap-4 text-center">
-      <AlertOctagon class="size-6 text-(--danger-failed)" stroke-width="2" />
+      <AppIcon name="spam-2-line" class="size-6 text-(--danger-failed)" />
 
       <div class="flex flex-col items-center gap-1">
         <p class="text-lg font-medium leading-6 text-(--text-primary)">

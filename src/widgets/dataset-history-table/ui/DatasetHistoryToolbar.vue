@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Calendar, FileText, PieChart } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -71,21 +70,21 @@ const dynamicTypeOptions = computed(() => {
         v-model="types"
         multiple
         :title="t('datasets.toolbar.dataType')"
-        :icon="FileText"
+        :icon="'file-list-3-line'"
         :options="dynamicTypeOptions"
       />
 
       <AppFilter
         v-model="status"
         :title="t('datasets.toolbar.status')"
-        :icon="PieChart"
+        :icon="'progress-2-line'"
         :options="statusOptions"
       />
 
       <AppFilter
         v-model="period"
         :title="t('datasets.toolbar.period')"
-        :icon="Calendar"
+        :icon="'calendar-line'"
         :options="periodOptions"
       />
     </div>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ChevronDown, X } from 'lucide-vue-next';
+import { AppIcon, type IconName } from '@/shared/ui/app-icon';
 
 defineProps<{
   title: string;
-  icon: unknown;
+  icon: IconName;
   count?: number;
   clearable?: boolean;
 }>();
@@ -20,11 +20,12 @@ function onClear(event: MouseEvent) {
 </script>
 
 <template>
+  <!-- data-state="open" ставит DropdownMenuTrigger (as-child) — по нему переключаем шеврон -->
   <button
     type="button"
-    class="flex h-8 min-h-8 max-h-8 items-center justify-center gap-1.5 rounded-(--radius-sm) border border-(--border-subtle) bg-(--surface) pl-3 pr-2 py-1.5 transition-colors hover:bg-(--muted)"
+    class="group flex h-8 min-h-8 max-h-8 items-center justify-center gap-1.5 rounded-(--radius-sm) border border-(--border-subtle) bg-(--surface) pl-3 pr-2 py-1.5 transition-colors hover:bg-(--muted)"
   >
-    <component :is="icon" class="size-4 shrink-0 text-(--text-secondary)" />
+    <AppIcon :name="icon" class="size-4 text-(--text-secondary)" />
 
     <span class="select-none text-sm font-medium leading-5 text-(--text-primary)">
       {{ title }}
@@ -38,9 +39,18 @@ function onClear(event: MouseEvent) {
     </span>
 
     <span v-if="clearable" class="flex cursor-pointer items-center justify-center" @click="onClear">
-      <X class="size-4 text-(--text-secondary)" />
+      <AppIcon name="small-close-line" class="size-4 text-(--text-secondary)" />
     </span>
 
-    <ChevronDown v-else class="size-4 text-(--text-primary)" />
+    <template v-else>
+      <AppIcon
+        name="large-line-arrow-down"
+        class="size-4 text-(--text-primary) group-data-[state=open]:hidden"
+      />
+      <AppIcon
+        name="large-line-arrow-up"
+        class="hidden size-4 text-(--text-primary) group-data-[state=open]:block"
+      />
+    </template>
   </button>
 </template>

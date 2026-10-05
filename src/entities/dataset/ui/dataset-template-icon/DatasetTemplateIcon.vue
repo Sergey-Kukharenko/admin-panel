@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import BalanceIcon from '@/entities/dataset/assets/icons/balance.svg';
-import Bets from '@/entities/dataset/assets/icons/bets.svg';
-import PaymentsIcon from '@/entities/dataset/assets/icons/payments.svg';
-import Users from '@/entities/dataset/assets/icons/users.svg';
-import VipUsers from '@/entities/dataset/assets/icons/vip-users.svg';
 import type { DatasetIcon } from '@/entities/dataset/model/types';
+import { AppIcon, type IconName } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'DatasetTemplateIcon',
@@ -14,18 +10,17 @@ const props = defineProps<{
   icon: DatasetIcon;
 }>();
 
-const icons: Record<DatasetIcon, string> = {
-  users: Users,
-  vip: VipUsers,
-  bets: Bets,
-  balance: BalanceIcon,
-  payments: PaymentsIcon,
+// Иконки типов данных из набора дизайн-системы (Figma Icons 52:4927)
+const icons: Record<DatasetIcon, IconName> = {
+  users: 'group-line',
+  vip: 'vip-crown-2-line',
+  bets: 'target-line',
+  balance: 'exchange-funds-line',
+  payments: 'wallet-line',
 };
 </script>
 
 <template>
-  <!-- Декоративная иконка — рядом всегда есть видимое название типа данных текстом,
-       поэтому alt пустой, а не технический идентификатор (icon), чтобы скринридер
-       не дублировал объявление -->
-  <img :src="icons[props.icon]" alt="" class="size-4 shrink-0" />
+  <!-- Декоративная иконка — рядом всегда есть видимое название типа данных текстом -->
+  <AppIcon :name="icons[props.icon]" class="size-4 text-(--text-primary)" />
 </template>

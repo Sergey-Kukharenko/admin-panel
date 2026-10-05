@@ -1,4 +1,4 @@
-import type { Component } from 'vue';
+import type { IconName } from '@/shared/ui/app-icon';
 
 export interface FilterOption {
   label: string;
@@ -7,7 +7,7 @@ export interface FilterOption {
 
 export interface AppFilterProps {
   title: string;
-  icon: Component;
+  icon: IconName;
   options: readonly FilterOption[];
 }
 
