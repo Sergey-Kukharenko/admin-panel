@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { Check } from 'lucide-vue-next';
 import { TooltipProvider } from 'radix-vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
+import { AppIcon } from '@/shared/ui/app-icon';
 import { AppPagination } from '@/shared/ui/app-pagination';
 
-import chevronDownIcon from '../assets/icons/chevron-down.svg';
 import { RUN_HISTORY_PAGE_SIZE } from '../model/useRunHistoryFilters';
 import { useRunHistoryTable } from '../model/useRunHistoryTable';
 import PredictionRunHistoryEmptyState from './PredictionRunHistoryEmptyState.vue';
@@ -53,16 +52,20 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
           <template #trigger>
             <button
               type="button"
-              class="flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 py-1.5 transition-colors hover:bg-(--muted-hover)"
+              class="group flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 py-1.5 transition-colors hover:bg-(--muted-hover)"
             >
               <span class="text-sm font-medium leading-5 text-[#18181b]">
                 {{ selectedProductName || t('predictions.history.allProducts') }}
               </span>
-              <span
-                class="relative flex size-4 shrink-0 items-center justify-center overflow-hidden"
-              >
-                <img :src="chevronDownIcon" alt="" class="h-[9.546px] w-[5.834px] rotate-90" />
-              </span>
+              <!-- data-state="open" ставит DropdownMenuTrigger (as-child) -->
+              <AppIcon
+                name="large-line-arrow-down"
+                class="size-4 text-(--text-primary) group-data-[state=open]:hidden"
+              />
+              <AppIcon
+                name="large-line-arrow-up"
+                class="hidden size-4 text-(--text-primary) group-data-[state=open]:block"
+              />
             </button>
           </template>
 
@@ -70,7 +73,11 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
             <span class="flex-1 text-sm font-medium text-(--text-primary)">
               {{ t('predictions.history.allProducts') }}
             </span>
-            <Check v-if="!selectedProductId" class="size-4 shrink-0 text-(--text-secondary)" />
+            <AppIcon
+              v-if="!selectedProductId"
+              name="check-line"
+              class="size-4 shrink-0 text-(--text-secondary)"
+            />
           </AppDropdownItem>
 
           <AppDropdownItem
@@ -81,8 +88,9 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
             <span class="flex-1 truncate text-sm font-medium text-(--text-primary)">
               {{ product.name }}
             </span>
-            <Check
+            <AppIcon
               v-if="selectedProductId === product.id"
+              name="check-line"
               class="size-4 shrink-0 text-(--text-secondary)"
             />
           </AppDropdownItem>

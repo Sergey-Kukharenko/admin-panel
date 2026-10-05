@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check } from 'lucide-vue-next';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import type { DashboardProduct } from '../model/types';
 
@@ -22,7 +22,7 @@ defineProps<{
         <p class="text-base font-medium text-(--text-primary)">{{ product.name }}</p>
 
         <span v-if="product.isActive" class="flex items-center gap-1 text-[#668948]">
-          <Check class="size-3.5" :stroke-width="2.5" />
+          <AppIcon name="check-alt" class="size-3.5" />
           <span class="text-xs font-medium uppercase">Active</span>
         </span>
       </div>
@@ -36,7 +36,7 @@ defineProps<{
         <div
           class="flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-neutral) pr-2 pl-1.5"
         >
-          <Check class="size-3.5 text-(--text-primary)" :stroke-width="2.5" />
+          <AppIcon name="checkbox-circle-line" class="size-3.5 text-(--text-primary)" />
           <span class="font-mono text-xs font-medium text-(--text-primary) uppercase">
             {{ product.dataStatusLabel }}
           </span>
@@ -48,7 +48,7 @@ defineProps<{
         <div
           class="flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-neutral) pr-2 pl-1.5"
         >
-          <Check class="size-3.5 text-(--text-primary)" :stroke-width="2.5" />
+          <AppIcon name="checkbox-circle-line" class="size-3.5 text-(--text-primary)" />
           <span class="font-mono text-xs font-medium text-(--text-primary) uppercase">Ready</span>
           <span class="text-(--text-secondary)">·</span>
           <span class="font-mono text-xs text-(--text-secondary) uppercase">

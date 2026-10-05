@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Download } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -11,6 +10,7 @@ import { downloadBlob } from '@/shared/lib/downloadBlob';
 import { AppBanner } from '@/shared/ui/app-banner';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDrawer } from '@/shared/ui/app-drawer';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import DatasetUploadFooter from './DatasetUploadFooter.vue';
 
@@ -153,7 +153,7 @@ const handleFinalConfirm = () => {
         </template>
 
         <template #action-icon>
-          <Download stroke-width="2" />
+          <AppIcon name="download-line" />
         </template>
       </AppBanner>
 

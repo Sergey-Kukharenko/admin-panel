@@ -3,6 +3,8 @@ import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import { AppIcon } from '@/shared/ui/app-icon';
+
 import { predictionStatusIconByStatus } from '../model/constants';
 import type { PredictionIntegration } from '../model/types';
 
@@ -56,11 +58,13 @@ const badgeTooltipText = computed(() => {
             class="max-h-5 rounded-(--radius-sm) inline-flex justify-end items-center gap-[3.25px] cursor-help"
           >
             <div class="size-3 relative overflow-hidden flex items-center justify-center">
-              <img
-                :src="predictionStatusIconByStatus[integration.status]"
-                alt=""
-                class="size-2.5 object-contain"
-                :class="{ 'animate-spin': integration.status === 'generating' }"
+              <AppIcon
+                :name="predictionStatusIconByStatus[integration.status]"
+                class="size-2.5"
+                :class="{
+                  'animate-spin': integration.status === 'generating',
+                  'text-[var(--danger-failed)]': integration.status === 'failed',
+                }"
               />
             </div>
 
@@ -100,10 +104,13 @@ const badgeTooltipText = computed(() => {
         class="max-h-5 rounded-(--radius-sm) inline-flex justify-end items-center gap-[3.25px]"
       >
         <div class="size-3 relative overflow-hidden flex items-center justify-center">
-          <img
-            :src="predictionStatusIconByStatus[integration.status]"
-            alt=""
-            class="size-2.5 object-contain"
+          <AppIcon
+            :name="predictionStatusIconByStatus[integration.status]"
+            class="size-2.5"
+            :class="{
+              'text-[var(--success-ready)]': integration.status === 'ready',
+              'text-[var(--danger-failed)]': integration.status === 'failed',
+            }"
           />
         </div>
 

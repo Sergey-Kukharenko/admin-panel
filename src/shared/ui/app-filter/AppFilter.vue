@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Component } from 'vue';
+import type { IconName } from '@/shared/ui/app-icon';
 
 import AppFilterMultiple from './AppFilterMultiple.vue';
 import AppFilterSingle from './AppFilterSingle.vue';
@@ -8,7 +8,7 @@ import type { FilterOption } from './model/types';
 defineProps<{
   multiple?: boolean;
   title: string;
-  icon: Component;
+  icon: IconName;
   options: readonly FilterOption[];
   modelValue?: string | string[];
 }>();

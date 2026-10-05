@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ChevronRight } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import type { DatasetGroup } from '@/entities/dataset';
 import { DatasetTemplateIcon, getDatasetTypeContent } from '@/entities/dataset';
+import { AppIcon } from '@/shared/ui/app-icon';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
 import { mapBackendStatusToUi } from '../model/statusMapping';
@@ -150,7 +150,7 @@ const visibleCategories = computed(() => {
             :aria-label="t('datasets.table.viewErrorDetails')"
             @click="errors.open(file.rawFile, category.title)"
           >
-            <ChevronRight class="size-4" />
+            <AppIcon name="arrow-right-s-line" class="size-4" />
           </button>
         </div>
       </div>

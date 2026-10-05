@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Check } from 'lucide-vue-next';
 import { CheckboxIndicator, CheckboxRoot } from 'radix-vue';
+
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import type { AppCheckboxProps } from './AppCheckbox.types';
 
@@ -32,7 +33,7 @@ const emit = defineEmits<{
       @update:checked="(value) => emit('update:modelValue', !!value)"
     >
       <CheckboxIndicator class="flex items-center justify-center text-(--bg-surface-primary)">
-        <Check class="size-2.5" :stroke-width="3" />
+        <AppIcon name="check-2" class="size-3" />
       </CheckboxIndicator>
     </CheckboxRoot>
 

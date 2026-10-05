@@ -9,7 +9,8 @@ import {
 } from 'radix-vue';
 import { computed } from 'vue';
 
-import chevronDownIcon from '../assets/icons/chevron-down.svg';
+import { AppIcon } from '@/shared/ui/app-icon';
+
 import { getDayCellClasses } from '../model/calendarCellClasses';
 import { monthShortNames } from '../model/constants';
 import { useScheduleCalendar } from '../model/useScheduleCalendar';
@@ -76,16 +77,10 @@ const asideClasses = computed(() => [
                 {{ selectedMonth }}
               </span>
 
-              <span
-                class="relative flex size-3.5 shrink-0 items-center justify-center overflow-hidden"
-              >
-                <img
-                  :src="chevronDownIcon"
-                  alt=""
-                  class="h-[9.546px] w-[5.834px] transition-transform duration-200"
-                  :class="calendarOpened ? 'rotate-[270deg]' : 'rotate-90'"
-                />
-              </span>
+              <AppIcon
+                :name="calendarOpened ? 'large-line-arrow-up' : 'large-line-arrow-down'"
+                class="size-3.5 text-(--text-primary)"
+              />
             </button>
           </div>
         </header>
@@ -146,7 +141,9 @@ const asideClasses = computed(() => [
           class="flex select-none touch-none p-0.5 bg-transparent w-1.5 absolute right-1 top-0 bottom-0 transition-colors hover:bg-black/5"
           orientation="vertical"
         >
-          <ScrollAreaThumb class="flex-1 bg-[var(--text-secondary)] opacity-30 rounded-(--radius-full)" />
+          <ScrollAreaThumb
+            class="flex-1 bg-[var(--text-secondary)] opacity-30 rounded-(--radius-full)"
+          />
         </ScrollAreaScrollbar>
       </ScrollAreaRoot>
     </div>

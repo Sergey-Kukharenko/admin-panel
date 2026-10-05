@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Check } from 'lucide-vue-next';
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -8,6 +7,8 @@ import {
   DropdownMenuTrigger,
 } from 'radix-vue';
 import { computed } from 'vue';
+
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import AppFilterTrigger from './AppFilterTrigger.vue';
 import type { AppFilterMultipleProps } from './model/types';
@@ -61,7 +62,11 @@ function toggle(value: string) {
             {{ option.label }}
           </span>
 
-          <Check v-if="modelValue?.includes(option.value)" class="size-4 text-(--text-secondary)" />
+          <AppIcon
+            v-if="modelValue?.includes(option.value)"
+            name="check-line"
+            class="size-4 text-(--text-secondary)"
+          />
         </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenuPortal>

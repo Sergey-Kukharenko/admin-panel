@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Copy } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { toast } from 'vue-sonner';
 
 import type { IntegrationType } from '@/entities/integration';
 import { ConnectionStatusTag, useIntegrationsStore } from '@/entities/integration';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import ApiSecretsSection from './ApiSecretsSection.vue';
 
@@ -18,7 +18,9 @@ const props = defineProps<{
 
 const integrationsStore = useIntegrationsStore();
 
-const clientId = computed(() => integrationsStore.getClientCredentials(props.integrationType).clientId);
+const clientId = computed(
+  () => integrationsStore.getClientCredentials(props.integrationType).clientId,
+);
 
 async function copyClientId() {
   await navigator.clipboard.writeText(clientId.value);
@@ -34,7 +36,9 @@ async function copyClientId() {
     >
       <p class="px-4 text-base font-medium text-[#181818]">Общая информация</p>
 
-      <div class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4">
+      <div
+        class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4"
+      >
         <div class="flex items-center gap-4">
           <p class="w-49.5 shrink-0 text-sm text-(--text-primary)">Статус подключения</p>
           <ConnectionStatusTag status="connected" />
@@ -51,7 +55,7 @@ async function copyClientId() {
             class="flex size-8 shrink-0 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
             @click="copyClientId"
           >
-            <Copy class="size-4" />
+            <AppIcon name="file-copy-line" class="size-4" />
           </button>
         </div>
       </div>

@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { Bell, CheckCircle2, Loader2, RotateCw, ShieldAlert, Sparkles } from 'lucide-vue-next';
-import { DropdownMenuContent, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'radix-vue';
+import {
+  DropdownMenuContent,
+  DropdownMenuPortal,
+  DropdownMenuRoot,
+  DropdownMenuTrigger,
+} from 'radix-vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import type { NotificationVariant } from '@/entities/notification';
 import { MOCK_NOTIFICATIONS } from '@/entities/notification';
+import { AppIcon, type IconName } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'NotificationsPanel',
@@ -19,13 +24,26 @@ const hasUnread = computed(() => notifications.value.some((notification) => !not
 
 const VARIANT_CONFIG: Record<
   NotificationVariant,
-  { icon: typeof Bell; bg: string; color: string; spin?: boolean }
+  { icon: IconName; bg: string; color: string; spin?: boolean }
 > = {
-  processing: { icon: Loader2, bg: 'bg-(--bg-badge-loading)', color: 'text-(--icon-loading)', spin: true },
-  ai: { icon: Sparkles, bg: 'bg-(--warning-muted)', color: 'text-(--icon-warning)' },
-  success: { icon: CheckCircle2, bg: 'bg-(--bg-badge-success)', color: 'text-(--icon-success)' },
-  error: { icon: ShieldAlert, bg: 'bg-(--bg-badge-danger)', color: 'text-(--icon-error)' },
-  loop: { icon: RotateCw, bg: 'bg-(--bg-badge-processing)', color: 'text-(--icon-tertiary)' },
+  processing: {
+    icon: 'loader-2-line',
+    bg: 'bg-(--bg-badge-loading)',
+    color: 'text-(--icon-loading)',
+    spin: true,
+  },
+  ai: { icon: 'sparkling-line', bg: 'bg-(--warning-muted)', color: 'text-(--icon-warning)' },
+  success: {
+    icon: 'checkbox-circle-line',
+    bg: 'bg-(--bg-badge-success)',
+    color: 'text-(--icon-success)',
+  },
+  error: { icon: 'spam-2-line', bg: 'bg-(--bg-badge-danger)', color: 'text-(--icon-error)' },
+  loop: {
+    icon: 'loop-left-fill',
+    bg: 'bg-(--bg-badge-processing)',
+    color: 'text-(--icon-tertiary)',
+  },
 };
 
 function markAllAsRead(): void {
@@ -46,7 +64,7 @@ function markAllAsRead(): void {
         class="relative flex size-8 items-center justify-center rounded-(--radius-sm) hover:bg-(--muted)"
         :aria-label="t('layout.notifications.ariaLabel')"
       >
-        <Bell class="size-4 text-(--icon-tertiary)" />
+        <AppIcon name="notification-3-line" class="size-4.5 text-(--icon-tertiary)" />
         <span
           v-if="hasUnread"
           class="absolute top-1.5 right-1.5 size-1.75 rounded-full border border-(--surface) bg-(--icon-error)"
@@ -76,7 +94,7 @@ function markAllAsRead(): void {
         </div>
 
         <div v-if="notifications.length === 0" class="flex flex-col items-center gap-2 px-4 py-10">
-          <Bell class="size-6 text-(--icon-disabled)" />
+          <AppIcon name="notification-3-line" class="size-6 text-(--icon-disabled)" />
           <p class="text-body-sm text-(--text-tertiary)">{{ t('layout.notifications.empty') }}</p>
         </div>
 
@@ -92,10 +110,13 @@ function markAllAsRead(): void {
                 class="relative flex size-9 shrink-0 items-center justify-center rounded-(--radius-lg)"
                 :class="VARIANT_CONFIG[notification.variant].bg"
               >
-                <component
-                  :is="VARIANT_CONFIG[notification.variant].icon"
+                <AppIcon
+                  :name="VARIANT_CONFIG[notification.variant].icon"
                   class="size-4"
-                  :class="[VARIANT_CONFIG[notification.variant].color, VARIANT_CONFIG[notification.variant].spin && 'animate-spin']"
+                  :class="[
+                    VARIANT_CONFIG[notification.variant].color,
+                    VARIANT_CONFIG[notification.variant].spin && 'animate-spin',
+                  ]"
                 />
 
                 <span
@@ -105,7 +126,9 @@ function markAllAsRead(): void {
               </div>
 
               <div class="flex flex-col gap-0.5">
-                <p class="text-body-sm font-medium text-(--text-primary)">{{ t(notification.titleKey) }}</p>
+                <p class="text-body-sm font-medium text-(--text-primary)">
+                  {{ t(notification.titleKey) }}
+                </p>
                 <p class="text-body-xs text-(--text-secondary)">{{ t(notification.timeKey) }}</p>
               </div>
             </div>

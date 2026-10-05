@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown } from 'lucide-vue-next';
-
+import { AppIcon } from '@/shared/ui/app-icon';
 import { AppSkeleton } from '@/shared/ui/app-skeleton';
 
 defineOptions({
@@ -15,7 +14,7 @@ const FILE_ROWS_COUNT = 6;
     class="mb-1 flex w-full flex-col items-center overflow-hidden rounded-(--radius-xl) bg-(--bg-surface-neutral) self-stretch"
   >
     <div class="flex h-12 w-full items-center gap-3 px-6">
-      <ChevronDown class="size-4 shrink-0 text-(--icon-muted)" stroke-width="2.5" />
+      <AppIcon name="arrow-down-s-fill" class="size-4 shrink-0 text-(--icon-muted)" />
 
       <AppSkeleton class="h-3 w-32 rounded-(--radius-sm)" />
 

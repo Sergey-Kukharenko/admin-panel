@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ChevronRight, PlusCircle, X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
 import { ref } from 'vue';
 
@@ -8,6 +7,7 @@ import type { ProductAccessMap } from '@/entities/integration';
 import { EnvironmentTabs, INTEGRATION_PRODUCTS, ProductAccessTable } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppCheckbox } from '@/shared/ui/app-checkbox';
+import { AppIcon } from '@/shared/ui/app-icon';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
 
 defineOptions({
@@ -79,14 +79,14 @@ function handleSubmit() {
             <p class="flex-1 text-sm font-medium text-(--text-primary)">Подключение REST API</p>
 
             <AppButton variant="outline" size="icon" @click="emit('close')">
-              <X class="size-4" />
+              <AppIcon name="close-line" class="size-4" />
             </AppButton>
           </header>
 
           <div class="flex flex-1 flex-col gap-5 overflow-y-auto px-5 pb-2">
             <p class="text-sm text-(--text-secondary)">
-              Заполните параметры заявки. Если часть информации неизвестна, просто отправьте
-              заявку — менеджер свяжется с вами и поможет завершить настройку.
+              Заполните параметры заявки. Если часть информации неизвестна, просто отправьте заявку
+              — менеджер свяжется с вами и поможет завершить настройку.
             </p>
 
             <div class="flex flex-col gap-1">
@@ -136,7 +136,8 @@ function handleSubmit() {
                     class="flex items-center gap-1 text-sm text-(--text-secondary)"
                     @click="isIpSectionOpen = !isIpSectionOpen"
                   >
-                    <ChevronRight
+                    <AppIcon
+                      name="large-line-arrow-right"
                       class="size-4 shrink-0 transition-transform"
                       :class="isIpSectionOpen && 'rotate-90'"
                     />
@@ -149,7 +150,7 @@ function handleSubmit() {
                     class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
                     @click="addIpAddress"
                   >
-                    <PlusCircle class="size-4" />
+                    <AppIcon name="add-circle-line" class="size-4" />
                   </button>
                 </div>
 

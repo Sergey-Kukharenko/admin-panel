@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import ArrowLeftIcon from './assets/arrow-left-s-line.svg?component';
-import ArrowRightIcon from './assets/arrow-right-s-line.svg?component';
+import { AppIcon } from '@/shared/ui/app-icon';
+
 import { getPaginationRange } from './model/getPaginationRange';
 
 defineOptions({
@@ -54,7 +54,7 @@ function goToPage(page: number) {
       class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
       @click="handlePrevPage"
     >
-      <ArrowLeftIcon class="size-4" />
+      <AppIcon name="arrow-left-s-line" class="size-4" />
     </button>
 
     <template v-for="(item, index) in paginationRange" :key="`${item}-${index}`">
@@ -88,7 +88,7 @@ function goToPage(page: number) {
       class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-primary) transition-colors hover:bg-(--muted-hover-soft) cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent focus-visible:outline-none"
       @click="handleNextPage"
     >
-      <ArrowRightIcon class="size-4" />
+      <AppIcon name="arrow-right-s-line" class="size-4" />
     </button>
   </nav>
 </template>

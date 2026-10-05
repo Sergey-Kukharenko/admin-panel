@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { AlertOctagon } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'PredictionsManagerErrorState',
@@ -18,7 +18,7 @@ const { t } = useI18n({ useScope: 'global' });
 <template>
   <div class="flex w-full flex-col items-center justify-center gap-4 py-8">
     <div class="flex max-w-85 flex-col items-center gap-1 text-center">
-      <AlertOctagon class="mb-2 size-6 text-(--danger-failed)" stroke-width="2" />
+      <AppIcon name="spam-2-line" class="mb-2 size-6 text-(--danger-failed)" />
       <p class="text-lg font-medium leading-6 text-(--text-primary)">
         {{ t('predictions.manager.error.title') }}
       </p>

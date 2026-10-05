@@ -1,16 +1,4 @@
 <script setup lang="ts">
-import {
-  CheckCircle2,
-  ChevronDown,
-  ChevronsUpDown,
-  CircleCheck,
-  CircleX,
-  Copy,
-  Pause,
-  Plus,
-  Trash2,
-  XCircle,
-} from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
@@ -24,6 +12,7 @@ import {
 } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
+import { AppIcon } from '@/shared/ui/app-icon';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
 
 import CreateKeySecretModal from './CreateKeySecretModal.vue';
@@ -119,7 +108,9 @@ function confirmRevoke() {
     >
       <p class="px-4 text-base font-medium text-[#181818]">Общая информация</p>
 
-      <div class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4">
+      <div
+        class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4"
+      >
         <div class="flex items-center gap-4">
           <p class="w-49.5 shrink-0 text-sm text-(--text-primary)">Статус подключения</p>
           <ConnectionStatusTag status="connected" />
@@ -136,7 +127,7 @@ function confirmRevoke() {
             class="flex size-8 shrink-0 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
             @click="copyAccessKeyId"
           >
-            <Copy class="size-4" />
+            <AppIcon name="file-copy-line" class="size-4" />
           </button>
         </div>
       </div>
@@ -152,14 +143,14 @@ function confirmRevoke() {
             class="flex h-8 items-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 text-sm font-medium text-(--foreground)"
           >
             Активные
-            <ChevronDown class="size-4" />
+            <AppIcon name="large-line-arrow-down" class="size-4" />
           </button>
           <button
             type="button"
             class="flex h-8 items-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 text-sm font-medium text-(--foreground)"
           >
             Все среды
-            <ChevronDown class="size-4" />
+            <AppIcon name="large-line-arrow-down" class="size-4" />
           </button>
         </div>
 
@@ -167,13 +158,13 @@ function confirmRevoke() {
           <span
             class="inline-flex h-8 cursor-not-allowed items-center gap-1.5 rounded-(--radius-lg) bg-(--muted) px-3 text-sm font-medium text-(--text-tertiary)"
           >
-            <Plus class="size-4" />
+            <AppIcon name="add-line" class="size-4" />
             Создать Key Secret
           </span>
         </AppTooltip>
 
         <AppButton v-else size="small" @click="isCreateModalOpen = true">
-          <Plus class="size-4" />
+          <AppIcon name="add-line" class="size-4" />
           Создать Key Secret
         </AppButton>
       </div>
@@ -184,25 +175,25 @@ function confirmRevoke() {
             class="flex h-9 flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
           >
             Наименование
-            <ChevronsUpDown class="size-3.5" />
+            <AppIcon name="expand-up-down-line" class="size-3.5" />
           </div>
           <div
             class="flex h-9 w-35 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
           >
             Среда
-            <ChevronsUpDown class="size-3.5" />
+            <AppIcon name="expand-up-down-line" class="size-3.5" />
           </div>
           <div
             class="flex h-9 w-37.5 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
           >
             Создан
-            <ChevronsUpDown class="size-3.5" />
+            <AppIcon name="expand-up-down-line" class="size-3.5" />
           </div>
           <div
             class="flex h-9 w-31 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
           >
             Статус
-            <ChevronsUpDown class="size-3.5" />
+            <AppIcon name="expand-up-down-line" class="size-3.5" />
           </div>
           <div
             class="flex h-9 w-45 items-center bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
@@ -216,13 +207,19 @@ function confirmRevoke() {
           :key="secret.id"
           class="flex w-full items-center border-t border-(--border-default)"
         >
-          <div class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+          <div
+            class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)"
+          >
             {{ secret.name }}
           </div>
-          <div class="flex h-11 w-35 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+          <div
+            class="flex h-11 w-35 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)"
+          >
             {{ environmentLabel(secret.environment) }}
           </div>
-          <div class="flex h-11 w-37.5 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+          <div
+            class="flex h-11 w-37.5 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)"
+          >
             {{ formatSecretDate(secret.createdAt) }}
           </div>
           <div class="flex h-11 w-31 items-center border-r border-(--border-default) px-4">
@@ -230,21 +227,21 @@ function confirmRevoke() {
               v-if="secret.status === 'active'"
               class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-success) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-success-alt)"
             >
-              <CircleCheck class="size-3.5" />
+              <AppIcon name="checkbox-circle-line" class="size-3.5" />
               Активен
             </span>
             <span
               v-else-if="secret.status === 'inactive'"
               class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--muted) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-tertiary)"
             >
-              <Pause class="size-3.5" />
+              <AppIcon name="circle-dashed" class="size-3.5" />
               Неактивен
             </span>
             <span
               v-else
               class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-danger) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-error)"
             >
-              <CircleX class="size-3.5" />
+              <AppIcon name="close-circle-line" class="size-3.5" />
               Отозван
             </span>
           </div>
@@ -257,7 +254,7 @@ function confirmRevoke() {
                 class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
                 @click="requestDeactivate(secret)"
               >
-                <XCircle class="size-4" />
+                <AppIcon name="close-circle-line" class="size-4" />
               </button>
               <button
                 v-else
@@ -266,7 +263,7 @@ function confirmRevoke() {
                 class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
                 @click="activateKeySecret(secret)"
               >
-                <CheckCircle2 class="size-4" />
+                <AppIcon name="checkbox-circle-line" class="size-4" />
               </button>
               <button
                 type="button"
@@ -274,7 +271,7 @@ function confirmRevoke() {
                 class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
                 @click="requestRevoke(secret)"
               >
-                <Trash2 class="size-4" />
+                <AppIcon name="delete-bin-line" class="size-4" />
               </button>
             </template>
           </div>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'radix-vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'DatasetHistoryErrorDialog',
@@ -96,7 +96,7 @@ const detailsRows = computed(() => {
             </DialogTitle>
 
             <AppButton variant="outline" size="icon" @click="emit('close')">
-              <X />
+              <AppIcon name="close-line" />
             </AppButton>
           </header>
 

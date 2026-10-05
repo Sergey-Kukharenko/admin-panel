@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { CheckCircle2, Loader, LoaderCircle, Trash2, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import type { DatasetFile, DatasetUpload } from '@/entities/dataset';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'DatasetFilesList',
@@ -84,7 +84,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
     >
       <template v-if="item.type === 'file'">
         <div class="shrink-0 flex items-center justify-center pt-0.75 w-4 h-4">
-          <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
+          <AppIcon name="checkbox-circle-line" class="size-4 text-(--success)" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
@@ -100,7 +100,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
           class="size-4 aspect-square flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer mt-0.5"
           @click="emit('remove', item.file.id)"
         >
-          <Trash2 class="size-4 aspect-square" stroke-width="2" />
+          <AppIcon name="delete-bin-line" class="size-4 aspect-square" />
         </button>
       </template>
 
@@ -110,9 +110,9 @@ const getProgressStyle = (upload: DatasetUpload) => ({
         >
           <div class="flex w-full items-center justify-between gap-2 z-10 self-stretch pl-2 pr-3">
             <div class="flex items-center gap-2 min-w-0">
-              <LoaderCircle
+              <AppIcon
+                name="loader-2-line"
                 class="size-3.5 shrink-0 animate-spin text-(--progress-fill)"
-                stroke-width="1.5"
               />
 
               <span
@@ -144,7 +144,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
            показываем как обычный добавленный файл, реальной отправки на бэк ещё нет -->
       <template v-else-if="isQueued(item.upload) && !isSubmitting">
         <div class="shrink-0 flex items-center justify-center pt-0.75 w-4 h-4">
-          <CheckCircle2 class="size-3.5 text-(--success)" stroke-width="1.5" />
+          <AppIcon name="checkbox-circle-line" class="size-4 text-(--success)" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
@@ -160,7 +160,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
           class="size-4 aspect-square flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer mt-0.5"
           @click="emit('remove', item.upload.id)"
         >
-          <Trash2 class="size-4 aspect-square" stroke-width="2" />
+          <AppIcon name="delete-bin-line" class="size-4 aspect-square" />
         </button>
       </template>
 
@@ -168,7 +168,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
            файла очередь ещё не дошла. Иконка — loader-2-line из макета (WT-447/WT-519) -->
       <template v-else-if="isQueued(item.upload)">
         <div class="shrink-0 flex items-center justify-center h-5">
-          <Loader class="size-3.5 text-(--text-primary)" stroke-width="1.5" />
+          <AppIcon name="loader-2-line" class="size-3.5 text-(--text-primary)" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
@@ -189,14 +189,14 @@ const getProgressStyle = (upload: DatasetUpload) => ({
             class="size-4 flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer"
             @click="emit('remove', item.upload.id)"
           >
-            <Trash2 class="size-4 aspect-square" stroke-width="2" />
+            <AppIcon name="delete-bin-line" class="size-4 aspect-square" />
           </button>
         </div>
       </template>
 
       <template v-else-if="isError(item.upload)">
         <div class="shrink-0 flex items-center justify-center h-5">
-          <XCircle class="size-3.5 text-(--danger)" stroke-width="1.5" />
+          <AppIcon name="close-circle-line" class="size-4 text-(--danger)" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
@@ -217,7 +217,7 @@ const getProgressStyle = (upload: DatasetUpload) => ({
             class="size-4 flex items-center justify-center text-(--text-secondary) hover:text-(--danger) transition-colors cursor-pointer"
             @click="emit('remove', item.upload.id)"
           >
-            <Trash2 class="size-4 aspect-square" stroke-width="2" />
+            <AppIcon name="delete-bin-line" class="size-4 aspect-square" />
           </button>
         </div>
       </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Copy, X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
 import { toast } from 'vue-sonner';
 
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'RevealSecretModal',
@@ -63,14 +63,16 @@ async function copyAndClose() {
             <p class="flex-1 text-base font-medium text-(--text-primary)">{{ title }}</p>
 
             <AppButton variant="outline" size="icon" @click="emit('close')">
-              <X class="size-4" />
+              <AppIcon name="close-line" class="size-4" />
             </AppButton>
           </header>
 
           <div class="flex flex-col gap-4 px-5 pb-5">
             <div class="flex flex-col gap-1">
               <label class="text-sm font-medium text-(--text-primary)">{{ fieldLabel }}</label>
-              <div class="h-9 w-full truncate rounded-(--radius-lg) bg-(--bg-input) px-3 py-2 text-sm text-(--text-primary)">
+              <div
+                class="h-9 w-full truncate rounded-(--radius-lg) bg-(--bg-input) px-3 py-2 text-sm text-(--text-primary)"
+              >
                 {{ MASKED_SECRET }}
               </div>
             </div>
@@ -80,7 +82,7 @@ async function copyAndClose() {
 
           <footer class="flex w-full shrink-0 items-center justify-end gap-2 px-5 py-4">
             <AppButton @click="copyAndClose">
-              <Copy class="size-4" />
+              <AppIcon name="file-copy-line" class="size-4" />
               Скопировать
             </AppButton>
           </footer>

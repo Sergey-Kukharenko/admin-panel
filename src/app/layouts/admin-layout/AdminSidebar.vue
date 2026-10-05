@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { PanelLeft } from 'lucide-vue-next';
 import { CollapsibleRoot, CollapsibleTrigger } from 'radix-vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import logoUrl from '@/shared/assets/images/logo.svg';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import SidebarNavigation from './SidebarNavigation.vue';
 
@@ -32,7 +32,7 @@ const isExpanded = ref(true);
         class="ml-auto flex size-8 shrink-0 items-center justify-center rounded-(--radius-md) text-(--text-tertiary) transition-colors hover:bg-(--muted) hover:text-(--foreground)"
         :aria-label="isExpanded ? t('layout.sidebar.collapse') : t('layout.sidebar.expand')"
       >
-        <PanelLeft class="size-4.5" stroke-width="2" />
+        <AppIcon name="layout-right-2-line" class="size-4.5" />
       </CollapsibleTrigger>
     </div>
 

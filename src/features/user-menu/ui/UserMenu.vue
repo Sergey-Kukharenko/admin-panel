@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { LogOut, User } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -9,6 +8,7 @@ import { useUserStore } from '@/entities/user';
 import avatarPlaceholderUrl from '@/shared/assets/images/avatar-placeholder.png';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'UserMenu',
@@ -53,13 +53,17 @@ function handleLogout(): void {
     </div>
 
     <AppDropdownItem @select="router.push('/profile')">
-      <User class="size-4 text-(--text-secondary)" stroke-width="2" />
-      <span class="text-body-sm font-medium text-(--text-primary)">{{ t('layout.userMenu.profile') }}</span>
+      <AppIcon name="user-line" class="size-4 text-(--text-secondary)" />
+      <span class="text-body-sm font-medium text-(--text-primary)">{{
+        t('layout.userMenu.profile')
+      }}</span>
     </AppDropdownItem>
 
     <AppDropdownItem @select="isLogoutConfirmOpen = true">
-      <LogOut class="size-4 text-(--text-secondary)" stroke-width="2" />
-      <span class="text-body-sm font-medium text-(--text-primary)">{{ t('layout.userMenu.logout') }}</span>
+      <AppIcon name="logout-circle-r-line" class="size-4 text-(--text-secondary)" />
+      <span class="text-body-sm font-medium text-(--text-primary)">{{
+        t('layout.userMenu.logout')
+      }}</span>
     </AppDropdownItem>
   </AppDropdown>
 

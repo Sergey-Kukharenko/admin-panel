@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Download } from 'lucide-vue-next';
-
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 interface Props {
   title: string;
@@ -39,7 +38,7 @@ const emit = defineEmits<{
     <div class="shrink-0 ml-auto">
       <AppButton variant="ghost" size="icon" @click="emit('action')">
         <slot name="action-icon">
-          <Download stroke-width="2" />
+          <AppIcon name="download-line" />
         </slot>
       </AppButton>
     </div>

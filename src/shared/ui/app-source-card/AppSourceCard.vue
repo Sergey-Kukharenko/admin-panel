@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Check, Hexagon } from 'lucide-vue-next';
 import { computed } from 'vue';
+
+import { AppIcon } from '@/shared/ui/app-icon';
 
 interface Props {
   label: string;
@@ -40,19 +41,8 @@ const tagStyles = computed(() => {
       :style="tagStyles"
       class="flex h-6 max-h-6 items-center justify-center gap-1 px-1.5 py-1 rounded-(--radius-sm) backdrop-blur-[calc(var(--blur,0px)/2)] box-border"
     >
-      <div class="relative w-3.5 h-3.5 flex items-center justify-center shrink-0">
-        <Hexagon class="w-full h-full text-current" :stroke-width="2.2" />
-
-        <!-- Галочка для активного состояния -->
-        <Check
-          v-if="isActive"
-          class="absolute w-2.25 h-2.25 text-current top-[2.5px]"
-          :stroke-width="3"
-        />
-
-        <!-- Точка для неактивного состояния -->
-        <span v-else class="absolute w-0.75 h-0.75 rounded-(--radius-full) bg-current" />
-      </div>
+      <!-- В наборе это готовые иконки: гексагон с галочкой (check-alt) и с точкой (cog) -->
+      <AppIcon :name="isActive ? 'check-alt' : 'cog'" class="size-3.5" />
 
       <!-- Текст статуса -->
       <span class="font-mono text-element-tag font-medium uppercase tracking-wide">

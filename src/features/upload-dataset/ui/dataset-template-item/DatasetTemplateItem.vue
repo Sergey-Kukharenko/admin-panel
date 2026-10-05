@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ChevronRight, Download, MoreHorizontal, PlusCircle, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -7,6 +6,7 @@ import type { DatasetTemplate, DatasetUpload } from '@/entities/dataset';
 import { DatasetTemplateIcon } from '@/entities/dataset';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 import { DatasetFilesList } from '../dataset-files-list';
 import { DatasetUploadZone } from '../dataset-upload-zone';
@@ -44,9 +44,7 @@ const emit = defineEmits<{
 const inputRef = ref<HTMLInputElement>();
 
 const files = computed(() => props.template.files ?? []);
-const nonErrorUploads = computed(() =>
-  props.uploads.filter((upload) => upload.status !== 'error'),
-);
+const nonErrorUploads = computed(() => props.uploads.filter((upload) => upload.status !== 'error'));
 const addedFilesCount = computed(() => files.value.length + nonErrorUploads.value.length);
 const hasFiles = computed(() => files.value.length > 0);
 const hasUploads = computed(() => props.uploads.length > 0);
@@ -90,8 +88,9 @@ const handleFilesChange = (event: Event) => {
         @click="emit('toggle')"
       >
         <div class="flex gap-1">
-          <ChevronRight
-            class="mt-0.5 size-4 shrink-0 text-(--text-secondary) transition-transform duration-200"
+          <AppIcon
+            name="large-line-arrow-right"
+            class="mt-0.5 size-4 shrink-0 text-(--text-primary) transition-transform duration-200"
             :class="{ 'rotate-90': expanded }"
           />
           <div class="flex shrink-0 items-center pt-0.5">
@@ -121,25 +120,29 @@ const handleFilesChange = (event: Event) => {
         <AppDropdown align="end" :side-offset="4">
           <template #trigger>
             <AppButton variant="ghost" size="icon">
-              <MoreHorizontal class="text-(--text-secondary)" />
+              <AppIcon name="more-line" class="text-(--text-secondary)" />
             </AppButton>
           </template>
           <AppDropdownItem @select="emit('downloadTemplate')">
-            <Download class="size-4 text-(--text-secondary)" stroke-width="2" />
-            <span class="text-body-sm font-medium text-(--text-primary)">{{ t('datasets.upload.templateItem.getTemplate') }}</span>
+            <AppIcon name="download-line" class="size-4 text-(--text-secondary)" />
+            <span class="text-body-sm font-medium text-(--text-primary)">{{
+              t('datasets.upload.templateItem.getTemplate')
+            }}</span>
           </AppDropdownItem>
           <AppDropdownItem
             :disabled="!hasListItems"
             class="data-highlighted:bg-red-50!"
             @select="emit('clearAll')"
           >
-            <Trash2 class="size-4 text-(--danger)" stroke-width="2" />
-            <span class="text-body-sm font-medium text-(--danger)">{{ t('datasets.upload.templateItem.removeFiles') }}</span>
+            <AppIcon name="delete-bin-line" class="size-4 text-(--danger)" />
+            <span class="text-body-sm font-medium text-(--danger)">{{
+              t('datasets.upload.templateItem.removeFiles')
+            }}</span>
           </AppDropdownItem>
         </AppDropdown>
 
         <AppButton variant="ghost" size="icon" :disabled="disabled" @click="openFilePicker">
-          <PlusCircle class="text-(--text-secondary)" stroke-width="2" />
+          <AppIcon name="add-circle-line" class="text-(--text-secondary)" />
         </AppButton>
         <input
           ref="inputRef"

@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { Copy, X } from 'lucide-vue-next';
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
 import { computed, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 
-import type { IntegrationEnvironment, IntegrationType, ProductAccessMap } from '@/entities/integration';
+import type {
+  IntegrationEnvironment,
+  IntegrationType,
+  ProductAccessMap,
+} from '@/entities/integration';
 import {
   EnvironmentTabs,
   INTEGRATION_PRODUCTS,
@@ -12,6 +15,7 @@ import {
   useIntegrationsStore,
 } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 
 defineOptions({
   name: 'CreateApiSecretModal',
@@ -37,7 +41,9 @@ const productAccess = ref<ProductAccessMap>(
   ),
 );
 
-const clientId = computed(() => integrationsStore.getClientCredentials(props.integrationType).clientId);
+const clientId = computed(
+  () => integrationsStore.getClientCredentials(props.integrationType).clientId,
+);
 const canSubmit = computed(() => name.value.trim().length > 0);
 
 watch(
@@ -111,7 +117,7 @@ function handleSubmit() {
             <p class="flex-1 text-base font-medium text-(--text-primary)">Создать API secret</p>
 
             <AppButton variant="outline" size="icon" @click="emit('close')">
-              <X class="size-4" />
+              <AppIcon name="close-line" class="size-4" />
             </AppButton>
           </header>
 
@@ -130,7 +136,9 @@ function handleSubmit() {
 
             <div class="flex flex-col gap-1">
               <label class="text-sm font-medium text-(--text-primary)">Client ID</label>
-              <div class="flex h-9 w-full items-center gap-1.5 rounded-(--radius-lg) bg-(--bg-input) pl-3">
+              <div
+                class="flex h-9 w-full items-center gap-1.5 rounded-(--radius-lg) bg-(--bg-input) pl-3"
+              >
                 <span class="flex-1 text-sm text-(--text-secondary)">{{ clientId }}</span>
                 <button
                   type="button"
@@ -138,7 +146,7 @@ function handleSubmit() {
                   class="flex size-9 shrink-0 items-center justify-center text-(--text-secondary) hover:text-(--text-primary)"
                   @click="copyClientId"
                 >
-                  <Copy class="size-4" />
+                  <AppIcon name="file-copy-line" class="size-4" />
                 </button>
               </div>
             </div>
