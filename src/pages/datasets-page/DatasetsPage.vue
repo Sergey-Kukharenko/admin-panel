@@ -34,10 +34,12 @@ watch(hasHistory, (value) => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-10 text-left">
+  <div class="flex w-full flex-1 flex-col gap-8 text-left">
     <!-- Шапка страницы: заголовок и описание -->
-    <div class="flex flex-col gap-1">
-      <h1 class="text-title-sm font-medium text-(--text-primary)">{{ t('datasets.page.title') }}</h1>
+    <div class="flex flex-col gap-2">
+      <h1 class="text-title-sm font-medium text-(--text-primary)">
+        {{ t('datasets.page.title') }}
+      </h1>
 
       <p class="max-w-118.25 text-body-sm text-(--text-secondary)">
         {{ t('datasets.page.description') }}

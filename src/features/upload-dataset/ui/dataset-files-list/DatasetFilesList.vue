@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CheckCircle2, LoaderCircle, Trash2, XCircle } from 'lucide-vue-next';
+import { CheckCircle2, Loader, LoaderCircle, Trash2, XCircle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -165,10 +165,10 @@ const getProgressStyle = (upload: DatasetUpload) => ({
       </template>
 
       <!-- Реальная отправка на бэк уже идёт (submitQueuedFiles), но до этого
-           файла очередь ещё не дошла -->
+           файла очередь ещё не дошла. Иконка — loader-2-line из макета (WT-447/WT-519) -->
       <template v-else-if="isQueued(item.upload)">
         <div class="shrink-0 flex items-center justify-center h-5">
-          <LoaderCircle class="size-3.5 text-(--text-tertiary)" stroke-width="1.5" />
+          <Loader class="size-3.5 text-(--text-primary)" stroke-width="1.5" />
         </div>
 
         <div class="flex flex-col items-start flex-1 min-w-0">
