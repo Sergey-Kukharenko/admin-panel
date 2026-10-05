@@ -48,7 +48,7 @@ function handleResetFilters(): void {
 <template>
   <UploadsEmptyState v-if="!showHistoryTable" @upload="emit('openUploadDrawer')" />
 
-  <div v-else class="mx-auto flex flex-col items-start gap-4 self-stretch relative w-full">
+  <div v-else class="mx-auto flex flex-1 flex-col items-start gap-4 self-stretch relative w-full">
     <DatasetHistoryTableSkeleton v-if="isTemplatesLoading" />
 
     <template v-else>
@@ -66,14 +66,16 @@ function handleResetFilters(): void {
         @open-upload="emit('openUploadDrawer')"
       />
 
-      <div class="flex w-full flex-col gap-1 self-stretch">
+      <div class="flex w-full flex-1 flex-col gap-1 self-stretch">
         <DatasetHistoryTableHeader />
 
         <DatasetHistoryGroupSkeleton v-if="isLoading" />
 
+        <!-- По макету пустой результат фильтрации центрируется во всей свободной
+             области под шапкой таблицы, а не прижимается к ней сверху -->
         <div
           v-else-if="renderedGroups.length === 0"
-          class="flex w-full flex-col items-center gap-4 py-8 text-center"
+          class="flex w-full flex-1 flex-col items-center justify-center gap-4 py-8 min-h-112.5 text-center"
         >
           <div class="flex flex-col gap-1">
             <p class="text-title-sm font-medium text-(--text-primary)">

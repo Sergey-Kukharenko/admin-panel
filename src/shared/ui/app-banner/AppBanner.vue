@@ -16,13 +16,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
+  <!-- Кликабельна только кнопка действия, сам баннер — статичный блок (WT-519) -->
   <div
-    role="button"
-    tabindex="0"
-    class="flex items-center w-120 h-22 pr-4 gap-3 bg-(--bg-surface-accent) rounded-(--radius-lg) shadow-sm text-left overflow-hidden transition-all hover:bg-(--bg-surface-hover) cursor-pointer"
-    @click="emit('action')"
-    @keydown.enter="emit('action')"
-    @keydown.space.prevent="emit('action')"
+    class="flex items-center w-120 h-22 pr-4 gap-3 bg-(--bg-surface-accent) rounded-(--radius-xl) text-left overflow-hidden"
   >
     <div class="shrink-0 h-22 flex items-center justify-center">
       <slot name="icon" />
@@ -41,12 +37,7 @@ const emit = defineEmits<{
     </div>
 
     <div class="shrink-0 ml-auto">
-      <AppButton
-        variant="outline"
-        size="icon"
-        class="text-(--text-secondary) hover:text-(--text-primary)"
-        @click.stop="emit('action')"
-      >
+      <AppButton variant="ghost" size="icon" @click="emit('action')">
         <slot name="action-icon">
           <Download stroke-width="2" />
         </slot>

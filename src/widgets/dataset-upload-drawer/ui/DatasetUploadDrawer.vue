@@ -153,7 +153,7 @@ const handleFinalConfirm = () => {
         </template>
 
         <template #action-icon>
-          <Download class="size-5" />
+          <Download stroke-width="2" />
         </template>
       </AppBanner>
 
