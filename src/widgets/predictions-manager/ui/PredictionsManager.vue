@@ -33,13 +33,10 @@ const { groupedIntegrations, hasData, isLoading, isError, refetch } = usePredict
           </h2>
         </header>
 
-        <div class="flex w-full flex-wrap gap-4">
-          <PredictionIntegrationCard
-            v-for="item in items"
-            :key="item.id"
-            :integration="item"
-            class="w-full min-[1100px]:w-[382px]"
-          />
+        <!-- По макету (431:30974, 544:30337) карточки сервисов идут по одной в ряд
+             на всю ширину страницы, без пустого места справа (WT-538) -->
+        <div class="flex w-full flex-col gap-4">
+          <PredictionIntegrationCard v-for="item in items" :key="item.id" :integration="item" />
         </div>
       </section>
     </div>

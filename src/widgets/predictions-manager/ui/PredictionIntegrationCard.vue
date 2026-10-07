@@ -27,7 +27,7 @@ const isBlocked = computed(
 
 <template>
   <article
-    class="min-h-32 shrink-0 px-2 pb-2 bg-(--bg-surface-neutral) rounded-(--radius-md) flex flex-col justify-start items-start"
+    class="min-h-32 shrink-0 px-2 pb-2 bg-(--bg-surface-neutral) rounded-(--radius-xl) flex flex-col justify-start items-start"
     :class="{ 'opacity-60': isBlocked }"
     :data-blocked="isBlocked || undefined"
   >
@@ -70,7 +70,7 @@ const isBlocked = computed(
               class="px-2 py-1.5 bg-(--bg-foreground-overlay) rounded-(--radius-sm) shadow-(--shadow-panel) backdrop-blur-[20px] flex flex-col justify-center items-center"
             >
               <p
-                class="text-(--text-overlay) text-xs font-normal font-['Geist'] leading-4 whitespace-pre-line"
+                class="text-(--text-overlay) text-xs font-normal font-sans leading-4 whitespace-pre-line"
               >
                 {{ t(`predictions.manager.serviceTooltip.${integration.serviceState}`) }}
               </p>
@@ -81,7 +81,7 @@ const isBlocked = computed(
         </TooltipRoot>
 
         <h3
-          class="justify-start text-(--text-primary) text-sm font-medium font-['Geist'] leading-6 truncate"
+          class="justify-start text-(--text-primary) text-sm font-medium font-sans leading-6 truncate"
         >
           {{ integration.name }}
         </h3>

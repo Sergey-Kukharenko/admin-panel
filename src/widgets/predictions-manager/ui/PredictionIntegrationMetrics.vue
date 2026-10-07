@@ -40,12 +40,12 @@ const badgeTooltipText = computed(() => {
 
 <template>
   <div
-    class="self-stretch pl-3 pr-[7px] py-3 bg-[var(--background)] rounded-(--radius-lg) flex items-center gap-[9px]"
+    class="self-stretch p-3 bg-[var(--background)] rounded-(--radius-lg) flex items-center gap-4"
   >
     <!-- Колонка 1: Статус -->
     <div class="flex-1 min-w-0 flex flex-col justify-start items-start">
       <div
-        class="self-stretch font-mono text-[8.11px] font-normal uppercase leading-4 text-[var(--text-secondary)] truncate"
+        class="self-stretch font-mono text-element-small-caption font-normal uppercase text-[var(--text-secondary)] truncate"
       >
         {{ t('predictions.manager.resultStatus') }}
       </div>
@@ -55,12 +55,12 @@ const badgeTooltipText = computed(() => {
           <div
             :data-status="integration.status"
             data-type="results"
-            class="max-h-5 rounded-(--radius-sm) inline-flex justify-end items-center gap-[3.25px] cursor-help"
+            class="max-w-full rounded-(--radius-sm) inline-flex justify-end items-center gap-1 cursor-help"
           >
-            <div class="size-3 relative overflow-hidden flex items-center justify-center">
+            <div class="size-3.5 shrink-0 flex items-center justify-center">
               <AppIcon
                 :name="predictionStatusIconByStatus[integration.status]"
-                class="size-2.5"
+                class="size-3.5"
                 :class="{
                   'animate-spin': integration.status === 'generating',
                   'text-[var(--danger-failed)]': integration.status === 'failed',
@@ -69,7 +69,7 @@ const badgeTooltipText = computed(() => {
             </div>
 
             <div
-              class="justify-start font-mono text-[9.74px] font-medium uppercase leading-4 truncate"
+              class="min-w-0 justify-start font-mono text-element-tag font-medium uppercase truncate"
               :class="{
                 'text-[var(--danger-failed)]': integration.status === 'failed',
                 'text-[var(--text-primary)]': integration.status !== 'failed',
@@ -101,12 +101,12 @@ const badgeTooltipText = computed(() => {
         v-else
         :data-status="integration.status"
         data-type="results"
-        class="max-h-5 rounded-(--radius-sm) inline-flex justify-end items-center gap-[3.25px]"
+        class="max-w-full rounded-(--radius-sm) inline-flex justify-end items-center gap-1"
       >
-        <div class="size-3 relative overflow-hidden flex items-center justify-center">
+        <div class="size-3.5 shrink-0 flex items-center justify-center">
           <AppIcon
             :name="predictionStatusIconByStatus[integration.status]"
-            class="size-2.5"
+            class="size-3.5"
             :class="{
               'text-[var(--success-ready)]': integration.status === 'ready',
               'text-[var(--danger-failed)]': integration.status === 'failed',
@@ -115,7 +115,7 @@ const badgeTooltipText = computed(() => {
         </div>
 
         <div
-          class="justify-start font-mono text-[9.74px] font-medium uppercase leading-4 truncate"
+          class="min-w-0 justify-start font-mono text-element-tag font-medium uppercase truncate"
           :class="{
             'text-[var(--success-ready)]': integration.status === 'ready',
             'text-[var(--danger-failed)]': integration.status === 'failed',
@@ -129,16 +129,16 @@ const badgeTooltipText = computed(() => {
     </div>
 
     <!-- Колонка 2: Следующий расчет -->
-    <div class="w-[80.331px] shrink-0 flex flex-col justify-start items-start">
+    <div class="flex-1 min-w-0 flex flex-col justify-start items-start">
       <div
-        class="self-stretch font-mono text-[8.11px] font-normal uppercase leading-4 text-[var(--text-secondary)] whitespace-nowrap"
+        class="self-stretch font-mono text-element-small-caption font-normal uppercase text-[var(--text-secondary)] truncate"
       >
         {{ t('predictions.manager.nextRun') }}
       </div>
 
-      <div class="inline-flex justify-start items-center gap-1.5">
+      <div class="flex max-w-full min-w-0 justify-start items-center gap-1.5">
         <div
-          class="justify-start font-mono text-[9.74px] font-medium uppercase leading-4 text-[var(--text-primary)] whitespace-nowrap"
+          class="justify-start font-mono text-element-tag font-medium uppercase text-[var(--text-primary)] truncate"
         >
           {{ integration.nextCalculation }}
         </div>
@@ -146,15 +146,15 @@ const badgeTooltipText = computed(() => {
     </div>
 
     <!-- Колонка 3: Последний расчет -->
-    <div class="w-[79.52px] shrink-0 flex flex-col justify-start items-start">
+    <div class="flex-1 min-w-0 flex flex-col justify-start items-start">
       <div
-        class="self-stretch font-mono text-[8.11px] font-normal uppercase leading-4 text-[var(--text-secondary)] whitespace-nowrap"
+        class="self-stretch font-mono text-element-small-caption font-normal uppercase text-[var(--text-secondary)] truncate"
       >
         {{ t('predictions.manager.lastRun') }}
       </div>
 
       <div
-        class="justify-start font-mono text-[9.74px] font-medium uppercase leading-4 text-[var(--text-primary)] whitespace-nowrap"
+        class="justify-start font-mono text-element-tag font-medium uppercase text-[var(--text-primary)] truncate"
       >
         {{ integration.lastCalculation ?? '-' }}
       </div>
