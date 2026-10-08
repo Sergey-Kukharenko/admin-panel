@@ -33,9 +33,12 @@ const { groupedIntegrations, hasData, isLoading, isError, refetch } = usePredict
           </h2>
         </header>
 
-        <!-- По макету (431:30974, 544:30337) карточки сервисов идут по одной в ряд
-             на всю ширину страницы, без пустого места справа (WT-538) -->
-        <div class="flex w-full flex-col gap-4">
+        <!-- По макету (619:19130) карточки сервисов идут по две в ряд на всю ширину.
+             Адаптивно: minmax(max(420px, половина ширины)) даёт не больше 2 колонок, а когда
+             на карточку остаётся меньше 420px — одну, чтобы колонки внутри не сжимались (WT-538) -->
+        <div
+          class="grid w-full grid-cols-[repeat(auto-fill,minmax(max(420px,calc((100%-24px)/2)),1fr))] gap-x-6 gap-y-3"
+        >
           <PredictionIntegrationCard v-for="item in items" :key="item.id" :integration="item" />
         </div>
       </section>
