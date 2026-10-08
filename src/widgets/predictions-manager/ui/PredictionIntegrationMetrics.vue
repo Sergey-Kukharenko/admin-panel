@@ -154,7 +154,7 @@ const badgeTooltipText = computed(() => {
       </div>
 
       <div
-        class="justify-start font-mono text-element-tag font-medium uppercase text-[var(--text-primary)] truncate"
+        class="max-w-full justify-start font-mono text-element-tag font-medium uppercase text-[var(--text-primary)] truncate"
       >
         {{ integration.lastCalculation ?? '-' }}
       </div>

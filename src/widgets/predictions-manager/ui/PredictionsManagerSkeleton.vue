@@ -6,7 +6,7 @@ defineOptions({
 });
 
 const SECTIONS_COUNT = 2;
-const CARDS_PER_SECTION = 3;
+const CARDS_PER_SECTION = 4;
 </script>
 
 <template>
@@ -18,7 +18,9 @@ const CARDS_PER_SECTION = 3;
     >
       <AppSkeleton class="h-2.5 w-32 rounded-(--radius-sm)" />
 
-      <div class="flex w-full flex-col gap-4">
+      <div
+        class="grid w-full grid-cols-[repeat(auto-fill,minmax(max(420px,calc((100%-24px)/2)),1fr))] gap-x-6 gap-y-3"
+      >
         <div
           v-for="card in CARDS_PER_SECTION"
           :key="card"
