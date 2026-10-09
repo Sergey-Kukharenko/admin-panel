@@ -1,13 +1,18 @@
 import type { AuthentikApiAccessEnvironment } from './api';
 import type { IntegrationEnvironment } from './constants';
 
-// Заявка на подключение REST API — тело POST /project-api-credentials/request (RFC Ph-1 API).
+// Заявки на подключение — тела POST /project-api-credentials/request и
+// POST /project-s3-credentials/request (RFC Ph-1 API и S3).
 // Организацию, тип подключения и пользователя бэкенд берёт из сессии.
 export type ApiAccessType = 'ip_restricted' | 'public';
 
 export interface RestApiConnectionRequest {
   access_type: ApiAccessType;
   ip_addresses: string[];
+  environments: AuthentikApiAccessEnvironment[];
+}
+
+export interface S3ConnectionRequest {
   environments: AuthentikApiAccessEnvironment[];
 }
 
@@ -55,4 +60,10 @@ export function buildRestApiConnectionRequest(form: {
     ip_addresses: form.accessType === 'public' ? [] : normalizeIpAddresses(form.ipAddresses),
     environments: [API_ENVIRONMENT[form.environment]],
   };
+}
+
+export function buildS3ConnectionRequest(form: {
+  environment: IntegrationEnvironment;
+}): S3ConnectionRequest {
+  return { environments: [API_ENVIRONMENT[form.environment]] };
 }

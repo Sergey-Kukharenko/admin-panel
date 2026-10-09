@@ -276,11 +276,16 @@ export const ru = {
       requestConnection: 'Запросить подключение',
       requestSuccess: 'Заявка успешно создана! Данные будут направлены на почту',
     },
+    connectionForm: {
+      organization: 'Организация',
+      connectionType: 'Тип подключения',
+      environment: 'Среда',
+      cancel: 'Отмена',
+      submit: 'Запросить подключение',
+    },
     restApiModal: {
       title: 'Подключение REST API',
       description: 'Заполните параметры заявки.',
-      organization: 'Организация',
-      connectionType: 'Тип подключения',
       accessType: 'Тип доступа',
       accessTypeTooltip:
         'Выберите способ доступа к API. При ограничении по IP необходимо указать разрешенные IP-адреса.',
@@ -293,9 +298,10 @@ export const ru = {
       addIpAddress: 'Добавить IP-адрес',
       invalidIp: 'Введите корректный IP-адрес',
       maxIpAddresses: 'Максимум {max} IP-адресов',
-      environment: 'Среда',
-      cancel: 'Отмена',
-      submit: 'Запросить подключение',
+    },
+    s3Modal: {
+      title: 'Подключение Amazon S3',
+      description: 'Ознакомьтесь с параметрами заявки.',
     },
     items: {
       restApi: {

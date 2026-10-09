@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildRestApiConnectionRequest,
+  buildS3ConnectionRequest,
   isRestApiConnectionFormValid,
   isValidIpv4,
   MAX_IP_ADDRESSES,
@@ -70,5 +71,16 @@ describe('buildRestApiConnectionRequest', () => {
         environment: 'development',
       }),
     ).toEqual({ access_type: 'public', ip_addresses: [], environments: ['dev'] });
+  });
+});
+
+describe('buildS3ConnectionRequest', () => {
+  it('maps the environment to the RFC request body', () => {
+    expect(buildS3ConnectionRequest({ environment: 'production' })).toEqual({
+      environments: ['prod'],
+    });
+    expect(buildS3ConnectionRequest({ environment: 'development' })).toEqual({
+      environments: ['dev'],
+    });
   });
 });
