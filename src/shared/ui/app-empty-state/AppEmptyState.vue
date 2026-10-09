@@ -31,7 +31,10 @@ const props = defineProps<{
     </h3>
 
     <!-- Описание -->
-    <p v-if="description" class="mb-6 max-w-sm text-body-sm text-(--muted-foreground)">
+    <p
+      v-if="description"
+      class="mb-6 max-w-sm text-body-sm whitespace-pre-line text-(--muted-foreground)"
+    >
       {{ description }}
     </p>
 

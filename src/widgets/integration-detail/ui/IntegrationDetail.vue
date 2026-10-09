@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
 
@@ -21,6 +22,7 @@ const props = defineProps<{
   integration: Integration;
 }>();
 
+const { t } = useI18n({ useScope: 'global' });
 const router = useRouter();
 const integrationsStore = useIntegrationsStore();
 
@@ -36,7 +38,7 @@ function requestConnection() {
 function handleConnectionRequestSubmit() {
   isConnectionModalOpen.value = false;
   integrationsStore.requestConnection(props.integration.type);
-  toast.success('Заявка успешно создана!');
+  toast.success(t('integrations.detail.requestSuccess'));
   router.push('/integrations');
 }
 </script>
@@ -45,19 +47,21 @@ function handleConnectionRequestSubmit() {
   <div class="flex w-full flex-1 flex-col gap-8">
     <div class="flex items-start justify-between gap-4">
       <div class="flex flex-col gap-2">
-        <p class="text-lg font-medium text-(--text-primary)">{{ integration.name }}</p>
-        <p class="text-sm text-(--text-secondary)">{{ integration.detail.description }}</p>
+        <p class="text-lg leading-6 font-medium text-(--text-primary)">{{ integration.name }}</p>
+        <p class="max-w-132 text-sm text-(--text-secondary)">
+          {{ t(`integrations.items.${integration.i18nKey}.description`) }}
+        </p>
       </div>
 
       <a
-        v-if="integration.detail.docsUrl"
-        :href="integration.detail.docsUrl"
+        v-if="integration.docsUrl"
+        :href="integration.docsUrl"
         target="_blank"
         rel="noopener noreferrer"
         class="inline-flex h-9 shrink-0 items-center gap-2 rounded-(--radius-lg) bg-(--muted) px-4 text-element-button font-medium text-(--foreground) hover:bg-(--muted-hover)"
       >
         <AppIcon name="file-text-line" class="size-4" />
-        {{ integration.detail.docsLabel ?? 'Документация' }}
+        {{ t(`integrations.items.${integration.i18nKey}.docsLabel`) }}
         <AppIcon name="arrow-right-up-line" class="size-4" />
       </a>
     </div>
@@ -74,13 +78,13 @@ function handleConnectionRequestSubmit() {
 
     <div v-else class="flex flex-1 items-center justify-center">
       <AppEmptyState
-        :title="integration.detail.emptyStateTitle"
-        :description="integration.detail.emptyStateDescription"
-        :illustration-src="integration.detail.illustrationSrc"
+        :title="t('integrations.detail.emptyStateTitle')"
+        :description="t(`integrations.items.${integration.i18nKey}.emptyStateDescription`)"
+        :illustration-src="integration.illustrationSrc"
       >
         <template #action>
           <AppButton size="small" @click="requestConnection">
-            {{ integration.detail.ctaLabel }}
+            {{ t('integrations.detail.requestConnection') }}
           </AppButton>
         </template>
       </AppEmptyState>

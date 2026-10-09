@@ -10,11 +10,11 @@ import type {
   IntegrationType,
 } from './types';
 
-// rest-api по умолчанию "подключена", чтобы сразу показать экран управления API secrets;
-// чтобы продемонстрировать флоу с самого начала (заявка → настройка → подключено),
-// поставьте здесь 'not_configured'.
+// Обе интеграции стартуют "не подключёнными": флоу заявка → настройка → подключено.
+// Экран управления secrets вырезан из Ph-1 (решение PM 2026-09-24); чтобы посмотреть его,
+// поставьте здесь 'connected'.
 const INITIAL_STATUSES: Record<IntegrationType, IntegrationStatus> = {
-  'rest-api': 'connected',
+  'rest-api': 'not_configured',
   s3: 'not_configured',
 };
 

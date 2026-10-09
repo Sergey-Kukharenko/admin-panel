@@ -1,46 +1,24 @@
 import restApiEmptyStateIllustration from '../assets/illustrations/rest-api-empty-state.png';
 import type { Integration, IntegrationType } from './types';
 
+// Тексты карточек и детальной страницы — в локалях `integrations.items.<i18nKey>`
 export const INTEGRATIONS: Integration[] = [
   {
     type: 'rest-api',
     name: 'REST API',
-    cardDescription: 'Программный обмен данными через HTTPS с поддержкой пакетной передачи данных',
-    features: [
-      'Встраивайте отправку в любые сервисы без доработок',
-      'Готовность к реалтайм-обработке',
-      'Безопасный обмен через короткоживущие токены',
-    ],
-    recommended: true,
-    detail: {
-      description: 'Прямая передача данных через HTTP API с поддержкой батч-загрузки и стриминга',
-      docsUrl: 'https://docs.mico.team/rest-api',
-      docsLabel: 'Документация API',
-      emptyStateTitle: 'Интеграция не подключена',
-      emptyStateDescription:
-        'Для получения доступа к API отправьте запрос на подключение. Команда платформы настроит интеграцию и выдаст учётные данные.',
-      ctaLabel: 'Запросить подключение',
-      illustrationSrc: restApiEmptyStateIllustration,
-    },
+    i18nKey: 'restApi',
+    featureKeys: ['sendResults', 'errorValidation', 'encryption'],
+    docsUrl: 'https://docs.mico.team/rest-api',
+    illustrationSrc: restApiEmptyStateIllustration,
   },
   {
     type: 's3',
     name: 'Amazon S3',
-    cardDescription: 'Файловый обмен данными через облачное хранилище Amazon S3',
-    features: [
-      'Экономичная выгрузка больших объёмов данных',
-      'Бесшовная интеграция с существующим data lake',
-      'Безопасное хранение с шифрованием данных',
-    ],
-    detail: {
-      description: 'Автоматическая загрузка файлов через S3-хранилище.',
-      docsUrl: 'https://docs.mico.team/s3-guide',
-      docsLabel: 'Документация S3 Guide',
-      emptyStateTitle: 'Интеграция не подключена',
-      emptyStateDescription:
-        'Для получения доступа к Amazon S3 отправьте запрос на подключение. Настроим интеграцию и выдадим учётные данные.',
-      ctaLabel: 'Запросить подключение',
-    },
+    i18nKey: 's3',
+    featureKeys: ['largeVolumes', 'existingStorages', 'encryption'],
+    docsUrl: 'https://docs.mico.team/s3-guide',
+    // В макете S3 та же иллюстрация, что и у REST API
+    illustrationSrc: restApiEmptyStateIllustration,
   },
 ];
 

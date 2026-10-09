@@ -254,4 +254,50 @@ export const en: MessageSchema = {
       },
     },
   },
+  integrations: {
+    catalog: {
+      title: 'Integrations',
+      description:
+        'Automate your data uploads with integrations\nManage your sources here, and track upload history and results in the "Data Upload" section',
+      connect: 'Configure',
+    },
+    status: {
+      notConfigured: 'Not configured',
+      pending: 'In progress',
+      connected: 'Connected',
+      pendingTooltip:
+        'Request received.\nOur team has started configuring your Integrations. This usually takes no more than 1 day. We will send you an email notification as soon as everything is ready.',
+    },
+    detail: {
+      emptyStateTitle: 'Integration not connected',
+      requestConnection: 'Request connection',
+      requestSuccess: 'Request successfully created! Data will be sent to your email',
+    },
+    items: {
+      restApi: {
+        cardDescription: 'Programmatic data exchange via HTTPS with batch upload support',
+        features: {
+          sendResults: 'Send results directly to any service',
+          errorValidation: 'Instant error validation',
+          encryption: 'Secure data exchange with encryption',
+        },
+        description: 'Programmatic data exchange via HTTPS with batch upload support',
+        docsLabel: 'API Documentation',
+        emptyStateDescription:
+          'To get API access, send a connection request. The platform team will set up the integration and issue credentials.',
+      },
+      s3: {
+        cardDescription: 'File-based data exchange via Amazon S3 cloud storage',
+        features: {
+          largeVolumes: 'Cost-efficient large volume uploads',
+          existingStorages: 'Connect to your existing data storages',
+          encryption: 'Secure storage with encryption',
+        },
+        description: 'Automated file uploads via S3 storage.',
+        docsLabel: 'S3 Guide Documentation',
+        emptyStateDescription:
+          'To get access to Amazon S3, send a connection request.\nWe will set up the integration and issue credentials.',
+      },
+    },
+  },
 };
