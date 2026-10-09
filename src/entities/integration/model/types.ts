@@ -4,23 +4,15 @@ export type IntegrationType = 'rest-api' | 's3';
 
 export type IntegrationStatus = 'not_configured' | 'pending' | 'connected';
 
-export interface IntegrationDetail {
-  description: string;
-  docsUrl?: string;
-  docsLabel?: string;
-  emptyStateTitle: string;
-  emptyStateDescription: string;
-  ctaLabel: string;
-  illustrationSrc?: string;
-}
-
 export interface Integration {
   type: IntegrationType;
   name: string;
-  cardDescription: string;
-  features: string[];
-  recommended?: boolean;
-  detail: IntegrationDetail;
+  /** Ключ секции `integrations.items` в локалях */
+  i18nKey: 'restApi' | 's3';
+  /** Ключи преимуществ в `integrations.items.<i18nKey>.features` */
+  featureKeys: string[];
+  docsUrl?: string;
+  illustrationSrc?: string;
 }
 
 export interface ClientCredentials {

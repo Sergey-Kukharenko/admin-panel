@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 import type { Integration } from '@/entities/integration';
@@ -17,6 +18,7 @@ const props = defineProps<{
   integration: Integration;
 }>();
 
+const { t } = useI18n({ useScope: 'global' });
 const router = useRouter();
 const integrationsStore = useIntegrationsStore();
 
@@ -48,24 +50,23 @@ function goToDetail() {
         </div>
       </div>
 
-      <p class="text-sm text-(--text-secondary)">{{ integration.cardDescription }}</p>
+      <p class="text-sm text-(--text-secondary)">
+        {{ t(`integrations.items.${integration.i18nKey}.cardDescription`) }}
+      </p>
     </div>
 
     <div class="px-5 pt-5 pb-4">
       <ul class="list-disc space-y-0 pl-3.75 text-[10px] leading-5 text-(--text-secondary)">
-        <li v-for="feature in integration.features" :key="feature">{{ feature }}</li>
+        <li v-for="featureKey in integration.featureKeys" :key="featureKey">
+          {{ t(`integrations.items.${integration.i18nKey}.features.${featureKey}`) }}
+        </li>
       </ul>
     </div>
 
-    <div class="flex items-center gap-3 px-5 py-4">
-      <span
-        v-if="integration.recommended"
-        class="inline-flex h-5.75 items-center rounded-full bg-(--bg-badge-success) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-success-alt)"
-      >
-        рекомендуется
-      </span>
-
-      <AppButton class="ml-auto" @click="goToDetail">Настроить</AppButton>
+    <div class="px-5 py-4">
+      <AppButton class="min-w-50.75" @click="goToDetail">
+        {{ t('integrations.catalog.connect') }}
+      </AppButton>
     </div>
   </article>
 </template>
