@@ -10,9 +10,7 @@ import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';
 import { RestApiConnectionModal } from '@/widgets/rest-api-connection-modal';
-import { RestApiCredentialsPanel } from '@/widgets/rest-api-credentials';
 import { S3ConnectionModal } from '@/widgets/s3-connection-modal';
-import { S3CredentialsPanel } from '@/widgets/s3-credentials';
 
 defineOptions({
   name: 'IntegrationDetail',
@@ -27,7 +25,34 @@ const router = useRouter();
 const integrationsStore = useIntegrationsStore();
 
 const status = computed(() => integrationsStore.getStatus(props.integration.type));
-const isConnected = computed(() => status.value === 'connected');
+
+// Экран управления secrets вырезан из Ph-1, поэтому для заявленной/подключённой интеграции
+// вместо кнопки заявки показываем её статус — повторную заявку отправить нельзя (бэкенд вернёт 409)
+const emptyState = computed(() => {
+  const { i18nKey } = props.integration;
+
+  if (status.value === 'pending') {
+    return {
+      title: t('integrations.detail.pendingTitle'),
+      description: t('integrations.status.pendingTooltip'),
+      canRequest: false,
+    };
+  }
+
+  if (status.value === 'connected') {
+    return {
+      title: t('integrations.detail.connectedTitle'),
+      description: t('integrations.detail.connectedDescription'),
+      canRequest: false,
+    };
+  }
+
+  return {
+    title: t('integrations.detail.emptyStateTitle'),
+    description: t(`integrations.items.${i18nKey}.emptyStateDescription`),
+    canRequest: true,
+  };
+});
 
 const isConnectionModalOpen = ref(false);
 
@@ -38,7 +63,7 @@ function requestConnection() {
 function handleConnectionRequestSubmit() {
   isConnectionModalOpen.value = false;
   integrationsStore.requestConnection(props.integration.type);
-  toast.success(t('integrations.detail.requestSuccess'));
+  toast.success(t('integrations.detail.requestSuccess'), { duration: 5000 });
   router.push('/integrations');
 }
 </script>
@@ -66,23 +91,13 @@ function handleConnectionRequestSubmit() {
       </a>
     </div>
 
-    <RestApiCredentialsPanel
-      v-if="integration.type === 'rest-api' && isConnected"
-      :integration-type="integration.type"
-    />
-
-    <S3CredentialsPanel
-      v-else-if="integration.type === 's3' && isConnected"
-      :integration-type="integration.type"
-    />
-
-    <div v-else class="flex flex-1 items-center justify-center">
+    <div class="flex flex-1 items-center justify-center">
       <AppEmptyState
-        :title="t('integrations.detail.emptyStateTitle')"
-        :description="t(`integrations.items.${integration.i18nKey}.emptyStateDescription`)"
+        :title="emptyState.title"
+        :description="emptyState.description"
         :illustration-src="integration.illustrationSrc"
       >
-        <template #action>
+        <template v-if="emptyState.canRequest" #action>
           <AppButton size="small" @click="requestConnection">
             {{ t('integrations.detail.requestConnection') }}
           </AppButton>

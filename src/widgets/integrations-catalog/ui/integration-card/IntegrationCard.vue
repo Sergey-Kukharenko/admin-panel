@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router';
 import type { Integration } from '@/entities/integration';
 import { ConnectionStatusTag, useIntegrationsStore } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppTooltip } from '@/shared/ui/app-tooltip';
 
 import restApiIcon from '../../assets/icons/rest-api.svg';
 import s3Icon from '../../assets/icons/s3.svg';
@@ -28,6 +29,12 @@ const iconByType: Record<Integration['type'], string> = {
 };
 
 const status = computed(() => integrationsStore.getStatus(props.integration.type));
+// После заявки повторно подать её нельзя: кнопка неактивна, подсказка объясняет почему
+// (решение PM 2026-09-24, тексты предложены в WT-337)
+const disabledTooltip = computed(() => {
+  if (status.value === 'not_configured') return null;
+  return t(`integrations.catalog.connectDisabledTooltip.${status.value}`);
+});
 
 function goToDetail() {
   router.push(`/integrations/${props.integration.type}`);
@@ -63,8 +70,14 @@ function goToDetail() {
       </ul>
     </div>
 
-    <div class="px-5 py-4">
-      <AppButton class="min-w-50.75" @click="goToDetail">
+    <div class="flex px-5 py-4">
+      <AppTooltip v-if="disabledTooltip" :icon="false" :text="disabledTooltip">
+        <AppButton class="min-w-50.75" disabled>
+          {{ t('integrations.catalog.connect') }}
+        </AppButton>
+      </AppTooltip>
+
+      <AppButton v-else class="min-w-50.75" @click="goToDetail">
         {{ t('integrations.catalog.connect') }}
       </AppButton>
     </div>

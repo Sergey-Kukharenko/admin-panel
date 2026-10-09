@@ -260,6 +260,11 @@ export const en: MessageSchema = {
       description:
         'Automate your data uploads with integrations\nManage your sources here, and track upload history and results in the "Data Upload" section',
       connect: 'Configure',
+      connectDisabledTooltip: {
+        pending:
+          'Your request has already been sent. We will email you as soon as everything is ready',
+        connected: 'The integration is connected. Connection details have been sent to your email',
+      },
     },
     status: {
       notConfigured: 'Not configured',
@@ -269,6 +274,9 @@ export const en: MessageSchema = {
         'Request received.\nOur team has started configuring your Integrations. This usually takes no more than 1 day. We will send you an email notification as soon as everything is ready.',
     },
     detail: {
+      pendingTitle: 'Connection is being set up',
+      connectedTitle: 'Integration connected',
+      connectedDescription: 'Connection details have been sent to your email.',
       emptyStateTitle: 'Integration not connected',
       requestConnection: 'Request connection',
       requestSuccess: 'Request successfully created! Data will be sent to your email',
