@@ -157,7 +157,7 @@ function handleSubmit() {
 
             <div class="flex flex-col gap-1">
               <label for="rest-api-organization" class="text-sm font-medium text-(--text-primary)">
-                {{ t('integrations.restApiModal.organization') }}
+                {{ t('integrations.connectionForm.organization') }}
               </label>
               <input
                 id="rest-api-organization"
@@ -173,7 +173,7 @@ function handleSubmit() {
                 for="rest-api-connection-type"
                 class="text-sm font-medium text-(--text-primary)"
               >
-                {{ t('integrations.restApiModal.connectionType') }}
+                {{ t('integrations.connectionForm.connectionType') }}
               </label>
               <input
                 id="rest-api-connection-type"
@@ -272,7 +272,7 @@ function handleSubmit() {
 
             <div class="flex flex-col gap-1 pb-2">
               <p class="text-sm font-medium text-(--text-primary)">
-                {{ t('integrations.restApiModal.environment') }}
+                {{ t('integrations.connectionForm.environment') }}
               </p>
 
               <EnvironmentTabs v-model="environment" />
@@ -281,10 +281,10 @@ function handleSubmit() {
 
           <footer class="flex w-full shrink-0 items-center justify-end gap-2 px-5 py-4">
             <AppButton variant="outline" @click="emit('close')">
-              {{ t('integrations.restApiModal.cancel') }}
+              {{ t('integrations.connectionForm.cancel') }}
             </AppButton>
             <AppButton type="submit" form="rest-api-connection-form" :disabled="!canSubmit">
-              {{ t('integrations.restApiModal.submit') }}
+              {{ t('integrations.connectionForm.submit') }}
             </AppButton>
           </footer>
         </DialogContent>

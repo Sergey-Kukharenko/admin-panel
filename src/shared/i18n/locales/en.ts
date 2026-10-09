@@ -273,11 +273,16 @@ export const en: MessageSchema = {
       requestConnection: 'Request connection',
       requestSuccess: 'Request successfully created! Data will be sent to your email',
     },
+    connectionForm: {
+      organization: 'Organization',
+      connectionType: 'Connection Type',
+      environment: 'Environment',
+      cancel: 'Cancel',
+      submit: 'Request Connection',
+    },
     restApiModal: {
       title: 'REST API Connection',
       description: 'Fill in the request parameters',
-      organization: 'Organization',
-      connectionType: 'Connection Type',
       accessType: 'Access Type',
       accessTypeTooltip:
         'Choose an API access method. If you restrict access by IP, please list the allowed IP addresses.',
@@ -290,9 +295,10 @@ export const en: MessageSchema = {
       addIpAddress: 'Add IP address',
       invalidIp: 'Enter a valid IP address',
       maxIpAddresses: 'Maximum {max} IP addresses allowed',
-      environment: 'Environment',
-      cancel: 'Cancel',
-      submit: 'Request Connection',
+    },
+    s3Modal: {
+      title: 'Amazon S3 Connection',
+      description: 'Review the request parameters',
     },
     items: {
       restApi: {
