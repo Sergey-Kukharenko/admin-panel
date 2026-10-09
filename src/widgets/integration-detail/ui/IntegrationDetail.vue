@@ -70,7 +70,7 @@ function handleConnectionRequestSubmit() {
 
 <template>
   <div class="flex w-full flex-1 flex-col gap-8">
-    <div class="flex items-start justify-between gap-4">
+    <div class="flex items-end justify-between gap-4">
       <div class="flex flex-col gap-2">
         <p class="text-lg leading-6 font-medium text-(--text-primary)">{{ integration.name }}</p>
         <p class="max-w-132 text-sm text-(--text-secondary)">
