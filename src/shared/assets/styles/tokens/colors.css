@@ -173,6 +173,9 @@
 
   --shadow-panel-short: 0 2px 8px 0 rgba(0, 0, 0, 0.06), 0 14px 28px 0 rgba(0, 0, 0, 0.08);
 
+  /* Активная вкладка сегментного переключателя (Figma shadow-tab) */
+  --shadow-tab: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+
   --shadow-field:
     0 0 1px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
     0 2px 4px 0 rgba(0, 0, 0, 0.04), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);

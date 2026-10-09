@@ -21,10 +21,10 @@ const emit = defineEmits<{
       v-for="option in ENVIRONMENT_OPTIONS"
       :key="option.value"
       type="button"
-      class="flex-1 rounded-(--radius-xl) px-3 py-1.5 text-sm font-medium transition-colors"
+      class="flex-1 rounded-(--radius-full) px-3 py-1.5 text-sm font-medium transition-colors"
       :class="
         modelValue === option.value
-          ? 'bg-(--bg-surface-primary) text-(--text-primary) shadow-(--shadow-panel-short)'
+          ? 'bg-(--bg-surface-primary) text-(--text-primary) shadow-(--shadow-tab)'
           : 'text-(--text-secondary)'
       "
       @click="emit('update:modelValue', option.value)"
