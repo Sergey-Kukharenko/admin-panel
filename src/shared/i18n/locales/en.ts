@@ -273,6 +273,27 @@ export const en: MessageSchema = {
       requestConnection: 'Request connection',
       requestSuccess: 'Request successfully created! Data will be sent to your email',
     },
+    restApiModal: {
+      title: 'REST API Connection',
+      description: 'Fill in the request parameters',
+      organization: 'Organization',
+      connectionType: 'Connection Type',
+      accessType: 'Access Type',
+      accessTypeTooltip:
+        'Choose an API access method. If you restrict access by IP, please list the allowed IP addresses.',
+      ipRestricted: 'Restrict by IP',
+      publicAccess: 'Public access',
+      ipAddresses: 'Server IP Addresses',
+      ipAddressesTooltip:
+        'Specify the IP addresses of servers that will be allowed to access the API. Only applicable when IP-based access is selected.',
+      ipAddress: 'Server IP Address',
+      addIpAddress: 'Add IP address',
+      invalidIp: 'Enter a valid IP address',
+      maxIpAddresses: 'Maximum {max} IP addresses allowed',
+      environment: 'Environment',
+      cancel: 'Cancel',
+      submit: 'Request Connection',
+    },
     items: {
       restApi: {
         cardDescription: 'Programmatic data exchange via HTTPS with batch upload support',

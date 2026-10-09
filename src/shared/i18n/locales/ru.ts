@@ -276,6 +276,27 @@ export const ru = {
       requestConnection: 'Запросить подключение',
       requestSuccess: 'Заявка успешно создана! Данные будут направлены на почту',
     },
+    restApiModal: {
+      title: 'Подключение REST API',
+      description: 'Заполните параметры заявки.',
+      organization: 'Организация',
+      connectionType: 'Тип подключения',
+      accessType: 'Тип доступа',
+      accessTypeTooltip:
+        'Выберите способ доступа к API. При ограничении по IP необходимо указать разрешенные IP-адреса.',
+      ipRestricted: 'Ограничить по IP',
+      publicAccess: 'Публичный доступ',
+      ipAddresses: 'IP-адреса серверов',
+      ipAddressesTooltip:
+        'Укажите IP-адреса серверов, которым будет разрешен доступ к API. Заполняется только при выборе доступа по IP.',
+      ipAddress: 'IP-адрес сервера',
+      addIpAddress: 'Добавить IP-адрес',
+      invalidIp: 'Введите корректный IP-адрес',
+      maxIpAddresses: 'Максимум {max} IP-адресов',
+      environment: 'Среда',
+      cancel: 'Отмена',
+      submit: 'Запросить подключение',
+    },
     items: {
       restApi: {
         cardDescription:
