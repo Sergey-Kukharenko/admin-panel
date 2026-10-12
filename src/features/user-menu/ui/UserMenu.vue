@@ -3,7 +3,6 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
-import { MOCK_ORGANIZATION_MEMBERS } from '@/entities/organization';
 import { useUserStore } from '@/entities/user';
 import avatarPlaceholderUrl from '@/shared/assets/images/avatar-placeholder.png';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
@@ -19,7 +18,7 @@ const router = useRouter();
 const { t } = useI18n({ useScope: 'global' });
 
 const email = computed(() => userStore.user?.email ?? '');
-const displayName = computed(() => MOCK_ORGANIZATION_MEMBERS[0]?.name ?? '');
+const displayName = computed(() => userStore.user?.name ?? '');
 
 const isLogoutConfirmOpen = ref(false);
 

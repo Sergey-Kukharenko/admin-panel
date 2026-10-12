@@ -54,13 +54,16 @@ export const useUserStore = defineStore('user', () => {
   async function logout() {
     user.value = null;
 
+    let redirectUrl = '/';
+
     try {
       const { data } = await authorizationApi.logout();
-
-      window.location.href = data.authentik_logout_url ?? '/';
+      redirectUrl = data?.authentik_logout_url ?? '/';
     } catch {
-      window.location.href = '/';
+      // Сессию на бэке не закрыли — всё равно уходим на главную, гард отправит на логин
     }
+
+    window.location.href = redirectUrl;
   }
 
   return {

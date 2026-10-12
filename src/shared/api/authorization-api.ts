@@ -6,8 +6,12 @@ export interface AuthorizationLoginUrlResponse {
   authorize_url: string;
 }
 
+/**
+ * По OpenAPI тело пустое: сессию портала и SSO в Authentik бэкенд закрывает сам. API ещё не
+ * финализирован, поэтому ссылку на логаут IdP поддерживаем, если бэкенд её всё же вернёт
+ */
 export interface LogoutResponse {
-  authentik_logout_url: string | null;
+  authentik_logout_url?: string | null;
 }
 
 export const authorizationApi = {
