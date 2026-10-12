@@ -14,6 +14,8 @@ defineOptions({
 
 const props = defineProps<{
   open: boolean;
+  /** Заявка отправляется — блокируем повторную отправку и показываем спиннер */
+  submitting?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -37,7 +39,9 @@ watch(
 );
 
 function handleSubmit() {
-  // TODO: заменить на POST /project-s3-credentials/request, когда подключим бэкенд (WT-338)
+  if (props.submitting) return;
+
+  // Саму отправку (POST /project-s3-credentials/request) и ошибки обрабатывает IntegrationDetail
   emit('submit', buildS3ConnectionRequest({ environment: environment.value }));
 }
 </script>
@@ -130,7 +134,8 @@ function handleSubmit() {
             <AppButton variant="outline" @click="emit('close')">
               {{ t('integrations.connectionForm.cancel') }}
             </AppButton>
-            <AppButton type="submit" form="s3-connection-form">
+            <AppButton type="submit" form="s3-connection-form" :disabled="submitting">
+              <AppIcon v-if="submitting" name="loader-2-line" class="mr-1.5 size-4 animate-spin" />
               {{ t('integrations.connectionForm.submit') }}
             </AppButton>
           </footer>

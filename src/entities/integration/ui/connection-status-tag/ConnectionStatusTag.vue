@@ -26,7 +26,7 @@ const { t } = useI18n({ useScope: 'global' });
   </div>
 
   <AppTooltip
-    v-else-if="status === 'pending'"
+    v-else-if="status === 'setup_in_progress'"
     :icon="false"
     :text="t('integrations.status.pendingTooltip')"
   >

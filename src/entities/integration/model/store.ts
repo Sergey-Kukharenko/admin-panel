@@ -6,17 +6,8 @@ import type {
   ApiSecret,
   ApiSecretProductAccess,
   ClientCredentials,
-  IntegrationStatus,
   IntegrationType,
 } from './types';
-
-// Обе интеграции стартуют "не подключёнными": флоу заявка → настройка → подключено.
-// Экран управления secrets вырезан из Ph-1 (решение PM 2026-09-24); чтобы посмотреть его,
-// поставьте здесь 'connected'.
-const INITIAL_STATUSES: Record<IntegrationType, IntegrationStatus> = {
-  'rest-api': 'not_configured',
-  s3: 'not_configured',
-};
 
 const CLIENT_CREDENTIALS: Record<IntegrationType, ClientCredentials> = {
   'rest-api': { clientId: 'cid_nnjd68rh' },
@@ -59,21 +50,13 @@ const INITIAL_API_SECRETS: Record<IntegrationType, ApiSecret[]> = {
   ],
 };
 
+// Моки API secrets / Key secrets для экранов подключённой интеграции — вырезаны из Ph-1,
+// статусы и заявки идут через бэкенд (useIntegrationStatus, useRequestIntegrationConnection)
 export const useIntegrationsStore = defineStore('integrations', () => {
-  const statuses = reactive<Record<IntegrationType, IntegrationStatus>>({ ...INITIAL_STATUSES });
-
   const apiSecrets = reactive<Record<IntegrationType, ApiSecret[]>>({
     'rest-api': [...INITIAL_API_SECRETS['rest-api']],
     s3: [...INITIAL_API_SECRETS.s3],
   });
-
-  function getStatus(type: IntegrationType) {
-    return statuses[type];
-  }
-
-  function requestConnection(type: IntegrationType) {
-    statuses[type] = 'pending';
-  }
 
   function getClientCredentials(type: IntegrationType) {
     return CLIENT_CREDENTIALS[type];
@@ -123,10 +106,7 @@ export const useIntegrationsStore = defineStore('integrations', () => {
   }
 
   return {
-    statuses,
     apiSecrets,
-    getStatus,
-    requestConnection,
     getClientCredentials,
     getApiSecrets,
     createApiSecret,

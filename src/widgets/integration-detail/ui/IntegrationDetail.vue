@@ -1,11 +1,22 @@
 <script setup lang="ts">
+import { useQueryClient } from '@tanstack/vue-query';
+import { isAxiosError } from 'axios';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { toast } from 'vue-sonner';
 
-import type { Integration } from '@/entities/integration';
-import { useIntegrationsStore } from '@/entities/integration';
+import type {
+  Integration,
+  IntegrationConnectionRequest,
+  RestApiConnectionRequest,
+  S3ConnectionRequest,
+} from '@/entities/integration';
+import {
+  integrationStatusQueryKey,
+  useIntegrationStatus,
+  useRequestIntegrationConnection,
+} from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -22,16 +33,20 @@ const props = defineProps<{
 
 const { t } = useI18n({ useScope: 'global' });
 const router = useRouter();
-const integrationsStore = useIntegrationsStore();
+const queryClient = useQueryClient();
 
-const status = computed(() => integrationsStore.getStatus(props.integration.type));
+const { data: status, isPending: isStatusLoading } = useIntegrationStatus(
+  () => props.integration.type,
+);
+const { mutate: requestIntegrationConnection, isPending: isSubmitting } =
+  useRequestIntegrationConnection();
 
 // Экран управления secrets вырезан из Ph-1, поэтому для заявленной/подключённой интеграции
 // вместо кнопки заявки показываем её статус — повторную заявку отправить нельзя (бэкенд вернёт 409)
 const emptyState = computed(() => {
   const { i18nKey } = props.integration;
 
-  if (status.value === 'pending') {
+  if (status.value === 'setup_in_progress') {
     return {
       title: t('integrations.detail.pendingTitle'),
       description: t('integrations.status.pendingTooltip'),
@@ -60,11 +75,35 @@ function requestConnection() {
   isConnectionModalOpen.value = true;
 }
 
-function handleConnectionRequestSubmit() {
-  isConnectionModalOpen.value = false;
-  integrationsStore.requestConnection(props.integration.type);
-  toast.success(t('integrations.detail.requestSuccess'), { duration: 5000 });
-  router.push('/integrations');
+function submitConnectionRequest(request: IntegrationConnectionRequest) {
+  requestIntegrationConnection(request, {
+    onSuccess: () => {
+      isConnectionModalOpen.value = false;
+      toast.success(t('integrations.detail.requestSuccess'), { duration: 5000 });
+      router.push('/integrations');
+    },
+    onError: (error) => {
+      // 409 — активная заявка уже есть (например, отправлена из другой вкладки): закрываем окно
+      // и перезапрашиваем статус, страница покажет «Настройка». Остальные ошибки — окно
+      // остаётся открытым с заполненной формой, можно отправить ещё раз (тексты предложены в WT-337)
+      if (isAxiosError(error) && error.response?.status === 409) {
+        isConnectionModalOpen.value = false;
+        toast.error(t('integrations.detail.requestAlreadySent'));
+        queryClient.invalidateQueries({ queryKey: integrationStatusQueryKey(request.type) });
+        return;
+      }
+
+      toast.error(t('integrations.detail.requestFailed'));
+    },
+  });
+}
+
+function handleRestApiSubmit(payload: RestApiConnectionRequest) {
+  submitConnectionRequest({ type: 'rest-api', payload });
+}
+
+function handleS3Submit(payload: S3ConnectionRequest) {
+  submitConnectionRequest({ type: 's3', payload });
 }
 </script>
 
@@ -91,7 +130,8 @@ function handleConnectionRequestSubmit() {
       </a>
     </div>
 
-    <div class="flex flex-1 items-center justify-center">
+    <!-- Пока статус грузится, пустое состояние не показываем, чтобы не мигала кнопка заявки -->
+    <div v-if="!isStatusLoading" class="flex flex-1 items-center justify-center">
       <AppEmptyState
         :title="emptyState.title"
         :description="emptyState.description"
@@ -108,15 +148,17 @@ function handleConnectionRequestSubmit() {
     <RestApiConnectionModal
       v-if="integration.type === 'rest-api'"
       :open="isConnectionModalOpen"
+      :submitting="isSubmitting"
       @close="isConnectionModalOpen = false"
-      @submit="handleConnectionRequestSubmit"
+      @submit="handleRestApiSubmit"
     />
 
     <S3ConnectionModal
       v-else-if="integration.type === 's3'"
       :open="isConnectionModalOpen"
+      :submitting="isSubmitting"
       @close="isConnectionModalOpen = false"
-      @submit="handleConnectionRequestSubmit"
+      @submit="handleS3Submit"
     />
   </div>
 </template>

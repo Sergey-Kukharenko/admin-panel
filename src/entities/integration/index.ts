@@ -1,3 +1,4 @@
+export { integrationRequestApi } from './api/integration-request-api';
 export { projectApiCredentialApi } from './api/project-api-credential-api';
 export * from './model';
 export * from './ui/connection-status-tag';

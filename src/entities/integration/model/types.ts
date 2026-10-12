@@ -2,7 +2,8 @@ import type { IntegrationEnvironment } from './constants';
 
 export type IntegrationType = 'rest-api' | 's3';
 
-export type IntegrationStatus = 'not_configured' | 'pending' | 'connected';
+// Статусы заявки из RFC Ph-1 (GET /project-api-credentials, GET /project-s3-credentials)
+export type IntegrationStatus = 'not_configured' | 'setup_in_progress' | 'connected';
 
 export interface Integration {
   type: IntegrationType;

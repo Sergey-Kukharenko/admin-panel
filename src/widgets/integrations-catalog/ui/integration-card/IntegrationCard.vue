@@ -4,8 +4,9 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 import type { Integration } from '@/entities/integration';
-import { ConnectionStatusTag, useIntegrationsStore } from '@/entities/integration';
+import { ConnectionStatusTag, useIntegrationStatus } from '@/entities/integration';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppSkeleton } from '@/shared/ui/app-skeleton';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
 
 import restApiIcon from '../../assets/icons/rest-api.svg';
@@ -21,19 +22,27 @@ const props = defineProps<{
 
 const { t } = useI18n({ useScope: 'global' });
 const router = useRouter();
-const integrationsStore = useIntegrationsStore();
 
 const iconByType: Record<Integration['type'], string> = {
   'rest-api': restApiIcon,
   s3: s3Icon,
 };
 
-const status = computed(() => integrationsStore.getStatus(props.integration.type));
+const { data: status, isPending: isStatusLoading } = useIntegrationStatus(
+  () => props.integration.type,
+);
+
 // После заявки повторно подать её нельзя: кнопка неактивна, подсказка объясняет почему
-// (решение PM 2026-09-24, тексты предложены в WT-337)
+// (решение PM 2026-09-24, тексты предложены в WT-337). Если статус не загрузился, кнопку
+// не блокируем — повторную заявку отсечёт бэкенд (409)
 const disabledTooltip = computed(() => {
-  if (status.value === 'not_configured') return null;
-  return t(`integrations.catalog.connectDisabledTooltip.${status.value}`);
+  if (status.value === 'setup_in_progress') {
+    return t('integrations.catalog.connectDisabledTooltip.setupInProgress');
+  }
+  if (status.value === 'connected') {
+    return t('integrations.catalog.connectDisabledTooltip.connected');
+  }
+  return null;
 });
 
 function goToDetail() {
@@ -53,7 +62,8 @@ function goToDetail() {
         <p class="truncate text-base font-medium text-(--text-primary)">{{ integration.name }}</p>
 
         <div class="ml-auto">
-          <ConnectionStatusTag :status="status" />
+          <AppSkeleton v-if="isStatusLoading" class="h-4 w-24 rounded-(--radius-sm)" />
+          <ConnectionStatusTag v-else-if="status" :status="status" />
         </div>
       </div>
 
@@ -77,7 +87,7 @@ function goToDetail() {
         </AppButton>
       </AppTooltip>
 
-      <AppButton v-else class="min-w-50.75" @click="goToDetail">
+      <AppButton v-else class="min-w-50.75" :disabled="isStatusLoading" @click="goToDetail">
         {{ t('integrations.catalog.connect') }}
       </AppButton>
     </div>

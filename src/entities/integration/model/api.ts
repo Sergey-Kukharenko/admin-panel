@@ -1,4 +1,22 @@
+import type { IntegrationStatus } from './types';
+
 export type AuthentikApiAccessEnvironment = 'dev' | 'prod';
+
+/** Состояние заявки на подключение — общая часть ответов GET /project-api-credentials и GET /project-s3-credentials */
+export interface IntegrationRequestState {
+  status: IntegrationStatus;
+  integration_request_id: string | null;
+  requested_at: string | null;
+  connected_at: string | null;
+}
+
+/** Ответ 201 на POST /project-api-credentials/request и POST /project-s3-credentials/request */
+export interface IntegrationRequestCreated {
+  integration_request_id: string;
+  status: IntegrationStatus;
+  environments: AuthentikApiAccessEnvironment[];
+  created_at: string;
+}
 
 export interface ProjectApiCredential {
   project_api_credential_id: string;

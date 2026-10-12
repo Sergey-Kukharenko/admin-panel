@@ -261,7 +261,7 @@ export const en: MessageSchema = {
         'Automate your data uploads with integrations\nManage your sources here, and track upload history and results in the "Data Upload" section',
       connect: 'Configure',
       connectDisabledTooltip: {
-        pending:
+        setupInProgress:
           'Your request has already been sent. We will email you as soon as everything is ready',
         connected: 'The integration is connected. Connection details have been sent to your email',
       },
@@ -280,6 +280,8 @@ export const en: MessageSchema = {
       emptyStateTitle: 'Integration not connected',
       requestConnection: 'Request connection',
       requestSuccess: 'Request successfully created! Data will be sent to your email',
+      requestAlreadySent: 'The request has already been sent',
+      requestFailed: 'Failed to send the request. Please try again',
     },
     connectionForm: {
       organization: 'Organization',
