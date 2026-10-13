@@ -17,11 +17,14 @@ import {
   useIntegrationStatus,
   useRequestIntegrationConnection,
 } from '@/entities/integration';
+import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';
 import { RestApiConnectionModal } from '@/widgets/rest-api-connection-modal';
+import { RestApiCredentialsPanel } from '@/widgets/rest-api-credentials';
 import { S3ConnectionModal } from '@/widgets/s3-connection-modal';
+import { S3CredentialsPanel } from '@/widgets/s3-credentials';
 
 defineOptions({
   name: 'IntegrationDetail',
@@ -38,6 +41,11 @@ const queryClient = useQueryClient();
 const { data: status, isPending: isStatusLoading } = useIntegrationStatus(
   () => props.integration.type,
 );
+// Экраны управления ключами (H2, WT-345–353) — только за фича-флагом, на моках
+const showCredentialsPanel = computed(
+  () => FEATURE_INTEGRATION_SECRETS && status.value === 'connected',
+);
+
 const { mutate: requestIntegrationConnection, isPending: isSubmitting } =
   useRequestIntegrationConnection();
 
@@ -130,8 +138,18 @@ function handleS3Submit(payload: S3ConnectionRequest) {
       </a>
     </div>
 
+    <RestApiCredentialsPanel
+      v-if="showCredentialsPanel && integration.type === 'rest-api'"
+      :integration-type="integration.type"
+    />
+
+    <S3CredentialsPanel
+      v-else-if="showCredentialsPanel && integration.type === 's3'"
+      :integration-type="integration.type"
+    />
+
     <!-- Пока статус грузится, пустое состояние не показываем, чтобы не мигала кнопка заявки -->
-    <div v-if="!isStatusLoading" class="flex flex-1 items-center justify-center">
+    <div v-else-if="!isStatusLoading" class="flex flex-1 items-center justify-center">
       <AppEmptyState
         :title="emptyState.title"
         :description="emptyState.description"

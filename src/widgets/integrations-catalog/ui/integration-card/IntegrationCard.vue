@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 
 import type { Integration } from '@/entities/integration';
 import { ConnectionStatusTag, useIntegrationStatus } from '@/entities/integration';
+import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppSkeleton } from '@/shared/ui/app-skeleton';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
@@ -39,7 +40,8 @@ const disabledTooltip = computed(() => {
   if (status.value === 'setup_in_progress') {
     return t('integrations.catalog.connectDisabledTooltip.setupInProgress');
   }
-  if (status.value === 'connected') {
+  // С флагом экранов secrets (H2) подключённая интеграция открывается — там управление ключами
+  if (status.value === 'connected' && !FEATURE_INTEGRATION_SECRETS) {
     return t('integrations.catalog.connectDisabledTooltip.connected');
   }
   return null;
