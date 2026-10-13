@@ -1,22 +1,24 @@
 import type { ApiSecretProductAccess } from './types';
 
-const DATE_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
+/** Дата создания ключа как в макете: «02 октября 2026» — день двумя цифрами, без «г.» */
+export function formatSecretDate(dateIso: string, locale: string): string {
+  const parts = new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'ru-RU', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).formatToParts(new Date(dateIso));
 
-export function formatSecretDate(dateIso: string): string {
-  return DATE_FORMATTER.format(new Date(dateIso));
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((item) => item.type === type)?.value ?? '';
+
+  return `${part('day')} ${part('month')} ${part('year')}`;
 }
 
-export function formatPermissionsSummary(productAccess: ApiSecretProductAccess[]): string {
-  const hasWriteData = productAccess.some((access) => access.writeData);
-  const hasReadResults = productAccess.some((access) => access.readResults);
+/** Колонка «Права доступа» в макете — продукты, к которым у ключа есть доступ */
+export function formatProductsWithAccess(productAccess: ApiSecretProductAccess[]): string {
+  const products = productAccess
+    .filter((access) => access.writeData || access.readResults)
+    .map((access) => access.productName);
 
-  const labels: string[] = [];
-  if (hasWriteData) labels.push('Upload data');
-  if (hasReadResults) labels.push('Read results');
-
-  return labels.length > 0 ? labels.join(', ') : '—';
+  return products.length > 0 ? products.join(', ') : '—';
 }

@@ -310,6 +310,95 @@ export const en: MessageSchema = {
       title: 'Amazon S3 Connection',
       description: 'Review the request parameters',
     },
+    credentials: {
+      generalInfo: 'General information',
+      connectionStatus: 'Connection status',
+      copy: 'Copy',
+      copied: 'Copied',
+      copyAria: 'Copy {field}',
+      filters: {
+        active: 'Active',
+        allEnvironments: 'All environments',
+      },
+      columns: {
+        name: 'Name',
+        environment: 'Environment',
+        permissions: 'Permissions',
+        createdAt: 'Created',
+        status: 'Status',
+        actions: 'Actions',
+      },
+      secretStatus: {
+        active: 'Active',
+        inactive: 'Inactive',
+        revoked: 'Revoked',
+      },
+      form: {
+        name: 'Name',
+        productAccess: 'Product access',
+        productColumn: 'Product',
+        create: 'Create',
+      },
+    },
+    restApiSecrets: {
+      title: 'API Secrets',
+      create: 'New API secret',
+      formTitle: 'New API secret',
+      empty: {
+        title: 'Create your first API secret',
+        description: 'Create API secrets yourself and set access parameters to ML products',
+        action: 'Create API secret',
+      },
+      reveal: {
+        title: 'API secret created successfully!',
+        description:
+          'Copy the API secret now.\nIt will not be shown again after you close this window.',
+        field: 'API secret',
+        copied: 'API secret copied successfully!',
+      },
+      revoke: {
+        aria: 'Revoke API Secret',
+        title: 'Revoke API Secret',
+        description:
+          'Revoke API Secret "{name}"? This action cannot be undone. All requests with this API Secret will stop working.',
+        confirm: 'Revoke',
+        done: 'API Secret revoked',
+      },
+    },
+    s3KeySecrets: {
+      title: 'Key Secrets',
+      create: 'Create Key Secret',
+      formTitle: 'Create Key secret',
+      limitTooltip:
+        'You already have {max} active keys, which is the maximum.\nTo create a new one, revoke or delete one of the existing keys.',
+      reveal: {
+        title: 'Save the Key secret',
+        field: 'Key secret',
+        warning:
+          'The key will not be shown again. It cannot be restored after you close this window.',
+        created: 'Key secret created successfully',
+      },
+      deactivate: {
+        aria: 'Deactivate Key Secret',
+        title: 'Deactivate Key Secret "{name}"?',
+        description: 'The key will stop working. You can activate it again at any time.',
+        confirm: 'Deactivate',
+        done: 'Key Secret deactivated',
+      },
+      activate: {
+        aria: 'Activate Key Secret',
+        done: 'Key Secret activated',
+      },
+      revoke: {
+        aria: 'Revoke Key Secret',
+        title: 'Revoke Key Secret "{name}"?',
+        descriptionActive:
+          'The key is active and will stop working immediately after revocation. It cannot be restored.',
+        descriptionInactive: 'The key cannot be restored after revocation.',
+        confirm: 'Revoke',
+        done: 'Key Secret revoked',
+      },
+    },
     items: {
       restApi: {
         cardDescription: 'Programmatic data exchange via HTTPS with batch upload support',
@@ -319,6 +408,8 @@ export const en: MessageSchema = {
           encryption: 'Secure data exchange with encryption',
         },
         description: 'Programmatic data exchange via HTTPS with batch upload support',
+        connectedDescription:
+          'Manage the API connection and its parameters for data exchange with the MICO platform.',
         docsLabel: 'API Documentation',
         emptyStateDescription:
           'To get API access, send a connection request. The platform team will set up the integration and issue credentials.',
@@ -331,6 +422,7 @@ export const en: MessageSchema = {
           encryption: 'Secure storage with encryption',
         },
         description: 'Automated file uploads via S3 storage.',
+        connectedDescription: 'File-based data exchange via Amazon S3 cloud storage.',
         docsLabel: 'S3 Guide Documentation',
         emptyStateDescription:
           'To get access to Amazon S3, send a connection request.\nWe will set up the integration and issue credentials.',

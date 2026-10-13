@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
+import {
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+} from 'radix-vue';
 
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -15,10 +22,13 @@ withDefaults(
     description?: string;
     confirmLabel?: string;
     cancelLabel?: string;
+    /** danger — необратимое действие (красная иконка), warning — по умолчанию */
+    variant?: 'warning' | 'danger';
   }>(),
   {
     confirmLabel: 'Подтвердить',
     cancelLabel: 'Отмена',
+    variant: 'warning',
   },
 );
 
@@ -70,22 +80,29 @@ const emit = defineEmits<{
           <div class="flex flex-col items-start gap-4 px-5 pb-1">
             <!-- Иконка предупреждения -->
             <div
-              class="flex size-11 p-3 justify-center items-center rounded-(--radius-xl) bg-(--warning-muted)"
+              class="flex size-11 p-3 justify-center items-center rounded-(--radius-xl)"
+              :class="variant === 'danger' ? 'bg-(--bg-badge-danger)' : 'bg-(--warning-muted)'"
             >
-              <AppIcon name="spam-2-line" class="size-5 text-(--warning-foreground) shrink-0" />
+              <AppIcon
+                name="spam-2-line"
+                class="size-5 shrink-0"
+                :class="
+                  variant === 'danger' ? 'text-(--text-error)' : 'text-(--warning-foreground)'
+                "
+              />
             </div>
 
             <!-- Content блок с текстом -->
             <div class="flex flex-col items-start gap-1 self-stretch text-left">
-              <h3 class="text-sm font-medium text-(--text-primary) leading-5 select-none">
+              <DialogTitle class="text-sm font-medium text-(--text-primary) leading-5 select-none">
                 {{ title }}
-              </h3>
-              <p
+              </DialogTitle>
+              <DialogDescription
                 v-if="description"
                 class="text-sm font-normal text-(--text-secondary) leading-5 select-none whitespace-pre-line"
               >
                 {{ description }}
-              </p>
+              </DialogDescription>
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
+import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'radix-vue';
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
 import type {
@@ -31,6 +32,7 @@ const emit = defineEmits<{
   created: [secretValue: string];
 }>();
 
+const { t } = useI18n({ useScope: 'global' });
 const integrationsStore = useIntegrationsStore();
 
 const name = ref('');
@@ -61,7 +63,7 @@ watch(
 
 async function copyClientId() {
   await navigator.clipboard.writeText(clientId.value);
-  toast.success('Скопировано');
+  toast.success(t('integrations.credentials.copied'));
 }
 
 function handleSubmit() {
@@ -111,10 +113,13 @@ function handleSubmit() {
       >
         <DialogContent
           v-if="open"
+          :aria-describedby="undefined"
           class="fixed top-1/2 left-1/2 z-50 flex max-h-[85vh] w-120 -translate-x-1/2 -translate-y-1/2 flex-col rounded-(--radius-xxl) bg-(--bg-surface-primary) shadow-(--shadow-panel) focus:outline-none"
         >
           <header class="flex w-full shrink-0 items-center gap-2 px-5 py-4">
-            <p class="flex-1 text-base font-medium text-(--text-primary)">Создать API secret</p>
+            <DialogTitle class="flex-1 text-base font-medium text-(--text-primary)">
+              {{ t('integrations.restApiSecrets.formTitle') }}
+            </DialogTitle>
 
             <AppButton variant="outline" size="icon" @click="emit('close')">
               <AppIcon name="close-line" class="size-4" />
@@ -124,7 +129,7 @@ function handleSubmit() {
           <div class="flex flex-1 flex-col gap-4 overflow-y-auto px-5 pb-2">
             <div class="flex flex-col gap-1">
               <label class="flex items-center gap-1 text-sm font-medium text-(--text-primary)">
-                Наименование
+                {{ t('integrations.credentials.form.name') }}
                 <span class="text-(--text-error)">*</span>
               </label>
               <input
@@ -139,10 +144,10 @@ function handleSubmit() {
               <div
                 class="flex h-9 w-full items-center gap-1.5 rounded-(--radius-lg) bg-(--bg-input) pl-3"
               >
-                <span class="flex-1 text-sm text-(--text-secondary)">{{ clientId }}</span>
+                <span class="flex-1 text-sm text-(--text-primary)">{{ clientId }}</span>
                 <button
                   type="button"
-                  aria-label="Скопировать Client ID"
+                  :aria-label="t('integrations.credentials.copyAria', { field: 'Client ID' })"
                   class="flex size-9 shrink-0 items-center justify-center text-(--text-secondary) hover:text-(--text-primary)"
                   @click="copyClientId"
                 >
@@ -152,21 +157,30 @@ function handleSubmit() {
             </div>
 
             <div class="flex flex-col gap-1">
-              <p class="text-sm font-medium text-(--text-primary)">Среда</p>
+              <p class="text-sm font-medium text-(--text-primary)">
+                {{ t('integrations.connectionForm.environment') }}
+              </p>
               <EnvironmentTabs v-model="environment" />
             </div>
 
             <div class="flex flex-col gap-2 pb-4">
-              <p class="text-sm font-medium text-(--text-primary)">Доступ к продуктам</p>
-              <ProductAccessTable v-model="productAccess" product-column-label="Название" />
+              <p class="text-sm font-medium text-(--text-primary)">
+                {{ t('integrations.credentials.form.productAccess') }}
+              </p>
+              <ProductAccessTable
+                v-model="productAccess"
+                :product-column-label="t('integrations.credentials.form.productColumn')"
+              />
             </div>
           </div>
 
-          <footer
-            class="flex w-full shrink-0 items-center justify-end gap-2 border-t border-(--border-default) px-5 py-4"
-          >
-            <AppButton variant="outline" @click="emit('close')">Отмена</AppButton>
-            <AppButton :disabled="!canSubmit" @click="handleSubmit">Создать</AppButton>
+          <footer class="flex w-full shrink-0 items-center justify-end gap-2 px-5 py-4">
+            <AppButton variant="outline" @click="emit('close')">
+              {{ t('integrations.connectionForm.cancel') }}
+            </AppButton>
+            <AppButton :disabled="!canSubmit" @click="handleSubmit">
+              {{ t('integrations.credentials.form.create') }}
+            </AppButton>
           </footer>
         </DialogContent>
       </Transition>

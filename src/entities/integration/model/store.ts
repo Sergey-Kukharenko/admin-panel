@@ -92,7 +92,9 @@ export const useIntegrationsStore = defineStore('integrations', () => {
 
   function revokeApiSecret(type: IntegrationType, secretId: string) {
     const secret = apiSecrets[type].find((item) => item.id === secretId);
-    if (secret) secret.status = 'revoked';
+    if (!secret || secret.status === 'revoked') return;
+    secret.revokedFrom = secret.status;
+    secret.status = 'revoked';
   }
 
   function deactivateApiSecret(type: IntegrationType, secretId: string) {

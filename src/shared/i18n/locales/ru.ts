@@ -312,6 +312,96 @@ export const ru = {
       title: 'Подключение Amazon S3',
       description: 'Ознакомьтесь с параметрами заявки.',
     },
+    credentials: {
+      generalInfo: 'Общая информация',
+      connectionStatus: 'Статус подключения',
+      copy: 'Скопировать',
+      copied: 'Скопировано',
+      copyAria: 'Скопировать {field}',
+      filters: {
+        active: 'Активные',
+        allEnvironments: 'Все среды',
+      },
+      columns: {
+        name: 'Наименование',
+        environment: 'Среда',
+        permissions: 'Права доступа',
+        createdAt: 'Создан',
+        status: 'Статус',
+        actions: 'Действия',
+      },
+      secretStatus: {
+        active: 'Активен',
+        inactive: 'Неактивен',
+        revoked: 'Отозван',
+      },
+      form: {
+        name: 'Наименование',
+        productAccess: 'Доступ к продуктам',
+        productColumn: 'Название',
+        create: 'Создать',
+      },
+    },
+    restApiSecrets: {
+      title: 'API Secrets',
+      create: 'Новый API secret',
+      formTitle: 'Новый API secret',
+      empty: {
+        title: 'Создайте свой первый API secret',
+        description:
+          'Самостоятельно создавайте API secrets и определяйте параметры доступа к ML-продуктам',
+        action: 'Создать API secret',
+      },
+      reveal: {
+        title: 'API secret успешно создан!',
+        description:
+          'Скопируйте API secret сейчас.\nПосле закрытия окна он больше не будет показан.',
+        field: 'API secret',
+        copied: 'API secret успешно скопирован!',
+      },
+      revoke: {
+        aria: 'Отозвать API Secret',
+        title: 'Отозвать API Secret',
+        description:
+          'Отозвать API Secret «{name}»? Это действие необратимо. Все запросы с этим API Secret перестанут работать.',
+        confirm: 'Отозвать',
+        done: 'API Secret отозван',
+      },
+    },
+    s3KeySecrets: {
+      title: 'Key Secrets',
+      create: 'Создать Key Secret',
+      formTitle: 'Создать Key secret',
+      limitTooltip:
+        'У вас уже есть {max} активных ключа — это максимум.\nЕсли хотите создать новый, просто отзовите или удалите один из существующих.',
+      reveal: {
+        title: 'Сохраните Key secret',
+        field: 'Key secret',
+        warning:
+          'Ключ больше не будет показан. После закрытия этого окна восстановить ключ невозможно.',
+        created: 'Key secret успешно создан',
+      },
+      deactivate: {
+        aria: 'Деактивировать Key Secret',
+        title: 'Деактивировать Key Secret «{name}»?',
+        description: 'Ключ перестанет работать. Вы можете активировать его снова в любой момент.',
+        confirm: 'Деактивировать',
+        done: 'Key Secret деактивирован',
+      },
+      activate: {
+        aria: 'Активировать Key Secret',
+        done: 'Key Secret активирован',
+      },
+      revoke: {
+        aria: 'Отозвать Key Secret',
+        title: 'Отозвать Key Secret «{name}»?',
+        descriptionActive:
+          'Ключ сейчас активен и после отзыва сразу перестанет работать. Восстановить его будет невозможно.',
+        descriptionInactive: 'После отзыва восстановить ключ будет невозможно.',
+        confirm: 'Отозвать',
+        done: 'Key Secret отозван',
+      },
+    },
     items: {
       restApi: {
         cardDescription:
@@ -322,6 +412,8 @@ export const ru = {
           encryption: 'Защищенный обмен данными с шифрованием',
         },
         description: 'Программный обмен данными через HTTPS с поддержкой пакетной передачи данных',
+        connectedDescription:
+          'Управляйте API-подключением и его параметрами для обмена данными с платформой MICO.',
         docsLabel: 'Документация API',
         emptyStateDescription:
           'Для получения доступа к API отправьте запрос на подключение. Команда платформы настроит интеграцию и выдаст учётные данные.',
@@ -334,6 +426,7 @@ export const ru = {
           encryption: 'Безопасное хранение с шифрованием',
         },
         description: 'Автоматическая загрузка файлов через S3-хранилище.',
+        connectedDescription: 'Файловый обмен данными через облачное хранилище Amazon S3.',
         docsLabel: 'Документация S3 Guide',
         emptyStateDescription:
           'Для получения доступа к Amazon S3 отправьте запрос на подключение.\nНастроим интеграцию и выдадим учётные данные.',

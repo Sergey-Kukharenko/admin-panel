@@ -120,8 +120,12 @@ function handleS3Submit(payload: S3ConnectionRequest) {
     <div class="flex items-end justify-between gap-4">
       <div class="flex flex-col gap-2">
         <p class="text-lg leading-6 font-medium text-(--text-primary)">{{ integration.name }}</p>
-        <p class="max-w-132 text-sm text-(--text-secondary)">
-          {{ t(`integrations.items.${integration.i18nKey}.description`) }}
+        <p class="text-sm text-(--text-secondary)" :class="!showCredentialsPanel && 'max-w-132'">
+          {{
+            t(
+              `integrations.items.${integration.i18nKey}.${showCredentialsPanel ? 'connectedDescription' : 'description'}`,
+            )
+          }}
         </p>
       </div>
 

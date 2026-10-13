@@ -36,4 +36,7 @@ export interface ApiSecret {
   productAccess: ApiSecretProductAccess[];
   createdAt: string;
   status: ApiSecretStatus;
+  /** Каким был ключ до отзыва — в макете S3 у отозванной строки остаются неактивные иконки
+   *  прежних действий (деактивировать для активного, активировать для неактивного) */
+  revokedFrom?: Exclude<ApiSecretStatus, 'revoked'>;
 }

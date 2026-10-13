@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
 import type { ApiSecret, IntegrationType } from '@/entities/integration';
 import {
-  ConnectionStatusTag,
+  CredentialsInfoCard,
   ENVIRONMENT_OPTIONS,
   formatSecretDate,
   RevealSecretModal,
@@ -21,14 +22,25 @@ defineOptions({
   name: 'S3CredentialsPanel',
 });
 
+// WT-351: не больше 2 активных Key Secret; неактивные в лимит не входят
 const MAX_ACTIVE_KEY_SECRETS = 2;
-const SECRET_LIMIT_TOOLTIP_TEXT =
-  'У вас уже есть 2 активных ключа — это максимум.\nЕсли хотите создать новый, просто отзовите или удалите один из существующих.';
+
+const COLUMNS = [
+  { key: 'name', width: 'flex-1', sortable: true },
+  { key: 'environment', width: 'w-35', sortable: true },
+  { key: 'createdAt', width: 'w-37.5', sortable: true },
+  { key: 'status', width: 'w-31', sortable: true },
+  { key: 'actions', width: 'w-57.75', sortable: false },
+] as const;
+
+const ACTION_BUTTON_CLASS =
+  'flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted) disabled:pointer-events-none disabled:text-(--icon-disabled)';
 
 const props = defineProps<{
   integrationType: IntegrationType;
 }>();
 
+const { t, locale } = useI18n({ useScope: 'global' });
 const integrationsStore = useIntegrationsStore();
 
 const accessKeyId = computed(
@@ -39,6 +51,9 @@ const activeSecretsCount = computed(
   () => secrets.value.filter((secret) => secret.status === 'active').length,
 );
 const isAtSecretLimit = computed(() => activeSecretsCount.value >= MAX_ACTIVE_KEY_SECRETS);
+const limitTooltip = computed(() =>
+  t('integrations.s3KeySecrets.limitTooltip', { max: MAX_ACTIVE_KEY_SECRETS }),
+);
 
 const isCreateModalOpen = ref(false);
 const pendingSecretValue = ref<string | null>(null);
@@ -49,23 +64,15 @@ function environmentLabel(value: string) {
   return ENVIRONMENT_OPTIONS.find((option) => option.value === value)?.label ?? value;
 }
 
-async function copyAccessKeyId() {
-  await navigator.clipboard.writeText(accessKeyId.value);
-  toast.success('Скопировано');
-}
-
 function handleSecretCreated(secretValue: string) {
   isCreateModalOpen.value = false;
   pendingSecretValue.value = secretValue;
 }
 
-function handleSaveModalClose() {
+// Макет 920:84196: после окна с ключом — один тост «Key secret успешно создан»
+function handleRevealModalClose() {
   pendingSecretValue.value = null;
-  toast.success('Key secret успешно создан');
-}
-
-function requestDeactivate(secret: ApiSecret) {
-  secretPendingDeactivate.value = secret;
+  toast.success(t('integrations.s3KeySecrets.reveal.created'));
 }
 
 function confirmDeactivate() {
@@ -73,22 +80,20 @@ function confirmDeactivate() {
 
   integrationsStore.deactivateApiSecret(props.integrationType, secretPendingDeactivate.value.id);
   secretPendingDeactivate.value = null;
-  toast.success('Key Secret деактивирован');
+  toast.success(t('integrations.s3KeySecrets.deactivate.done'));
 }
 
 function activateKeySecret(secret: ApiSecret) {
-  integrationsStore.activateApiSecret(props.integrationType, secret.id);
-  toast.success('Key Secret активирован');
-}
+  if (isAtSecretLimit.value) return;
 
-function requestRevoke(secret: ApiSecret) {
-  secretPendingRevoke.value = secret;
+  integrationsStore.activateApiSecret(props.integrationType, secret.id);
+  toast.success(t('integrations.s3KeySecrets.activate.done'));
 }
 
 const revokeDescription = computed(() =>
   secretPendingRevoke.value?.status === 'active'
-    ? 'Ключ сейчас активен и после отзыва сразу перестанет работать. Восстановить его будет невозможно.'
-    : 'После отзыва восстановить ключ будет невозможно.',
+    ? t('integrations.s3KeySecrets.revoke.descriptionActive')
+    : t('integrations.s3KeySecrets.revoke.descriptionInactive'),
 );
 
 function confirmRevoke() {
@@ -96,131 +101,78 @@ function confirmRevoke() {
 
   integrationsStore.revokeApiSecret(props.integrationType, secretPendingRevoke.value.id);
   secretPendingRevoke.value = null;
-  toast.success('Key Secret отозван');
+  toast.success(t('integrations.s3KeySecrets.revoke.done'));
 }
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-8">
-    <div
-      class="flex flex-col gap-2 rounded-(--radius-xl) pt-4 pb-2"
-      style="background-image: linear-gradient(180deg, #ffffff 1%, rgba(217, 217, 217, 0.3) 37%)"
-    >
-      <p class="px-4 text-base font-medium text-[#181818]">Общая информация</p>
-
-      <div
-        class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4"
-      >
-        <div class="flex items-center gap-4">
-          <p class="w-49.5 shrink-0 text-sm text-(--text-primary)">Статус подключения</p>
-          <ConnectionStatusTag status="connected" />
-        </div>
-
-        <div class="h-px w-full bg-(--border-default)" />
-
-        <div class="flex items-center gap-4">
-          <p class="w-49.5 shrink-0 text-sm text-(--text-primary)">Access Key ID</p>
-          <p class="flex-1 text-sm text-(--text-primary)">{{ accessKeyId }}</p>
-          <button
-            type="button"
-            aria-label="Скопировать Access Key ID"
-            class="flex size-8 shrink-0 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-            @click="copyAccessKeyId"
-          >
-            <AppIcon name="file-copy-line" class="size-4" />
-          </button>
-        </div>
-      </div>
-    </div>
+  <div class="flex w-full flex-col gap-7">
+    <CredentialsInfoCard id-label="Access Key ID" :id-value="accessKeyId" />
 
     <div class="flex flex-col gap-4">
-      <p class="text-base font-medium text-(--text-primary)">Key Secrets</p>
+      <p class="text-base font-medium text-(--text-primary)">
+        {{ t('integrations.s3KeySecrets.title') }}
+      </p>
 
       <div class="flex items-center justify-between">
+        <!-- Фильтры и сортировка пока без логики — как и в исходной реализации на моках -->
         <div class="flex items-center gap-3">
           <button
+            v-for="filterKey in ['active', 'allEnvironments'] as const"
+            :key="filterKey"
             type="button"
             class="flex h-8 items-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 text-sm font-medium text-(--foreground)"
           >
-            Активные
-            <AppIcon name="large-line-arrow-down" class="size-4" />
-          </button>
-          <button
-            type="button"
-            class="flex h-8 items-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 text-sm font-medium text-(--foreground)"
-          >
-            Все среды
+            {{ t(`integrations.credentials.filters.${filterKey}`) }}
             <AppIcon name="large-line-arrow-down" class="size-4" />
           </button>
         </div>
 
-        <AppTooltip v-if="isAtSecretLimit" :icon="false" :text="SECRET_LIMIT_TOOLTIP_TEXT">
+        <!-- Макет 920:85149: при лимите кнопка тёмно-серая, подсказка объясняет почему -->
+        <AppTooltip v-if="isAtSecretLimit" :icon="false" :text="limitTooltip">
           <span
-            class="inline-flex h-8 cursor-not-allowed items-center gap-1.5 rounded-(--radius-lg) bg-(--muted) px-3 text-sm font-medium text-(--text-tertiary)"
+            class="inline-flex h-8 cursor-not-allowed items-center gap-1.5 rounded-(--radius-lg) bg-(--text-secondary) px-3 text-sm font-medium text-(--text-inverse-soft)"
           >
             <AppIcon name="add-line" class="size-4" />
-            Создать Key Secret
+            {{ t('integrations.s3KeySecrets.create') }}
           </span>
         </AppTooltip>
 
         <AppButton v-else size="small" @click="isCreateModalOpen = true">
           <AppIcon name="add-line" class="size-4" />
-          Создать Key Secret
+          {{ t('integrations.s3KeySecrets.create') }}
         </AppButton>
       </div>
 
       <div class="w-full overflow-hidden rounded-(--radius-xl) border border-(--border-default)">
         <div class="flex w-full items-center">
           <div
-            class="flex h-9 flex-1 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+            v-for="(column, index) in COLUMNS"
+            :key="column.key"
+            class="flex h-9 items-center gap-1.5 bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+            :class="[
+              column.width,
+              index < COLUMNS.length - 1 && 'border-r border-(--border-default)',
+            ]"
           >
-            Наименование
-            <AppIcon name="expand-up-down-line" class="size-3.5" />
-          </div>
-          <div
-            class="flex h-9 w-35 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
-          >
-            Среда
-            <AppIcon name="expand-up-down-line" class="size-3.5" />
-          </div>
-          <div
-            class="flex h-9 w-37.5 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
-          >
-            Создан
-            <AppIcon name="expand-up-down-line" class="size-3.5" />
-          </div>
-          <div
-            class="flex h-9 w-31 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
-          >
-            Статус
-            <AppIcon name="expand-up-down-line" class="size-3.5" />
-          </div>
-          <div
-            class="flex h-9 w-45 items-center bg-(--bg-surface-secondary) px-4 font-mono text-xs font-medium uppercase text-(--text-secondary)"
-          >
-            Действия
+            {{ t(`integrations.credentials.columns.${column.key}`) }}
+            <AppIcon v-if="column.sortable" name="expand-up-down-line" class="size-3.5" />
           </div>
         </div>
 
         <div
           v-for="secret in secrets"
           :key="secret.id"
-          class="flex w-full items-center border-t border-(--border-default)"
+          class="flex w-full items-center border-t border-(--border-default) text-sm font-medium text-(--text-primary)"
         >
-          <div
-            class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)"
-          >
+          <div class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4">
             {{ secret.name }}
           </div>
-          <div
-            class="flex h-11 w-35 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)"
-          >
+          <div class="flex h-11 w-35 items-center border-r border-(--border-default) px-4">
             {{ environmentLabel(secret.environment) }}
           </div>
-          <div
-            class="flex h-11 w-37.5 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)"
-          >
-            {{ formatSecretDate(secret.createdAt) }}
+          <div class="flex h-11 w-37.5 items-center border-r border-(--border-default) px-4">
+            {{ formatSecretDate(secret.createdAt, locale) }}
           </div>
           <div class="flex h-11 w-31 items-center border-r border-(--border-default) px-4">
             <span
@@ -228,52 +180,69 @@ function confirmRevoke() {
               class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-success) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-success-alt)"
             >
               <AppIcon name="checkbox-circle-line" class="size-3.5" />
-              Активен
+              {{ t('integrations.credentials.secretStatus.active') }}
             </span>
             <span
               v-else-if="secret.status === 'inactive'"
-              class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--muted) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-tertiary)"
+              class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-processing) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-primary)"
             >
-              <AppIcon name="circle-dashed" class="size-3.5" />
-              Неактивен
+              <AppIcon name="progress-2-line" class="size-3.5" />
+              {{ t('integrations.credentials.secretStatus.inactive') }}
             </span>
             <span
               v-else
               class="inline-flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-danger) py-1 pr-2 pl-1.5 font-mono text-xs font-medium uppercase text-(--text-error)"
             >
               <AppIcon name="close-circle-line" class="size-3.5" />
-              Отозван
+              {{ t('integrations.credentials.secretStatus.revoked') }}
             </span>
           </div>
-          <div class="flex h-11 w-45 items-center gap-1 px-4">
-            <template v-if="secret.status !== 'revoked'">
+          <!-- У отозванного ключа иконки прежних действий остаются, но неактивны (920:88173) -->
+          <div class="flex h-11 w-57.75 items-center gap-1.5 px-4">
+            <button
+              v-if="secret.status === 'active' || secret.revokedFrom === 'active'"
+              type="button"
+              :aria-label="t('integrations.s3KeySecrets.deactivate.aria')"
+              :disabled="secret.status === 'revoked'"
+              :class="ACTION_BUTTON_CLASS"
+              @click="secretPendingDeactivate = secret"
+            >
+              <AppIcon name="close-circle-line" class="size-4" />
+            </button>
+            <AppTooltip
+              v-else-if="secret.status === 'inactive' && isAtSecretLimit"
+              :icon="false"
+              :text="limitTooltip"
+            >
               <button
-                v-if="secret.status === 'active'"
                 type="button"
-                aria-label="Деактивировать Key Secret"
-                class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-                @click="requestDeactivate(secret)"
-              >
-                <AppIcon name="close-circle-line" class="size-4" />
-              </button>
-              <button
-                v-else
-                type="button"
-                aria-label="Активировать Key Secret"
-                class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-                @click="activateKeySecret(secret)"
+                :aria-label="t('integrations.s3KeySecrets.activate.aria')"
+                disabled
+                :class="ACTION_BUTTON_CLASS"
               >
                 <AppIcon name="checkbox-circle-line" class="size-4" />
               </button>
-              <button
-                type="button"
-                aria-label="Отозвать Key Secret"
-                class="flex size-8 items-center justify-center rounded-(--radius-lg) text-(--text-secondary) hover:bg-(--muted)"
-                @click="requestRevoke(secret)"
-              >
-                <AppIcon name="delete-bin-line" class="size-4" />
-              </button>
-            </template>
+            </AppTooltip>
+            <button
+              v-else
+              type="button"
+              :aria-label="t('integrations.s3KeySecrets.activate.aria')"
+              :disabled="secret.status === 'revoked'"
+              :class="ACTION_BUTTON_CLASS"
+              @click="activateKeySecret(secret)"
+            >
+              <AppIcon name="checkbox-circle-line" class="size-4" />
+            </button>
+
+            <button
+              type="button"
+              :aria-label="t('integrations.s3KeySecrets.revoke.aria')"
+              :disabled="secret.status === 'revoked'"
+              :class="ACTION_BUTTON_CLASS"
+              @click="secretPendingRevoke = secret"
+            >
+              <AppIcon name="delete-bin-line" class="size-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -288,25 +257,32 @@ function confirmRevoke() {
 
     <RevealSecretModal
       :open="pendingSecretValue !== null"
-      title="Сохраните Key secret"
-      field-label="Key secret"
-      warning-text="Ключ больше не будет показан. После закрытия этого окна восстановить ключ невозможно."
+      :title="t('integrations.s3KeySecrets.reveal.title')"
+      :field-label="t('integrations.s3KeySecrets.reveal.field')"
+      :warning-text="t('integrations.s3KeySecrets.reveal.warning')"
       :secret-value="pendingSecretValue ?? ''"
-      @close="handleSaveModalClose"
+      @close="handleRevealModalClose"
     />
 
     <AppConfirmDialog
       :open="secretPendingDeactivate !== null"
-      :title="`Деактивировать Key Secret «${secretPendingDeactivate?.name}»?`"
-      description="Ключ перестанет работать. Вы можете активировать его снова в любой момент."
+      :title="
+        t('integrations.s3KeySecrets.deactivate.title', { name: secretPendingDeactivate?.name })
+      "
+      :description="t('integrations.s3KeySecrets.deactivate.description')"
+      :confirm-label="t('integrations.s3KeySecrets.deactivate.confirm')"
+      :cancel-label="t('integrations.connectionForm.cancel')"
       @close="secretPendingDeactivate = null"
       @confirm="confirmDeactivate"
     />
 
     <AppConfirmDialog
       :open="secretPendingRevoke !== null"
-      :title="`Отозвать Key Secret «${secretPendingRevoke?.name}»?`"
+      variant="danger"
+      :title="t('integrations.s3KeySecrets.revoke.title', { name: secretPendingRevoke?.name })"
       :description="revokeDescription"
+      :confirm-label="t('integrations.s3KeySecrets.revoke.confirm')"
+      :cancel-label="t('integrations.connectionForm.cancel')"
       @close="secretPendingRevoke = null"
       @confirm="confirmRevoke"
     />
