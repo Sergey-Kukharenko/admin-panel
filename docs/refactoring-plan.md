@@ -1,0 +1,61 @@
+# План приведения проекта к архитектурному манифесту
+
+Пошаговый план рефакторинга `mico-client-portal-ui` под манифест (CLAUDE.md) с упором на FSD.
+Замечания к манифесту, на которых основан план: [документ на claude.ai](https://claude.ai/code/artifact/7f3dcaab-16ff-41dd-90b5-2032f31e2837).
+
+**Правила работы:**
+
+- Один пункт — один MR в `develop`, без смешивания с фичами.
+- Каждый MR проходит `type-check`, линт и тесты, затем ревью и ручную проверку затронутых экранов.
+- Сделанные пункты отмечаем `[x]` в этом файле.
+
+## Этап 0 — подготовка
+
+- [ ] Поправить манифест по замечаниям и влить его.
+- [ ] Получить доступ к OpenAPI-схеме бэка.
+- [ ] Согласовать с DevOps джобу `quality` и флоу `develop`.
+
+## Этап 1 — быстрые исправления
+
+- [ ] Точечные нарушения FSD:
+  - перенести `shared/api/session-api.ts` и `shared/api/authorization-api.ts` в `entities/user/api/`;
+  - вынести `ErrorDetails` из `widgets/dataset-history-table/ui/DatasetHistoryErrorDialog.vue` в `model/types.ts`;
+  - заменить импорты своего же слайса по алиасу на относительные (`entities/dataset/ui/dataset-template-icon/DatasetTemplateIcon.vue`, `widgets/predictions-manager/model/constants.ts`).
+- [ ] Фабрики query keys `<entity>Keys` в `model/queryKeys.ts` вместо ключей, собранных по месту.
+- [ ] Скрипты `check:lint` и `format:check` (не `lint:check`: его подхватит маска `run-s lint:*`), довести проект до зелёных проверок.
+
+## Этап 2 — базовая инфраструктура
+
+- [ ] `AppModal` с тестами, `AppConfirmDialog` на его основе.
+- [ ] Перевод 9 модалок на `AppModal`.
+- [ ] Перенос модалок и панелей из `widgets` в `features`:
+  - `rest-api-connection-modal`, `s3-connection-modal`, `rest-api-credentials`, `s3-credentials` (сейчас их импортирует `widgets/integration-detail`);
+  - `uploads-empty-state` (сейчас его импортирует `widgets/dataset-history-table`);
+  - `entities/integration/ui/reveal-secret-modal`.
+- [ ] Роутер:
+  - `ROUTE_NAMES`;
+  - ленивые страницы (`() => import('@/pages/x-page').then((m) => m.XPage)`);
+  - сайдбар и шапка, построенные из `meta`;
+  - страница 404.
+- [ ] Интерсептор 401 (подключается после `initAuth()`, не трогает `/user/me`, не редиректит при `authError`), `getHttpStatus` и `isClientError`, ретраи только для 5xx и сетевых сбоев.
+- [ ] Прокси `/api` в dev (`server.proxy`), относительный `VITE_API_URL`, один `TooltipProvider` в `App.vue`.
+- [ ] Убрать `useI18n` из стора `features/upload-dataset/model/store.ts`.
+
+## Этап 3 — типы и структура слайсов
+
+- [ ] Генерация типов из OpenAPI (`api:types`), алиасы DTO во всех сущностях.
+- [ ] Сегменты `lib/`, `config/` и `api/types.ts` — по слайсам, одним MR на слой:
+  - `model/` — реактивное: сторы, composables, query keys, UI-типы;
+  - `lib/` — чистые функции: мапперы, форматтеры, валидация;
+  - `config/` — константы, справочники, моки;
+  - `api/` — вызовы бэка и DTO.
+- [ ] Хардкод цветов заменить на токены (21 место).
+
+## Этап 4 — качество и контроль
+
+- [ ] Окружение Vitest и хелпер `withSetup`.
+- [ ] Компонентные тесты `shared/ui`: `AppModal`, `AppButton`, `AppPagination`, `AppFilter`.
+- [ ] Тесты недостающих мапперов и форматтеров.
+- [ ] Линтер i18n (`no-raw-text`) с исправлениями.
+- [ ] Линтер a11y (`vuejs-accessibility`) с исправлениями.
+- [ ] Линтер FSD (`steiger`) в `check:lint` и CI.
