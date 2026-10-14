@@ -1,14 +1,15 @@
 <script setup lang="ts">
-// Заглушка: страница пока не показывается. Готовые виджеты остаются в коде —
-// чтобы вернуть страницу, отрисуйте здесь TariffLimitsSection и TariffUsageChart
-// из '@/widgets/tariff-limits' и '@/widgets/tariff-usage-chart'
+import { TariffLimitsSection } from '@/widgets/tariff-limits';
+import { TariffUsageChart } from '@/widgets/tariff-usage-chart';
+
 defineOptions({
   name: 'BillingPage',
 });
 </script>
 
 <template>
-  <div>
-    <p class="text-sm text-(--muted-foreground)">BillingPage</p>
+  <div class="flex w-full flex-col gap-6">
+    <TariffLimitsSection />
+    <TariffUsageChart />
   </div>
 </template>

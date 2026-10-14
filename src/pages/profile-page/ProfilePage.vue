@@ -1,13 +1,13 @@
 <script setup lang="ts">
-// Заглушка: страница пока не показывается. Готовый виджет остаётся в коде —
-// чтобы вернуть страницу, отрисуйте здесь ProfileOverview из '@/widgets/profile-overview'
+import { ProfileOverview } from '@/widgets/profile-overview';
+
 defineOptions({
   name: 'ProfilePage',
 });
 </script>
 
 <template>
-  <div>
-    <p class="text-sm text-(--muted-foreground)">ProfilePage</p>
+  <div class="flex w-full flex-col gap-6">
+    <ProfileOverview />
   </div>
 </template>
