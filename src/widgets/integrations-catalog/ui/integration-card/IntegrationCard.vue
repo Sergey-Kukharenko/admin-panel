@@ -59,7 +59,11 @@ function goToDetail() {
   >
     <div class="flex flex-col gap-5 px-5 pt-5">
       <div class="flex items-center gap-1.5">
-        <img :src="iconByType[integration.type]" :alt="integration.name" class="size-7 shrink-0" />
+        <!-- Как в макете (popup icons 52:2123/52:2128): иконка в натуральном размере по центру
+             слота 28px, без растягивания — у S3 пропорции не квадратные (33×25) -->
+        <span class="flex size-7 shrink-0 items-center justify-center">
+          <img :src="iconByType[integration.type]" :alt="integration.name" class="max-w-none" />
+        </span>
 
         <p class="truncate text-base font-medium text-(--text-primary)">{{ integration.name }}</p>
 
