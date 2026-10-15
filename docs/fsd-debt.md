@@ -41,7 +41,7 @@
 | `--text-success-soft` (`#668948`) | В Figma тоже сырой hex («Active» в Status Tag), не переменная | Попросить завести переменную в Figma |
 | `profile-overview/*`, `tariff-*`, `prediction-processing-schedule` (скрытые экраны) | Тексты в обход i18n; `no-raw-text` для них выключен | Перевести вместе с возвратом экрана |
 | `prediction-processing-schedule/lib/scheduleMapper.ts`, `tariff-*` (скрытые экраны) | Зашитая локаль `'ru-RU'` | `toIntlLocale` вместе с возвратом экрана |
-| `widgets/dashboard-*`, `tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |
+| `widgets/tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц (страницы-заглушки ссылаются на него комментарием) | Решение за командой: подключить за `FEATURE_*` (по умолчанию выключен) или удалить |
 
 ## Процесс и прочее
 
