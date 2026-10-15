@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { RouteRecordName } from 'vue-router';
 
+import { routes } from '@/app/router';
 import { AppIcon, type IconName } from '@/shared/ui/app-icon';
 
 defineOptions({
@@ -10,7 +12,7 @@ defineOptions({
 
 interface NavigationItem {
   label: string;
-  to: string;
+  name: RouteRecordName;
   icon: IconName;
 }
 
@@ -25,41 +27,22 @@ withDefaults(
 
 const { t } = useI18n({ useScope: 'global' });
 
-const items = computed<NavigationItem[]>(() => [
-  {
-    label: t('layout.nav.dashboard'),
-    to: '/dashboard',
-    icon: 'function-line',
-  },
-  {
-    label: t('layout.nav.integrations'),
-    to: '/integrations',
-    icon: 'connector-line',
-  },
-  {
-    label: t('layout.nav.datasets'),
-    to: '/datasets',
-    icon: 'folder-check-line',
-  },
-  {
-    label: t('layout.nav.predictions'),
-    to: '/predictions',
-    icon: 'sparkling-line',
-  },
-  {
-    label: t('layout.nav.billing'),
-    to: '/billing',
-    icon: 'receipt-line',
-  },
-]);
+// Пункты меню — маршруты с meta.nav, в порядке объявления в роутере
+const items = computed<NavigationItem[]>(() =>
+  routes.flatMap((route) =>
+    route.name && route.meta?.nav && route.meta.titleKey
+      ? [{ label: t(route.meta.titleKey), name: route.name, icon: route.meta.nav.icon }]
+      : [],
+  ),
+);
 </script>
 
 <template>
   <nav :class="isExpanded ? 'px-3' : 'px-2'">
     <ul class="flex flex-col gap-1">
-      <li v-for="item in items" :key="item.to">
+      <li v-for="item in items" :key="String(item.name)">
         <RouterLink
-          :to="item.to"
+          :to="{ name: item.name }"
           :title="!isExpanded ? item.label : undefined"
           :class="[
             'group flex h-9 items-center gap-3 rounded-(--radius-sm) text-[14px] leading-5 font-medium text-(--muted-foreground) transition-all hover:bg-(--muted) hover:text-(--foreground)',

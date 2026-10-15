@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 
 import { useUserStore } from '@/entities/user';
 import avatarPlaceholderUrl from '@/shared/assets/images/avatar-placeholder.png';
+import { ROUTE_NAMES } from '@/shared/config/routes';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -51,7 +52,7 @@ function handleLogout(): void {
       <p class="truncate text-body-xs text-(--text-secondary)">{{ email }}</p>
     </div>
 
-    <AppDropdownItem @select="router.push('/profile')">
+    <AppDropdownItem @select="router.push({ name: ROUTE_NAMES.profile })">
       <AppIcon name="user-line" class="size-4 text-(--text-secondary)" />
       <span class="text-body-sm font-medium text-(--text-primary)">{{
         t('layout.userMenu.profile')

@@ -13,6 +13,11 @@ export const en: MessageSchema = {
       code: 'Error code',
     },
   },
+  notFound: {
+    title: 'Page not found',
+    description: 'The link may be outdated or the address may contain a typo.',
+    backHome: 'Go to home page',
+  },
   modal: {
     close: 'Close',
   },

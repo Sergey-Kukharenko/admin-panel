@@ -35,10 +35,10 @@
   - отложено до API ключей: модалки ключей → `features/manage-integration-secrets`, панели `rest-api-credentials` и `s3-credentials` → внутренние компоненты `widgets/integration-detail`;
   - [x] `uploads-empty-state` → внутренний компонент `widgets/dataset-history-table/ui/DatasetHistoryEmptyState.vue` (действия в нём нет, только событие открыть дровер);
   - `entities/integration/ui/reveal-secret-modal` — тоже отложено, вместе с модалками ключей.
-- [ ] Роутер:
-  - `ROUTE_NAMES`;
+- [x] Роутер:
+  - `ROUTE_NAMES` в `shared/config/routes.ts`, навигация по имени маршрута;
   - ленивые страницы (`() => import('@/pages/x-page').then((m) => m.XPage)`);
-  - сайдбар и шапка, построенные из `meta`;
+  - сайдбар и шапка, построенные из `meta` (`titleKey`, `nav`, типизация `RouteMeta`);
   - страница 404.
 - [ ] Интерсептор 401 (подключается после `initAuth()`, не трогает `/user/me`, не редиректит при `authError`), `getHttpStatus` и `isClientError`, ретраи только для 5xx и сетевых сбоев.
 - [ ] Прокси `/api` в dev (`server.proxy`), относительный `VITE_API_URL`, один `TooltipProvider` в `App.vue`.

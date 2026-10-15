@@ -19,6 +19,7 @@ import {
   useRequestIntegrationConnection,
 } from '@/features/request-integration-connection';
 import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
+import { ROUTE_NAMES } from '@/shared/config/routes';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -87,7 +88,7 @@ function submitConnectionRequest(request: IntegrationConnectionRequest) {
     onSuccess: () => {
       isConnectionModalOpen.value = false;
       toast.success(t('integrations.detail.requestSuccess'), { duration: 5000 });
-      router.push('/integrations');
+      router.push({ name: ROUTE_NAMES.integrations });
     },
     onError: (error) => {
       // 409 — активная заявка уже есть (например, отправлена из другой вкладки): закрываем окно

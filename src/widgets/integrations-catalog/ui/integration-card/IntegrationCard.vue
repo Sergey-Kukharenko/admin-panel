@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router';
 import type { Integration } from '@/entities/integration';
 import { ConnectionStatusTag, useIntegrationStatus } from '@/entities/integration';
 import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
+import { ROUTE_NAMES } from '@/shared/config/routes';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppSkeleton } from '@/shared/ui/app-skeleton';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
@@ -48,7 +49,10 @@ const disabledTooltip = computed(() => {
 });
 
 function goToDetail() {
-  router.push(`/integrations/${props.integration.type}`);
+  router.push({
+    name: ROUTE_NAMES.integrationDetail,
+    params: { type: props.integration.type },
+  });
 }
 </script>
 
