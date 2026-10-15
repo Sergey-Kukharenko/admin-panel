@@ -1,2 +1,2 @@
 export { invitationApi } from './api/invitation-api';
-export * from './model';
+export type * from './api/types';

@@ -25,14 +25,14 @@
 | Где | Отклонение | Как привести |
 |---|---|---|
 | Все слайсы | Мапперы, форматтеры, валидация, константы, справочники и моки лежат в `model/` (`model/mapper.ts`, `model/utils.ts`, `model/data.ts`, `model/constants.ts`) | Чистые функции → `lib/`, статические данные → `config/` |
-| `entities/*/model/api.ts` | DTO в `model/api.ts` | → `api/types.ts`, алиасы на сгенерированные типы |
 | `shared/ui/app-pagination/model/getPaginationRange.ts` | Чистая логика в `model/` | → `lib/` |
 
 ## Данные и состояние
 
 | Где | Отклонение | Как привести |
 |---|---|---|
-| Все `entities/*/model/api.ts` | DTO описаны вручную, статусы строкой (`/fail|error/` в `prediction-run-history/model/mapper.ts`) | Генерация из OpenAPI; `enum` статусов — на стороне бэка |
+| Статусы файлов, прогонов и сервисов | В OpenAPI — `string` без `enum`, фронт сравнивает литералы со стенда (`/fail|error/` в `prediction-run-history/model/mapper.ts`) | `enum` статусов — на стороне бэка (вопрос задан), затем `api:types` |
+| `entities/integration/api/types.ts` (scopes) | `GET /project-api-credentials/scopes` нет в OpenAPI, типы ручные | Заменить на алиас, когда эндпоинт появится в схеме |
 | `entities/product/model/{displayNames,docsLinks,hiddenServices}.ts`, `entities/dataset/model/templateMapper.ts` | Бизнес-справочники по slug'ам на фронте | Fallback в `config/` с `TODO` на задачу бэка |
 | `features/upload-dataset/model/store.ts` | Стор сам грузит шаблоны в обход `useDatasetTemplates`; `filesMap` с `File` и квота в `localStorage` | Шаблоны через `useDatasetTemplates`; квоту считать на бэке |
 | `.env` | Абсолютный `VITE_API_URL` на dev-хост вшивается в любую сборку (в т.ч. prod) | `server.proxy` + `VITE_API_URL=/api` (порядок — в «Конфигурации») |
