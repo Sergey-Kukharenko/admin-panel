@@ -53,7 +53,7 @@
   - `lib/` — чистые функции: мапперы, форматтеры, валидация;
   - `config/` — константы, справочники, моки;
   - `api/` — вызовы бэка и DTO.
-- [ ] Хардкод цветов заменить на токены: точные совпадения заменены (`--text-disabled`, `--bg-surface-primary`, новые `--text-success-soft`, `--shadow-chart-tooltip`, `--scrollbar-thumb`); остальное без точного токена — в `fsd-debt.md`, ждёт решения по макету.
+- [x] Хардкод цветов заменить на токены — сверено с UI-китом Figma (`Semantic colors`, компоненты): токены `--default-foreground`, `--default-hover`, `--gradient-card`/`-avatar`/`-section`, `--text-success-soft`, `--shadow-chart-tooltip`, `--scrollbar-thumb`; `--bg-surface-secondary` приведён к Figma; остатки на скрытых экранах — в `fsd-debt.md`.
 
 ## Этап 4 — качество и контроль
 

@@ -52,7 +52,7 @@ const showDropdown = computed(() => !isLoading.value && !isError.value && hasDat
             type="button"
             class="group flex h-8 max-h-8 min-h-8 items-center justify-center gap-1.5 rounded-(--radius-lg) border border-(--border-default) px-3 py-1.5 transition-colors hover:bg-(--muted-hover)"
           >
-            <span class="text-sm font-medium leading-5 text-[#18181b]">
+            <span class="text-sm font-medium leading-5 text-(--default-foreground)">
               {{ selectedProductName || t('predictions.history.allProducts') }}
             </span>
             <!-- data-state="open" ставит DropdownMenuTrigger (as-child) -->

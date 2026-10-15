@@ -131,11 +131,11 @@ const handleFilesChange = (event: Event) => {
           </AppDropdownItem>
           <AppDropdownItem
             :disabled="!hasListItems"
-            class="data-highlighted:bg-red-50!"
+            class="data-highlighted:bg-(--bg-button-secondary)!"
             @select="emit('clearAll')"
           >
-            <AppIcon name="delete-bin-line" class="size-4 text-(--danger)" />
-            <span class="text-body-sm font-medium text-(--danger)">{{
+            <AppIcon name="delete-bin-line" class="size-4 text-(--text-error)" />
+            <span class="text-body-sm font-medium text-(--text-error)">{{
               t('datasets.upload.templateItem.removeFiles')
             }}</span>
           </AppDropdownItem>

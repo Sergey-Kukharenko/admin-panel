@@ -56,6 +56,8 @@
   --text-success-alt: var(--success-alt);
   /* Приглушённый зелёный статуса «Подключено» / «Готово» (иконка и подпись) */
   --text-success-soft: #668948;
+  /* Figma default/default-foreground — текст кнопки-фильтра «Все продукты» */
+  --default-foreground: #18181b;
   --text-warning: var(--warning-foreground);
   --text-error: var(--danger-failed);
 
@@ -70,7 +72,7 @@
   /* Фоновые подложки */
   --bg-surface-primary: var(--color-neutral-0);
   --bg-surface-neutral: #f8f8f8;
-  --bg-surface-secondary: #f1f1f1;
+  --bg-surface-secondary: rgba(48, 48, 50, 0.03);
   --bg-surface-accent: #f8f8f9;
   --bg-surface-hover: var(--color-neutral-100);
 
@@ -88,6 +90,8 @@
   --muted: rgba(48, 48, 50, 0.06);
   --muted-hover: rgba(48, 48, 50, 0.1);
   --muted-hover-soft: rgba(48, 48, 50, 0.02);
+  /* Figma default/default-hover — нажатый Switch (вместе с opacity-80) */
+  --default-hover: #e1e1e2;
 
   /* Accent (чекбоксы, тумблеры) */
   --bg-accent: #aceb5c;
@@ -141,6 +145,12 @@
   --border-error: var(--danger-failed);
 
   --scrollbar-thumb: var(--color-neutral-300);
+
+  /* Figma: стиль «card bg» (Product card, Service card) */
+  --gradient-card: linear-gradient(181.26deg, #ffffff 41.737%, #efefef 96.93%);
+  /* Figma: заливка компонента avatar */
+  --gradient-avatar: linear-gradient(146.43deg, #bfed85 21.507%, #e4ffc3 94.327%);
+  --gradient-section: linear-gradient(180deg, #ffffff 1%, rgba(217, 217, 217, 0.3) 37%);
 
   /* Statuses */
   --success: var(--color-green-700);

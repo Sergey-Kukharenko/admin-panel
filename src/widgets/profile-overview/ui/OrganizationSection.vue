@@ -10,8 +10,7 @@ defineOptions({
 
 <template>
   <section
-    class="flex w-full flex-col gap-2 rounded-(--radius-xl) pt-4 pb-2"
-    style="background-image: linear-gradient(180deg, #ffffff 1%, rgba(217, 217, 217, 0.3) 37%)"
+    class="flex w-full flex-col gap-2 rounded-(--radius-xl) pt-4 pb-2 bg-(image:--gradient-section)"
   >
     <p class="px-4 text-base font-medium text-[#181818]">Организация</p>
 

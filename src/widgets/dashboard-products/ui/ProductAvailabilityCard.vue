@@ -14,8 +14,7 @@ defineProps<{
 
 <template>
   <div
-    class="relative flex h-47.5 flex-1 flex-col justify-between overflow-hidden rounded-2xl"
-    style="background-image: linear-gradient(181deg, #ffffff 41.7%, #efefef 96.9%)"
+    class="relative flex h-47.5 flex-1 flex-col justify-between overflow-hidden rounded-2xl bg-(image:--gradient-card)"
   >
     <div class="flex flex-col gap-2 px-5 pt-5">
       <div class="flex items-center gap-2">

@@ -34,8 +34,7 @@ function handleLogout(): void {
     <template #trigger>
       <button
         type="button"
-        class="relative size-7 shrink-0 overflow-hidden rounded-(--radius-full)"
-        style="background-image: linear-gradient(146deg, #bfed85 21.5%, #e4ffc3 94.33%)"
+        class="relative size-7 shrink-0 overflow-hidden rounded-(--radius-full) bg-(image:--gradient-avatar)"
       >
         <img
           :src="avatarPlaceholderUrl"
