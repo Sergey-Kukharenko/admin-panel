@@ -15,7 +15,6 @@
 | Где | Отклонение | Как привести |
 |---|---|---|
 | `widgets/integration-detail/ui/IntegrationDetail.vue` | Импортирует 2 виджета: `rest-api-credentials`, `s3-credentials` | Панели ключей → `features/manage-api-secrets` (или собирать на странице) |
-| `widgets/dataset-history-table/ui/DatasetHistoryTable.vue` | Импортирует виджет `uploads-empty-state` | Пустое состояние с CTA загрузки → в `features/upload-dataset` или внутрь виджета |
 | `entities/integration/ui/reveal-secret-modal` | Модалка-действие в слое `entities` | Перенести в `features` |
 | `entities/integration/model/store.ts` | Мутации на моках в Pinia сущности | Временное решение под фича-флагом; не образец. Заменить на API, когда появится |
 

@@ -4,6 +4,10 @@ import { useI18n } from 'vue-i18n';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 
+defineOptions({
+  name: 'DatasetHistoryEmptyState',
+});
+
 const emit = defineEmits<{
   upload: [];
 }>();
