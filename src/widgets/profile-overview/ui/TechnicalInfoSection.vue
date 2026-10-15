@@ -15,7 +15,9 @@ defineOptions({
   >
     <p class="px-4 text-base font-medium text-[#181818]">Техническая информация</p>
 
-    <div class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4">
+    <div
+      class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4"
+    >
       <ProfileInfoRow
         label="project_slug"
         :value="MOCK_ORGANIZATION_TECH_INFO.projectSlug"

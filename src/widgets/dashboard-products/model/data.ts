@@ -15,7 +15,8 @@ export const DASHBOARD_PRODUCTS: DashboardProduct[] = [
   {
     id: 'recommender-system',
     name: 'Recommender System',
-    description: 'Настраивает выдачу игр казино под каждого игрока для роста вовлечённости и выручки.',
+    description:
+      'Настраивает выдачу игр казино под каждого игрока для роста вовлечённости и выручки.',
     isActive: true,
     dataStatusLabel: 'Awaiting',
     resultsDate: '16 Feb 2026, 12:15',

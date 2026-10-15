@@ -41,7 +41,9 @@ function toggle(productId: string, field: 'writeData' | 'readResults') {
       <span class="w-48.5 font-mono text-xs font-medium uppercase text-(--text-secondary)">
         {{ productColumnLabel }}
       </span>
-      <span class="flex-1 font-mono text-xs font-medium uppercase text-(--text-secondary)">Write data</span>
+      <span class="flex-1 font-mono text-xs font-medium uppercase text-(--text-secondary)"
+        >Write data</span
+      >
       <span class="w-28 text-right font-mono text-xs font-medium uppercase text-(--text-secondary)">
         Read results
       </span>

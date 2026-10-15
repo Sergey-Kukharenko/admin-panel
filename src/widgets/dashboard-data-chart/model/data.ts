@@ -32,11 +32,25 @@ export const DATA_CHART_BY_PRODUCT: Record<string, DataChartDataset> = {
     bars: buildBars({
       8: {
         tooltipLabel: '18 мая',
-        values: { bets: 60_000, users: 45_000, betsDaily: 15_000, balanceDaily: 10_000, payments: 8_000, vipUsers: 12_000 },
+        values: {
+          bets: 60_000,
+          users: 45_000,
+          betsDaily: 15_000,
+          balanceDaily: 10_000,
+          payments: 8_000,
+          vipUsers: 12_000,
+        },
       },
       13: {
         tooltipLabel: '23 мая',
-        values: { bets: 55_000, users: 50_000, betsDaily: 20_000, balanceDaily: 12_000, payments: 10_000, vipUsers: 15_000 },
+        values: {
+          bets: 55_000,
+          users: 50_000,
+          betsDaily: 20_000,
+          balanceDaily: 12_000,
+          payments: 10_000,
+          vipUsers: 15_000,
+        },
       },
     }),
   },
@@ -46,11 +60,25 @@ export const DATA_CHART_BY_PRODUCT: Record<string, DataChartDataset> = {
     bars: buildBars({
       6: {
         tooltipLabel: '17 мая',
-        values: { bets: 40_000, users: 38_000, betsDaily: 12_000, balanceDaily: 9_000, payments: 7_000, vipUsers: 8_000 },
+        values: {
+          bets: 40_000,
+          users: 38_000,
+          betsDaily: 12_000,
+          balanceDaily: 9_000,
+          payments: 7_000,
+          vipUsers: 8_000,
+        },
       },
       16: {
         tooltipLabel: '27 мая',
-        values: { bets: 48_000, users: 42_000, betsDaily: 14_000, balanceDaily: 10_000, payments: 9_000, vipUsers: 11_000 },
+        values: {
+          bets: 48_000,
+          users: 42_000,
+          betsDaily: 14_000,
+          balanceDaily: 10_000,
+          payments: 9_000,
+          vipUsers: 11_000,
+        },
       },
     }),
   },

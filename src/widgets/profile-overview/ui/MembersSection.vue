@@ -37,10 +37,14 @@ defineOptions({
         :key="member.id"
         class="flex w-full items-center border-t border-(--border-default)"
       >
-        <div class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+        <div
+          class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)"
+        >
           {{ member.name }}
         </div>
-        <div class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)">
+        <div
+          class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4 text-sm text-(--text-primary)"
+        >
           {{ member.email }}
         </div>
         <div class="flex h-11 flex-1 items-center px-4 text-sm text-(--text-primary)">

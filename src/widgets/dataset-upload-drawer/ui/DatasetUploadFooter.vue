@@ -18,12 +18,7 @@ const { t } = useI18n({ useScope: 'global' });
 
 <template>
   <div class="flex items-center justify-end w-full h-19 px-5 py-4 gap-2 bg-(--background)">
-    <AppButton
-      variant="outline"
-      size="medium"
-      :disabled="submitting"
-      @click="emit('cancel')"
-    >
+    <AppButton variant="outline" size="medium" :disabled="submitting" @click="emit('cancel')">
       {{ t('datasets.upload.footer.cancel') }}
     </AppButton>
 

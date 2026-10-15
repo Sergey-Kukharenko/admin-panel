@@ -18,16 +18,9 @@ const userStore = useUserStore();
   />
   <AdminLayout v-else />
 
-  <Toaster
-    theme="dark"
-    position="bottom-center"
-    :style="{ '--width': '483px' }"
-  >
+  <Toaster theme="dark" position="bottom-center" :style="{ '--width': '483px' }">
     <template #success-icon>
-      <AppIcon
-        name="check-line"
-        class="size-4"
-      />
+      <AppIcon name="check-line" class="size-4" />
     </template>
   </Toaster>
 </template>

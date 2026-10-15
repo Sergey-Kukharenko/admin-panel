@@ -26,7 +26,11 @@ defineOptions({
 
       <div class="h-px w-full bg-(--border-default)" />
 
-      <ProfileInfoRow label="Дата создания" :value="MOCK_ORGANIZATION.createdAt" :copyable="false" />
+      <ProfileInfoRow
+        label="Дата создания"
+        :value="MOCK_ORGANIZATION.createdAt"
+        :copyable="false"
+      />
     </div>
   </section>
 </template>

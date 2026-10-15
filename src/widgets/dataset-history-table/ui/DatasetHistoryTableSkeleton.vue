@@ -25,15 +25,11 @@ defineOptions({
     <div
       class="flex w-full items-center rounded-(--radius-xl) bg-(--bg-surface-neutral) pl-6 pr-2 self-stretch"
     >
-      <div
-        class="flex h-9 flex-1 items-center gap-1.5 border-r border-(--border-subtle) pl-7 pr-4"
-      >
+      <div class="flex h-9 flex-1 items-center gap-1.5 border-r border-(--border-subtle) pl-7 pr-4">
         <AppSkeleton class="h-2.5 w-20 rounded-(--radius-sm)" />
       </div>
 
-      <div
-        class="flex h-9 w-40 items-center gap-1.5 border-r border-(--border-subtle) pl-4 pr-3"
-      >
+      <div class="flex h-9 w-40 items-center gap-1.5 border-r border-(--border-subtle) pl-4 pr-3">
         <AppSkeleton class="h-2.5 w-20 rounded-(--radius-sm)" />
       </div>
 

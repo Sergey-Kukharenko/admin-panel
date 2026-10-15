@@ -23,7 +23,7 @@
   - вынести `ErrorDetails` из `widgets/dataset-history-table/ui/DatasetHistoryErrorDialog.vue` в `model/types.ts`;
   - заменить импорты своего же слайса по алиасу на относительные (`entities/dataset/ui/dataset-template-icon/DatasetTemplateIcon.vue`, `widgets/predictions-manager/model/constants.ts`).
 - [x] Query keys: единый формат (массив, домен первым), экспорт только для инвалидации из другого слайса; `QUERY_KEYS` → `URL_PARAMS` (это имена параметров URL). Фабрики `<entity>Keys` — по мере появления мутаций.
-- [ ] Скрипты `check:lint` и `format:check` (не `lint:check`: его подхватит маска `run-s lint:*`), довести проект до зелёных проверок.
+- [x] Скрипты `check:lint`, `check:format` и общий `check` (type-check, линт, формат, тесты) — без `--fix`, не попадают под маску `run-s lint:*`; проект доведён до зелёных проверок.
 
 ## Этап 2 — базовая инфраструктура
 

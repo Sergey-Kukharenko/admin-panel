@@ -88,7 +88,9 @@ const handleDragLeave = () => {
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
   >
-    <p class="text-body-sm text-(--text-secondary) mb-3 select-none">{{ t('datasets.upload.zone.empty') }}</p>
+    <p class="text-body-sm text-(--text-secondary) mb-3 select-none">
+      {{ t('datasets.upload.zone.empty') }}
+    </p>
 
     <AppButton variant="outline" size="medium" :disabled="disabled" @click="handleSelect">
       {{ t('datasets.upload.zone.chooseFiles') }}

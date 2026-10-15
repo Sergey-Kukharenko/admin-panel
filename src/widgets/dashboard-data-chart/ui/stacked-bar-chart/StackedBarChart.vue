@@ -42,7 +42,8 @@ function formatValue(value: number): string {
 
 function orderedVisibleSeries(): ChartSeriesDef[] {
   return STACK_ORDER.map((key) => props.series.find((series) => series.key === key)).filter(
-    (series): series is ChartSeriesDef => Boolean(series) && props.visibleSeriesKeys.has(series!.key),
+    (series): series is ChartSeriesDef =>
+      Boolean(series) && props.visibleSeriesKeys.has(series!.key),
   );
 }
 

@@ -60,7 +60,6 @@
 
 | Где | Отклонение | Как привести |
 |---|---|---|
-| `package.json` | Нет `check:lint`, `check:format`, `icons:sprite`; Prettier вне проверок, 15 файлов не отформатированы; ошибка ESLint в `vitest.config.ts`; 6 `console.*` | Скрипты, CI-джоба `quality`, разовая чистка |
-| `.gitlab-ci.yml` | Нет проверок качества | Тикет у DevOps; джоба `quality` |
+| `.gitlab-ci.yml` | Нет проверок качества | Тикет у DevOps: джоба `quality` = `npm run check` |
 | Весь код | Комментарии на русском | Переводить при правке строки, массово не переводить |
 | `README.md` | Шаблон create-vue | Переписать |

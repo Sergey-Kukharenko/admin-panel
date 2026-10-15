@@ -44,8 +44,8 @@ export function useScheduleCalendar() {
   );
 
   // Реальное количество дней в выбранном месяце (вместо заглушки "31 для июля/августа, иначе 30")
-  const daysInCurrentMonth = computed(
-    () => new Date(Number(selectedYear.value), selectedMonthIndex.value + 1, 0).getDate(),
+  const daysInCurrentMonth = computed(() =>
+    new Date(Number(selectedYear.value), selectedMonthIndex.value + 1, 0).getDate(),
   );
 
   const calendarDays = computed<CalendarDay[]>(() => {
