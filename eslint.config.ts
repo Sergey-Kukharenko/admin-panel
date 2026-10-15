@@ -94,6 +94,12 @@ export default defineConfigWithVueTs(
       // ♿ A11Y
       // =========================
 
+      // В шаблоне — emit из defineEmits, а не $emit (типизированные события, один стиль)
+      'vue/no-restricted-syntax': [
+        'error',
+        { selector: "CallExpression[callee.name='$emit']", message: 'Use emit() from defineEmits instead of $emit().' },
+      ],
+
       // <label> связан с полем через for/id ИЛИ оборачивает его — по умолчанию правило требует оба
       'vuejs-accessibility/label-has-for': [
         'error',

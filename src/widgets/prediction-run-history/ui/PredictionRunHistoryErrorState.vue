@@ -8,7 +8,7 @@ defineOptions({
   name: 'PredictionRunHistoryErrorState',
 });
 
-defineEmits<{
+const emit = defineEmits<{
   retry: [];
 }>();
 
@@ -27,7 +27,7 @@ const { t } = useI18n({ useScope: 'global' });
       </p>
     </div>
 
-    <AppButton variant="outline" size="small" @click="$emit('retry')">{{
+    <AppButton variant="outline" size="small" @click="emit('retry')">{{
       t('predictions.history.error.retry')
     }}</AppButton>
   </div>

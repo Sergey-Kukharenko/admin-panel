@@ -40,7 +40,7 @@ const period = defineModel<DatasetPeriod | ''>('period', {
   default: '',
 });
 
-defineEmits<{
+const emit = defineEmits<{
   openUpload: [];
 }>();
 
@@ -90,7 +90,7 @@ const dynamicTypeOptions = computed(() => {
     </div>
 
     <div class="shrink-0">
-      <AppButton variant="primary" size="small" @click="$emit('openUpload')">
+      <AppButton variant="primary" size="small" @click="emit('openUpload')">
         {{ t('datasets.toolbar.uploadButton') }}
       </AppButton>
     </div>

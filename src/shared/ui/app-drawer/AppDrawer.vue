@@ -58,7 +58,7 @@ const emit = defineEmits<{
               {{ title }}
             </h2>
 
-            <AppButton variant="outline" size="icon" @click="$emit('close')">
+            <AppButton variant="outline" size="icon" @click="emit('close')">
               <AppIcon name="close-line" />
             </AppButton>
           </header>

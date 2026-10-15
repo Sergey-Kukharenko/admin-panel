@@ -18,7 +18,7 @@ const props = defineProps<{
   expanded: boolean;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   toggle: [];
 }>();
 
@@ -31,7 +31,7 @@ const formattedDate = computed(() => formatDatasetGroupDate(props.date));
   <button
     type="button"
     class="flex gap-3 h-12 w-full items-center bg-transparent px-6 text-left focus-visible:outline-none"
-    @click="$emit('toggle')"
+    @click="emit('toggle')"
   >
     <div class="flex min-w-0 items-center gap-3">
       <div class="flex shrink-0 items-center gap-2">

@@ -253,7 +253,8 @@ shared → entities → features → widgets → pages → app
 - **`v-model` — `defineModel`.** Пара `modelValue` / `update:modelValue` вручную — только при
   нетривиальной записи. Управляемые компоненты без двусторонней привязки (модалка: `:open` + `@close`)
   — пропс + событие.
-- `defineEmits` — tuple-синтаксис с именованными аргументами; в шаблоне `emit(...)`, не `$emit`.
+- `defineEmits` — tuple-синтаксис с именованными аргументами; в шаблоне `emit(...)`, не `$emit`
+  (проверяет `vue/no-restricted-syntax`).
 - Обёртка над нативным элементом — `inheritAttrs: false` + `v-bind="$attrs"`.
 - `useI18n({ useScope: 'global' })`; роутер и сторы — `useRoute()` / `useRouter()` / `useXxxStore()`,
   не `$route` в шаблоне.

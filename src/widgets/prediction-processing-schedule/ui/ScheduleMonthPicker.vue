@@ -15,7 +15,7 @@ const props = defineProps<{
   selectedMonthName: string;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   select: [month: string];
 }>();
 
@@ -47,7 +47,7 @@ const monthRows = computed(() => {
           :key="month"
           type="button"
           :class="getMonthCellClasses(month, selectedMonthName)"
-          @click="$emit('select', month)"
+          @click="emit('select', month)"
         >
           {{ month }}
         </button>
