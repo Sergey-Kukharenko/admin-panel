@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import { authorizationApi, sessionApi } from '@/shared/api';
 import { API_URL } from '@/shared/config/api';
 import { IS_DEV } from '@/shared/config/env';
 
+import { authorizationApi } from '../api/authorization-api';
+import { sessionApi } from '../api/session-api';
 import type { UserProfile } from './types';
 
 export const useUserStore = defineStore('user', () => {

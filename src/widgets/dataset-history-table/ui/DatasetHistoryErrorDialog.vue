@@ -6,18 +6,13 @@ import { useI18n } from 'vue-i18n';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
 
+import type { ErrorDetails } from '../model/types';
+
 defineOptions({
   name: 'DatasetHistoryErrorDialog',
 });
 
 const { t } = useI18n({ useScope: 'global' });
-
-export interface ErrorDetails {
-  checkDate: string;
-  dataType: string;
-  checkedRows: number;
-  errorsFound: number;
-}
 
 const props = defineProps<{
   open: boolean;

@@ -5,19 +5,20 @@
 
 **Правила работы:**
 
-- Один пункт — один MR в `develop`, без смешивания с фичами.
-- Каждый MR проходит `type-check`, линт и тесты, затем ревью и ручную проверку затронутых экранов.
+- Проект — черновик: работаем в `main`, отдельная ветка — только по запросу.
+- Один пункт — один коммит, без смешивания с фичами.
+- Перед коммитом — `type-check`, линт и тесты, ручная проверка затронутых экранов.
 - Сделанные пункты отмечаем `[x]` в этом файле.
 
 ## Этап 0 — подготовка
 
 - [ ] Поправить манифест по замечаниям и влить его.
 - [ ] Получить доступ к OpenAPI-схеме бэка.
-- [ ] Согласовать с DevOps джобу `quality` и флоу `develop`.
+- [ ] Согласовать с DevOps джобу `quality`.
 
 ## Этап 1 — быстрые исправления
 
-- [ ] Точечные нарушения FSD:
+- [x] Точечные нарушения FSD:
   - перенести `shared/api/session-api.ts` и `shared/api/authorization-api.ts` в `entities/user/api/`;
   - вынести `ErrorDetails` из `widgets/dataset-history-table/ui/DatasetHistoryErrorDialog.vue` в `model/types.ts`;
   - заменить импорты своего же слайса по алиасу на относительные (`entities/dataset/ui/dataset-template-icon/DatasetTemplateIcon.vue`, `widgets/predictions-manager/model/constants.ts`).
