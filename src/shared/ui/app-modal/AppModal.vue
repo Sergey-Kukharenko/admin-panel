@@ -15,6 +15,7 @@ defineOptions({
 const props = withDefaults(defineProps<AppModalProps>(), {
   title: undefined,
   size: 'md',
+  titleSize: 'md',
   overlay: 'strong',
   hasDescription: false,
 });
@@ -37,6 +38,8 @@ const overlayClasses = computed(() =>
 );
 
 const sizeClasses = computed(() => (props.size === 'sm' ? 'w-100' : 'w-120'));
+
+const titleClasses = computed(() => (props.titleSize === 'sm' ? 'text-sm' : 'text-base'));
 
 const headerClasses = computed(() => (props.title ? ['gap-2', 'py-4'] : ['justify-end', 'pt-4']));
 
@@ -75,7 +78,11 @@ const contentAttrs = computed(() =>
           :class="sizeClasses"
         >
           <header class="flex w-full shrink-0 items-center px-5" :class="headerClasses">
-            <DialogTitle v-if="title" class="flex-1 text-base font-medium text-(--text-primary)">
+            <DialogTitle
+              v-if="title"
+              class="flex-1 font-medium text-(--text-primary)"
+              :class="titleClasses"
+            >
               {{ title }}
             </DialogTitle>
 

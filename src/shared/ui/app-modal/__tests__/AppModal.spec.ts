@@ -103,4 +103,15 @@ describe('AppModal', () => {
     await flushPromises();
     expect(getDialog()?.classList.contains('w-100')).toBe(true);
   });
+
+  it('переключает размер заголовка по titleSize', async () => {
+    const medium = mountModal({ title: 'Заголовок' });
+    await flushPromises();
+    expect(getDialog()?.querySelector('h2')?.classList.contains('text-base')).toBe(true);
+    medium.unmount();
+
+    mountModal({ title: 'Заголовок', titleSize: 'sm' });
+    await flushPromises();
+    expect(getDialog()?.querySelector('h2')?.classList.contains('text-sm')).toBe(true);
+  });
 });

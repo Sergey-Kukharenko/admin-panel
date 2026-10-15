@@ -1,9 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
+import { useQuery } from '@tanstack/vue-query';
 import type { MaybeRefOrGetter } from 'vue';
 import { computed, toValue } from 'vue';
 
 import { integrationRequestApi } from '../api/integration-request-api';
-import type { RestApiConnectionRequest, S3ConnectionRequest } from './connectionRequest';
 import type { IntegrationStatus, IntegrationType } from './types';
 
 export const integrationStatusQueryKey = (type: IntegrationType) =>
@@ -31,27 +30,5 @@ export function useIntegrationStatus(type: MaybeRefOrGetter<IntegrationType>) {
     refetchOnWindowFocus: true,
     refetchInterval: (query) =>
       query.state.data === 'setup_in_progress' ? INTEGRATION_STATUS_POLLING_INTERVAL : false,
-  });
-}
-
-export type IntegrationConnectionRequest =
-  | { type: 'rest-api'; payload: RestApiConnectionRequest }
-  | { type: 's3'; payload: S3ConnectionRequest };
-
-/** Отправка заявки; после успеха карточка сразу показывает «Настройка», не дожидаясь перезапроса */
-export function useRequestIntegrationConnection() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (request: IntegrationConnectionRequest) => {
-      const response =
-        request.type === 'rest-api'
-          ? await integrationRequestApi.requestRestApi(request.payload)
-          : await integrationRequestApi.requestS3(request.payload);
-      return response.data;
-    },
-    onSuccess: (data, request) => {
-      queryClient.setQueryData(integrationStatusQueryKey(request.type), data.status);
-    },
   });
 }

@@ -14,10 +14,9 @@
 
 | Где | Отклонение | Как привести |
 |---|---|---|
-| `widgets/integration-detail/ui/IntegrationDetail.vue` | Импортирует 4 виджета: `rest-api-connection-modal`, `rest-api-credentials`, `s3-connection-modal`, `s3-credentials` | Модалки → `features/connect-rest-api`, `features/connect-s3`; панели ключей → `features/manage-api-secrets` (или собирать на странице) |
+| `widgets/integration-detail/ui/IntegrationDetail.vue` | Импортирует 3 виджета: `rest-api-connection-modal`, `rest-api-credentials`, `s3-credentials` | Модалку → `features/request-integration-connection` (туда уже переехали S3-модалка и мутация); панели ключей → `features/manage-api-secrets` (или собирать на странице) |
 | `widgets/dataset-history-table/ui/DatasetHistoryTable.vue` | Импортирует виджет `uploads-empty-state` | Пустое состояние с CTA загрузки → в `features/upload-dataset` или внутрь виджета |
 | `entities/integration/ui/reveal-secret-modal` | Модалка-действие в слое `entities` | Перенести в `features` |
-| `entities/integration/model/useIntegrationStatus.ts` (`useRequestIntegrationConnection`) | Мутация действия пользователя в `entities` | Перенести в `features/connect-*` вместе с модалками |
 | `entities/integration/model/store.ts` | Мутации на моках в Pinia сущности | Временное решение под фича-флагом; не образец. Заменить на API, когда появится |
 
 Импортов вверх из `entities` и `features`, кросс-импортов между `features` и между `entities` нет; страницы тонкие и без запросов.
@@ -44,7 +43,7 @@
 
 | Где | Отклонение | Как привести |
 |---|---|---|
-| `RevealSecretModal`, `ChangePasswordModal`, `RestApiConnectionModal`, `S3ConnectionModal`, `CreateApiSecretModal`, `CreateKeySecretModal`, `DatasetHistoryErrorDialog` | Каркас radix-диалога скопирован вместо `AppModal` | Перевести на `AppModal` (`shared/ui/app-modal`) |
+| `RevealSecretModal`, `ChangePasswordModal`, `RestApiConnectionModal`, `CreateApiSecretModal`, `CreateKeySecretModal`, `DatasetHistoryErrorDialog` | Каркас radix-диалога скопирован вместо `AppModal` | Перевести на `AppModal` (`shared/ui/app-modal`) |
 | `AppTooltip`, `PredictionsManager`, `PredictionRunHistory` | `TooltipProvider` в каждом компоненте, в `App.vue` его нет | Один провайдер в `App.vue`, затем убрать локальные |
 | `app/router/index.ts`, `AdminHeader`, `SidebarNavigation` | Статические импорты страниц, нет `name`, пути строками, заголовки и меню отдельными списками, нет 404 | Ленивые страницы, `ROUTE_NAMES`, `meta` |
 | `ProductAccessTable.vue`, `DatasetUploadZone.vue`, `AppButton.vue` | Экспорт типов из `.vue`; `AppButton.types.ts` устарел и не используется | Типы в `*.types.ts` |

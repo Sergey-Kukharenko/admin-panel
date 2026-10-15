@@ -1,2 +1,7 @@
-export type { AppModalOverlay, AppModalProps, AppModalSize } from './AppModal.types';
+export type {
+  AppModalOverlay,
+  AppModalProps,
+  AppModalSize,
+  AppModalTitleSize,
+} from './AppModal.types';
 export { default as AppModal } from './AppModal.vue';
