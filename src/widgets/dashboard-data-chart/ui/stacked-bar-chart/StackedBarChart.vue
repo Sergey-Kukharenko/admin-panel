@@ -3,6 +3,8 @@ import type { ApexOptions, ApexTooltipCustomOpts } from 'apexcharts';
 import { onMounted, ref, watch } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
+import { getAppLocale, toIntlLocale } from '@/shared/i18n';
+
 import type { ChartSeriesDef, ChartSeriesKey, DataChartBar } from '../../model/types';
 
 defineOptions({
@@ -37,7 +39,7 @@ function readToken(name: string): string {
 }
 
 function formatValue(value: number): string {
-  return value.toLocaleString('ru-RU');
+  return value.toLocaleString(toIntlLocale(getAppLocale()));
 }
 
 function orderedVisibleSeries(): ChartSeriesDef[] {

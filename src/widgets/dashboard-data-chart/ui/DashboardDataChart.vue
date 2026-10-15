@@ -11,6 +11,7 @@ import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { TARIFF_USAGE_LIMITS } from '@/entities/tariff';
+import { toIntlLocale } from '@/shared/i18n';
 import { AppIcon } from '@/shared/ui/app-icon';
 
 import { DATA_CHART_BY_PRODUCT, DATA_CHART_SERIES } from '../config/mocks';
@@ -52,7 +53,7 @@ function toggleSeries(key: ChartSeriesKey): void {
   }
 }
 
-const { t } = useI18n({ useScope: 'global' });
+const { t, locale } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -119,7 +120,7 @@ const { t } = useI18n({ useScope: 'global' });
 
       <div class="flex flex-col">
         <p class="text-element-accent leading-8 tracking-tight text-(--text-primary)">
-          {{ dataset.totalRows.toLocaleString('ru-RU') }}
+          {{ dataset.totalRows.toLocaleString(toIntlLocale(locale)) }}
         </p>
         <p class="text-body-sm text-(--text-secondary)">{{ t('dashboard.rows') }}</p>
       </div>

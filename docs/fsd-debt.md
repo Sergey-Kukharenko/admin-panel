@@ -40,7 +40,7 @@
 | `profile-overview/*` (`text-[#181818]`), `PredictionProcessingSchedule` (`hover:bg-black/5`) | Цвета без токена; в UI-ките состояния не раскрыты, экраны скрыты | Решить, когда экраны вернутся |
 | `--text-success-soft` (`#668948`) | В Figma тоже сырой hex («Active» в Status Tag), не переменная | Попросить завести переменную в Figma |
 | `profile-overview/*`, `tariff-*`, `prediction-processing-schedule` (скрытые экраны) | Тексты в обход i18n; `no-raw-text` для них выключен | Перевести вместе с возвратом экрана |
-| `widgets/dataset-history-table/lib/utils.ts`, `entities/integration/lib/format.ts`, `dashboard-*-chart` (`toLocaleString('ru-RU')`) | Зашитые локали `'ru-RU'`, `'en-GB'` | `toIntlLocale` |
+| `prediction-processing-schedule/lib/scheduleMapper.ts`, `tariff-*` (скрытые экраны) | Зашитая локаль `'ru-RU'` | `toIntlLocale` вместе с возвратом экрана |
 | `widgets/dashboard-*`, `tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |
 
 ## Процесс и прочее

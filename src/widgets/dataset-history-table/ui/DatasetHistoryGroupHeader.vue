@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import { toIntlLocale } from '@/shared/i18n';
 import { AppIcon } from '@/shared/ui/app-icon';
 
 import { formatDatasetGroupDate } from '../lib/utils';
@@ -22,9 +23,11 @@ const emit = defineEmits<{
   toggle: [];
 }>();
 
-const { t } = useI18n({ useScope: 'global' });
+const { t, locale } = useI18n({ useScope: 'global' });
 
-const formattedDate = computed(() => formatDatasetGroupDate(props.date));
+const formattedDate = computed(() =>
+  formatDatasetGroupDate(props.date, toIntlLocale(locale.value)),
+);
 </script>
 
 <template>

@@ -3,6 +3,8 @@ import type { ApexOptions, ApexTooltipCustomOpts } from 'apexcharts';
 import { computed, onMounted, ref } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 
+import { getAppLocale, toIntlLocale } from '@/shared/i18n';
+
 import type { PredictionSeries } from '../../model/types';
 
 defineOptions({
@@ -129,7 +131,7 @@ onMounted(() => {
                 <span style="width:8px;height:8px;border-radius:1px;flex-shrink:0;background:${color};display:inline-block;"></span>
                 <span style="font-size:12px;white-space:nowrap;">${name}</span>
               </div>
-              <span style="font-size:12px;opacity:.7;white-space:nowrap;">${Number(value).toLocaleString('ru-RU')}</span>
+              <span style="font-size:12px;opacity:.7;white-space:nowrap;">${Number(value).toLocaleString(toIntlLocale(getAppLocale()))}</span>
             </div>`;
           })
           .join('');

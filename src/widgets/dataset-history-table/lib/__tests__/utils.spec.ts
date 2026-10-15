@@ -8,11 +8,12 @@ afterEach(() => {
 
 describe('formatDatasetGroupDate', () => {
   it('форматирует ISO-дату для заголовка группы', () => {
-    expect(formatDatasetGroupDate('2026-07-24T09:57:23.585609Z')).toBe('24 июл. 2026 г.');
+    expect(formatDatasetGroupDate('2026-07-24T09:57:23.585609Z', 'ru-RU')).toBe('24 июл. 2026 г.');
+    expect(formatDatasetGroupDate('2026-07-24T09:57:23.585609Z', 'en-US')).toBe('Jul 24, 2026');
   });
 
   it('пустая строка — пустой результат', () => {
-    expect(formatDatasetGroupDate('')).toBe('');
+    expect(formatDatasetGroupDate('', 'ru-RU')).toBe('');
   });
 });
 
