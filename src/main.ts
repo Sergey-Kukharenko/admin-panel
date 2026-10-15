@@ -5,8 +5,10 @@ import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
 import App from '@/App.vue';
+import { setupAuthInterceptor } from '@/app/providers';
 import { router } from '@/app/router';
 import { useUserStore } from '@/entities/user';
+import { isRetryableError } from '@/shared/api';
 import { i18n } from '@/shared/i18n';
 
 async function bootstrap() {
@@ -22,7 +24,8 @@ async function bootstrap() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false, // Отключаем повторные запросы при переключении вкладок
-        retry: 1, // В случае сбоя сети делаем только одну повторную попытку
+        // Одна повторная попытка и только при сбое сети или 5xx: 4xx повтор не исправит
+        retry: (failureCount, error) => failureCount < 1 && isRetryableError(error),
       },
     },
   });
@@ -33,6 +36,8 @@ async function bootstrap() {
   const userStore = useUserStore();
 
   await userStore.initAuth();
+
+  setupAuthInterceptor();
 
   app.use(router);
 

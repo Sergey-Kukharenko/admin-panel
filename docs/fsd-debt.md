@@ -35,7 +35,6 @@
 | Все `entities/*/model/api.ts` | DTO описаны вручную, статусы строкой (`/fail|error/` в `prediction-run-history/model/mapper.ts`) | Генерация из OpenAPI; `enum` статусов — на стороне бэка |
 | `entities/product/model/{displayNames,docsLinks,hiddenServices}.ts`, `entities/dataset/model/templateMapper.ts` | Бизнес-справочники по slug'ам на фронте | Fallback в `config/` с `TODO` на задачу бэка |
 | `features/upload-dataset/model/store.ts` | Стор сам грузит шаблоны в обход `useDatasetTemplates`; `filesMap` с `File` и квота в `localStorage` | Шаблоны через `useDatasetTemplates`; квоту считать на бэке |
-| `shared/api/api-client.ts`, `main.ts` | Пустой интерсептор, нет обработки 401 во время работы; `retry: 1` на все ошибки | Интерсептор 401 в `app/providers/`; ретраи только сеть и 5xx |
 | `.env` | Абсолютный `VITE_API_URL` на dev-хост вшивается в любую сборку (в т.ч. prod) | `server.proxy` + `VITE_API_URL=/api` (порядок — в «Конфигурации») |
 
 ## UI

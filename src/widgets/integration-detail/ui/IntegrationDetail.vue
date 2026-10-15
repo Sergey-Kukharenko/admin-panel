@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useQueryClient } from '@tanstack/vue-query';
-import { isAxiosError } from 'axios';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -18,6 +17,7 @@ import {
   S3ConnectionModal,
   useRequestIntegrationConnection,
 } from '@/features/request-integration-connection';
+import { getHttpStatus } from '@/shared/api';
 import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
 import { ROUTE_NAMES } from '@/shared/config/routes';
 import { AppButton } from '@/shared/ui/app-button';
@@ -94,7 +94,7 @@ function submitConnectionRequest(request: IntegrationConnectionRequest) {
       // 409 — активная заявка уже есть (например, отправлена из другой вкладки): закрываем окно
       // и перезапрашиваем статус, страница покажет «Настройка». Остальные ошибки — окно
       // остаётся открытым с заполненной формой, можно отправить ещё раз (тексты предложены в WT-337)
-      if (isAxiosError(error) && error.response?.status === 409) {
+      if (getHttpStatus(error) === 409) {
         isConnectionModalOpen.value = false;
         toast.error(t('integrations.detail.requestAlreadySent'));
         queryClient.invalidateQueries({ queryKey: integrationStatusQueryKey(request.type) });
