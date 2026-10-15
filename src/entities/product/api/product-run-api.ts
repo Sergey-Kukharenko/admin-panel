@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api';
 
-import type { ProductRun } from '../model/api';
+import type { ProductRun } from './types';
 
 export const productRunApi = {
   /** Получить прогон продукта по ID */

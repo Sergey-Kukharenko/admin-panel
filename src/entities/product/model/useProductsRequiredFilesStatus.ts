@@ -2,7 +2,7 @@ import { useQueries } from '@tanstack/vue-query';
 import { computed, type Ref } from 'vue';
 
 import { productApi } from '../api/product-api';
-import type { ProductRequiredFilesStatus } from './api';
+import type { ProductRequiredFilesStatus } from '../api/types';
 import { PREDICTIONS_POLLING_INTERVAL } from './useProducts';
 
 const PRODUCT_REQUIRED_FILES_STATUS_QUERY_KEY = ['product-required-files-status'] as const;

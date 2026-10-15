@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Product } from '../api';
+import type { Product } from '../../api/types';
 import { withoutHiddenServices } from '../hiddenServices';
 
 const service = (name: string) => ({
