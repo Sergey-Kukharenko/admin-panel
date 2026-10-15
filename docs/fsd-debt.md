@@ -44,7 +44,7 @@
 
 | Где | Отклонение | Как привести |
 |---|---|---|
-| `AppConfirmDialog`, `RevealSecretModal`, `ChangePasswordModal`, `RestApiConnectionModal`, `S3ConnectionModal`, `CreateApiSecretModal`, `CreateKeySecretModal`, `DatasetHistoryErrorDialog` | Каркас radix-диалога скопирован 8 раз, оверлеи и z-index расходятся | Базовый `AppModal` |
+| `RevealSecretModal`, `ChangePasswordModal`, `RestApiConnectionModal`, `S3ConnectionModal`, `CreateApiSecretModal`, `CreateKeySecretModal`, `DatasetHistoryErrorDialog` | Каркас radix-диалога скопирован вместо `AppModal` | Перевести на `AppModal` (`shared/ui/app-modal`) |
 | `AppTooltip`, `PredictionsManager`, `PredictionRunHistory` | `TooltipProvider` в каждом компоненте, в `App.vue` его нет | Один провайдер в `App.vue`, затем убрать локальные |
 | `app/router/index.ts`, `AdminHeader`, `SidebarNavigation` | Статические импорты страниц, нет `name`, пути строками, заголовки и меню отдельными списками, нет 404 | Ленивые страницы, `ROUTE_NAMES`, `meta` |
 | `ProductAccessTable.vue`, `DatasetUploadZone.vue`, `AppButton.vue` | Экспорт типов из `.vue`; `AppButton.types.ts` устарел и не используется | Типы в `*.types.ts` |

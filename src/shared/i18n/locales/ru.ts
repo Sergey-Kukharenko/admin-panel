@@ -11,6 +11,9 @@ export const ru = {
       code: 'Код ошибки',
     },
   },
+  modal: {
+    close: 'Закрыть',
+  },
   pagination: {
     previousPage: 'Предыдущая страница',
     nextPage: 'Следующая страница',

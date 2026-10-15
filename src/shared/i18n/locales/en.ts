@@ -13,6 +13,9 @@ export const en: MessageSchema = {
       code: 'Error code',
     },
   },
+  modal: {
+    close: 'Close',
+  },
   pagination: {
     previousPage: 'Previous page',
     nextPage: 'Next page',

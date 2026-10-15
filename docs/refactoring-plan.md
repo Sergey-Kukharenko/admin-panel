@@ -27,8 +27,8 @@
 
 ## Этап 2 — базовая инфраструктура
 
-- [ ] `AppModal` с тестами, `AppConfirmDialog` на его основе.
-- [ ] Перевод 9 модалок на `AppModal`.
+- [x] `AppModal` с тестами, `AppConfirmDialog` на его основе.
+- [ ] Перевод модалок на `AppModal`: 5 переводим вместе с переносом в `features` (пункт ниже), `ChangePasswordModal` и `DatasetHistoryErrorDialog` — отдельно.
 - [ ] Перенос модалок и панелей из `widgets` в `features`:
   - `rest-api-connection-modal`, `s3-connection-modal`, `rest-api-credentials`, `s3-credentials` (сейчас их импортирует `widgets/integration-detail`);
   - `uploads-empty-state` (сейчас его импортирует `widgets/dataset-history-table`);
