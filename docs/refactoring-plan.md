@@ -61,5 +61,5 @@
 - [x] Компонентные тесты `shared/ui`: `AppModal`, `AppConfirmDialog`, `AppButton`, `AppPagination`, `AppFilter`.
 - [x] Тесты недостающих мапперов и форматтеров живых экранов (история датасетов, проверка файлов, форматтеры предсказаний, `createQueryPatch`). Не покрыты: скрытые экраны (расписание, тарифы), неиспользуемый `cn`, `downloadBlob` (побочный эффект DOM).
 - [ ] Линтер i18n (`no-raw-text`) с исправлениями.
-- [ ] Линтер a11y (`vuejs-accessibility`) с исправлениями.
+- [x] Линтер a11y (`eslint-plugin-vuejs-accessibility`, `flat/recommended`) с исправлениями. `label-has-for`: достаточно `for`/`id` или вложенности; `CheckboxRoot` считается полем. Исключения с причиной: зона drag-and-drop, скрытый виджет расписания.
 - [x] Линтер FSD (`steiger`) в `lint` и `check:lint` (CI — вместе с джобой `quality`). Решения по манифесту: страницы — `pages/<name>/ui/`, без суффикса `-page`; у `shared/config`, `shared/lib/router`, `shared/lib/test` есть index-файлы; выключены `insignificant-slice` (ложные срабатывания, спорит с критерием feature/widget) и `segments-by-purpose` (`assets`, `app/providers` оставляем).

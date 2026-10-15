@@ -38,7 +38,7 @@
 | `RevealSecretModal`, `CreateApiSecretModal`, `CreateKeySecretModal` | Каркас radix-диалога скопирован вместо `AppModal` | Перевести на `AppModal` вместе с переносом в `features/manage-integration-secrets`, когда появится API ключей |
 | `ProductAccessTable.vue`, `DatasetUploadZone.vue`, `AppButton.vue` | Экспорт типов из `.vue`; `AppButton.types.ts` устарел и не используется | Типы в `*.types.ts` |
 | 9 компонентов (`AppConfirmDialog`, `AppDrawer`, `AppStatusBadge`, …) | `$emit` в шаблоне | `emit` |
-| `AppStatusBadge`, `AppFilterTrigger`, кнопки закрытия модалок | `div @click`, кликабельный `span` внутри `button`, иконочные кнопки без `aria-label` | По правилам доступности |
+| `widgets/prediction-processing-schedule` | Кликабельный `span` (месяц) внутри кнопки сворачивания календаря; правила a11y для файла выключены | Развести на две кнопки, когда виджет вернётся |
 | `profile-overview/*` (`text-[#181818]`), `PredictionProcessingSchedule` (`hover:bg-black/5`) | Цвета без токена; в UI-ките состояния не раскрыты, экраны скрыты | Решить, когда экраны вернутся |
 | `--text-success-soft` (`#668948`) | В Figma тоже сырой hex («Active» в Status Tag), не переменная | Попросить завести переменную в Figma |
 | `AppWaveBackground` | Hex в JS для canvas (`--color-neutral-75`, `--color-neutral-400`) | Допустимо: canvas не читает CSS-переменные; значения сверены с токенами |

@@ -78,7 +78,12 @@ const handleDragLeave = () => {
 </script>
 
 <template>
+  <!-- Drag-and-drop без клавиатурного аналога по природе; с клавиатуры файлы выбираются
+       кнопкой «Выбрать файлы» внутри зоны -->
+  <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
   <div
+    role="group"
+    :aria-label="t('datasets.upload.zone.dropArea')"
     :class="[
       'flex flex-col items-center justify-center rounded-(--radius-md) border border-dashed text-center py-10 px-6 transition-colors duration-150 ease-in-out',
       isDragOver ? 'border-(--primary) bg-(--muted)' : 'border-(--border) bg-(--background)',
@@ -100,6 +105,7 @@ const handleDragLeave = () => {
       ref="inputRef"
       type="file"
       class="hidden"
+      :aria-label="t('datasets.upload.zone.chooseFiles')"
       :accept="accept"
       :multiple="multiple"
       :disabled="disabled"

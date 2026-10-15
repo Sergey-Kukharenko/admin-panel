@@ -11,13 +11,8 @@ defineOptions({
 
 const props = defineProps<{
   status: AppStatusBadgeStatus;
-  clickable?: boolean;
   /** Переопределяет текст по умолчанию для контекстов со своей терминологией статусов */
   label?: string;
-}>();
-
-defineEmits<{
-  click: [];
 }>();
 
 // Цвета взяты из макетов (Figma) под соответствующие статусы — bg-badge-*/icon-*
@@ -50,10 +45,9 @@ const config = computed(() => STATUS_CONFIG[props.status]);
 </script>
 
 <template>
-  <div
-    class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) px-2 select-none transition-all"
-    :class="[config.bg, clickable && 'cursor-pointer hover:bg-opacity-80 active:scale-95']"
-    @click="$emit('click')"
+  <span
+    class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) px-2 select-none"
+    :class="config.bg"
   >
     <AppIcon
       :name="config.icon"
@@ -64,5 +58,5 @@ const config = computed(() => STATUS_CONFIG[props.status]);
     <span class="text-xs font-medium uppercase" :class="config.color">
       {{ label ?? config.text }}
     </span>
-  </div>
+  </span>
 </template>

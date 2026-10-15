@@ -21,6 +21,9 @@ export const en: MessageSchema = {
   modal: {
     close: 'Close',
   },
+  filter: {
+    clear: 'Clear filter',
+  },
   pagination: {
     previousPage: 'Previous page',
     nextPage: 'Next page',
@@ -143,6 +146,7 @@ export const en: MessageSchema = {
       zone: {
         empty: 'No files added',
         chooseFiles: 'Choose Files',
+        dropArea: 'File drop area',
       },
       status: {
         queued: 'In progress',

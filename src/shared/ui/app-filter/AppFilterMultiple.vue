@@ -4,7 +4,6 @@ import {
   DropdownMenuContent,
   DropdownMenuPortal,
   DropdownMenuRoot,
-  DropdownMenuTrigger,
 } from 'radix-vue';
 import { computed } from 'vue';
 
@@ -35,15 +34,13 @@ function toggle(value: string) {
        padding-right поверх уже зарезервированного html { scrollbar-gutter: stable },
        из-за чего страница дёргается вправо при каждом открытии дропдауна -->
   <DropdownMenuRoot :modal="false">
-    <DropdownMenuTrigger as-child>
-      <AppFilterTrigger
-        :title="title"
-        :icon="icon"
-        :count="count"
-        :clearable="count > 0"
-        @clear="emit('update:modelValue', [])"
-      />
-    </DropdownMenuTrigger>
+    <AppFilterTrigger
+      :title="title"
+      :icon="icon"
+      :count="count"
+      :clearable="count > 0"
+      @clear="emit('update:modelValue', [])"
+    />
 
     <DropdownMenuPortal>
       <DropdownMenuContent

@@ -19,6 +19,9 @@ export const ru = {
   modal: {
     close: 'Закрыть',
   },
+  filter: {
+    clear: 'Сбросить фильтр',
+  },
   pagination: {
     previousPage: 'Предыдущая страница',
     nextPage: 'Следующая страница',
@@ -142,6 +145,7 @@ export const ru = {
       zone: {
         empty: 'Нет добавленных файлов',
         chooseFiles: 'Выбрать файлы',
+        dropArea: 'Область загрузки файлов',
       },
       status: {
         queued: 'В процессе',

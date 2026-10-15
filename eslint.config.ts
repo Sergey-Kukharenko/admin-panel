@@ -8,6 +8,7 @@ import pluginOxlint from 'eslint-plugin-oxlint';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unusedImports from 'eslint-plugin-unused-imports';
 import pluginVue from 'eslint-plugin-vue';
+import pluginVueA11y from 'eslint-plugin-vuejs-accessibility';
 
 export default defineConfigWithVueTs(
   {
@@ -19,6 +20,19 @@ export default defineConfigWithVueTs(
 
   // ✅ Vue базовые правила
   ...pluginVue.configs['flat/essential'],
+
+  // ✅ Доступность (a11y) в шаблонах
+  ...pluginVueA11y.configs['flat/recommended'],
+
+  {
+    // TODO: виджет расписания скрыт PM; в шапке кликабельный span внутри кнопки
+    // (месяц и сворачивание календаря) — исправить вместе с возвратом виджета
+    files: ['src/widgets/prediction-processing-schedule/**'],
+    rules: {
+      'vuejs-accessibility/click-events-have-key-events': 'off',
+      'vuejs-accessibility/no-static-element-interactions': 'off',
+    },
+  },
 
   // ✅ TypeScript
   vueTsConfigs.recommended,
@@ -46,6 +60,17 @@ export default defineConfigWithVueTs(
       // =========================
 
       // авто-сортировка imports
+      // =========================
+      // ♿ A11Y
+      // =========================
+
+      // <label> связан с полем через for/id ИЛИ оборачивает его — по умолчанию правило требует оба
+      'vuejs-accessibility/label-has-for': [
+        'error',
+        // CheckboxRoot из radix-vue рендерит <button role="checkbox"> — это поле формы
+        { required: { some: ['nesting', 'id'] }, controlComponents: ['CheckboxRoot'] },
+      ],
+
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
 

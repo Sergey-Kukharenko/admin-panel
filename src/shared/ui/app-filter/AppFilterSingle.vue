@@ -5,7 +5,6 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuRoot,
-  DropdownMenuTrigger,
 } from 'radix-vue';
 import { computed } from 'vue';
 
@@ -30,14 +29,12 @@ const selectedLabel = computed(() => {
        padding-right поверх уже зарезервированного html { scrollbar-gutter: stable },
        из-за чего страница дёргается вправо при каждом открытии дропдауна -->
   <DropdownMenuRoot :modal="false">
-    <DropdownMenuTrigger as-child>
-      <AppFilterTrigger
-        :title="selectedLabel || title"
-        :icon="icon"
-        :clearable="!!modelValue"
-        @clear="emit('update:modelValue', '')"
-      />
-    </DropdownMenuTrigger>
+    <AppFilterTrigger
+      :title="selectedLabel || title"
+      :icon="icon"
+      :clearable="!!modelValue"
+      @clear="emit('update:modelValue', '')"
+    />
 
     <DropdownMenuPortal>
       <DropdownMenuContent

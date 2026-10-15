@@ -128,11 +128,15 @@ function handleSubmit() {
 
           <div class="flex flex-1 flex-col gap-4 overflow-y-auto px-5 pb-2">
             <div class="flex flex-col gap-1">
-              <label class="flex items-center gap-1 text-sm font-medium text-(--text-primary)">
+              <label
+                for="api-secret-name"
+                class="flex items-center gap-1 text-sm font-medium text-(--text-primary)"
+              >
                 {{ t('integrations.credentials.form.name') }}
                 <span class="text-(--text-error)">*</span>
               </label>
               <input
+                id="api-secret-name"
                 v-model="name"
                 type="text"
                 class="h-9 w-full rounded-(--radius-lg) bg-(--bg-input) px-3 text-sm text-(--text-primary) outline-none focus-visible:ring-2 focus-visible:ring-(--border-accent)"
@@ -140,7 +144,7 @@ function handleSubmit() {
             </div>
 
             <div class="flex flex-col gap-1">
-              <label class="text-sm font-medium text-(--text-primary)">Client ID</label>
+              <p class="text-sm font-medium text-(--text-primary)">Client ID</p>
               <div
                 class="flex h-9 w-full items-center gap-1.5 rounded-(--radius-lg) bg-(--bg-input) pl-3"
               >

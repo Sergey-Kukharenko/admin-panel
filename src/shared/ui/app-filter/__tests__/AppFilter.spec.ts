@@ -1,6 +1,8 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { i18n } from '@/shared/i18n';
+
 import AppFilter from '../AppFilter.vue';
 
 const OPTIONS = [
@@ -11,6 +13,7 @@ const OPTIONS = [
 function mountFilter(props: { multiple?: boolean; modelValue?: string | string[] }) {
   return mount(AppFilter, {
     props: { title: 'Статус', icon: 'filter-3-line', options: OPTIONS, ...props },
+    global: { plugins: [i18n] },
     attachTo: document.body,
   });
 }
@@ -49,7 +52,7 @@ describe('AppFilter (одиночный выбор)', () => {
   it('крестик сбрасывает значение в пустую строку', async () => {
     const wrapper = mountFilter({ modelValue: 'ERROR' });
 
-    await wrapper.get('button span.cursor-pointer').trigger('click');
+    await wrapper.get('button[aria-label="Сбросить фильтр"]').trigger('click');
 
     expect(wrapper.emitted('update:modelValue')).toEqual([['']]);
   });
@@ -74,7 +77,7 @@ describe('AppFilter (множественный выбор)', () => {
   it('крестик сбрасывает в пустой массив', async () => {
     const wrapper = mountFilter({ multiple: true, modelValue: ['ERROR'] });
 
-    await wrapper.get('button span.cursor-pointer').trigger('click');
+    await wrapper.get('button[aria-label="Сбросить фильтр"]').trigger('click');
 
     expect(wrapper.emitted('update:modelValue')).toEqual([[[]]]);
   });

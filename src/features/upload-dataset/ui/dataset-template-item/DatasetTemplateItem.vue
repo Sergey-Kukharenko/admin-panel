@@ -148,6 +148,7 @@ const handleFilesChange = (event: Event) => {
           ref="inputRef"
           class="hidden"
           type="file"
+          :aria-label="t('datasets.upload.zone.chooseFiles')"
           multiple
           :accept="DATASET_FILE_ACCEPT"
           :disabled="disabled"

@@ -215,6 +215,7 @@ function handleSubmit() {
                 type="text"
                 inputmode="decimal"
                 placeholder="192.168.1.1"
+                :aria-label="t('integrations.restApiModal.ipAddress')"
                 :disabled="!isIpRestricted"
                 :aria-invalid="hasIpError(index)"
                 class="h-9 w-full rounded-(--radius-lg) bg-(--bg-input) px-3 text-sm text-(--text-primary) outline-none placeholder:text-(--text-secondary) focus-visible:ring-2 focus-visible:ring-(--border-accent) disabled:cursor-not-allowed disabled:text-(--text-secondary)"
