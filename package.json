@@ -17,7 +17,8 @@
     "format": "prettier --write --experimental-cli src/",
     "check:format": "prettier --check --experimental-cli src/",
     "check": "run-s type-check check:lint check:format \"test:unit -- --run\"",
-    "icons:sprite": "node scripts/build-icon-sprite.mjs"
+    "icons:sprite": "node scripts/build-icon-sprite.mjs",
+    "api:types": "openapi-typescript openapi/openapi.json -o src/shared/api/generated/schema.d.ts"
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.101.4",
@@ -52,6 +53,7 @@
     "jiti": "^2.6.1",
     "jsdom": "^29.0.1",
     "npm-run-all2": "^8.0.4",
+    "openapi-typescript": "^7.13.0",
     "oxlint": "~1.57.0",
     "postcss-html": "^1.8.1",
     "prettier": "3.8.1",
@@ -69,5 +71,10 @@
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
+  },
+  "overrides": {
+    "openapi-typescript": {
+      "typescript": "$typescript"
+    }
   }
 }

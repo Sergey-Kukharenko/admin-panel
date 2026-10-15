@@ -1,0 +1,1959 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "mico-client-portal-api",
+    "description": "Client portal API.",
+    "contact": { "name": "MICo Team", "url": "https://mico.team/", "email": "devnull@mico.team" },
+    "version": "0.1.0"
+  },
+  "servers": [{ "url": "/", "description": "mico-client-portal-api" }],
+  "paths": {
+    "/registration/invitations": {
+      "post": {
+        "tags": ["registration"],
+        "summary": "Create pending invitation and send email",
+        "operationId": "create_registration_invitation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/InvitationCreateSchema" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InvitationResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorization/login-url": {
+      "get": {
+        "tags": ["authorization"],
+        "summary": "OIDC authorize URL for interactive login",
+        "operationId": "get_authorization_login_url",
+        "parameters": [
+          {
+            "name": "frontend",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": ["local", "main"],
+              "type": "string",
+              "default": "main",
+              "title": "Frontend"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthorizationLoginUrlSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorization/login": {
+      "get": {
+        "tags": ["authorization"],
+        "summary": "Redirect to Authentik (stores OAuth state)",
+        "description": "Redirect entry: stores OAuth ``state`` in PostgreSQL then sends user to Authentik.",
+        "operationId": "redirect_authorization_oidc_login",
+        "parameters": [
+          {
+            "name": "frontend",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": ["local", "main"],
+              "type": "string",
+              "default": "main",
+              "title": "Frontend"
+            }
+          }
+        ],
+        "responses": {
+          "307": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorization/callback": {
+      "get": {
+        "tags": ["authorization"],
+        "summary": "OIDC callback: session cookie and frontend redirect",
+        "operationId": "complete_authorization_oidc_callback",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "minLength": 1, "title": "Code" }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "minLength": 1, "title": "State" }
+          }
+        ],
+        "responses": {
+          "307": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authorization/logout": {
+      "post": {
+        "tags": ["authorization"],
+        "summary": "Invalidate portal session, purge Authentik SSO/tokens, clear session cookie",
+        "operationId": "authorization_logout",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/LogoutResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Current session (OIDC identity)",
+        "operationId": "get_authorization_me",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthorizationMeResponseSchema" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/password-change": {
+      "post": {
+        "tags": ["user"],
+        "summary": "Request password change email (Authentik recovery link via SES)",
+        "operationId": "request_user_password_change",
+        "responses": { "204": { "description": "Successful Response" } }
+      }
+    },
+    "/data-load/templates": {
+      "get": {
+        "tags": ["data-load"],
+        "summary": "List dataset CSV templates",
+        "operationId": "list_dataset_templates",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/DatasetTemplateResponseSchema" },
+                  "type": "array",
+                  "title": "Response List Dataset Templates"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data-load/templates/archive": {
+      "get": {
+        "tags": ["data-load"],
+        "summary": "Download all dataset CSV templates as a ZIP archive",
+        "operationId": "download_dataset_templates_archive",
+        "responses": { "200": { "description": "Successful Response" } }
+      }
+    },
+    "/data-load/templates/{dataset_type_id}": {
+      "get": {
+        "tags": ["data-load"],
+        "summary": "Download dataset CSV template file",
+        "operationId": "download_dataset_template",
+        "parameters": [
+          {
+            "name": "dataset_type_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Dataset Type Id" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data-load/files": {
+      "get": {
+        "tags": ["data-load"],
+        "summary": "List uploaded input data files for the current project",
+        "operationId": "list_input_data_files",
+        "parameters": [
+          {
+            "name": "dataset_type_id__in",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Dataset Type Id  In"
+            }
+          },
+          {
+            "name": "source_type__in",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Source Type  In"
+            }
+          },
+          {
+            "name": "status__in",
+            "in": "query",
+            "required": false,
+            "schema": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Status  In" }
+          },
+          {
+            "name": "uploaded_at__gte",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+              "title": "Uploaded At  Gte"
+            }
+          },
+          {
+            "name": "uploaded_at__lte",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+              "title": "Uploaded At  Lte"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "default": "-uploaded_at,-created_at",
+              "title": "Order By"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 0, "default": 0, "title": "Offset" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InputDataListResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["data-load"],
+        "summary": "Upload CSV input data file",
+        "operationId": "upload_input_data_file",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": { "$ref": "#/components/schemas/Body_upload_input_data_file" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InputDataResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data-load/files/{file_id}": {
+      "get": {
+        "tags": ["data-load"],
+        "summary": "Download uploaded input data file as CSV",
+        "operationId": "download_input_data_file",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data-load/files/{file_id}/errors": {
+      "get": {
+        "tags": ["data-load"],
+        "summary": "Download validation errors for an uploaded input data file as XLSX",
+        "operationId": "download_input_data_file_errors",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "$ref": "#/components/schemas/ReportLocale" }, { "type": "null" }],
+              "description": "Report language (en|ru)",
+              "title": "Lang"
+            },
+            "description": "Report language (en|ru)"
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": ["products"],
+        "summary": "List products for the current project",
+        "operationId": "list_project_products",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/ProjectProductListItemSchema" },
+                  "type": "array",
+                  "title": "Response List Project Products"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}/required-files/status": {
+      "get": {
+        "tags": ["products"],
+        "summary": "Get required files status for a project product",
+        "operationId": "get_product_required_files_status",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Product Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProductRequiredFilesStatusSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}/required-files/notify": {
+      "post": {
+        "tags": ["products"],
+        "summary": "Notify Slack that required product files are ready",
+        "operationId": "notify_product_required_files_ready",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Product Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProductRequiredFilesStatusSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}": {
+      "get": {
+        "tags": ["products"],
+        "summary": "Get a product for the current project by id",
+        "operationId": "get_project_product",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Product Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProjectProductListItemSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product-runs/{product_run_id}": {
+      "get": {
+        "tags": ["product-runs"],
+        "summary": "Get a product run by id for the current project",
+        "operationId": "get_product_run",
+        "parameters": [
+          {
+            "name": "product_run_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Product Run Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProductRunResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ml-service-runs": {
+      "get": {
+        "tags": ["ml-service-runs"],
+        "summary": "List ML service runs for the current project",
+        "operationId": "list_ml_service_runs",
+        "parameters": [
+          {
+            "name": "product_id__in",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Product Id  In"
+            }
+          },
+          {
+            "name": "ml_service_id__in",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Ml Service Id  In"
+            }
+          },
+          {
+            "name": "status__in",
+            "in": "query",
+            "required": false,
+            "schema": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Status  In" }
+          },
+          {
+            "name": "started_at__gte",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+              "title": "Started At  Gte"
+            }
+          },
+          {
+            "name": "started_at__lte",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+              "title": "Started At  Lte"
+            }
+          },
+          {
+            "name": "finished_at__gte",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+              "title": "Finished At  Gte"
+            }
+          },
+          {
+            "name": "finished_at__lte",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+              "title": "Finished At  Lte"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "default": "-created_at",
+              "title": "Order By"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 0, "default": 0, "title": "Offset" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MLServiceRunListResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ml-service-runs/{ml_service_run_id}": {
+      "get": {
+        "tags": ["ml-service-runs"],
+        "summary": "Get an ML service run by id for the current project",
+        "operationId": "get_ml_service_run",
+        "parameters": [
+          {
+            "name": "ml_service_run_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Ml Service Run Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MLServiceRunResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predictions": {
+      "get": {
+        "tags": ["predictions"],
+        "summary": "List prediction results for the current project",
+        "operationId": "list_predictions",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 0, "default": 0, "title": "Offset" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PredictionResultListResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predictions/{prediction_result_id}/download": {
+      "get": {
+        "tags": ["predictions"],
+        "summary": "Download prediction result file",
+        "operationId": "download_prediction_result",
+        "parameters": [
+          {
+            "name": "prediction_result_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Prediction Result Id" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-api-credentials": {
+      "get": {
+        "tags": ["project-api-credentials"],
+        "summary": "API integration status and credentials for the current project",
+        "operationId": "list_project_api_credentials",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectApiCredentialsOverviewResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-api-credentials/request": {
+      "post": {
+        "tags": ["project-api-credentials"],
+        "summary": "Submit a REST API integration connection request",
+        "operationId": "create_project_api_credentials_request",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProjectApiCredentialRequestCreateSchema" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IntegrationRequestResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-api-credentials/{project_api_credential_id}": {
+      "get": {
+        "tags": ["project-api-credentials"],
+        "summary": "Get one project API credential",
+        "operationId": "get_project_api_credential",
+        "parameters": [
+          {
+            "name": "project_api_credential_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Project Api Credential Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProjectApiCredentialResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-api-credentials/{project_api_credential_id}/rotate-secret": {
+      "post": {
+        "tags": ["project-api-credentials"],
+        "summary": "Rotate client_secret for a project API credential",
+        "operationId": "rotate_project_api_credential_secret",
+        "parameters": [
+          {
+            "name": "project_api_credential_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Project Api Credential Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectApiCredentialRotateSecretResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-api-credentials/{project_api_credential_id}/logs": {
+      "get": {
+        "tags": ["project-api-credentials"],
+        "summary": "List Authentik token-issuance logs for a project API credential",
+        "operationId": "list_project_api_credential_logs",
+        "parameters": [
+          {
+            "name": "project_api_credential_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "Project Api Credential Id" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 1, "default": 1, "title": "Page" }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Search" }
+          },
+          {
+            "name": "created_after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+              "title": "Created After"
+            }
+          },
+          {
+            "name": "created_before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+              "title": "Created Before"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProjectApiCredentialLogsResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-s3-credentials": {
+      "get": {
+        "tags": ["project-s3-credentials"],
+        "summary": "S3 integration status for the current project",
+        "operationId": "list_project_s3_credentials",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IntegrationOverviewResponseSchema" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-s3-credentials/request": {
+      "post": {
+        "tags": ["project-s3-credentials"],
+        "summary": "Submit an Amazon S3 integration connection request",
+        "operationId": "create_project_s3_credentials_request",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProjectS3CredentialRequestCreateSchema" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IntegrationRequestResponseSchema" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthorizationLoginUrlSchema": {
+        "properties": { "authorize_url": { "type": "string", "title": "Authorize Url" } },
+        "type": "object",
+        "required": ["authorize_url"],
+        "title": "AuthorizationLoginUrlSchema"
+      },
+      "AuthorizationMeResponseSchema": {
+        "properties": {
+          "authenticated": { "type": "boolean", "title": "Authenticated", "default": true },
+          "email": { "type": "string", "title": "Email" },
+          "project_id": { "type": "string", "title": "Project Id" },
+          "authentik_user_id": { "type": "string", "title": "Authentik User Id" },
+          "name": { "type": "string", "title": "Name" }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["email", "project_id", "authentik_user_id", "name"],
+        "title": "AuthorizationMeResponseSchema",
+        "description": "Identity summary for ``GET /authorization/me`` (no tokens)."
+      },
+      "Body_upload_input_data_file": {
+        "properties": {
+          "dataset_type_id": { "type": "string", "format": "uuid", "title": "Dataset Type Id" },
+          "file": { "type": "string", "format": "binary", "title": "File" }
+        },
+        "type": "object",
+        "required": ["dataset_type_id", "file"],
+        "title": "Body_upload_input_data_file"
+      },
+      "ColumnIssueDetailSchema": {
+        "properties": {
+          "error_count": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Error Count"
+          },
+          "sample_rows": { "items": { "type": "integer" }, "type": "array", "title": "Sample Rows" }
+        },
+        "type": "object",
+        "title": "ColumnIssueDetailSchema",
+        "description": "Optional rich detail for a column-level issue (sample rows / counts)."
+      },
+      "DatasetTemplateResponseSchema": {
+        "properties": {
+          "dataset_type_id": { "type": "string", "format": "uuid", "title": "Dataset Type Id" },
+          "name": { "type": "string", "title": "Name" }
+        },
+        "type": "object",
+        "required": ["dataset_type_id", "name"],
+        "title": "DatasetTemplateResponseSchema"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InputDataDatasetGroupSchema": {
+        "properties": {
+          "dataset_type": { "type": "string", "title": "Dataset Type" },
+          "files_count": { "type": "integer", "title": "Files Count" },
+          "files": {
+            "items": { "$ref": "#/components/schemas/InputDataListItemSchema" },
+            "type": "array",
+            "title": "Files"
+          }
+        },
+        "type": "object",
+        "required": ["dataset_type", "files_count", "files"],
+        "title": "InputDataDatasetGroupSchema"
+      },
+      "InputDataGroupSchema": {
+        "properties": {
+          "uploaded_at": { "type": "string", "format": "date-time", "title": "Uploaded At" },
+          "dataset_groups": {
+            "items": { "$ref": "#/components/schemas/InputDataDatasetGroupSchema" },
+            "type": "array",
+            "title": "Dataset Groups"
+          }
+        },
+        "type": "object",
+        "required": ["uploaded_at", "dataset_groups"],
+        "title": "InputDataGroupSchema"
+      },
+      "InputDataListItemSchema": {
+        "properties": {
+          "file_id": { "type": "string", "format": "uuid", "title": "File Id" },
+          "file_name": { "type": "string", "title": "File Name" },
+          "file_name_csv": { "type": "string", "title": "File Name Csv" },
+          "source_type": { "type": "string", "title": "Source Type" },
+          "rows_count": { "type": "integer", "title": "Rows Count" },
+          "status": { "type": "string", "title": "Status" },
+          "validation_errors": {
+            "anyOf": [{ "$ref": "#/components/schemas/ValidationErrorsSchema" }, { "type": "null" }]
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_id",
+          "file_name",
+          "file_name_csv",
+          "source_type",
+          "rows_count",
+          "status"
+        ],
+        "title": "InputDataListItemSchema"
+      },
+      "InputDataListResponseSchema": {
+        "properties": {
+          "items": {
+            "items": { "$ref": "#/components/schemas/InputDataGroupSchema" },
+            "type": "array",
+            "title": "Items"
+          },
+          "total_count": { "type": "integer", "title": "Total Count" },
+          "next_page_offset": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Next Page Offset"
+          }
+        },
+        "type": "object",
+        "required": ["items", "total_count", "next_page_offset"],
+        "title": "InputDataListResponseSchema"
+      },
+      "InputDataResponseSchema": {
+        "properties": {
+          "file_id": { "type": "string", "format": "uuid", "title": "File Id" },
+          "project_id": { "type": "string", "title": "Project Id" },
+          "dataset_type": { "type": "string", "title": "Dataset Type" },
+          "rows_count": { "type": "integer", "title": "Rows Count" },
+          "status": { "type": "string", "title": "Status" },
+          "file_name": { "type": "string", "title": "File Name" },
+          "s3_bucket": { "type": "string", "title": "S3 Bucket" },
+          "source_type": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Source Type"
+          },
+          "validation_errors": {
+            "anyOf": [{ "$ref": "#/components/schemas/ValidationErrorsSchema" }, { "type": "null" }]
+          },
+          "uploaded_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Uploaded At"
+          },
+          "deleted_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Deleted At"
+          },
+          "created_at": { "type": "string", "format": "date-time", "title": "Created At" },
+          "updated_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_id",
+          "project_id",
+          "dataset_type",
+          "rows_count",
+          "status",
+          "file_name",
+          "s3_bucket",
+          "created_at"
+        ],
+        "title": "InputDataResponseSchema"
+      },
+      "IntegrationAccessType": {
+        "type": "string",
+        "enum": ["public", "ip_restricted"],
+        "title": "IntegrationAccessType"
+      },
+      "IntegrationEnvironment": {
+        "type": "string",
+        "enum": ["dev", "prod"],
+        "title": "IntegrationEnvironment",
+        "description": "Target deployment environment for credentials and connection requests."
+      },
+      "IntegrationOverviewResponseSchema": {
+        "properties": {
+          "status": { "$ref": "#/components/schemas/IntegrationStatus" },
+          "integration_request_id": {
+            "anyOf": [{ "type": "string", "format": "uuid" }, { "type": "null" }],
+            "title": "Integration Request Id"
+          },
+          "requested_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Requested At"
+          },
+          "connected_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Connected At"
+          }
+        },
+        "type": "object",
+        "required": ["status"],
+        "title": "IntegrationOverviewResponseSchema"
+      },
+      "IntegrationRequestResponseSchema": {
+        "properties": {
+          "integration_request_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Integration Request Id"
+          },
+          "status": { "$ref": "#/components/schemas/IntegrationStatus" },
+          "environments": {
+            "items": { "$ref": "#/components/schemas/IntegrationEnvironment" },
+            "type": "array",
+            "title": "Environments"
+          },
+          "created_at": { "type": "string", "format": "date-time", "title": "Created At" }
+        },
+        "type": "object",
+        "required": ["integration_request_id", "status", "environments", "created_at"],
+        "title": "IntegrationRequestResponseSchema"
+      },
+      "IntegrationStatus": {
+        "type": "string",
+        "enum": ["not_configured", "setup_in_progress", "connected"],
+        "title": "IntegrationStatus",
+        "description": "Integration state shown in the portal.\n\n``NOT_CONFIGURED`` is virtual: it is never persisted and means\n\"no active integration request for the project\". Only\n``SETUP_IN_PROGRESS`` and ``CONNECTED`` are stored in the DB."
+      },
+      "InvitationCreateSchema": {
+        "properties": {
+          "project_id": { "type": "string", "title": "Project Id" },
+          "email": { "type": "string", "format": "email", "title": "Email" },
+          "expires_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Expires At",
+            "description": "Expiry instant with timezone (RFC 3339); stored as timestamptz."
+          }
+        },
+        "type": "object",
+        "required": ["project_id", "email"],
+        "title": "InvitationCreateSchema"
+      },
+      "InvitationResponseSchema": {
+        "properties": {
+          "invitation_id": { "type": "string", "format": "uuid", "title": "Invitation Id" },
+          "email": { "type": "string", "title": "Email" },
+          "project_id": { "type": "string", "title": "Project Id" },
+          "user_id": {
+            "anyOf": [{ "type": "string", "format": "uuid" }, { "type": "null" }],
+            "title": "User Id"
+          },
+          "authentik_invitation_id": { "type": "string", "title": "Authentik Invitation Id" },
+          "invite_link": { "type": "string", "title": "Invite Link" },
+          "status": { "$ref": "#/components/schemas/InvitationStatus" },
+          "invited_at": { "type": "string", "format": "date-time", "title": "Invited At" },
+          "expires_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Expires At"
+          },
+          "accepted_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Accepted At"
+          },
+          "expired_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Expired At"
+          },
+          "created_at": { "type": "string", "format": "date-time", "title": "Created At" },
+          "updated_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "invitation_id",
+          "email",
+          "project_id",
+          "authentik_invitation_id",
+          "invite_link",
+          "status",
+          "invited_at",
+          "created_at"
+        ],
+        "title": "InvitationResponseSchema"
+      },
+      "InvitationStatus": {
+        "type": "string",
+        "enum": ["pending", "accepted", "expired"],
+        "title": "InvitationStatus"
+      },
+      "LogoutResponse": {
+        "properties": {},
+        "additionalProperties": false,
+        "type": "object",
+        "title": "LogoutResponse",
+        "description": "Empty body for ``POST /authorization/logout`` (cookie cleared server-side)."
+      },
+      "MLServiceRunListItemSchema": {
+        "properties": {
+          "ml_service_run_id": { "type": "string", "format": "uuid", "title": "Ml Service Run Id" },
+          "product_run_id": { "type": "string", "format": "uuid", "title": "Product Run Id" },
+          "product_id": { "type": "string", "format": "uuid", "title": "Product Id" },
+          "product_name": { "type": "string", "title": "Product Name" },
+          "ml_service_id": { "type": "string", "format": "uuid", "title": "Ml Service Id" },
+          "ml_service_name": { "type": "string", "title": "Ml Service Name" },
+          "status": { "type": "string", "title": "Status" },
+          "service_version": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Service Version"
+          },
+          "started_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Finished At"
+          },
+          "error_status_message": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error Status Message"
+          },
+          "total_predictions": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Total Predictions"
+          },
+          "prediction_result_id": {
+            "anyOf": [{ "type": "string", "format": "uuid" }, { "type": "null" }],
+            "title": "Prediction Result Id"
+          },
+          "is_downloadable": { "type": "boolean", "title": "Is Downloadable" },
+          "created_at": { "type": "string", "format": "date-time", "title": "Created At" }
+        },
+        "type": "object",
+        "required": [
+          "ml_service_run_id",
+          "product_run_id",
+          "product_id",
+          "product_name",
+          "ml_service_id",
+          "ml_service_name",
+          "status",
+          "is_downloadable",
+          "created_at"
+        ],
+        "title": "MLServiceRunListItemSchema"
+      },
+      "MLServiceRunListResponseSchema": {
+        "properties": {
+          "items": {
+            "items": { "$ref": "#/components/schemas/MLServiceRunListItemSchema" },
+            "type": "array",
+            "title": "Items"
+          },
+          "total_count": { "type": "integer", "title": "Total Count" },
+          "next_page_offset": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Next Page Offset"
+          }
+        },
+        "type": "object",
+        "required": ["items", "total_count", "next_page_offset"],
+        "title": "MLServiceRunListResponseSchema"
+      },
+      "MLServiceRunResponseSchema": {
+        "properties": {
+          "ml_service_run_id": { "type": "string", "format": "uuid", "title": "Ml Service Run Id" },
+          "product_run_id": { "type": "string", "format": "uuid", "title": "Product Run Id" },
+          "ml_service_id": { "type": "string", "format": "uuid", "title": "Ml Service Id" },
+          "status": { "type": "string", "title": "Status" },
+          "service_version": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Service Version"
+          },
+          "started_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Finished At"
+          },
+          "error_status_message": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error Status Message"
+          },
+          "event_occurred_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Event Occurred At"
+          },
+          "product_id": { "type": "string", "format": "uuid", "title": "Product Id" },
+          "product_name": { "type": "string", "title": "Product Name" },
+          "ml_service_name": { "type": "string", "title": "Ml Service Name" },
+          "prediction_result_id": {
+            "anyOf": [{ "type": "string", "format": "uuid" }, { "type": "null" }],
+            "title": "Prediction Result Id"
+          },
+          "total_predictions": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Total Predictions"
+          },
+          "is_downloadable": { "type": "boolean", "title": "Is Downloadable" },
+          "deleted_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Deleted At"
+          },
+          "created_at": { "type": "string", "format": "date-time", "title": "Created At" },
+          "updated_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ml_service_run_id",
+          "product_run_id",
+          "ml_service_id",
+          "status",
+          "product_id",
+          "product_name",
+          "ml_service_name",
+          "is_downloadable",
+          "created_at"
+        ],
+        "title": "MLServiceRunResponseSchema"
+      },
+      "MLServiceRunStatusResponseSchema": {
+        "properties": {
+          "ml_service_run_status_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Ml Service Run Status Id"
+          },
+          "name": { "type": "string", "title": "Name" },
+          "deleted_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Deleted At"
+          },
+          "created_at": { "type": "string", "format": "date-time", "title": "Created At" },
+          "updated_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": ["ml_service_run_status_id", "name", "created_at"],
+        "title": "MLServiceRunStatusResponseSchema"
+      },
+      "NotAllowedValueDetailSchema": {
+        "properties": {
+          "value": { "type": "string", "title": "Value" },
+          "error_count": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Error Count"
+          },
+          "sample_rows": { "items": { "type": "integer" }, "type": "array", "title": "Sample Rows" }
+        },
+        "type": "object",
+        "required": ["value"],
+        "title": "NotAllowedValueDetailSchema",
+        "description": "One disallowed value with optional ML diagnostics."
+      },
+      "PredictionResultListItemSchema": {
+        "properties": {
+          "prediction_result_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Prediction Result Id"
+          },
+          "product_id": { "type": "string", "format": "uuid", "title": "Product Id" },
+          "product_name": { "type": "string", "title": "Product Name" },
+          "ml_service_id": {
+            "anyOf": [{ "type": "string", "format": "uuid" }, { "type": "null" }],
+            "title": "Ml Service Id"
+          },
+          "ml_service_name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Ml Service Name"
+          },
+          "started_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Finished At"
+          },
+          "total_predictions": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Total Predictions"
+          },
+          "service_run_status": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Service Run Status"
+          },
+          "is_downloadable": { "type": "boolean", "title": "Is Downloadable" }
+        },
+        "type": "object",
+        "required": ["prediction_result_id", "product_id", "product_name", "is_downloadable"],
+        "title": "PredictionResultListItemSchema"
+      },
+      "PredictionResultListResponseSchema": {
+        "properties": {
+          "items": {
+            "items": { "$ref": "#/components/schemas/PredictionResultListItemSchema" },
+            "type": "array",
+            "title": "Items"
+          },
+          "total_count": { "type": "integer", "title": "Total Count" },
+          "next_page_offset": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Next Page Offset"
+          }
+        },
+        "type": "object",
+        "required": ["items", "total_count", "next_page_offset"],
+        "title": "PredictionResultListResponseSchema"
+      },
+      "ProductRequiredFileTypeStatusSchema": {
+        "properties": {
+          "dataset_type_id": { "type": "string", "format": "uuid", "title": "Dataset Type Id" },
+          "name": { "type": "string", "title": "Name" },
+          "status": { "type": "string", "title": "Status" },
+          "input_data_id": {
+            "anyOf": [{ "type": "string", "format": "uuid" }, { "type": "null" }],
+            "title": "Input Data Id"
+          }
+        },
+        "type": "object",
+        "required": ["dataset_type_id", "name", "status"],
+        "title": "ProductRequiredFileTypeStatusSchema"
+      },
+      "ProductRequiredFilesStatusSchema": {
+        "properties": {
+          "product_id": { "type": "string", "format": "uuid", "title": "Product Id" },
+          "is_ready": { "type": "boolean", "title": "Is Ready" },
+          "is_notified": { "type": "boolean", "title": "Is Notified" },
+          "can_notify": { "type": "boolean", "title": "Can Notify" },
+          "dataset_types": {
+            "items": { "$ref": "#/components/schemas/ProductRequiredFileTypeStatusSchema" },
+            "type": "array",
+            "title": "Dataset Types"
+          }
+        },
+        "type": "object",
+        "required": ["product_id", "is_ready", "is_notified", "can_notify", "dataset_types"],
+        "title": "ProductRequiredFilesStatusSchema"
+      },
+      "ProductRunResponseSchema": {
+        "properties": {
+          "product_run_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Run Id",
+            "description": "Internal primary key of the product run in Client Portal API."
+          },
+          "project_id": { "type": "string", "title": "Project Id" },
+          "product_id": { "type": "string", "format": "uuid", "title": "Product Id" },
+          "product_run_external_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Product Run External Id",
+            "description": "ML platform batch id for one product inference run (SQS field ``product_run_id``). Groups ML service runs of the same product batch; not the internal ``product_run_id`` UUID. Null while a schedule pre-created run is awaiting its first ML platform event."
+          },
+          "scheduled_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Scheduled At",
+            "description": "Inference schedule fire time the run was pre-created for; null for event-created runs."
+          },
+          "aggregated_ml_service_run_status_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Aggregated Ml Service Run Status Id"
+          },
+          "aggregated_ml_service_run_status": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/MLServiceRunStatusResponseSchema" },
+              { "type": "null" }
+            ]
+          },
+          "started_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Finished At"
+          },
+          "error_status_message": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error Status Message"
+          },
+          "deleted_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Deleted At"
+          },
+          "created_at": { "type": "string", "format": "date-time", "title": "Created At" },
+          "updated_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_run_id",
+          "project_id",
+          "product_id",
+          "aggregated_ml_service_run_status_id",
+          "created_at"
+        ],
+        "title": "ProductRunResponseSchema"
+      },
+      "ProjectApiCredentialLogItemSchema": {
+        "properties": {
+          "pk": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Pk" },
+          "action": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Action" },
+          "app": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "App" },
+          "client_ip": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Client Ip"
+          },
+          "context": {
+            "anyOf": [{ "additionalProperties": true, "type": "object" }, { "type": "null" }],
+            "title": "Context"
+          },
+          "created": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Created"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "ProjectApiCredentialLogItemSchema",
+        "description": "Authentik event payload (extra fields allowed for now)."
+      },
+      "ProjectApiCredentialLogsResponseSchema": {
+        "properties": {
+          "items": {
+            "items": { "$ref": "#/components/schemas/ProjectApiCredentialLogItemSchema" },
+            "type": "array",
+            "title": "Items"
+          },
+          "total_count": { "type": "integer", "title": "Total Count" },
+          "next_page": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Next Page"
+          }
+        },
+        "type": "object",
+        "required": ["items", "total_count"],
+        "title": "ProjectApiCredentialLogsResponseSchema"
+      },
+      "ProjectApiCredentialRequestCreateSchema": {
+        "properties": {
+          "project_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Project Id"
+          },
+          "environments": {
+            "items": { "$ref": "#/components/schemas/IntegrationEnvironment" },
+            "type": "array",
+            "minItems": 1,
+            "title": "Environments"
+          },
+          "access_type": { "$ref": "#/components/schemas/IntegrationAccessType" },
+          "ip_addresses": {
+            "items": { "type": "string", "format": "ipv4" },
+            "type": "array",
+            "title": "Ip Addresses"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["environments", "access_type"],
+        "title": "ProjectApiCredentialRequestCreateSchema",
+        "description": "Payload for ``POST /project-api-credentials/request``."
+      },
+      "ProjectApiCredentialResponseSchema": {
+        "properties": {
+          "project_api_credential_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Project Api Credential Id"
+          },
+          "client_id": { "type": "string", "title": "Client Id" },
+          "environment": { "$ref": "#/components/schemas/IntegrationEnvironment" },
+          "scopes": { "items": { "type": "string" }, "type": "array", "title": "Scopes" }
+        },
+        "type": "object",
+        "required": ["project_api_credential_id", "client_id", "environment"],
+        "title": "ProjectApiCredentialResponseSchema"
+      },
+      "ProjectApiCredentialRotateSecretResponseSchema": {
+        "properties": {
+          "project_api_credential_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Project Api Credential Id"
+          },
+          "client_id": { "type": "string", "title": "Client Id" },
+          "environment": { "$ref": "#/components/schemas/IntegrationEnvironment" },
+          "scopes": { "items": { "type": "string" }, "type": "array", "title": "Scopes" },
+          "client_secret": { "type": "string", "title": "Client Secret" }
+        },
+        "type": "object",
+        "required": ["project_api_credential_id", "client_id", "environment", "client_secret"],
+        "title": "ProjectApiCredentialRotateSecretResponseSchema"
+      },
+      "ProjectApiCredentialsOverviewResponseSchema": {
+        "properties": {
+          "status": { "$ref": "#/components/schemas/IntegrationStatus" },
+          "integration_request_id": {
+            "anyOf": [{ "type": "string", "format": "uuid" }, { "type": "null" }],
+            "title": "Integration Request Id"
+          },
+          "requested_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Requested At"
+          },
+          "connected_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Connected At"
+          },
+          "items": {
+            "items": { "$ref": "#/components/schemas/ProjectApiCredentialResponseSchema" },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": ["status"],
+        "title": "ProjectApiCredentialsOverviewResponseSchema"
+      },
+      "ProjectProductListItemSchema": {
+        "properties": {
+          "product_id": { "type": "string", "format": "uuid", "title": "Product Id" },
+          "name": { "type": "string", "title": "Name" },
+          "product_status": { "type": "string", "title": "Product Status" },
+          "last_product_run_status": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Last Product Run Status"
+          },
+          "last_prediction_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Last Prediction At"
+          },
+          "next_prediction_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Next Prediction Date"
+          },
+          "services": {
+            "items": { "$ref": "#/components/schemas/ProjectProductServiceItemSchema" },
+            "type": "array",
+            "title": "Services"
+          }
+        },
+        "type": "object",
+        "required": ["product_id", "name", "product_status", "next_prediction_date", "services"],
+        "title": "ProjectProductListItemSchema"
+      },
+      "ProjectProductServiceItemSchema": {
+        "properties": {
+          "ml_service_id": { "type": "string", "format": "uuid", "title": "Ml Service Id" },
+          "name": { "type": "string", "title": "Name" },
+          "service_status": { "type": "string", "title": "Service Status" },
+          "last_service_run_status": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Last Service Run Status"
+          },
+          "last_prediction_at": {
+            "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+            "title": "Last Prediction At"
+          },
+          "next_prediction_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Next Prediction Date"
+          }
+        },
+        "type": "object",
+        "required": ["ml_service_id", "name", "service_status", "next_prediction_date"],
+        "title": "ProjectProductServiceItemSchema"
+      },
+      "ProjectS3CredentialRequestCreateSchema": {
+        "properties": {
+          "project_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Project Id"
+          },
+          "environments": {
+            "items": { "$ref": "#/components/schemas/IntegrationEnvironment" },
+            "type": "array",
+            "minItems": 1,
+            "title": "Environments"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["environments"],
+        "title": "ProjectS3CredentialRequestCreateSchema",
+        "description": "Payload for ``POST /project-s3-credentials/request``."
+      },
+      "ReportLocale": { "type": "string", "enum": ["en", "ru"], "title": "ReportLocale" },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      },
+      "ValidationErrorsSchema": {
+        "properties": {
+          "missing_required_columns": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Missing Required Columns",
+            "description": "ML or portal: required CSV columns absent from upload."
+          },
+          "missing_values": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Missing Values",
+            "description": "ML: columns with null values in required fields (flat column names)."
+          },
+          "missing_values_details": {
+            "additionalProperties": { "$ref": "#/components/schemas/ColumnIssueDetailSchema" },
+            "type": "object",
+            "title": "Missing Values Details",
+            "description": "ML: per-column error_count and sample_rows for missing_values."
+          },
+          "wrong_column_type": {
+            "additionalProperties": { "$ref": "#/components/schemas/WrongColumnTypeDetailSchema" },
+            "type": "object",
+            "title": "Wrong Column Type",
+            "description": "ML: expected vs actual dtype per column."
+          },
+          "not_allowed_values": {
+            "additionalProperties": { "items": { "type": "string" }, "type": "array" },
+            "type": "object",
+            "title": "Not Allowed Values",
+            "description": "ML: disallowed enum/value per column (flat value lists)."
+          },
+          "not_allowed_values_details": {
+            "additionalProperties": {
+              "items": { "$ref": "#/components/schemas/NotAllowedValueDetailSchema" },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Not Allowed Values Details",
+            "description": "ML: per-value error_count and sample_rows for not_allowed_values."
+          },
+          "expected_values": {
+            "additionalProperties": { "items": { "type": "string" }, "type": "array" },
+            "type": "object",
+            "title": "Expected Values",
+            "description": "ML: expected whitelist per column (for not_allowed_values report)."
+          },
+          "extra_columns": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Extra Columns",
+            "description": "Portal prevalidation: CSV columns not in the dataset template."
+          },
+          "header_errors": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Header Errors",
+            "description": "Portal prevalidation: malformed CSV header row."
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "ValidationErrorsSchema",
+        "description": "Canonical validation payload stored in DB and returned in HTTP responses.\n\nWire-format conversion (ML flat SQS, ML rich collector) happens in\n``normalize_validation_errors_payload`` before field validation.\nSee ``wire.py`` for the format matrix."
+      },
+      "WrongColumnTypeDetailSchema": {
+        "properties": {
+          "required": {
+            "anyOf": [{ "type": "string" }, { "items": { "type": "string" }, "type": "array" }],
+            "title": "Required"
+          },
+          "actual": { "anyOf": [{ "type": "string" }, { "type": "null" }], "title": "Actual" }
+        },
+        "type": "object",
+        "required": ["required"],
+        "title": "WrongColumnTypeDetailSchema",
+        "description": "Type mismatch for one column (ML platform shape)."
+      }
+    }
+  },
+  "tags": [{ "name": "system", "description": "System endpoints." }]
+}
