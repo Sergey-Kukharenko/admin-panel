@@ -1,6 +1,6 @@
 import type { Product } from '@/entities/product';
 
-import type { ScheduleEvent } from './types';
+import type { ScheduleEvent } from '../model/types';
 
 export interface DatedScheduleEvent {
   id: string;

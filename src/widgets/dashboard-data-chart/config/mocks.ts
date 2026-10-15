@@ -1,4 +1,4 @@
-import type { ChartSeriesDef, DataChartBar, DataChartDataset } from './types';
+import type { ChartSeriesDef, DataChartBar, DataChartDataset } from '../model/types';
 
 export const DATA_CHART_SERIES: ChartSeriesDef[] = [
   { key: 'bets', label: 'bets', colorVar: '--stats-bets' },

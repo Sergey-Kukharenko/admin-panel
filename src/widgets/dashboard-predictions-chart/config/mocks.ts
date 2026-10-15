@@ -1,4 +1,4 @@
-import type { PredictionsChartDataset } from './types';
+import type { PredictionsChartDataset } from '../model/types';
 
 const MONTH_LABELS = [
   'Май 2026',

@@ -1,6 +1,6 @@
 import recommenderSystemImage from '../assets/recommender-system.png';
 import vipIntelligenceImage from '../assets/vip-intelligence.png';
-import type { DashboardProduct } from './types';
+import type { DashboardProduct } from '../model/types';
 
 export const DASHBOARD_PRODUCTS: DashboardProduct[] = [
   {

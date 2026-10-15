@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { predictionStatusIconByStatus } from '../model/constants';
+import { predictionStatusIconByStatus } from '../config/constants';
 import type { PredictionIntegration } from '../model/types';
 
 defineOptions({

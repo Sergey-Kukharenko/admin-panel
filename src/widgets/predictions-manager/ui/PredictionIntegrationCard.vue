@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { predictionIntegrationIconByName, predictionTooltipIconByName } from '../model/constants';
+import { predictionIntegrationIconByName, predictionTooltipIconByName } from '../config/constants';
 import type { PredictionIntegration } from '../model/types';
 import PredictionIntegrationMetrics from './PredictionIntegrationMetrics.vue';
 

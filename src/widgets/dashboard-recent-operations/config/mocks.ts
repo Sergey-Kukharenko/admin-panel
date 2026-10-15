@@ -1,4 +1,4 @@
-import type { RecentOperation } from './types';
+import type { RecentOperation } from '../model/types';
 
 export const MOCK_RECENT_OPERATIONS: RecentOperation[] = [
   {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
-import { MOCK_RECENT_OPERATIONS } from '../model/data';
+import { MOCK_RECENT_OPERATIONS } from '../config/mocks';
 
 defineOptions({
   name: 'DashboardRecentOperations',

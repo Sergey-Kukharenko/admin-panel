@@ -11,7 +11,7 @@ import {
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 import { getContentDispositionFilename } from '@/shared/lib/getContentDispositionFilename';
 
-import { mapServiceRunToRunRecord } from './mapper';
+import { mapServiceRunToRunRecord } from '../lib/mapper';
 import type { PredictionRunRecord } from './types';
 import { RUN_HISTORY_PAGE_SIZE, useRunHistoryFilters } from './useRunHistoryFilters';
 

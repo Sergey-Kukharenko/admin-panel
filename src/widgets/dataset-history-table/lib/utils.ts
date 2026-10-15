@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import type { DatasetPeriod } from './types';
+import type { DatasetPeriod } from '../model/types';
 
 /**
  * Переводит ISO-дату с бэкенда, например "2026-07-24T09:57:23.585609Z",

@@ -12,7 +12,7 @@ import { computed, ref } from 'vue';
 import { TARIFF_USAGE_LIMITS } from '@/entities/tariff';
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { PREDICTIONS_CHART_DATASET } from '../model/data';
+import { PREDICTIONS_CHART_DATASET } from '../config/mocks';
 import { PredictionsLineChart } from './predictions-line-chart';
 
 defineOptions({

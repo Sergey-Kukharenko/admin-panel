@@ -4,14 +4,14 @@ import { computed, ref, watch } from 'vue';
 import type { FetchFilesBackendResponse } from '@/entities/dataset';
 import { DATASET_HISTORY_QUERY_KEY, datasetApi, useDatasetTemplates } from '@/entities/dataset';
 
-import { mapSourceTypeToLabel } from './sourceMapping';
-import { mapUiStatusToBackend } from './statusMapping';
+import { mapSourceTypeToLabel } from '../lib/sourceMapping';
+import { mapUiStatusToBackend } from '../lib/statusMapping';
+import { getDatasetGroupDayKey, getPeriodDates } from '../lib/utils';
 import { useDatasetHistoryFilters } from './useDatasetHistoryFilters';
 import {
   DATASET_HISTORY_PAGE_SIZE,
   useDatasetHistoryPagination,
 } from './useDatasetHistoryPagination';
-import { getDatasetGroupDayKey, getPeriodDates } from './utils';
 
 const AWAITING_FILES_POLL_INTERVAL_MS = 4000;
 

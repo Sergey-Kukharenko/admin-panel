@@ -3,8 +3,8 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
 
+import { URL_PARAMS } from '../config/urlParams';
 import type { DatasetPeriod, DatasetSort, DatasetSortOrder, DatasetStatus } from './types';
-import { URL_PARAMS } from './urlParams';
 
 export function useDatasetHistoryFilters() {
   const route = useRoute();

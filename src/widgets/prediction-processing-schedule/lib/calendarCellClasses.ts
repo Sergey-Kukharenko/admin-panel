@@ -1,4 +1,4 @@
-import type { CalendarDay } from './types';
+import type { CalendarDay } from '../model/types';
 
 // Общие классы "пилюли" (кружка) для дня и месяца в календаре
 const basePillClasses = 'rounded-full inline-flex items-center justify-center transition-colors';

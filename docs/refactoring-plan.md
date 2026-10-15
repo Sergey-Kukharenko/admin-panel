@@ -48,7 +48,7 @@
 ## Этап 3 — типы и структура слайсов
 
 - [x] Генерация типов из OpenAPI (`npm run api:types` → `shared/api/generated`), алиасы DTO во всех сущностях (`entities/*/api/types.ts`). При изменении бэка: обновить схему → `api:types` → поправить ошибки type-check.
-- [ ] Сегменты `lib/`, `config/` и `api/types.ts` — по слайсам, одним коммитом на слой (сделано: `api/types.ts` во всех сущностях, слои `shared` и `entities`):
+- [x] Сегменты `lib/`, `config/` и `api/types.ts` — по слайсам, одним коммитом на слой (`shared`, `entities`, `widgets`; в `features` чистого кода в `model/` не было):
   - `model/` — реактивное: сторы, composables, query keys, UI-типы;
   - `lib/` — чистые функции: мапперы, форматтеры, валидация;
   - `config/` — константы, справочники, моки;

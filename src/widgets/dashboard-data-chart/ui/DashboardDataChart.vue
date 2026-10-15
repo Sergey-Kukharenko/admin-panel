@@ -12,7 +12,7 @@ import { computed, reactive, ref } from 'vue';
 import { TARIFF_USAGE_LIMITS } from '@/entities/tariff';
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { DATA_CHART_BY_PRODUCT, DATA_CHART_SERIES } from '../model/data';
+import { DATA_CHART_BY_PRODUCT, DATA_CHART_SERIES } from '../config/mocks';
 import type { ChartSeriesKey } from '../model/types';
 import { StackedBarChart } from './stacked-bar-chart';
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DASHBOARD_PRODUCTS } from '../model/data';
+import { DASHBOARD_PRODUCTS } from '../config/mocks';
 import ProductAvailabilityCard from './ProductAvailabilityCard.vue';
 
 defineOptions({

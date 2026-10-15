@@ -24,7 +24,6 @@
 
 | Где | Отклонение | Как привести |
 |---|---|---|
-| Все слайсы | Мапперы, форматтеры, валидация, константы, справочники и моки лежат в `model/` (`model/mapper.ts`, `model/utils.ts`, `model/data.ts`, `model/constants.ts`) | Чистые функции → `lib/`, статические данные → `config/` |
 
 ## Данные и состояние
 
@@ -32,7 +31,7 @@
 |---|---|---|
 | Статусы файлов, прогонов и сервисов | В OpenAPI — `string` без `enum`, фронт сравнивает литералы со стенда (`/fail|error/` в `prediction-run-history/model/mapper.ts`) | `enum` статусов — на стороне бэка (вопрос задан), затем `api:types` |
 | `entities/integration/api/types.ts` (scopes) | `GET /project-api-credentials/scopes` нет в OpenAPI, типы ручные | Заменить на алиас, когда эндпоинт появится в схеме |
-| `entities/product/model/{displayNames,docsLinks,hiddenServices}.ts`, `entities/dataset/model/templateMapper.ts` | Бизнес-справочники по slug'ам на фронте | Fallback в `config/` с `TODO` на задачу бэка |
+| `entities/product/model/displayNames.ts`, `entities/product/config/docsLinks.ts`, `entities/product/lib/hiddenServices.ts`, `entities/dataset/lib/templateMapper.ts` | Бизнес-справочники по slug'ам на фронте | Fallback в `config/` с `TODO` на задачу бэка |
 | `features/upload-dataset/model/store.ts` | Стор сам грузит шаблоны в обход `useDatasetTemplates`; `filesMap` с `File` и квота в `localStorage` | Шаблоны через `useDatasetTemplates`; квоту считать на бэке |
 | `.env` | Абсолютный `VITE_API_URL` на dev-хост вшивается в любую сборку (в т.ч. prod) | `server.proxy` + `VITE_API_URL=/api` (порядок — в «Конфигурации») |
 | `nginx.conf` | `location /api/` проксирует на `mico-transcription-orchestrator-service` (скопировано из другого проекта) | Исправить вместе с переходом на `/api`, согласовать с бэкендом/DevOps |
@@ -47,7 +46,7 @@
 | `AppStatusBadge`, `AppFilterTrigger`, кнопки закрытия модалок | `div @click`, кликабельный `span` внутри `button`, иконочные кнопки без `aria-label` | По правилам доступности |
 | ~22 места: `ConnectionStatusTag`, `CredentialsInfoCard`, `UserMenu`, `AppSwitch`, `AppSkeleton`, `AppWaveBackground`, `profile-overview/*`, … | Хардкод цветов, градиенты в `style`, `bg-red-50`, `bg-neutral-300` | Семантические токены |
 | `ChangePasswordModal`, `usePasswordChange`, `ProfileInfoRow`, `AppConfirmDialog`, `AppStatusBadge`, `AppTooltip`, `ProductAccessTable`, `AdminSidebar` (alt) | Тексты в обход i18n | Ключи в `ru.ts` / `en.ts` |
-| `widgets/dataset-history-table/model/utils.ts`, `entities/integration/model/format.ts` | Зашитые локали `'ru-RU'`, `'en-GB'` | `toIntlLocale` |
+| `widgets/dataset-history-table/lib/utils.ts`, `entities/integration/lib/format.ts` | Зашитые локали `'ru-RU'`, `'en-GB'` | `toIntlLocale` |
 | `widgets/dashboard-*`, `tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |
 | `vitest.config.ts`, `shared/lib/cn.ts`, `tailwind.config.js`, `.stylelintrc.json` + stylelint в devDependencies, `lucide-vue-next` | Не используются / противоречат манифесту | Удалить; окружение Vitest → `node` |
 

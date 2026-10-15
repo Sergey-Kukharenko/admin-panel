@@ -3,7 +3,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
 
-import { URL_PARAMS } from './urlParams';
+import { URL_PARAMS } from '../config/urlParams';
 
 // Размер страницы фиксированный: выбора «Строк на стр.» в UI-ките нет (решение PM)
 export const DATASET_HISTORY_PAGE_SIZE = 10;
