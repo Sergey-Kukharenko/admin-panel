@@ -1,6 +1,6 @@
 import { i18n } from '@/shared/i18n';
 
-import type { DatasetIcon } from './types';
+import type { DatasetIcon } from '../model/types';
 
 interface TemplateStaticContent {
   title: string;

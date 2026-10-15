@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AppSwitch } from '@/shared/ui/app-switch';
 
-import { INTEGRATION_PRODUCTS } from '../../model/constants';
+import { INTEGRATION_PRODUCTS } from '../../config/constants';
 
 export interface ProductAccessMap {
   [productId: string]: { writeData: boolean; readResults: boolean };

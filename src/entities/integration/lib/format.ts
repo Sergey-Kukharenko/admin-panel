@@ -1,4 +1,4 @@
-import type { ApiSecretProductAccess } from './types';
+import type { ApiSecretProductAccess } from '../model/types';
 
 /** Дата создания ключа как в макете: «02 октября 2026» — день двумя цифрами, без «г.» */
 export function formatSecretDate(dateIso: string, locale: string): string {

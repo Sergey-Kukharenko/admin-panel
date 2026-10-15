@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { IntegrationEnvironment } from '../../model/constants';
-import { ENVIRONMENT_OPTIONS } from '../../model/constants';
+import type { IntegrationEnvironment } from '../../config/constants';
+import { ENVIRONMENT_OPTIONS } from '../../config/constants';
 
 defineOptions({
   name: 'EnvironmentTabs',

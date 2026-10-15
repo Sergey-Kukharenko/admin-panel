@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/vue-query';
 
 import { datasetApi } from '../api/dataset-api';
-import { filterVisibleDatasetTemplates } from './templateMapper';
+import { filterVisibleDatasetTemplates } from '../lib/templateMapper';
 
 const TEMPLATES_QUERY_KEY = ['dataset-templates'] as const;
 const TEMPLATES_STALE_TIME = 1000 * 60 * 15;

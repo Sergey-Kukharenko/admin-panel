@@ -1,5 +1,5 @@
 import restApiEmptyStateIllustration from '../assets/illustrations/rest-api-empty-state.png';
-import type { Integration, IntegrationType } from './types';
+import type { Integration, IntegrationType } from '../model/types';
 
 // Тексты карточек и детальной страницы — в локалях `integrations.items.<i18nKey>`
 export const INTEGRATIONS: Integration[] = [

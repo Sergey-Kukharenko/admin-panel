@@ -1,4 +1,4 @@
-import type { OrganizationInfo, OrganizationMember, OrganizationTechInfo } from './types';
+import type { OrganizationInfo, OrganizationMember, OrganizationTechInfo } from '../model/types';
 
 export const MOCK_ORGANIZATION: OrganizationInfo = {
   name: 'Casino Group Ltd.',

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { reactive } from 'vue';
 
-import type { IntegrationEnvironment } from './constants';
+import type { IntegrationEnvironment } from '../config/constants';
 import type {
   ApiSecret,
   ApiSecretProductAccess,

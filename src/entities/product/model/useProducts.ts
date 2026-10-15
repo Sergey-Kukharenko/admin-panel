@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/vue-query';
 
 import { productApi } from '../api/product-api';
-import { withoutHiddenServices } from './hiddenServices';
+import { withoutHiddenServices } from '../lib/hiddenServices';
 
 const PRODUCTS_QUERY_KEY = ['products'] as const;
 // Push-канала (WS/SSE) у бэкенда нет, поэтому статусы сервисов обновляем поллингом —
