@@ -11,8 +11,8 @@ import { computed } from 'vue';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
+import type { AppFilterSingleProps } from './AppFilter.types';
 import AppFilterTrigger from './AppFilterTrigger.vue';
-import type { AppFilterSingleProps } from './model/types';
 
 const props = defineProps<AppFilterSingleProps>();
 

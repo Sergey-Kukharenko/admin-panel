@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { IconName } from '@/shared/ui/app-icon';
 
+import type { FilterOption } from './AppFilter.types';
 import AppFilterMultiple from './AppFilterMultiple.vue';
 import AppFilterSingle from './AppFilterSingle.vue';
-import type { FilterOption } from './model/types';
 
 defineProps<{
   multiple?: boolean;

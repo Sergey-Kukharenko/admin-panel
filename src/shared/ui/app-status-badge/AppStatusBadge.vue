@@ -3,7 +3,7 @@ import { computed } from 'vue';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import type { AppStatusBadgeStatus } from './model/types';
+import type { AppStatusBadgeStatus } from './AppStatusBadge.types';
 
 defineOptions({
   name: 'AppStatusBadge',

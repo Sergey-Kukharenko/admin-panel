@@ -10,8 +10,8 @@ import { computed } from 'vue';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
+import type { AppFilterMultipleProps } from './AppFilter.types';
 import AppFilterTrigger from './AppFilterTrigger.vue';
-import type { AppFilterMultipleProps } from './model/types';
 
 const props = defineProps<AppFilterMultipleProps>();
 
