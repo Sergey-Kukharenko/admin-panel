@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from 'radix-vue';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { TARIFF_USAGE_LIMITS } from '@/entities/tariff';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -32,6 +33,8 @@ const selectedProductName = computed(
 const totalRows = computed(
   () => PREDICTIONS_CHART_DATASET.totalRowsByProduct[selectedProductId.value] ?? 0,
 );
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -40,13 +43,13 @@ const totalRows = computed(
       <div class="flex items-center gap-4">
         <div class="flex flex-1 items-center gap-2">
           <p class="font-mono text-xs font-medium text-(--text-secondary) uppercase">
-            Предсказания
+            {{ t('dashboard.predictions') }}
           </p>
 
           <span
             class="rounded-full bg-(--bg-badge-neutral) px-2 py-1 font-mono text-xs font-medium text-(--text-primary) uppercase"
           >
-            за 12 месяцев
+            {{ t('dashboard.last12Months') }}
           </span>
         </div>
 
@@ -100,7 +103,7 @@ const totalRows = computed(
         <p class="text-element-accent leading-8 tracking-tight text-(--text-primary)">
           {{ totalRows.toLocaleString('ru-RU') }}
         </p>
-        <p class="text-body-sm text-(--text-secondary)">Строк</p>
+        <p class="text-body-sm text-(--text-secondary)">{{ t('dashboard.rows') }}</p>
       </div>
     </div>
 

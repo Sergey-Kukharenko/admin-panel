@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 import { AppButton } from '@/shared/ui/app-button';
 import { AppModal } from '@/shared/ui/app-modal';
 
@@ -15,26 +17,24 @@ const emit = defineEmits<{
   close: [];
   confirm: [];
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
-  <AppModal :open="open" title="Изменить пароль" @close="emit('close')">
+  <AppModal :open="open" :title="t('changePassword.title')" @close="emit('close')">
     <div class="flex flex-col gap-4 px-5 pb-5 text-sm text-(--text-secondary)">
-      <p>
-        Для изменения пароля мы отправим письмо на {{ email }}. Следуйте инструкции в письме, чтобы
-        задать новый пароль.
-      </p>
-      <p>
-        Ссылка действительна в течение 1 часа. Если срок действия истечет, вы сможете запросить
-        новое письмо.
-      </p>
+      <p>{{ t('changePassword.description', { email }) }}</p>
+      <p>{{ t('changePassword.linkValidity') }}</p>
     </div>
 
     <template #footer>
-      <AppButton variant="outline" size="medium" @click="emit('close')"> Отмена </AppButton>
+      <AppButton variant="outline" size="medium" @click="emit('close')">
+        {{ t('changePassword.cancel') }}
+      </AppButton>
 
       <AppButton variant="primary" size="medium" @click="emit('confirm')">
-        Отправить письмо
+        {{ t('changePassword.submit') }}
       </AppButton>
     </template>
   </AppModal>

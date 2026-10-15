@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from 'radix-vue';
 import { computed, reactive, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { TARIFF_USAGE_LIMITS } from '@/entities/tariff';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -50,6 +51,8 @@ function toggleSeries(key: ChartSeriesKey): void {
     visibleSeriesKeys.add(key);
   }
 }
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -58,13 +61,13 @@ function toggleSeries(key: ChartSeriesKey): void {
       <div class="flex items-center gap-4">
         <div class="flex flex-1 items-center gap-2">
           <p class="font-mono text-xs font-medium text-(--text-secondary) uppercase">
-            Загружено данных
+            {{ t('dashboard.uploadedData') }}
           </p>
 
           <span
             class="rounded-full bg-(--bg-badge-neutral) px-2 py-1 font-mono text-xs font-medium text-(--text-primary) uppercase"
           >
-            за 30 дней
+            {{ t('dashboard.last30Days') }}
           </span>
         </div>
 
@@ -118,7 +121,7 @@ function toggleSeries(key: ChartSeriesKey): void {
         <p class="text-element-accent leading-8 tracking-tight text-(--text-primary)">
           {{ dataset.totalRows.toLocaleString('ru-RU') }}
         </p>
-        <p class="text-body-sm text-(--text-secondary)">Строк</p>
+        <p class="text-body-sm text-(--text-secondary)">{{ t('dashboard.rows') }}</p>
       </div>
     </div>
 

@@ -10,6 +10,7 @@ export const ru = {
       retry: 'Попробовать снова',
       code: 'Код ошибки',
     },
+    loading: 'Авторизация в системе...',
   },
   notFound: {
     title: 'Страница не найдена',
@@ -21,6 +22,58 @@ export const ru = {
   },
   filter: {
     clear: 'Сбросить фильтр',
+  },
+  confirmDialog: {
+    confirm: 'Подтвердить',
+    cancel: 'Отмена',
+  },
+  statusBadge: {
+    loading: 'Загрузка',
+    success: 'Успешно',
+    error: 'Ошибка',
+  },
+  tooltip: {
+    hint: 'Подсказка',
+  },
+  changePassword: {
+    title: 'Изменить пароль',
+    description:
+      'Для изменения пароля мы отправим письмо на {email}. Следуйте инструкции в письме, чтобы задать новый пароль.',
+    linkValidity:
+      'Ссылка действительна в течение 1 часа. Если срок действия истечет, вы сможете запросить новое письмо.',
+    cancel: 'Отмена',
+    submit: 'Отправить письмо',
+    success: 'Письмо направлено! Проверьте почту.',
+    failed: 'Не удалось отправить письмо. Попробуйте позже.',
+  },
+  // Колонки доступа — по макету на английском в обеих локалях
+  productAccess: {
+    product: 'Продукт',
+    writeData: 'Write data',
+    readResults: 'Read results',
+  },
+  dashboard: {
+    uploadedData: 'Загружено данных',
+    last30Days: 'за 30 дней',
+    predictions: 'Предсказания',
+    last12Months: 'за 12 месяцев',
+    rows: 'Строк',
+    products: 'Продукты',
+    recentOperations: 'Последние операции',
+    records: '{count} записей',
+    columns: {
+      date: 'Дата',
+      type: 'Тип операции',
+      details: 'Детали',
+      status: 'Статус',
+    },
+    // Статусы продукта — по макету на английском в обеих локалях
+    product: {
+      active: 'Active',
+      data: 'Data',
+      results: 'Results',
+      ready: 'Ready',
+    },
   },
   pagination: {
     previousPage: 'Предыдущая страница',
@@ -38,6 +91,7 @@ export const ru = {
     sidebar: {
       collapse: 'Свернуть меню',
       expand: 'Развернуть меню',
+      logoAlt: 'Логотип компании',
     },
     userMenu: {
       profile: 'Профиль',

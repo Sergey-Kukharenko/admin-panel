@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DialogDescription, DialogTitle } from 'radix-vue';
+import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -21,8 +22,8 @@ withDefaults(
   }>(),
   {
     description: undefined,
-    confirmLabel: 'Подтвердить',
-    cancelLabel: 'Отмена',
+    confirmLabel: undefined,
+    cancelLabel: undefined,
     variant: 'warning',
   },
 );
@@ -31,6 +32,8 @@ const emit = defineEmits<{
   close: [];
   confirm: [];
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -69,7 +72,7 @@ const emit = defineEmits<{
 
     <template #footer>
       <AppButton variant="outline" size="medium" @click="emit('close')">
-        {{ cancelLabel }}
+        {{ cancelLabel ?? t('confirmDialog.cancel') }}
       </AppButton>
 
       <AppButton
@@ -78,7 +81,7 @@ const emit = defineEmits<{
         class="text-(--text-inverse-soft)"
         @click="emit('confirm')"
       >
-        {{ confirmLabel }}
+        {{ confirmLabel ?? t('confirmDialog.confirm') }}
       </AppButton>
     </template>
   </AppModal>

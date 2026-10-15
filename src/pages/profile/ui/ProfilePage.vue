@@ -8,6 +8,8 @@ defineOptions({
 
 <template>
   <div>
+    <!-- Заглушка страницы, не текст интерфейса -->
+    <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
     <p class="text-sm text-(--muted-foreground)">ProfilePage</p>
   </div>
 </template>

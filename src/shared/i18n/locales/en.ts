@@ -12,6 +12,7 @@ export const en: MessageSchema = {
       retry: 'Try again',
       code: 'Error code',
     },
+    loading: 'Signing in...',
   },
   notFound: {
     title: 'Page not found',
@@ -23,6 +24,55 @@ export const en: MessageSchema = {
   },
   filter: {
     clear: 'Clear filter',
+  },
+  confirmDialog: {
+    confirm: 'Confirm',
+    cancel: 'Cancel',
+  },
+  statusBadge: {
+    loading: 'Loading',
+    success: 'Success',
+    error: 'Error',
+  },
+  tooltip: {
+    hint: 'Hint',
+  },
+  changePassword: {
+    title: 'Change password',
+    description:
+      "To change your password, we'll send an email to {email}. Follow the instructions in the email to set a new password.",
+    linkValidity: 'The link is valid for 1 hour. If it expires, you can request a new email.',
+    cancel: 'Cancel',
+    submit: 'Send email',
+    success: 'Email sent! Check your inbox.',
+    failed: "Couldn't send the email. Please try again later.",
+  },
+  productAccess: {
+    product: 'Product',
+    writeData: 'Write data',
+    readResults: 'Read results',
+  },
+  dashboard: {
+    uploadedData: 'Data uploaded',
+    last30Days: 'last 30 days',
+    predictions: 'Predictions',
+    last12Months: 'last 12 months',
+    rows: 'Rows',
+    products: 'Products',
+    recentOperations: 'Recent operations',
+    records: '{count} records',
+    columns: {
+      date: 'Date',
+      type: 'Operation type',
+      details: 'Details',
+      status: 'Status',
+    },
+    product: {
+      active: 'Active',
+      data: 'Data',
+      results: 'Results',
+      ready: 'Ready',
+    },
   },
   pagination: {
     previousPage: 'Previous page',
@@ -40,6 +90,7 @@ export const en: MessageSchema = {
     sidebar: {
       collapse: 'Collapse menu',
       expand: 'Expand menu',
+      logoAlt: 'Company logo',
     },
     userMenu: {
       profile: 'Profile',

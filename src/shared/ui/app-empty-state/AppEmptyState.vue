@@ -19,7 +19,7 @@ const props = defineProps<{
     <div class="mb-6 flex h-65 w-65 items-center justify-center overflow-hidden">
       <img
         :src="props.illustrationSrc ?? emptyState"
-        alt="empty-state"
+        alt=""
         class="h-full w-full object-contain"
         loading="lazy"
       />

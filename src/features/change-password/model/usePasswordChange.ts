@@ -2,6 +2,7 @@ import { computed, onUnmounted, ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import { userApi } from '@/entities/user';
+import { i18n } from '@/shared/i18n';
 
 const COOLDOWN_SECONDS = 15 * 60;
 
@@ -57,10 +58,10 @@ export function usePasswordChange() {
 
     try {
       await userApi.requestPasswordChange();
-      toast.success('Письмо направлено! Проверьте почту.');
+      toast.success(i18n.global.t('changePassword.success'));
       startCooldown();
     } catch {
-      toast.error('Не удалось отправить письмо. Попробуйте позже.');
+      toast.error(i18n.global.t('changePassword.failed'));
     }
   }
 

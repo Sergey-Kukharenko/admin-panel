@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 import { AppIcon } from '@/shared/ui/app-icon';
 
 import type { DashboardProduct } from '../model/types';
@@ -10,6 +12,8 @@ defineOptions({
 defineProps<{
   product: DashboardProduct;
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -22,7 +26,7 @@ defineProps<{
 
         <span v-if="product.isActive" class="flex items-center gap-1 text-(--text-success-soft)">
           <AppIcon name="check-alt" class="size-3.5" />
-          <span class="text-xs font-medium uppercase">Active</span>
+          <span class="text-xs font-medium uppercase">{{ t('dashboard.product.active') }}</span>
         </span>
       </div>
 
@@ -31,7 +35,9 @@ defineProps<{
 
     <div class="flex items-center gap-3 px-5 py-4">
       <div class="flex flex-col items-center gap-1">
-        <p class="font-mono text-xs text-(--text-secondary) uppercase">Data</p>
+        <p class="font-mono text-xs text-(--text-secondary) uppercase">
+          {{ t('dashboard.product.data') }}
+        </p>
         <div
           class="flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-neutral) pr-2 pl-1.5"
         >
@@ -43,12 +49,16 @@ defineProps<{
       </div>
 
       <div class="flex flex-col items-start gap-1">
-        <p class="font-mono text-xs text-(--text-secondary) uppercase">Results</p>
+        <p class="font-mono text-xs text-(--text-secondary) uppercase">
+          {{ t('dashboard.product.results') }}
+        </p>
         <div
           class="flex h-5.75 items-center gap-1 rounded-full bg-(--bg-badge-neutral) pr-2 pl-1.5"
         >
           <AppIcon name="checkbox-circle-line" class="size-3.5 text-(--text-primary)" />
-          <span class="font-mono text-xs font-medium text-(--text-primary) uppercase">Ready</span>
+          <span class="font-mono text-xs font-medium text-(--text-primary) uppercase">
+            {{ t('dashboard.product.ready') }}
+          </span>
           <span class="text-(--text-secondary)">·</span>
           <span class="font-mono text-xs text-(--text-secondary) uppercase">
             {{ product.resultsDate }}

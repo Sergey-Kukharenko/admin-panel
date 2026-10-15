@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 import { AppIcon } from '@/shared/ui/app-icon';
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 <template>
   <div
@@ -8,7 +12,7 @@ import { AppIcon } from '@/shared/ui/app-icon';
     <div class="flex flex-col items-center gap-2">
       <AppIcon name="loader-2-line" class="w-8 h-8 animate-spin text-[var(--primary)]" />
       <span class="text-sm text-[var(--text-secondary)] font-sans font-medium">
-        Авторизация в системе...
+        {{ t('auth.loading') }}
       </span>
     </div>
   </div>

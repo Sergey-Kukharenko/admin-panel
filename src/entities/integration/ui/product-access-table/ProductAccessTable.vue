@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 import { AppSwitch } from '@/shared/ui/app-switch';
 
 import { INTEGRATION_PRODUCTS } from '../../config/constants';
@@ -17,7 +19,7 @@ const props = withDefaults(
     productColumnLabel?: string;
   }>(),
   {
-    productColumnLabel: 'Продукт',
+    productColumnLabel: undefined,
   },
 );
 
@@ -33,19 +35,21 @@ function toggle(productId: string, field: 'writeData' | 'readResults') {
     [productId]: { ...current, [field]: !current[field] },
   });
 }
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
   <div class="w-full overflow-hidden rounded-(--radius-lg) bg-(--bg-input)">
     <div class="flex h-8 items-center gap-4 pl-3">
       <span class="w-48.5 font-mono text-xs font-medium uppercase text-(--text-secondary)">
-        {{ productColumnLabel }}
+        {{ productColumnLabel ?? t('productAccess.product') }}
       </span>
-      <span class="flex-1 font-mono text-xs font-medium uppercase text-(--text-secondary)"
-        >Write data</span
-      >
+      <span class="flex-1 font-mono text-xs font-medium uppercase text-(--text-secondary)">
+        {{ t('productAccess.writeData') }}
+      </span>
       <span class="w-28 text-right font-mono text-xs font-medium uppercase text-(--text-secondary)">
-        Read results
+        {{ t('productAccess.readResults') }}
       </span>
     </div>
 

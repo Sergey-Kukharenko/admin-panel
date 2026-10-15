@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
 import { MOCK_RECENT_OPERATIONS } from '../config/mocks';
@@ -6,13 +8,19 @@ import { MOCK_RECENT_OPERATIONS } from '../config/mocks';
 defineOptions({
   name: 'DashboardRecentOperations',
 });
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
   <div class="flex flex-col gap-4 pt-4">
     <div class="flex items-center justify-between">
-      <h2 class="text-title-sm font-medium text-(--text-primary)">Последние операции</h2>
-      <p class="text-body-sm text-(--text-primary)">{{ MOCK_RECENT_OPERATIONS.length }} записей</p>
+      <h2 class="text-title-sm font-medium text-(--text-primary)">
+        {{ t('dashboard.recentOperations') }}
+      </h2>
+      <p class="text-body-sm text-(--text-primary)">
+        {{ t('dashboard.records', { count: MOCK_RECENT_OPERATIONS.length }) }}
+      </p>
     </div>
 
     <div
@@ -22,26 +30,28 @@ defineOptions({
         <div
           class="flex h-9 flex-1 items-center border-r border-(--border-default) bg-(--bg-surface-secondary) px-4"
         >
-          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">Дата</span>
+          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">{{
+            t('dashboard.columns.date')
+          }}</span>
         </div>
         <div
           class="flex h-9 flex-1 items-center border-r border-(--border-default) bg-(--bg-surface-secondary) px-4"
         >
           <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">
-            Тип операции
+            {{ t('dashboard.columns.type') }}
           </span>
         </div>
         <div
           class="flex h-9 flex-1 items-center border-r border-(--border-default) bg-(--bg-surface-secondary) px-4"
         >
-          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase"
-            >Детали</span
-          >
+          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">{{
+            t('dashboard.columns.details')
+          }}</span>
         </div>
         <div class="flex h-9 w-35 shrink-0 items-center bg-(--bg-surface-secondary) px-4">
-          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase"
-            >Статус</span
-          >
+          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">{{
+            t('dashboard.columns.status')
+          }}</span>
         </div>
       </div>
 

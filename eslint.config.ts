@@ -1,3 +1,4 @@
+import pluginVueI18n from '@intlify/eslint-plugin-vue-i18n';
 import pluginVitest from '@vitest/eslint-plugin';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import { globalIgnores } from 'eslint/config';
@@ -32,6 +33,35 @@ export default defineConfigWithVueTs(
       'vuejs-accessibility/click-events-have-key-events': 'off',
       'vuejs-accessibility/no-static-element-interactions': 'off',
     },
+  },
+
+  // ✅ i18n: видимый текст в шаблонах — только через t()
+  {
+    files: ['src/**/*.vue'],
+    plugins: { '@intlify/vue-i18n': pluginVueI18n },
+    rules: {
+      '@intlify/vue-i18n/no-raw-text': [
+        'error',
+        {
+          // Знаки, разделители и числа переводить не нужно
+          ignorePattern: '^[-–—·•…/|:;,.*+×%#№()\\[\\]\\s\\d]*$',
+          // Технические термины и примеры значений не переводятся
+          ignoreText: ['CSV', 'API', 'Client ID', 'Access Key ID', 'New_Casino'],
+          attributes: { '/.+/': ['aria-label', 'title', 'placeholder', 'alt'] },
+        },
+      ],
+    },
+  },
+
+  {
+    // TODO: скрытые экраны (профиль, тарифы, расписание) переводим вместе с их возвратом
+    files: [
+      'src/widgets/profile-overview/**',
+      'src/widgets/tariff-limits/**',
+      'src/widgets/tariff-usage-chart/**',
+      'src/widgets/prediction-processing-schedule/**',
+    ],
+    rules: { '@intlify/vue-i18n/no-raw-text': 'off' },
   },
 
   // ✅ TypeScript

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
@@ -19,21 +20,21 @@ const props = defineProps<{
 // токены под это уже были в дизайн-системе, просто не использовались здесь
 const STATUS_CONFIG = {
   loading: {
-    text: 'Загрузка',
+    textKey: 'statusBadge.loading',
     icon: 'loader-2-line',
     bg: 'bg-(--bg-badge-loading)',
     color: 'text-(--icon-loading)',
     animate: true,
   },
   success: {
-    text: 'Успешно',
+    textKey: 'statusBadge.success',
     icon: 'checkbox-circle-line',
     bg: 'bg-(--bg-badge-success)',
     color: 'text-(--icon-success-alt)',
     animate: false,
   },
   error: {
-    text: 'Ошибка',
+    textKey: 'statusBadge.error',
     icon: 'close-circle-line',
     bg: 'bg-(--bg-badge-danger)',
     color: 'text-(--icon-error)',
@@ -42,6 +43,8 @@ const STATUS_CONFIG = {
 } as const;
 
 const config = computed(() => STATUS_CONFIG[props.status]);
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -56,7 +59,7 @@ const config = computed(() => STATUS_CONFIG[props.status]);
     />
 
     <span class="text-xs font-medium uppercase" :class="config.color">
-      {{ label ?? config.text }}
+      {{ label ?? t(config.textKey) }}
     </span>
   </span>
 </template>
