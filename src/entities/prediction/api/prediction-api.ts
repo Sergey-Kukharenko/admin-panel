@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api';
 
-import type { PredictionFilters, PredictionResultListResponse } from '../model/api';
+import type { PredictionFilters, PredictionResultListResponse } from './types';
 
 export const predictionApi = {
   /** Получить список результатов прогнозов по проекту */
