@@ -10,32 +10,35 @@ Vue 3 + TypeScript admin panel for Mico ("mico-client-portal-ui"). Built with Vi
 
 ```sh
 npm run dev              # start Vite dev server
-npm run build             # type-check (vue-tsc) + production build
-npm run preview           # preview the production build
-npm run test:unit         # run Vitest (jsdom environment)
-npm run type-check        # vue-tsc --build only
-npm run lint              # oxlint --fix, then eslint --fix --cache
-npm run format             # prettier --write src/
+npm run build            # type-check (vue-tsc) + production build
+npm run preview          # preview the production build
+npm run test:unit        # run Vitest (jsdom environment)
+npm run type-check       # vue-tsc --build only
+npm run lint             # oxlint --fix, eslint --fix --cache, steiger (FSD rules)
+npm run format           # prettier --write src/
+npm run check            # everything without --fix: type-check, check:lint, check:format, tests
+npm run api:types        # regenerate src/shared/api/generated from openapi/openapi.json
+npm run icons:sprite     # rebuild the UI icon sprite
 ```
 
-There are no test files in `src` yet — `npm run test:unit` runs Vitest against `src/**/__tests__/*` once tests are added. To run a single test file: `npx vitest run path/to/file.spec.ts`.
+Run `npm run check` before committing. Tests live next to the code in `__tests__/` (`*.spec.ts`); a single file: `npx vitest run path/to/file.spec.ts`. Composables that need the app context (router, i18n, Vue Query) are tested with `withSetup` from `@/shared/lib/test`.
 
-Linting runs oxlint first (fast correctness checks, config in `.oxlintrc.json`), then ESLint (style/import rules, `eslint.config.ts`), which also loads `eslint-plugin-oxlint` to avoid duplicate reporting. Prettier (`.prettierrc.json`: single quotes, semicolons, 100 print width) runs separately via `npm run format` — it's not wired into `lint`.
+Linting runs oxlint first (fast correctness checks, config in `.oxlintrc.json`), then ESLint (style/import rules, `eslint.config.ts`), which also loads `eslint-plugin-oxlint` to avoid duplicate reporting, then steiger (FSD layers, public API, cross-imports; `steiger.config.ts`). Prettier (`.prettierrc.json`: single quotes, semicolons, 100 print width) is checked by `check:format`.
 
 ## Architecture
 
 The codebase follows **Feature-Sliced Design (FSD)**. Layers, from lowest to highest, live under `src/`:
 
-- `shared/` — framework-agnostic building blocks with no knowledge of business domain: `shared/ui` (design-system components like `AppButton`, `AppDropdown`, `AppDrawer`), `shared/api` (axios instance `apiClient`, `sessionApi`), `shared/config`, `shared/lib`, `shared/assets/styles` (Tailwind tokens as CSS custom properties: `tokens/colors.css`, `tokens/theme.css`, `tokens/radius.css`, `tokens/typography.css`).
-- `entities/` — business domain objects and their API/model, e.g. `entities/dataset` (dataset types, `datasetApi`, upload/validation helpers), `entities/user` (Pinia `useUserStore`, auth types).
+- `shared/` — framework-agnostic building blocks with no knowledge of business domain: `shared/ui` (design-system components like `AppButton`, `AppDropdown`, `AppDrawer`), `shared/api` (axios instance `apiClient`, HTTP error helpers, OpenAPI types generated into `shared/api/generated`), `shared/config`, `shared/lib`, `shared/assets/styles` (Tailwind tokens as CSS custom properties: `tokens/colors.css`, `tokens/theme.css`, `tokens/radius.css`, `tokens/typography.css`).
+- `entities/` — business domain objects and their API/model, e.g. `entities/dataset` (dataset types, `datasetApi`, upload/validation helpers), `entities/user` (Pinia `useUserStore`, `sessionApi`/`authorizationApi`).
 - `features/` — single user actions built from entities, e.g. `features/upload-dataset` (upload zone, template picker, `useDatasetFiles` composable).
 - `widgets/` — composite, self-sufficient UI blocks assembled from entities/features, e.g. `widgets/dataset-history-table`, `widgets/dataset-upload-drawer`, `widgets/auth-loader`.
-- `pages/` — route-level views (`DashboardPage`, `DatasetsPage`, `IntegrationsPage`, `PredictionsPage`, `BillingPage`), each a thin composition of widgets.
+- `pages/` — route-level views (`pages/<name>/ui/<Name>Page.vue`, slice names without a `-page` suffix: `pages/datasets`, `pages/integrations`, …), each a thin composition of widgets, lazy-loaded from the router.
 - `app/` — app-wide concerns: `app/router` (route table + auth guard) and `app/layouts/admin-layout` (shell: header, sidebar, navigation).
 
 Each slice exposes a **public API via `index.ts`** — other slices must import through that barrel (e.g. `@/entities/dataset`, `@/shared/api`), not by reaching into internal files. The `@/*` path alias maps to `src/*` (configured in both `vite.config.ts` and `tsconfig.app.json`).
 
-Within a slice, code is grouped by segment: `model/` (types, composables, stores, pure logic), `ui/` (`.vue` components, one per directory with its own `index.ts`), `api/` (backend calls), `assets/`.
+Within a slice, code is grouped by segment by the nature of the code: `model/` (reactive: stores, composables, query keys, UI types), `lib/` (pure functions: mappers, formatters, validation), `config/` (constants, dictionaries, mocks), `api/` (backend calls; DTOs in `api/types.ts` as aliases of the generated OpenAPI types), `ui/` (`.vue` components, one per directory with its own `index.ts`), `assets/`. Create a segment only when it has content. FSD rules are checked by steiger; known deviations are listed in `docs/fsd-debt.md` — don't copy them.
 
 ### Data flow conventions
 

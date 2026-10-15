@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
-import { ROUTE_NAMES } from '@/shared/config/routes';
+import { ROUTE_NAMES } from '@/shared/config';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 

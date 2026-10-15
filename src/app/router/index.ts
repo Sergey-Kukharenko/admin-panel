@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 
 import { useUserStore } from '@/entities/user';
-import { ROUTE_NAMES } from '@/shared/config/routes';
+import { ROUTE_NAMES } from '@/shared/config';
 import type { IconName } from '@/shared/ui/app-icon';
 
 declare module 'vue-router' {
@@ -19,13 +19,13 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/dashboard',
     name: ROUTE_NAMES.dashboard,
-    component: () => import('@/pages/dashboard-page').then((m) => m.DashboardPage),
+    component: () => import('@/pages/dashboard').then((m) => m.DashboardPage),
     meta: { requiresAuth: true, titleKey: 'layout.nav.dashboard', nav: { icon: 'function-line' } },
   },
   {
     path: '/integrations',
     name: ROUTE_NAMES.integrations,
-    component: () => import('@/pages/integrations-page').then((m) => m.IntegrationsPage),
+    component: () => import('@/pages/integrations').then((m) => m.IntegrationsPage),
     meta: {
       requiresAuth: true,
       titleKey: 'layout.nav.integrations',
@@ -35,13 +35,13 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/integrations/:type',
     name: ROUTE_NAMES.integrationDetail,
-    component: () => import('@/pages/integration-detail-page').then((m) => m.IntegrationDetailPage),
+    component: () => import('@/pages/integration-detail').then((m) => m.IntegrationDetailPage),
     meta: { requiresAuth: true, titleKey: 'layout.nav.integrations' },
   },
   {
     path: '/datasets',
     name: ROUTE_NAMES.datasets,
-    component: () => import('@/pages/datasets-page').then((m) => m.DatasetsPage),
+    component: () => import('@/pages/datasets').then((m) => m.DatasetsPage),
     meta: {
       requiresAuth: true,
       titleKey: 'layout.nav.datasets',
@@ -51,7 +51,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/predictions',
     name: ROUTE_NAMES.predictions,
-    component: () => import('@/pages/predictions-page').then((m) => m.PredictionsPage),
+    component: () => import('@/pages/predictions').then((m) => m.PredictionsPage),
     meta: {
       requiresAuth: true,
       titleKey: 'layout.nav.predictions',
@@ -61,19 +61,19 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/billing',
     name: ROUTE_NAMES.billing,
-    component: () => import('@/pages/billing-page').then((m) => m.BillingPage),
+    component: () => import('@/pages/billing').then((m) => m.BillingPage),
     meta: { requiresAuth: true, titleKey: 'layout.nav.billing', nav: { icon: 'receipt-line' } },
   },
   {
     path: '/profile',
     name: ROUTE_NAMES.profile,
-    component: () => import('@/pages/profile-page').then((m) => m.ProfilePage),
+    component: () => import('@/pages/profile').then((m) => m.ProfilePage),
     meta: { requiresAuth: true, titleKey: 'layout.userMenu.profile' },
   },
   {
     path: '/:pathMatch(.*)*',
     name: ROUTE_NAMES.notFound,
-    component: () => import('@/pages/not-found-page').then((m) => m.NotFoundPage),
+    component: () => import('@/pages/not-found').then((m) => m.NotFoundPage),
     meta: { requiresAuth: true, titleKey: 'notFound.title' },
   },
 ];

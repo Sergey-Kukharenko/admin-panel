@@ -1,0 +1,1 @@
+export { createQueryPatch } from './createQueryPatch';

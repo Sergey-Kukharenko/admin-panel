@@ -3,7 +3,7 @@ import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { getIntegrationByType } from '@/entities/integration';
-import { ROUTE_NAMES } from '@/shared/config/routes';
+import { ROUTE_NAMES } from '@/shared/config';
 import { IntegrationDetail } from '@/widgets/integration-detail';
 
 defineOptions({

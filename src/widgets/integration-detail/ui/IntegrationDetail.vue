@@ -18,8 +18,8 @@ import {
   useRequestIntegrationConnection,
 } from '@/features/request-integration-connection';
 import { getHttpStatus } from '@/shared/api';
-import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
-import { ROUTE_NAMES } from '@/shared/config/routes';
+import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config';
+import { ROUTE_NAMES } from '@/shared/config';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';

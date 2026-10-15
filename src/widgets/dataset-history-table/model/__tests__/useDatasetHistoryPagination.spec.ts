@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type { App } from 'vue';
 import { createMemoryHistory, createRouter } from 'vue-router';
 
-import { withSetup } from '@/shared/lib/test/withSetup';
+import { withSetup } from '@/shared/lib/test';
 
 import { useDatasetHistoryPagination } from '../useDatasetHistoryPagination';
 

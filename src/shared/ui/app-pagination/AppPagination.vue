@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { getPaginationRange } from './lib/getPaginationRange';
+import { getPaginationRange } from './getPaginationRange';
 
 defineOptions({
   name: 'AppPagination',

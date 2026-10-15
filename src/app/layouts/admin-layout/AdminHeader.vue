@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { type RouteLocationRaw, useRoute } from 'vue-router';
 
 import { getIntegrationByType } from '@/entities/integration';
-import { ROUTE_NAMES } from '@/shared/config/routes';
+import { ROUTE_NAMES } from '@/shared/config';
 
 import HeaderActions from './HeaderActions.vue';
 

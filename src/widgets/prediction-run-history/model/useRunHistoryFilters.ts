@@ -2,7 +2,7 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { useProductDisplayNames, useProducts } from '@/entities/product';
-import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
+import { createQueryPatch } from '@/shared/lib/router';
 
 import type { PredictionRunSortField, PredictionRunSortOrder } from './types';
 

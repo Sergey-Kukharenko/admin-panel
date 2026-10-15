@@ -1,7 +1,7 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
+import { createQueryPatch } from '@/shared/lib/router';
 
 import { URL_PARAMS } from '../config/urlParams';
 import type { DatasetPeriod, DatasetSort, DatasetSortOrder, DatasetStatus } from './types';

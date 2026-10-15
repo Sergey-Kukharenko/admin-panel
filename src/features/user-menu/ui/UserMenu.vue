@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 
 import { useUserStore } from '@/entities/user';
 import avatarPlaceholderUrl from '@/shared/assets/images/avatar-placeholder.png';
-import { ROUTE_NAMES } from '@/shared/config/routes';
+import { ROUTE_NAMES } from '@/shared/config';
 import { AppConfirmDialog } from '@/shared/ui/app-confirm-dialog';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 import { AppIcon } from '@/shared/ui/app-icon';
