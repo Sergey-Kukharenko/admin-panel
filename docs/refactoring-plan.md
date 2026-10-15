@@ -57,8 +57,8 @@
 
 ## Этап 4 — качество и контроль
 
-- [ ] Окружение Vitest и хелпер `withSetup`.
-- [ ] Компонентные тесты `shared/ui`: `AppModal`, `AppButton`, `AppPagination`, `AppFilter`.
+- [x] Окружение Vitest и хелпер `withSetup` (`shared/lib/test/withSetup.ts`). Окружение по умолчанию оставлено `jsdom`: компонентным тестам нужен DOM, а `shared/i18n` читает `localStorage` при импорте.
+- [x] Компонентные тесты `shared/ui`: `AppModal`, `AppConfirmDialog`, `AppButton`, `AppPagination`, `AppFilter`.
 - [ ] Тесты недостающих мапперов и форматтеров.
 - [ ] Линтер i18n (`no-raw-text`) с исправлениями.
 - [ ] Линтер a11y (`vuejs-accessibility`) с исправлениями.
