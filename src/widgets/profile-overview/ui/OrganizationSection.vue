@@ -16,7 +16,7 @@ defineOptions({
     <p class="px-4 text-base font-medium text-[#181818]">Организация</p>
 
     <div
-      class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-white p-4"
+      class="mx-2 flex flex-col gap-4 rounded-(--radius-lg) border border-(--border-default) bg-(--bg-surface-primary) p-4"
     >
       <ProfileInfoRow label="Наименование организации" :value="MOCK_ORGANIZATION.name" />
 

@@ -19,7 +19,7 @@ export const predictionTooltipIconByName: Record<
   PredictionTooltipIconName,
   { name: IconName; colorClass: string }
 > = {
-  'service-ready': { name: 'check-alt', colorClass: 'text-[#668948]' },
+  'service-ready': { name: 'check-alt', colorClass: 'text-(--text-success-soft)' },
   'not-yet-loaded': { name: 'cog', colorClass: 'text-(--text-primary)' },
   'has-been-validated': { name: 'cog-2', colorClass: 'text-(--text-primary)' },
   error: { name: 'small-close-line', colorClass: 'text-(--danger-failed)' },

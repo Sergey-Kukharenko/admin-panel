@@ -21,7 +21,7 @@ defineProps<{
       <div class="flex items-center gap-2">
         <p class="text-base font-medium text-(--text-primary)">{{ product.name }}</p>
 
-        <span v-if="product.isActive" class="flex items-center gap-1 text-[#668948]">
+        <span v-if="product.isActive" class="flex items-center gap-1 text-(--text-success-soft)">
           <AppIcon name="check-alt" class="size-3.5" />
           <span class="text-xs font-medium uppercase">Active</span>
         </span>

@@ -134,7 +134,7 @@ onMounted(() => {
           })
           .join('');
 
-        return `<div style="display:flex;flex-direction:column;gap:4px;background:${overlayBg};color:${overlayText};border-radius:4px;padding:8px 12px;min-width:220px;box-shadow:0 2px 2px rgba(0,0,0,.04),0 1px 1px rgba(0,0,0,.06),0 0 0.5px rgba(0,0,0,.06);">
+        return `<div style="display:flex;flex-direction:column;gap:4px;background:${overlayBg};color:${overlayText};border-radius:4px;padding:8px 12px;min-width:220px;box-shadow:var(--shadow-chart-tooltip);">
           <div style="font-size:12px;opacity:.7;">${categories[dataPointIndex] ?? ''}</div>
           ${rows}
         </div>`;

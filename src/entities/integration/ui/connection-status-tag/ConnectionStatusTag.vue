@@ -37,9 +37,10 @@ const { t } = useI18n({ useScope: 'global' });
   </AppTooltip>
 
   <div v-else class="flex shrink-0 items-center gap-1">
-    <AppIcon name="check-alt" class="size-3.5 shrink-0 text-[#668948]" />
-    <span class="font-mono text-xs font-medium whitespace-nowrap uppercase text-[#668948]">{{
-      t('integrations.status.connected')
-    }}</span>
+    <AppIcon name="check-alt" class="size-3.5 shrink-0 text-(--text-success-soft)" />
+    <span
+      class="font-mono text-xs font-medium whitespace-nowrap uppercase text-(--text-success-soft)"
+      >{{ t('integrations.status.connected') }}</span
+    >
   </div>
 </template>

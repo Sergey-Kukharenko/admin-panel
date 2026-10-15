@@ -39,7 +39,10 @@
 | `ProductAccessTable.vue`, `DatasetUploadZone.vue`, `AppButton.vue` | Экспорт типов из `.vue`; `AppButton.types.ts` устарел и не используется | Типы в `*.types.ts` |
 | 9 компонентов (`AppConfirmDialog`, `AppDrawer`, `AppStatusBadge`, …) | `$emit` в шаблоне | `emit` |
 | `AppStatusBadge`, `AppFilterTrigger`, кнопки закрытия модалок | `div @click`, кликабельный `span` внутри `button`, иконочные кнопки без `aria-label` | По правилам доступности |
-| ~22 места: `ConnectionStatusTag`, `CredentialsInfoCard`, `UserMenu`, `AppSwitch`, `AppSkeleton`, `AppWaveBackground`, `profile-overview/*`, … | Хардкод цветов, градиенты в `style`, `bg-red-50`, `bg-neutral-300` | Семантические токены |
+| `PredictionRunHistory` (`text-[#18181b]`), `profile-overview/*` (`text-[#181818]`) | Цвет заголовков близок к `--text-primary`, но не совпадает | Решить по макету: `--text-primary` или новый токен |
+| `AppSwitch` (`active:bg-[#e1e1e2]`), `DatasetTemplateItem` (`bg-red-50`), `PredictionProcessingSchedule` (`hover:bg-black/5`) | Цвета состояний без токена | Решить по макету |
+| `IntegrationCard`, `ProductAvailabilityCard`, `CredentialsInfoCard`, `profile-overview/*`, `UserMenu` (аватар) | Градиенты в `style`, у карточек чуть разные углы и стопы | Токены градиентов после решения по макету |
+| `AppWaveBackground` | Hex в JS для canvas (`--color-neutral-75`, `--color-neutral-400`) | Допустимо: canvas не читает CSS-переменные; значения сверены с токенами |
 | `ChangePasswordModal`, `usePasswordChange`, `ProfileInfoRow`, `AppConfirmDialog`, `AppStatusBadge`, `AppTooltip`, `ProductAccessTable`, `AdminSidebar` (alt) | Тексты в обход i18n | Ключи в `ru.ts` / `en.ts` |
 | `widgets/dataset-history-table/lib/utils.ts`, `entities/integration/lib/format.ts` | Зашитые локали `'ru-RU'`, `'en-GB'` | `toIntlLocale` |
 | `widgets/dashboard-*`, `tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |

@@ -9,7 +9,7 @@ export function getDayCellClasses(day: CalendarDay): string[] {
     'size-8 text-xs font-normal',
     day.selected && 'bg-[var(--bg-tag-active)] text-[var(--icon-primary)]',
     !day.disabled && !day.selected && 'text-[var(--icon-secondary)]',
-    day.disabled && 'opacity-70 text-[rgba(48,48,50,0.25)]',
+    day.disabled && 'opacity-70 text-(--text-disabled)',
   ].filter((value): value is string => Boolean(value));
 }
 
