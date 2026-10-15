@@ -41,11 +41,9 @@
 | `widgets/prediction-processing-schedule` | Кликабельный `span` (месяц) внутри кнопки сворачивания календаря; правила a11y для файла выключены | Развести на две кнопки, когда виджет вернётся |
 | `profile-overview/*` (`text-[#181818]`), `PredictionProcessingSchedule` (`hover:bg-black/5`) | Цвета без токена; в UI-ките состояния не раскрыты, экраны скрыты | Решить, когда экраны вернутся |
 | `--text-success-soft` (`#668948`) | В Figma тоже сырой hex («Active» в Status Tag), не переменная | Попросить завести переменную в Figma |
-| `AppWaveBackground` | Hex в JS для canvas (значения = `--color-neutral-75`, `--color-neutral-400`); компонент не используется | Читать токены через `getComputedStyle` или удалить, если не понадобится |
 | `profile-overview/*`, `tariff-*`, `prediction-processing-schedule` (скрытые экраны) | Тексты в обход i18n; `no-raw-text` для них выключен | Перевести вместе с возвратом экрана |
 | `widgets/dataset-history-table/lib/utils.ts`, `entities/integration/lib/format.ts`, `dashboard-*-chart` (`toLocaleString('ru-RU')`) | Зашитые локали `'ru-RU'`, `'en-GB'` | `toIntlLocale` |
 | `widgets/dashboard-*`, `tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |
-| `shared/lib/cn.ts`, `tailwind.config.js`, `.stylelintrc.json` + stylelint в devDependencies | Не используются / противоречат манифесту | Удалить |
 
 ## Процесс и прочее
 
