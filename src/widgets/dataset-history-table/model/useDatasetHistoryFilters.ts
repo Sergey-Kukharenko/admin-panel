@@ -3,8 +3,8 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
 
-import { QUERY_KEYS } from './queryKeys';
 import type { DatasetPeriod, DatasetSort, DatasetSortOrder, DatasetStatus } from './types';
+import { URL_PARAMS } from './urlParams';
 
 export function useDatasetHistoryFilters() {
   const route = useRoute();
@@ -13,8 +13,8 @@ export function useDatasetHistoryFilters() {
 
   function setSort(by: DatasetSort, order: DatasetSortOrder) {
     replaceQuery({
-      [QUERY_KEYS.sort]: by ?? undefined,
-      [QUERY_KEYS.order]: by ? order : undefined,
+      [URL_PARAMS.sort]: by ?? undefined,
+      [URL_PARAMS.order]: by ? order : undefined,
     });
   }
 
@@ -26,15 +26,15 @@ export function useDatasetHistoryFilters() {
   // откатывая изменения, сделанные предыдущими двумя.
   function resetFilters() {
     replaceQuery({
-      [QUERY_KEYS.types]: undefined,
-      [QUERY_KEYS.status]: undefined,
-      [QUERY_KEYS.period]: undefined,
+      [URL_PARAMS.types]: undefined,
+      [URL_PARAMS.status]: undefined,
+      [URL_PARAMS.period]: undefined,
     });
   }
 
   const types = computed<string[]>({
     get() {
-      const value = route.query[QUERY_KEYS.types];
+      const value = route.query[URL_PARAMS.types];
 
       if (!value) {
         return [];
@@ -45,55 +45,55 @@ export function useDatasetHistoryFilters() {
 
     set(value) {
       replaceQuery({
-        [QUERY_KEYS.types]: value.length ? value.join(',') : undefined,
+        [URL_PARAMS.types]: value.length ? value.join(',') : undefined,
       });
     },
   });
 
   const status = computed<DatasetStatus | ''>({
     get() {
-      return (route.query[QUERY_KEYS.status] as DatasetStatus) ?? '';
+      return (route.query[URL_PARAMS.status] as DatasetStatus) ?? '';
     },
 
     set(value) {
       replaceQuery({
-        [QUERY_KEYS.status]: value || undefined,
+        [URL_PARAMS.status]: value || undefined,
       });
     },
   });
 
   const period = computed<DatasetPeriod | ''>({
     get() {
-      return (route.query[QUERY_KEYS.period] as DatasetPeriod) ?? '';
+      return (route.query[URL_PARAMS.period] as DatasetPeriod) ?? '';
     },
 
     set(value) {
       replaceQuery({
-        [QUERY_KEYS.period]: value || undefined,
+        [URL_PARAMS.period]: value || undefined,
       });
     },
   });
 
   const sortBy = computed<DatasetSort>({
     get() {
-      return route.query[QUERY_KEYS.sort] === 'rows' ? 'rows' : null;
+      return route.query[URL_PARAMS.sort] === 'rows' ? 'rows' : null;
     },
 
     set(value) {
       replaceQuery({
-        [QUERY_KEYS.sort]: value ?? undefined,
+        [URL_PARAMS.sort]: value ?? undefined,
       });
     },
   });
 
   const sortOrder = computed<DatasetSortOrder>({
     get() {
-      return route.query[QUERY_KEYS.order] === 'desc' ? 'desc' : 'asc';
+      return route.query[URL_PARAMS.order] === 'desc' ? 'desc' : 'asc';
     },
 
     set(value) {
       replaceQuery({
-        [QUERY_KEYS.order]: value,
+        [URL_PARAMS.order]: value,
       });
     },
   });

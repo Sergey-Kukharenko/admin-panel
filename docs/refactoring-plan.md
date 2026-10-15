@@ -22,7 +22,7 @@
   - перенести `shared/api/session-api.ts` и `shared/api/authorization-api.ts` в `entities/user/api/`;
   - вынести `ErrorDetails` из `widgets/dataset-history-table/ui/DatasetHistoryErrorDialog.vue` в `model/types.ts`;
   - заменить импорты своего же слайса по алиасу на относительные (`entities/dataset/ui/dataset-template-icon/DatasetTemplateIcon.vue`, `widgets/predictions-manager/model/constants.ts`).
-- [ ] Фабрики query keys `<entity>Keys` в `model/queryKeys.ts` вместо ключей, собранных по месту.
+- [x] Query keys: единый формат (массив, домен первым), экспорт только для инвалидации из другого слайса; `QUERY_KEYS` → `URL_PARAMS` (это имена параметров URL). Фабрики `<entity>Keys` — по мере появления мутаций.
 - [ ] Скрипты `check:lint` и `format:check` (не `lint:check`: его подхватит маска `run-s lint:*`), довести проект до зелёных проверок.
 
 ## Этап 2 — базовая инфраструктура

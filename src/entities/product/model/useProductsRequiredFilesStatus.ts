@@ -5,7 +5,7 @@ import { productApi } from '../api/product-api';
 import type { ProductRequiredFilesStatus } from './api';
 import { PREDICTIONS_POLLING_INTERVAL } from './useProducts';
 
-export const PRODUCT_REQUIRED_FILES_STATUS_QUERY_KEY = 'product-required-files-status';
+const PRODUCT_REQUIRED_FILES_STATUS_QUERY_KEY = ['product-required-files-status'] as const;
 
 /**
  * Статус Core Data Validator по каждому продукту (GET /products/{id}/required-files/status).
@@ -19,7 +19,7 @@ export function useProductsRequiredFilesStatus(productIds: Ref<string[]>) {
   const queries = useQueries({
     queries: computed(() =>
       productIds.value.map((productId) => ({
-        queryKey: [PRODUCT_REQUIRED_FILES_STATUS_QUERY_KEY, productId],
+        queryKey: [...PRODUCT_REQUIRED_FILES_STATUS_QUERY_KEY, productId],
         queryFn: async () => {
           const response = await productApi.getRequiredFilesStatus(productId);
           return response.data;

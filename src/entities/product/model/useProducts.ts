@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { productApi } from '../api/product-api';
 import { withoutHiddenServices } from './hiddenServices';
 
-export const PRODUCTS_QUERY_KEY = ['products'];
+const PRODUCTS_QUERY_KEY = ['products'] as const;
 // Push-канала (WS/SSE) у бэкенда нет, поэтому статусы сервисов обновляем поллингом —
 // по PRD смена статуса должна появиться в интерфейсе максимум за 5 секунд (AC 6).
 // Вкладка в фоне не опрашивается (refetchIntervalInBackground по умолчанию false)
