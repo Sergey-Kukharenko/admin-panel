@@ -36,13 +36,13 @@
 | `entities/product/model/{displayNames,docsLinks,hiddenServices}.ts`, `entities/dataset/model/templateMapper.ts` | Бизнес-справочники по slug'ам на фронте | Fallback в `config/` с `TODO` на задачу бэка |
 | `features/upload-dataset/model/store.ts` | Стор сам грузит шаблоны в обход `useDatasetTemplates`; `filesMap` с `File` и квота в `localStorage` | Шаблоны через `useDatasetTemplates`; квоту считать на бэке |
 | `.env` | Абсолютный `VITE_API_URL` на dev-хост вшивается в любую сборку (в т.ч. prod) | `server.proxy` + `VITE_API_URL=/api` (порядок — в «Конфигурации») |
+| `nginx.conf` | `location /api/` проксирует на `mico-transcription-orchestrator-service` (скопировано из другого проекта) | Исправить вместе с переходом на `/api`, согласовать с бэкендом/DevOps |
 
 ## UI
 
 | Где | Отклонение | Как привести |
 |---|---|---|
 | `RevealSecretModal`, `CreateApiSecretModal`, `CreateKeySecretModal` | Каркас radix-диалога скопирован вместо `AppModal` | Перевести на `AppModal` вместе с переносом в `features/manage-integration-secrets`, когда появится API ключей |
-| `AppTooltip`, `PredictionsManager`, `PredictionRunHistory` | `TooltipProvider` в каждом компоненте, в `App.vue` его нет | Один провайдер в `App.vue`, затем убрать локальные |
 | `ProductAccessTable.vue`, `DatasetUploadZone.vue`, `AppButton.vue` | Экспорт типов из `.vue`; `AppButton.types.ts` устарел и не используется | Типы в `*.types.ts` |
 | 9 компонентов (`AppConfirmDialog`, `AppDrawer`, `AppStatusBadge`, …) | `$emit` в шаблоне | `emit` |
 | `AppStatusBadge`, `AppFilterTrigger`, кнопки закрытия модалок | `div @click`, кликабельный `span` внутри `button`, иконочные кнопки без `aria-label` | По правилам доступности |
