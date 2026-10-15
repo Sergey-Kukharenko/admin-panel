@@ -1,14 +1,19 @@
 import { apiClient } from '@/shared/api';
 
-import type { IntegrationRequestCreated, IntegrationRequestState } from '../model/api';
-import type { RestApiConnectionRequest, S3ConnectionRequest } from '../model/connectionRequest';
+import type {
+  IntegrationRequestCreated,
+  IntegrationRequestState,
+  ProjectApiCredentialsOverview,
+  RestApiConnectionRequest,
+  S3ConnectionRequest,
+} from './types';
 
 // Заявки на подключение интеграций (RFC Ph-1 API и S3). Организацию, проект и пользователя
 // бэкенд берёт из сессии
 export const integrationRequestApi = {
   /** Статус заявки на REST API; ответ также содержит items (ключи), в Ph-1 они не используются */
   getRestApiState() {
-    return apiClient.get<IntegrationRequestState>('/project-api-credentials');
+    return apiClient.get<ProjectApiCredentialsOverview>('/project-api-credentials');
   },
 
   /** Отправить заявку на подключение REST API; 409 — активная заявка уже есть */

@@ -1,21 +1,12 @@
-import type { AuthentikApiAccessEnvironment } from './api';
+import type {
+  ApiAccessType,
+  AuthentikApiAccessEnvironment,
+  RestApiConnectionRequest,
+  S3ConnectionRequest,
+} from '../api/types';
 import type { IntegrationEnvironment } from './constants';
 
-// Заявки на подключение — тела POST /project-api-credentials/request и
-// POST /project-s3-credentials/request (RFC Ph-1 API и S3).
-// Организацию, тип подключения и пользователя бэкенд берёт из сессии.
-export type ApiAccessType = 'ip_restricted' | 'public';
-
-export interface RestApiConnectionRequest {
-  access_type: ApiAccessType;
-  ip_addresses: string[];
-  environments: AuthentikApiAccessEnvironment[];
-}
-
-export interface S3ConnectionRequest {
-  environments: AuthentikApiAccessEnvironment[];
-}
-
+// Сборка и валидация тел заявок на подключение (типы тел — в api/types.ts)
 export const MAX_IP_ADDRESSES = 10;
 
 const IPV4_OCTET = '(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)';

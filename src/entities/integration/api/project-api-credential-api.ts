@@ -7,12 +7,13 @@ import type {
   ProjectApiCredentialLogsResponse,
   ProjectApiCredentialRotateSecretResponse,
   ProjectApiCredentialScopesCatalogue,
-} from '../model/api';
+  ProjectApiCredentialsOverview,
+} from './types';
 
 export const projectApiCredentialApi = {
-  /** Получить список API-ключей текущего проекта */
+  /** Получить статус интеграции и API-ключи текущего проекта (ключи — в items) */
   listCredentials() {
-    return apiClient.get<ProjectApiCredential[]>('/project-api-credentials');
+    return apiClient.get<ProjectApiCredentialsOverview>('/project-api-credentials');
   },
 
   /** Получить доступные кастомные OAuth-скоупы для окружения */

@@ -3,7 +3,8 @@ import type { MaybeRefOrGetter } from 'vue';
 import { computed, toValue } from 'vue';
 
 import { integrationRequestApi } from '../api/integration-request-api';
-import type { IntegrationStatus, IntegrationType } from './types';
+import type { IntegrationStatus } from '../api/types';
+import type { IntegrationType } from './types';
 
 export const integrationStatusQueryKey = (type: IntegrationType) =>
   ['integrations', type, 'status'] as const;
