@@ -59,7 +59,7 @@
 
 - [x] Окружение Vitest и хелпер `withSetup` (`shared/lib/test/withSetup.ts`). Окружение по умолчанию оставлено `jsdom`: компонентным тестам нужен DOM, а `shared/i18n` читает `localStorage` при импорте.
 - [x] Компонентные тесты `shared/ui`: `AppModal`, `AppConfirmDialog`, `AppButton`, `AppPagination`, `AppFilter`.
-- [ ] Тесты недостающих мапперов и форматтеров.
+- [x] Тесты недостающих мапперов и форматтеров живых экранов (история датасетов, проверка файлов, форматтеры предсказаний, `createQueryPatch`). Не покрыты: скрытые экраны (расписание, тарифы), неиспользуемый `cn`, `downloadBlob` (побочный эффект DOM).
 - [ ] Линтер i18n (`no-raw-text`) с исправлениями.
 - [ ] Линтер a11y (`vuejs-accessibility`) с исправлениями.
 - [ ] Линтер FSD (`steiger`) в `check:lint` и CI.

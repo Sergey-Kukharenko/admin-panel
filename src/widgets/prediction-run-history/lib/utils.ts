@@ -12,6 +12,8 @@ export function formatRunTimestamp(value: string | null, intlLocale: string): st
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    // Без hourCycle en-US даёт 12-часовой формат, а AM/PM при сборке строки теряется (14:23 → 02:23)
+    hourCycle: 'h23',
     timeZone: 'UTC',
   }).formatToParts(new Date(value));
 
