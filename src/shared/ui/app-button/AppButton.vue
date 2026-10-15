@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-export interface AppButtonProps {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'small' | 'medium' | 'icon';
-  disabled?: boolean;
-}
+import type { AppButtonProps } from './AppButton.types';
 
 defineOptions({
   name: 'AppButton',

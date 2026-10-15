@@ -249,7 +249,8 @@ shared → entities → features → widgets → pages → app
   `style` (ESLint). Имя компонента — из имени файла; `defineOptions({ name })` — только если имя
   должно отличаться.
 - Пропсы — generic `defineProps<{...}>()` + `withDefaults`. Тип пропсов, нужный снаружи, —
-  `<Component>.types.ts` + реэкспорт из `index.ts`. **Типы из `.vue` не экспортируем.**
+  `<Component>.types.ts` + реэкспорт из `index.ts`. **Типы из `.vue` не экспортируем** (ESLint
+  запрещает именованные экспорты в SFC).
 - **`v-model` — `defineModel`.** Пара `modelValue` / `update:modelValue` вручную — только при
   нетривиальной записи. Управляемые компоненты без двусторонней привязки (модалка: `:open` + `@close`)
   — пропс + событие.

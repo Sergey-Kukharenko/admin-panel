@@ -4,10 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { AppSwitch } from '@/shared/ui/app-switch';
 
 import { INTEGRATION_PRODUCTS } from '../../config/constants';
-
-export interface ProductAccessMap {
-  [productId: string]: { writeData: boolean; readResults: boolean };
-}
+import type { ProductAccessMap } from './ProductAccessTable.types';
 
 defineOptions({
   name: 'ProductAccessTable',

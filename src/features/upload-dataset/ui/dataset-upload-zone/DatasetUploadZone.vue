@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
 
-export interface DatasetUploadZoneProps {
+interface DatasetUploadZoneProps {
   accept?: string;
   multiple?: boolean;
   disabled?: boolean;

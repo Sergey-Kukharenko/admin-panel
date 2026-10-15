@@ -64,6 +64,20 @@ export default defineConfigWithVueTs(
     rules: { '@intlify/vue-i18n/no-raw-text': 'off' },
   },
 
+  {
+    // Types are not exported from SFCs: shared types live in <Component>.types.ts or model/types.ts
+    files: ['src/**/*.vue'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'ExportNamedDeclaration',
+          message: 'Move exported types to <Component>.types.ts (or model/types.ts).',
+        },
+      ],
+    },
+  },
+
   // ✅ TypeScript
   vueTsConfigs.recommended,
 
