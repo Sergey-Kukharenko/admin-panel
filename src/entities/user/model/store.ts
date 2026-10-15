@@ -6,7 +6,7 @@ import { IS_DEV } from '@/shared/config/env';
 
 import { authorizationApi } from '../api/authorization-api';
 import { sessionApi } from '../api/session-api';
-import type { UserProfile } from './types';
+import type { UserProfile } from '../api/types';
 
 export const useUserStore = defineStore('user', () => {
   const user = ref<UserProfile | null>(null);
