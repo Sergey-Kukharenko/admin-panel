@@ -1,6 +1,7 @@
 import { i18n } from '@/shared/i18n';
 
-import type { DatasetIcon } from '../model/types';
+import type { DatasetTemplateResponse } from '../api/types';
+import type { DatasetIcon, DatasetTemplate } from '../model/types';
 
 interface TemplateStaticContent {
   title: string;
@@ -104,4 +105,14 @@ export function getDatasetTypeContent(name: string): {
     description: i18n.global.t(content.descriptionKey),
     icon: content.icon,
   };
+}
+
+/**
+ * Template from GET /data-load/templates → UI template. Title and description are translated
+ * at call time, so a computed that maps the list follows the interface language.
+ */
+export function toDatasetTemplate(item: DatasetTemplateResponse): DatasetTemplate {
+  const { title, description, icon } = getDatasetTypeContent(item.name);
+
+  return { id: item.dataset_type_id, title, description, icon };
 }

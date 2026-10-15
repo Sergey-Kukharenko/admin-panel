@@ -1,17 +1,15 @@
 import { useQueryClient } from '@tanstack/vue-query';
 import { defineStore } from 'pinia';
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 
-import type { DatasetFile, DatasetTemplate, DatasetUpload } from '@/entities/dataset';
+import type { DatasetFile, DatasetUpload } from '@/entities/dataset';
 import {
   DATASET_FILE_ERRORS,
   DATASET_HISTORY_QUERY_KEY,
   DATASET_MAX_TOTAL_SIZE_BYTES,
   datasetApi,
-  filterVisibleDatasetTemplates,
   getDatasetFileValidationError,
-  getDatasetTypeContent,
 } from '@/entities/dataset';
 import { i18n } from '@/shared/i18n';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
@@ -38,31 +36,10 @@ function readSavedFiles(): SavedFilesState {
 export const useUploadDatasetStore = defineStore('uploadDataset', () => {
   const queryClient = useQueryClient();
 
-  // Храним сырой ответ бэкенда (id + системное имя), а не готовый title/description —
-  // они переводятся при чтении через getDatasetTypeContent, чтобы корректно
-  // реагировать на смену языка интерфейса, даже если шторка уже была открыта раньше
-  const rawTemplates = ref<Array<{ dataset_type_id: string; name: string }>>([]);
-
-  const templates = computed<DatasetTemplate[]>(() =>
-    rawTemplates.value.map((item) => {
-      const { title, description, icon } = getDatasetTypeContent(item.name);
-
-      return {
-        id: item.dataset_type_id,
-        title,
-        description,
-        icon,
-        count: 0,
-      };
-    }),
-  );
-
   const uploadsMap = ref<Record<string, DatasetUpload[]>>({});
   const filesMap = ref<SavedFilesState>(readSavedFiles());
   const isCategoryUploading = ref<Record<string, boolean>>({});
   const isSubmitting = ref(false);
-
-  let isInitialized = false;
 
   watch(
     filesMap,
@@ -71,18 +48,6 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
     },
     { deep: true },
   );
-
-  async function init() {
-    if (isInitialized) return;
-    isInitialized = true;
-
-    try {
-      const response = await datasetApi.getTemplates();
-      rawTemplates.value = filterVisibleDatasetTemplates(response.data);
-    } catch (e) {
-      console.error('Ошибка при загрузке шаблонов датасетов:', e);
-    }
-  }
 
   /** Суммарный объём файлов, уже занимающих квоту клиента: загруженные + ожидающие/грузящиеся */
   function getReservedTotalSize(): number {
@@ -269,11 +234,9 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
   }
 
   return {
-    templates,
     filesMap,
     uploadsMap,
     isSubmitting,
-    init,
     addFiles,
     removeFile,
     clearTemplateFiles,

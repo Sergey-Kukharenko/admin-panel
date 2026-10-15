@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { datasetApi } from '@/entities/dataset';
+import { datasetApi, toDatasetTemplate, useDatasetTemplates } from '@/entities/dataset';
 import { DatasetTemplatesList, useUploadDatasetStore } from '@/features/upload-dataset';
 import sphereImageUrl from '@/shared/assets/images/file-templates-sphere.jpg';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
@@ -26,11 +26,11 @@ const emit = defineEmits<{
 const { t } = useI18n({ useScope: 'global' });
 
 const uploadDatasetStore = useUploadDatasetStore();
-const { templates, filesMap, uploadsMap, isSubmitting } = storeToRefs(uploadDatasetStore);
+const { filesMap, uploadsMap, isSubmitting } = storeToRefs(uploadDatasetStore);
 
-onMounted(() => {
-  uploadDatasetStore.init();
-});
+// Shared TanStack Query cache with the history table: templates are requested once
+const { data: templatesResponse } = useDatasetTemplates();
+const templates = computed(() => (templatesResponse.value ?? []).map(toDatasetTemplate));
 
 const isConfirmOpen = ref(false);
 

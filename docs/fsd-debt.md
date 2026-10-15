@@ -27,7 +27,7 @@
 | Статусы файлов, прогонов и сервисов | В OpenAPI — `string` без `enum`, фронт сравнивает литералы со стенда (`/fail|error/` в `prediction-run-history/model/mapper.ts`) | `enum` статусов — на стороне бэка (вопрос задан), затем `api:types` |
 | `entities/integration/api/types.ts` (scopes) | `GET /project-api-credentials/scopes` нет в OpenAPI, типы ручные | Заменить на алиас, когда эндпоинт появится в схеме |
 | `entities/product/model/displayNames.ts`, `entities/product/config/docsLinks.ts`, `entities/product/lib/hiddenServices.ts`, `entities/dataset/lib/templateMapper.ts` | Бизнес-справочники по slug'ам на фронте | Fallback в `config/` с `TODO` на задачу бэка |
-| `features/upload-dataset/model/store.ts` | Стор сам грузит шаблоны в обход `useDatasetTemplates`; `filesMap` с `File` и квота в `localStorage` | Шаблоны через `useDatasetTemplates`; квоту считать на бэке |
+| `features/upload-dataset/model/store.ts` | `filesMap` с `File` и квота в `localStorage` | Квоту считать на бэке (вопрос к бэкенду); в `localStorage` — только сериализуемое |
 | `.env` | Абсолютный `VITE_API_URL` на dev-хост вшивается в любую сборку (в т.ч. prod) | `server.proxy` + `VITE_API_URL=/api` (порядок — в «Конфигурации») |
 | `nginx.conf` | `location /api/` проксирует на `mico-transcription-orchestrator-service` (скопировано из другого проекта) | Исправить вместе с переходом на `/api`, согласовать с бэкендом/DevOps |
 
