@@ -1,54 +1,47 @@
-# admin-panel
+# mico-client-portal-ui
 
-This template should help get you started developing with Vue 3 in Vite.
+Фронтенд клиентского портала MICo: загрузка данных, интеграции (REST API, Amazon S3), предсказания
+ML-продуктов. Vue 3 + TypeScript + Vite, архитектура — Feature-Sliced Design.
 
-## Recommended IDE Setup
+## Быстрый старт
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+Нужен Node `^20.19.0 || >=22.12.0`.
 
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+Вход — через сессию бэкенда (OIDC / Authentik): без авторизации приложение уводит на страницу входа.
+В dev вход идёт с `frontend=local`, бэкенд возвращает на локальный адрес.
 
-```sh
-npm run build
-```
+## Окружение
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+| Переменная | Где | Назначение |
+|---|---|---|
+| `VITE_API_URL` | `.env` | адрес API (сейчас — dev-стенд; цель — относительный `/api` с прокси, см. манифест) |
+| `VITE_FEATURE_INTEGRATION_SECRETS` | `.env.local` | `true` — включить экраны ключей интеграций (на моках) |
 
-```sh
-npm run test:unit
-```
+Личные настройки — в `.env.local` (не коммитится).
 
-### Lint with [ESLint](https://eslint.org/)
+## Скрипты
 
-```sh
-npm run lint
-```
+| Команда | Что делает |
+|---|---|
+| `npm run dev` | dev-сервер |
+| `npm run build` | type-check + сборка |
+| `npm run check` | все проверки без исправлений: типы, oxlint, ESLint, steiger, Prettier, тесты — **перед коммитом** |
+| `npm run lint` / `npm run format` | исправить линт / форматирование |
+| `npm run test:unit` | Vitest в watch-режиме |
+| `npm run api:types` | типы API из `openapi/openapi.json` (Swagger бэка) |
+| `npm run icons:sprite` | пересобрать спрайт иконок из `src/shared/assets/icons/ui/` |
+
+## Документация
+
+- [`CLAUDE.md`](CLAUDE.md) — **архитектурный манифест**: слои FSD, сегменты, работа с API, состояние,
+  компоненты, дизайн-система, i18n, тесты, Definition of Done. Им руководствуется и Claude Code.
+- [`docs/reference-slice.md`](docs/reference-slice.md) — эталонный срез entity → feature → widget → page.
+- [`docs/checklists.md`](docs/checklists.md) — чеклисты: страница, эндпоинт, фича, виджет, компонент.
+- [`docs/delivery.md`](docs/delivery.md) — git, коммиты, CI/CD, деплой.
+- [`docs/fsd-debt.md`](docs/fsd-debt.md) — известные отклонения от манифеста (не копировать).
+- [`docs/refactoring-plan.md`](docs/refactoring-plan.md) — план рефакторинга.

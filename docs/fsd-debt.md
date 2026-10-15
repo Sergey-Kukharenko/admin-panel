@@ -50,4 +50,3 @@
 | `.gitlab-ci.yml` | Нет проверок качества | Тикет у DevOps: джоба `quality` = `npm run check` |
 | Весь код и тесты | Комментарии и описания тестов (`it(...)`) на русском | Переводить при правке строки, массово не переводить |
 | `Dockerfile` | `node:22-alpine` и `nginx:1.27-alpine` вместо `node:24-alpine` и `docker.io/nginxinc/nginx-unprivileged` | По `docs/delivery.md`, вместе с DevOps |
-| `README.md` | Шаблон create-vue | Переписать |
