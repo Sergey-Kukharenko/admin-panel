@@ -28,13 +28,13 @@
 ## Этап 2 — базовая инфраструктура
 
 - [x] `AppModal` с тестами, `AppConfirmDialog` на его основе.
-- [ ] Перевод модалок на `AppModal`: 5 переводим вместе с переносом в `features` (пункт ниже), `ChangePasswordModal` и `DatasetHistoryErrorDialog` — отдельно.
+- [x] Перевод модалок на `AppModal`: подключение интеграций (вместе с переносом в `features`), `ChangePasswordModal`, `DatasetHistoryErrorDialog`. Модалки ключей (`CreateApiSecretModal`, `CreateKeySecretModal`, `RevealSecretModal`) отложены до API ключей: они за фича-флагом на моках и будут переписаны.
 - [ ] Перенос модалок и панелей из `widgets` в `features`:
   - [x] `s3-connection-modal` и мутация `useRequestIntegrationConnection` → `features/request-integration-connection` (одна фича на заявку: у S3 и REST общая мутация);
   - [x] `rest-api-connection-modal` → туда же;
-  - `rest-api-credentials`, `s3-credentials` (сейчас их импортирует `widgets/integration-detail`);
+  - отложено до API ключей: модалки ключей → `features/manage-integration-secrets`, панели `rest-api-credentials` и `s3-credentials` → внутренние компоненты `widgets/integration-detail`;
   - `uploads-empty-state` (сейчас его импортирует `widgets/dataset-history-table`);
-  - `entities/integration/ui/reveal-secret-modal`.
+  - `entities/integration/ui/reveal-secret-modal` — тоже отложено, вместе с модалками ключей.
 - [ ] Роутер:
   - `ROUTE_NAMES`;
   - ленивые страницы (`() => import('@/pages/x-page').then((m) => m.XPage)`);

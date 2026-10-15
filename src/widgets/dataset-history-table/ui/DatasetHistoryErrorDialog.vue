@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'radix-vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
-import { AppIcon } from '@/shared/ui/app-icon';
+import { AppModal } from '@/shared/ui/app-modal';
 
 import type { ErrorDetails } from '../model/types';
 
@@ -52,78 +51,38 @@ const detailsRows = computed(() => {
 </script>
 
 <template>
-  <DialogRoot :open="open" @update:open="(value) => !value && emit('close')">
-    <DialogPortal>
-      <!-- Overlay с размытием -->
-      <Transition
-        enter-from-class="opacity-0"
-        enter-active-class="transition-opacity duration-200 ease-out"
-        enter-to-class="opacity-100"
-        leave-from-class="opacity-100"
-        leave-active-class="transition-opacity duration-150 ease-in"
-        leave-to-class="opacity-0"
-      >
-        <DialogOverlay
-          v-if="open"
-          class="fixed inset-0 z-50 bg-(--overlay) backdrop-blur-overlay"
-        />
-      </Transition>
-
-      <!-- Контент модального окна -->
-      <Transition
-        enter-from-class="opacity-0 scale-95"
-        enter-active-class="transition-all duration-200 ease-out"
-        enter-to-class="opacity-100 scale-100"
-        leave-from-class="opacity-100 scale-100"
-        leave-active-class="transition-all duration-150 ease-in"
-        leave-to-class="opacity-0 scale-95"
-      >
-        <DialogContent
-          v-if="open"
-          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex w-100 flex-col rounded-(--radius-xxl) bg-(--bg-surface-primary) shadow-(--shadow-panel) focus:outline-none overflow-hidden"
+  <AppModal
+    :open="open"
+    :title="title || t('datasets.errorDialog.defaultTitle')"
+    size="sm"
+    overlay="soft"
+    @close="emit('close')"
+  >
+    <!-- Content container -->
+    <div class="flex flex-col items-start px-5 pb-18 w-full box-border">
+      <div v-if="detailsRows.length" class="flex flex-col items-start gap-2 w-full">
+        <div
+          v-for="row in detailsRows"
+          :key="row.label"
+          class="flex w-full items-start gap-3 min-h-6 py-0.5"
         >
-          <!-- Header -->
-          <header
-            class="flex w-full px-5 py-4 justify-between items-center bg-(--background) select-none"
+          <span
+            class="w-41 shrink-0 font-sans text-sm font-normal leading-5 text-(--text-secondary)"
           >
-            <DialogTitle class="font-sans text-base font-medium leading-6 text-(--text-primary)">
-              {{ title || t('datasets.errorDialog.defaultTitle') }}
-            </DialogTitle>
+            {{ row.label }}
+          </span>
 
-            <AppButton variant="outline" size="icon" @click="emit('close')">
-              <AppIcon name="close-line" />
-            </AppButton>
-          </header>
+          <span class="font-sans text-sm font-normal leading-5 text-(--text-primary)">
+            {{ row.value }}
+          </span>
+        </div>
+      </div>
+    </div>
 
-          <!-- Content container -->
-          <div class="flex flex-col items-start px-5 pb-18 w-full box-border">
-            <div v-if="detailsRows.length" class="flex flex-col items-start gap-2 w-full">
-              <div
-                v-for="row in detailsRows"
-                :key="row.label"
-                class="flex w-full items-start gap-3 min-h-6 py-0.5"
-              >
-                <span
-                  class="w-41 shrink-0 font-sans text-sm font-normal leading-5 text-(--text-secondary)"
-                >
-                  {{ row.label }}
-                </span>
-
-                <span class="font-sans text-sm font-normal leading-5 text-(--text-primary)">
-                  {{ row.value }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <footer class="flex w-full px-5 py-4 justify-end items-center bg-(--background)">
-            <AppButton class="flex-1" variant="primary" size="medium" @click="emit('download')">
-              {{ t('datasets.errorDialog.downloadFile') }}
-            </AppButton>
-          </footer>
-        </DialogContent>
-      </Transition>
-    </DialogPortal>
-  </DialogRoot>
+    <template #footer>
+      <AppButton class="flex-1" variant="primary" size="medium" @click="emit('download')">
+        {{ t('datasets.errorDialog.downloadFile') }}
+      </AppButton>
+    </template>
+  </AppModal>
 </template>
