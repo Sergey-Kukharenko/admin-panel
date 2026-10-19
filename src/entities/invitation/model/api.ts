@@ -1,10 +1,14 @@
 export type InvitationStatus = 'pending' | 'accepted' | 'expired';
 
+/** Язык письма-приглашения (OpenAPI InvitationEmailLang); по умолчанию на бэке — en */
+export type InvitationEmailLang = 'en' | 'ru';
+
 export interface InvitationCreateRequest {
   project_id: string;
   email: string;
   /** Expiry instant with timezone (RFC 3339); stored as timestamptz. */
   expires_at?: string | null;
+  lang?: InvitationEmailLang;
 }
 
 export interface Invitation {

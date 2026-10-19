@@ -22,7 +22,12 @@ export interface ProjectApiCredential {
   project_api_credential_id: string;
   client_id: string;
   environment: AuthentikApiAccessEnvironment;
-  scopes: string[];
+  scopes?: string[];
+}
+
+/** Ответ GET /project-api-credentials: статус заявки и ключи проекта */
+export interface ProjectApiCredentialsOverview extends IntegrationRequestState {
+  items?: ProjectApiCredential[];
 }
 
 export interface ProjectApiCredentialRotateSecretResponse extends ProjectApiCredential {

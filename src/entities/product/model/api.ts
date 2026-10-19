@@ -53,7 +53,10 @@ export interface ProductRun {
   product_run_id: string;
   project_id: string;
   product_id: string;
-  product_run_external_id: string;
+  /** null, пока заранее созданный по расписанию прогон не получил первое событие от ML-платформы */
+  product_run_external_id: string | null;
+  /** Время запуска по расписанию, под которое прогон создан заранее; null для прогонов из событий */
+  scheduled_at: string | null;
   aggregated_ml_service_run_status_id: string;
   aggregated_ml_service_run_status: MLServiceRunStatus | null;
   started_at: string | null;

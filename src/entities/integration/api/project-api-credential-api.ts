@@ -7,15 +7,17 @@ import type {
   ProjectApiCredentialLogsResponse,
   ProjectApiCredentialRotateSecretResponse,
   ProjectApiCredentialScopesCatalogue,
+  ProjectApiCredentialsOverview,
 } from '../model/api';
 
 export const projectApiCredentialApi = {
-  /** Получить список API-ключей текущего проекта */
+  /** Статус REST-интеграции и API-ключи текущего проекта */
   listCredentials() {
-    return apiClient.get<ProjectApiCredential[]>('/project-api-credentials');
+    return apiClient.get<ProjectApiCredentialsOverview>('/project-api-credentials');
   },
 
-  /** Получить доступные кастомные OAuth-скоупы для окружения */
+  /** Получить доступные кастомные OAuth-скоупы для окружения.
+   *  TODO: эндпоинта больше нет в OpenAPI — заготовка, не вызывать до появления на бэке */
   listScopes(environment: AuthentikApiAccessEnvironment) {
     return apiClient.get<ProjectApiCredentialScopesCatalogue>('/project-api-credentials/scopes', {
       params: { environment },
