@@ -1,0 +1,10 @@
+apiVersion: v2
+name: mico-client-portal-ui
+description: A Helm chart for mico-client-portal-ui
+type: application
+version: 1.0.0
+
+dependencies:
+  - name: mico-app
+    repository: oci://docker.artifactory.top/mi-external-int-helm-local
+    version: 1.1.3

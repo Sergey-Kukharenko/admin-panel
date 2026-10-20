@@ -8,3 +8,17 @@ export const IS_PROD = import.meta.env.PROD;
  */
 export const FEATURE_INTEGRATION_SECRETS =
   import.meta.env.VITE_FEATURE_INTEGRATION_SECRETS === 'true';
+
+/**
+ * Notifications bell and panel in the header (WT-323). Hidden for the release: there is no backend
+ * for notifications yet, the panel works on mocks (N. Ivanova in Slack, 2026-10-15).
+ * Enable locally: VITE_FEATURE_NOTIFICATIONS=true in .env.local
+ */
+export const FEATURE_NOTIFICATIONS = import.meta.env.VITE_FEATURE_NOTIFICATIONS === 'true';
+
+/**
+ * "Documentation" and "Contact the manager" buttons of the help menu (WT-323). Hidden: their targets
+ * (docs link, manager contact) are not defined yet, and a button without an action must not ship.
+ * Enable locally: VITE_FEATURE_HELP_LINKS=true in .env.local
+ */
+export const FEATURE_HELP_LINKS = import.meta.env.VITE_FEATURE_HELP_LINKS === 'true';

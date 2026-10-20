@@ -1,4 +1,9 @@
 export const ru = {
+  common: {
+    confirm: 'Подтвердить',
+    cancel: 'Отмена',
+    close: 'Закрыть',
+  },
   auth: {
     error: {
       title: 'Не удалось войти',
@@ -29,16 +34,19 @@ export const ru = {
       expand: 'Развернуть меню',
     },
     userMenu: {
+      ariaLabel: 'Меню профиля',
       profile: 'Профиль',
       logout: 'Выйти',
       logoutConfirmTitle: 'Выйти из профиля?',
-      logoutConfirmDescription: 'Для продолжения работы потребуется снова войти в систему.',
+      // Non-breaking spaces (\u00a0) as in the mockup: they decide where the line wraps
+      logoutConfirmDescription:
+        'Для\u00a0продолжения работы потребуется снова\u00a0войти\u00a0в систему.',
     },
     helpMenu: {
       ariaLabel: 'Помощь',
       title: 'Помощь',
       description:
-        'ML Portal — продвинутая среда для iGaming. Анализ поведения игроков на основе ML-моделей.',
+        'MiCo AI Platform\u00a0— предиктивная аналитическая среда для iGaming.\n\nМы анализируем поведение игроков с помощью ML-моделей, чтобы вы всегда были на шаг впереди.',
       docs: 'Документация',
       contactManager: 'Связаться с менеджером',
     },
@@ -57,17 +65,17 @@ export const ru = {
       title: 'VIP Churn Predictor 30d завершил обучение и готов к запуску',
       time: '5 мин назад',
     },
-    n2: { title: 'Прогон завершён', time: '2 ч назад' },
+    n2: { title: 'Прогон VIP Churn Predictor 30d завершён', time: '2 ч назад' },
     n3: { title: 'Данные успешно загружены через CSV (145,000 строк)', time: '5 ч назад' },
     n4: {
       title: 'Ошибка загрузки файла payments.csv — неверная структура колонок',
       time: '1 д назад',
     },
-    n5: { title: 'VIP Churn Predictor 30d завершил обучение и готов к запуску', time: '1 д назад' },
+    n5: { title: 'Запущен повторный прогон VIP CLV Predictor', time: '1 д назад' },
     n6: { title: 'Прогон VIP CLV Predictor завершён (145,000 строк)', time: '2 д назад' },
     n7: { title: 'Recommender System завершил обучение и готов к запуску', time: '3 д назад' },
-    n8: { title: 'Прогон Recommender System завершён (98,500 строк)', time: '4 д назад' },
-    n9: { title: 'Достигнуто 80% лимита по тарифу VIP Intelligence', time: '5 д назад' },
+    n8: { title: 'Идёт прогон Recommender System (98,500 строк)', time: '4 д назад' },
+    n9: { title: 'Запущен повторный прогон Recommender System', time: '5 д назад' },
   },
   datasets: {
     page: {

@@ -1,0 +1,10 @@
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M14.8398 19.625C19.9495 19.625 24.0918 23.7673 24.0918 28.877H3.91016C3.91016 23.7673 8.05249 19.625 13.1621 19.625H14.8398ZM14.001 7.23438C16.9784 7.23456 19.3924 9.67104 19.3926 12.6484C19.3926 15.626 16.9785 18.0633 14.001 18.0635C11.0233 18.0635 8.60938 15.6261 8.60938 12.6484C8.60956 9.67093 11.0234 7.23438 14.001 7.23438Z" fill="url(#avatar-silhouette)"/>
+  <defs>
+    <linearGradient id="avatar-silhouette" x1="11.4797" y1="7.85016" x2="11.4797" y2="28.0359" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6A6A6A"/>
+      <stop offset="0.4" stop-color="#3E3E3E"/>
+      <stop offset="1" stop-color="#3B3B3B"/>
+    </linearGradient>
+  </defs>
+</svg>

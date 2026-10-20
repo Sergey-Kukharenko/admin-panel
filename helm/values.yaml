@@ -1,0 +1,32 @@
+mico-app:
+  # Static SPA behind nginx-unprivileged; service defaults (8080/http) apply.
+  resources:
+    limits:
+      memory: "128Mi"
+      ephemeral-storage: "100Mi"
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+      ephemeral-storage: "100Mi"
+
+  # nginx.conf exposes a single /healthz used for both probes (chart defaults
+  # are /health and /ready, which nginx does not serve).
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: http
+
+  # nginx-unprivileged keeps its pid and temp files under /tmp; the chart's
+  # readOnlyRootFilesystem requires a writable emptyDir there.
+  volumes:
+    - name: tmp
+      emptyDir:
+        sizeLimit: "50Mi"
+
+  volumeMounts:
+    - name: tmp
+      mountPath: "/tmp"

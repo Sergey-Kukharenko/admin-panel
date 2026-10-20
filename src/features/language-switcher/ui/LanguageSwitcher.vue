@@ -5,6 +5,7 @@ import type { AppLocale } from '@/shared/i18n';
 import { setAppLocale } from '@/shared/i18n';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 import { AppIcon } from '@/shared/ui/app-icon';
+import { AppIconButton } from '@/shared/ui/app-icon-button';
 
 defineOptions({
   name: 'LanguageSwitcher',
@@ -25,26 +26,22 @@ const { locale, t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
-  <AppDropdown align="end" :side-offset="8">
+  <AppDropdown align="end" :side-offset="8" content-class="gap-1 p-1">
     <template #trigger>
-      <button
-        type="button"
-        class="flex size-8 items-center justify-center rounded-(--radius-sm) hover:bg-(--muted)"
-        :aria-label="t('layout.languageSwitcher.ariaLabel')"
-      >
-        <AppIcon name="global-line" class="size-4.5 text-(--icon-tertiary)" />
-      </button>
+      <AppIconButton :aria-label="t('layout.languageSwitcher.ariaLabel')">
+        <AppIcon name="global-line" class="size-4.5 text-(--icon-secondary)" />
+      </AppIconButton>
     </template>
 
     <AppDropdownItem
       v-for="language in LANGUAGES"
       :key="language.code"
-      class="w-36 justify-between"
+      class="w-37 justify-between"
       @select="setAppLocale(language.code)"
     >
       <span class="flex items-center gap-3 text-body-sm font-medium text-(--text-primary)">
-        <!-- Иконки ru/en из набора (Figma 1418:195848); имя иконки = код локали -->
-        <AppIcon :name="language.code" class="text-(--text-tertiary)" />
+        <!-- ru/en icons from the icon set (Figma 1418:195848); icon name = locale code -->
+        <AppIcon :name="language.code" class="text-(--icon-primary)" />
         {{ language.label }}
       </span>
 

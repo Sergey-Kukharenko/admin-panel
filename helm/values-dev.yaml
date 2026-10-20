@@ -1,0 +1,34 @@
+mico-app:
+  image:
+    repository: registry.mico.team/mi-external/client-portal/mico-client-portal-ui/dev
+
+  httpRoutes:
+    internal:
+      parentRefs:
+        - name: internal-gateway
+          namespace: envoy-gateway-system
+      hostnames:
+        - "client-portal-ui.dev.mico.team"
+      rules:
+        # /api -> client-portal-api (same namespace) with the prefix stripped:
+        # the API serves its routers at the root (/authorization, /user, ...).
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /api
+          filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  type: ReplacePrefixMatch
+                  replacePrefixMatch: /
+          backendRefs:
+            - name: mico-client-portal-api
+              port: 8000
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /
+          backendRefs:
+            - name: mico-client-portal-ui
+              port: 8080

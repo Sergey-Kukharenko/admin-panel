@@ -19,6 +19,9 @@
   --color-neutral-25: #fdfdfd;
   --color-neutral-0: #ffffff;
 
+  /* Figma colors/eclipse (button labels) */
+  --color-eclipse: #18181b;
+
   /* Green */
   --color-green-700: #15803d;
   --color-green-400: #4ade80;
@@ -68,7 +71,8 @@
   /* Фоновые подложки */
   --bg-surface-primary: var(--color-neutral-0);
   --bg-surface-neutral: #f8f8f8;
-  --bg-surface-secondary: #f1f1f1;
+  /* Figma bg/surface-secondary: table header cells, list item hover */
+  --bg-surface-secondary: rgba(48, 48, 50, 0.03);
   --bg-surface-accent: #f8f8f9;
   --bg-surface-hover: var(--color-neutral-100);
 
@@ -113,6 +117,10 @@
   --bg-button-secondary: rgba(48, 48, 50, 0.06);
   --bg-button-secondary-hover: rgba(48, 48, 50, 0.1);
   --bg-button-secondary-pressed: rgba(48, 48, 50, 0.08);
+  /* Scrollbar thumb (Figma _Scrollbar / Knob 55:384: text/disabled fill at 48% layer opacity) */
+  --bg-scrollbar-thumb: var(--text-disabled);
+  /* Button label color (Figma default/default-foreground) */
+  --default-foreground: var(--color-eclipse);
   --border-button: rgba(48, 48, 50, 0.12);
   --border-button-hover: var(--icon-muted);
   --border-button-pressed: rgba(48, 48, 50, 0.22);
@@ -142,7 +150,8 @@
   --success: var(--color-green-700);
   --warning: var(--color-yellow-700);
   --warning-foreground: var(--color-yellow-600);
-  --warning-muted: rgba(255, 236, 119, 0.2);
+  /* Figma bg/warning: warning icon boxes (confirm dialog, AI notification) */
+  --bg-warning: rgba(255, 236, 119, 0.2);
   --danger: var(--color-red-700);
   --success-ready: #528300;
   --success-alt: #004730;
@@ -175,10 +184,13 @@
 
   /* Активная вкладка сегментного переключателя (Figma shadow-tab) */
   --shadow-tab: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+  /* Keyboard focus ring of buttons (Figma Button state=focus: 2px background/background
+     inside a 4px border/focus) */
+  --shadow-focus: 0 0 0 2px var(--color-neutral-100), 0 0 0 4px var(--border-focus);
 
   --shadow-field:
-    0 0 1px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
-    0 2px 4px 0 rgba(0, 0, 0, 0.04), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    0 0 1px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.06), 0 2px 4px 0 rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
 
   --shadow-switch:
     0 0 1px 0 rgba(0, 0, 0, 0.3), 0 2px 10px 0 rgba(0, 0, 0, 0.06), 0 0 5px 0 rgba(0, 0, 0, 0.02);
@@ -189,4 +201,7 @@
   /* Tooltip */
   --bg-foreground-overlay: #1c1c1e;
   --text-overlay: var(--color-neutral-0);
+
+  /* User avatar placeholder (Figma component "avatar" 55:128) */
+  --bg-avatar: linear-gradient(146deg, #bfed85 21.5%, #e4ffc3 94.33%);
 }

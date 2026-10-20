@@ -42,14 +42,14 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => {
 
 <template>
   <header
-    class="flex h-(--header-height) items-center justify-between gap-4 border-b border-(--border) bg-(--surface) px-8"
+    class="flex h-(--header-height) items-center justify-between gap-4 border-b border-(--border-default) bg-(--bg-surface-primary) px-8"
   >
     <h1 class="flex min-w-0 items-center gap-1 truncate text-sm font-medium">
       <template v-for="(crumb, index) in breadcrumb" :key="crumb.label">
         <RouterLink v-if="crumb.to" :to="crumb.to" class="truncate text-(--text-tertiary)">
           {{ crumb.label }}
         </RouterLink>
-        <span v-else class="truncate text-(--color-foreground)">{{ crumb.label }}</span>
+        <span v-else class="truncate text-(--text-primary)">{{ crumb.label }}</span>
         <span v-if="index < breadcrumb.length - 1" class="text-(--text-tertiary)">/</span>
       </template>
     </h1>

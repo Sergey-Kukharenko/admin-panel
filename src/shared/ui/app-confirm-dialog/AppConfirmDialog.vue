@@ -7,6 +7,8 @@ import {
   DialogRoot,
   DialogTitle,
 } from 'radix-vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -15,7 +17,7 @@ defineOptions({
   name: 'AppConfirmDialog',
 });
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     open: boolean;
     title: string;
@@ -26,8 +28,6 @@ withDefaults(
     variant?: 'warning' | 'danger';
   }>(),
   {
-    confirmLabel: 'Подтвердить',
-    cancelLabel: 'Отмена',
     variant: 'warning',
   },
 );
@@ -36,6 +36,12 @@ const emit = defineEmits<{
   close: [];
   confirm: [];
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
+
+// Default labels are translated: a hardcoded default stayed Russian in the English UI
+const resolvedConfirmLabel = computed(() => props.confirmLabel ?? t('common.confirm'));
+const resolvedCancelLabel = computed(() => props.cancelLabel ?? t('common.cancel'));
 </script>
 
 <template>
@@ -71,7 +77,12 @@ const emit = defineEmits<{
         >
           <!-- Header с кнопкой close -->
           <header class="flex w-full px-5 pt-4 justify-end items-center">
-            <AppButton variant="outline" size="icon" @click="$emit('close')">
+            <AppButton
+              variant="outline"
+              size="icon"
+              :aria-label="t('common.close')"
+              @click="emit('close')"
+            >
               <AppIcon name="close-line" />
             </AppButton>
           </header>
@@ -81,7 +92,7 @@ const emit = defineEmits<{
             <!-- Иконка предупреждения -->
             <div
               class="flex size-11 p-3 justify-center items-center rounded-(--radius-xl)"
-              :class="variant === 'danger' ? 'bg-(--bg-badge-danger)' : 'bg-(--warning-muted)'"
+              :class="variant === 'danger' ? 'bg-(--bg-badge-danger)' : 'bg-(--bg-warning)'"
             >
               <AppIcon
                 name="spam-2-line"
@@ -111,16 +122,11 @@ const emit = defineEmits<{
             class="flex w-full px-5 py-4 justify-end items-center gap-2 bg-(--bg-surface-primary)"
           >
             <AppButton variant="outline" size="medium" @click="emit('close')">
-              {{ cancelLabel }}
+              {{ resolvedCancelLabel }}
             </AppButton>
 
-            <AppButton
-              variant="primary"
-              size="medium"
-              class="text-(--text-inverse-soft)"
-              @click="emit('confirm')"
-            >
-              {{ confirmLabel }}
+            <AppButton variant="primary" size="medium" @click="emit('confirm')">
+              {{ resolvedConfirmLabel }}
             </AppButton>
           </footer>
         </DialogContent>

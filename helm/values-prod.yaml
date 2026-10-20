@@ -1,0 +1,68 @@
+mico-app:
+  replicaCount: 2
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  # one ui and one api pod per node, so the PDB covers a node loss
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+
+  image:
+    # docker-mirror@2.3 publishes <mico-image-path>/${CI_PROJECT_NAME}/prod:<tag>.
+    repository: registry.mico.team/mi-external/client-portal/mico-client-portal-ui/prod
+
+  httpRoutes:
+    # ML-2866: one public host for the portal — UI on /, API behind /api. The host
+    # is owned here, not by the API chart, so prod stays single-origin.
+    public:
+      parentRefs:
+        - name: public-gateway
+          namespace: envoy-gateway-system
+      hostnames:
+        - "platform.mico.team"
+      rules:
+        # /api -> client-portal-api (same namespace) with the prefix stripped:
+        # the API serves its routers at the root (/authorization, /user, ...).
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /api
+          filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  type: ReplacePrefixMatch
+                  replacePrefixMatch: /
+            # TLS is terminated on the public ALB, so Envoy sees scheme=http and
+            # the app would emit http:// URLs and refuse to set a Secure cookie.
+            - type: RequestHeaderModifier
+              requestHeaderModifier:
+                set:
+                  - name: X-Forwarded-Proto
+                    value: https
+          backendRefs:
+            - name: mico-client-portal-api
+              port: 8000
+        - matches:
+            - path:
+                type: PathPrefix
+                value: /
+          filters:
+            - type: RequestHeaderModifier
+              requestHeaderModifier:
+                set:
+                  - name: X-Forwarded-Proto
+                    value: https
+          backendRefs:
+            - name: mico-client-portal-ui
+              port: 8080
+
+  nodeSelector:
+    karpenter.sh/nodepool: client-portal
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: client-portal
+      effect: NoSchedule

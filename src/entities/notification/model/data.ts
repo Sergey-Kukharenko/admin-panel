@@ -3,14 +3,14 @@ import type { Notification } from './types';
 export const MOCK_NOTIFICATIONS: Notification[] = [
   {
     id: 'n1',
-    variant: 'processing',
+    variant: 'ai',
     titleKey: 'notificationsMock.n1.title',
     timeKey: 'notificationsMock.n1.time',
     isRead: false,
   },
   {
     id: 'n2',
-    variant: 'ai',
+    variant: 'success',
     titleKey: 'notificationsMock.n2.title',
     timeKey: 'notificationsMock.n2.time',
     isRead: false,
@@ -38,7 +38,7 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
   },
   {
     id: 'n6',
-    variant: 'processing',
+    variant: 'success',
     titleKey: 'notificationsMock.n6.title',
     timeKey: 'notificationsMock.n6.time',
     isRead: false,

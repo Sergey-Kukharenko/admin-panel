@@ -1,6 +1,11 @@
 import type { MessageSchema } from './ru';
 
 export const en: MessageSchema = {
+  common: {
+    confirm: 'Confirm',
+    cancel: 'Cancel',
+    close: 'Close',
+  },
   auth: {
     error: {
       title: 'Sign-in failed',
@@ -31,6 +36,7 @@ export const en: MessageSchema = {
       expand: 'Expand menu',
     },
     userMenu: {
+      ariaLabel: 'Profile menu',
       profile: 'Profile',
       logout: 'Log out',
       logoutConfirmTitle: 'Log out of your account?',
@@ -40,7 +46,7 @@ export const en: MessageSchema = {
       ariaLabel: 'Help',
       title: 'Help',
       description:
-        'ML Portal — an advanced environment for iGaming. Player behavior analysis powered by ML models.',
+        'MiCo AI Platform is a predictive analytics environment for iGaming.\n\nWe analyze player behavior with ML models so you always stay one step ahead.',
       docs: 'Documentation',
       contactManager: 'Contact manager',
     },
@@ -59,17 +65,14 @@ export const en: MessageSchema = {
       title: 'VIP Churn Predictor 30d finished training and is ready to launch',
       time: '5 min ago',
     },
-    n2: { title: 'Run completed', time: '2 h ago' },
+    n2: { title: 'VIP Churn Predictor 30d run completed', time: '2 h ago' },
     n3: { title: 'Data successfully uploaded via CSV (145,000 rows)', time: '5 h ago' },
     n4: { title: 'Failed to upload payments.csv — invalid column structure', time: '1 d ago' },
-    n5: {
-      title: 'VIP Churn Predictor 30d finished training and is ready to launch',
-      time: '1 d ago',
-    },
+    n5: { title: 'VIP CLV Predictor re-run started', time: '1 d ago' },
     n6: { title: 'VIP CLV Predictor run completed (145,000 rows)', time: '2 d ago' },
     n7: { title: 'Recommender System finished training and is ready to launch', time: '3 d ago' },
-    n8: { title: 'Recommender System run completed (98,500 rows)', time: '4 d ago' },
-    n9: { title: 'Reached 80% of the VIP Intelligence plan limit', time: '5 d ago' },
+    n8: { title: 'Recommender System run in progress (98,500 rows)', time: '4 d ago' },
+    n9: { title: 'Recommender System re-run started', time: '5 d ago' },
   },
   datasets: {
     page: {
