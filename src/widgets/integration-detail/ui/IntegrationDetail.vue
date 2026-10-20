@@ -1,29 +1,15 @@
 <script setup lang="ts">
-import { useQueryClient } from '@tanstack/vue-query';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
-import { toast } from 'vue-sonner';
 
-import type {
-  Integration,
-  IntegrationConnectionRequest,
-  RestApiConnectionRequest,
-  S3ConnectionRequest,
-} from '@/entities/integration';
-import {
-  integrationKeys,
-  useIntegrationStatus,
-  useRequestIntegrationConnection,
-} from '@/entities/integration';
-import { getHttpStatus } from '@/shared/api';
+import type { Integration } from '@/entities/integration';
+import { useIntegrationStatus } from '@/entities/integration';
+import { RequestIntegrationConnectionModal } from '@/features/request-integration-connection';
 import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';
-import { RestApiConnectionModal } from '@/widgets/rest-api-connection-modal';
 import { RestApiCredentialsPanel } from '@/widgets/rest-api-credentials';
-import { S3ConnectionModal } from '@/widgets/s3-connection-modal';
 import { S3CredentialsPanel } from '@/widgets/s3-credentials';
 
 import IntegrationDetailErrorState from './IntegrationDetailErrorState.vue';
@@ -37,8 +23,6 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n({ useScope: 'global' });
-const router = useRouter();
-const queryClient = useQueryClient();
 
 const {
   data: status,
@@ -54,9 +38,6 @@ const isStatusError = computed(() => isStatusRequestError.value && !status.value
 const showCredentialsPanel = computed(
   () => FEATURE_INTEGRATION_SECRETS && status.value === 'connected',
 );
-
-const { mutate: requestIntegrationConnection, isPending: isSubmitting } =
-  useRequestIntegrationConnection();
 
 // Экран управления secrets вырезан из Ph-1, поэтому для заявленной/подключённой интеграции
 // вместо кнопки заявки показываем её статус — повторную заявку отправить нельзя (бэкенд вернёт 409)
@@ -90,37 +71,6 @@ const isConnectionModalOpen = ref(false);
 
 function requestConnection() {
   isConnectionModalOpen.value = true;
-}
-
-function submitConnectionRequest(request: IntegrationConnectionRequest) {
-  requestIntegrationConnection(request, {
-    onSuccess: () => {
-      isConnectionModalOpen.value = false;
-      toast.success(t('integrations.detail.requestSuccess'), { duration: 5000 });
-      router.push('/integrations');
-    },
-    onError: (error) => {
-      // 409 — an active request already exists (e.g. sent from another tab): close the modal and
-      // refetch, the page will show «Настройка». Any other error keeps the modal open with the
-      // filled form so it can be resent (texts proposed to PM in WT-337)
-      if (getHttpStatus(error) === 409) {
-        isConnectionModalOpen.value = false;
-        toast.error(t('integrations.detail.requestAlreadySent'));
-        queryClient.invalidateQueries({ queryKey: integrationKeys.overview(request.type) });
-        return;
-      }
-
-      toast.error(t('integrations.detail.requestFailed'));
-    },
-  });
-}
-
-function handleRestApiSubmit(payload: RestApiConnectionRequest) {
-  submitConnectionRequest({ type: 'rest-api', payload });
-}
-
-function handleS3Submit(payload: S3ConnectionRequest) {
-  submitConnectionRequest({ type: 's3', payload });
 }
 </script>
 
@@ -178,20 +128,9 @@ function handleS3Submit(payload: S3ConnectionRequest) {
       </AppEmptyState>
     </div>
 
-    <RestApiConnectionModal
-      v-if="integration.type === 'rest-api'"
-      :open="isConnectionModalOpen"
-      :submitting="isSubmitting"
-      @close="isConnectionModalOpen = false"
-      @submit="handleRestApiSubmit"
-    />
-
-    <S3ConnectionModal
-      v-else-if="integration.type === 's3'"
-      :open="isConnectionModalOpen"
-      :submitting="isSubmitting"
-      @close="isConnectionModalOpen = false"
-      @submit="handleS3Submit"
+    <RequestIntegrationConnectionModal
+      v-model:open="isConnectionModalOpen"
+      :integration-type="integration.type"
     />
   </div>
 </template>
