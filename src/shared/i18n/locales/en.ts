@@ -5,6 +5,44 @@ export const en: MessageSchema = {
     confirm: 'Confirm',
     cancel: 'Cancel',
     close: 'Close',
+    statusBadge: {
+      neutral: 'Processing',
+      loading: 'Loading',
+      success: 'Success',
+      error: 'Error',
+    },
+  },
+  dashboard: {
+    products: {
+      title: 'ML Products',
+      data: 'Data',
+      results: 'Results',
+      unavailable: 'Product unavailable',
+      descriptions: {
+        playerIntelligence: 'Models player behavior and forecasts deposit dynamics',
+        recommenderSystem: 'Personalizes game recommendations based on player interests',
+      },
+      productStatus: {
+        awaiting: 'Awaiting',
+        training: 'Training',
+        active: 'Active',
+        error: 'Error',
+      },
+      dataStatus: {
+        awaiting: 'Awaiting',
+        processing: 'Processing',
+        validated: 'Validated',
+        issue: 'Issue',
+        invalidUpdate: 'Invalid Update',
+        outdated: 'Outdated',
+      },
+      resultStatus: {
+        awaiting: 'Awaiting',
+        generating: 'Generating',
+        failed: 'Failed',
+        ready: 'Ready',
+      },
+    },
   },
   auth: {
     error: {

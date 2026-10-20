@@ -1,68 +1,62 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-import { AppIcon } from '@/shared/ui/app-icon';
+import { AppIcon, type IconName } from '@/shared/ui/app-icon';
 
-import type { AppStatusBadgeStatus } from './model/types';
-
-defineOptions({
-  name: 'AppStatusBadge',
-});
+import type { AppStatusBadgeStatus } from './AppStatusBadge.types';
 
 const props = defineProps<{
   status: AppStatusBadgeStatus;
-  clickable?: boolean;
-  /** Переопределяет текст по умолчанию для контекстов со своей терминологией статусов */
+  /** Overrides the default text for contexts with their own status wording */
   label?: string;
+  /** Overrides the default icon of the tone (e.g. "awaiting" and "generating" are both neutral) */
+  icon?: IconName;
 }>();
 
-defineEmits<{
-  click: [];
-}>();
+const { t } = useI18n({ useScope: 'global' });
 
-// Цвета взяты из макетов (Figma) под соответствующие статусы — bg-badge-*/icon-*
-// токены под это уже были в дизайн-системе, просто не использовались здесь
+// Figma StatusBadge (UI kit): fill, text and icon colors per tone. Icon-to-text space is 4px in
+// every tone (the neutral variant draws it as a 2px gap plus 2px padding)
 const STATUS_CONFIG = {
+  neutral: {
+    labelKey: 'common.statusBadge.neutral',
+    icon: 'progress-2-line',
+    classes: 'bg-(--bg-badge-neutral) text-(--text-primary)',
+  },
   loading: {
-    text: 'Загрузка',
+    labelKey: 'common.statusBadge.loading',
     icon: 'loader-2-line',
-    bg: 'bg-(--bg-badge-loading)',
-    color: 'text-(--icon-loading)',
-    animate: true,
+    classes: 'bg-(--bg-badge-loading) text-(--icon-loading)',
   },
   success: {
-    text: 'Успешно',
+    labelKey: 'common.statusBadge.success',
     icon: 'checkbox-circle-line',
-    bg: 'bg-(--bg-badge-success)',
-    color: 'text-(--icon-success-alt)',
-    animate: false,
+    classes: 'bg-(--bg-badge-success) text-(--text-success-alt)',
   },
   error: {
-    text: 'Ошибка',
+    labelKey: 'common.statusBadge.error',
     icon: 'close-circle-line',
-    bg: 'bg-(--bg-badge-danger)',
-    color: 'text-(--icon-error)',
-    animate: false,
+    classes: 'bg-(--bg-danger) text-(--text-error)',
   },
-} as const;
+} as const satisfies Record<
+  AppStatusBadgeStatus,
+  { labelKey: string; icon: IconName; classes: string }
+>;
 
 const config = computed(() => STATUS_CONFIG[props.status]);
+const iconName = computed<IconName>(() => props.icon ?? config.value.icon);
+// The loader always spins: Figma cannot show motion, and a still loader reads as a hung page
+// (results "Generating" is a neutral badge with the loader icon)
+const spinning = computed(() => iconName.value === 'loader-2-line');
 </script>
 
 <template>
-  <div
-    class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) px-2 select-none transition-all"
-    :class="[config.bg, clickable && 'cursor-pointer hover:bg-opacity-80 active:scale-95']"
-    @click="$emit('click')"
+  <span
+    class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) pr-2 pl-1.5 font-mono text-element-tag font-medium uppercase select-none"
+    :class="config.classes"
   >
-    <AppIcon
-      :name="config.icon"
-      class="size-3.5"
-      :class="[config.color, config.animate && 'animate-spin']"
-    />
-
-    <span class="text-xs font-medium uppercase" :class="config.color">
-      {{ label ?? config.text }}
-    </span>
-  </div>
+    <AppIcon :name="iconName" class="size-3.5 shrink-0" :class="spinning && 'animate-spin'" />
+    {{ label ?? t(config.labelKey) }}
+  </span>
 </template>

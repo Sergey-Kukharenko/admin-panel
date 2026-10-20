@@ -53,13 +53,14 @@
 | `AppTooltip`, `PredictionsManager`, `PredictionRunHistory` | `TooltipProvider` в каждом компоненте, в `App.vue` его нет | Один провайдер в `App.vue`, затем убрать локальные |
 | `app/router/index.ts`, `AdminHeader`, `SidebarNavigation` | Статические импорты страниц, нет `name`, пути строками, заголовки и меню отдельными списками, нет 404 | Ленивые страницы, `ROUTE_NAMES`, `meta` |
 | `ProductAccessTable.vue`, `DatasetUploadZone.vue` | Экспорт типов из `.vue` | Типы в `*.types.ts` |
-| 8 компонентов (`AppDrawer`, `AppStatusBadge`, `DatasetHistoryGroupHeader`, …) | `$emit` в шаблоне | `emit` |
+| 7 компонентов (`AppDrawer`, `DatasetHistoryGroupHeader`, …) | `$emit` в шаблоне | `emit` |
 | `tokens/colors.css` и 43 файла | Алиасы старой темы без переменной в Figma: `--background`, `--card`, `--surface`, `--foreground`, `--muted-foreground`, `--primary`, `--primary-foreground`, `--muted`, `--muted-hover`, `--muted-hover-soft`, `--border`, `--success`, `--danger` | Заменить на токены с именами Figma, сверяя место с макетом (`--surface` → `--bg-surface-primary`, `--muted` → `--bg-button-secondary`, `--muted-hover` → `--bg-button-secondary-hover` — значения совпадают; `--border` (#e5e5e5) отличается от `--border-default` (8%) — выбирать по макету), затем удалить алиасы |
-| `AppStatusBadge`, `AppFilterTrigger`, кнопки закрытия модалок (кроме `AppConfirmDialog`) | `div @click`, кликабельный `span` внутри `button`, иконочные кнопки без `aria-label` | По правилам доступности |
+| `AppFilterTrigger`, кнопки закрытия модалок (кроме `AppConfirmDialog`) | `div @click`, кликабельный `span` внутри `button`, иконочные кнопки без `aria-label` | По правилам доступности |
 | ~21 место: `ConnectionStatusTag`, `CredentialsInfoCard`, `AppSwitch`, `AppSkeleton`, `AppWaveBackground`, `profile-overview/*`, … | Хардкод цветов, градиенты в `style`, `bg-red-50`, `bg-neutral-300` | Семантические токены |
-| `ChangePasswordModal`, `usePasswordChange`, `ProfileInfoRow`, `AppStatusBadge`, `AppTooltip`, `ProductAccessTable`, `AdminSidebar` (alt) | Тексты в обход i18n | Ключи в `ru.ts` / `en.ts` |
+| `entities/integration/ui/connection-status-tag/ConnectionStatusTag.vue`, `widgets/predictions-manager/model/constants.ts` | Зелёный «активного» статуса зашит как `text-[#668948]` | `text-(--text-model-active)` — токен того же цвета (WT-324); переменной в Figma пока нет, дизайнер заведёт |
+| `ChangePasswordModal`, `usePasswordChange`, `ProfileInfoRow`, `AppTooltip`, `ProductAccessTable`, `AdminSidebar` (alt) | Тексты в обход i18n | Ключи в `ru.ts` / `en.ts` |
 | `widgets/dataset-history-table/model/utils.ts`, `entities/integration/model/format.ts` | Зашитые локали `'ru-RU'`, `'en-GB'` | `toIntlLocale` |
-| `widgets/dashboard-*`, `tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |
+| `widgets/tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |
 | `vitest.config.ts`, `shared/lib/cn.ts`, `tailwind.config.js`, `.stylelintrc.json` + stylelint в devDependencies, `lucide-vue-next` | Не используются / противоречат манифесту | Удалить; окружение Vitest → `node` |
 
 ## Процесс и прочее

@@ -162,7 +162,9 @@
   --bg-tag-inactive: rgba(48, 48, 50, 0.08);
   --bg-badge-loading: rgba(202, 220, 255, 0.4);
   --bg-badge-success: rgba(209, 255, 151, 0.6);
-  --bg-badge-danger: rgba(206, 98, 82, 0.15);
+  /* Figma bg/danger: StatusBadge error tone */
+  --bg-danger: rgba(206, 98, 82, 0.15);
+  --bg-badge-danger: var(--bg-danger);
   --bg-badge-neutral: rgba(48, 48, 50, 0.06);
   --bg-badge-processing: rgba(48, 48, 50, 0.08);
   --bg-badge-error: rgba(255, 224, 227, 0.9);
@@ -201,6 +203,22 @@
   /* Tooltip */
   --bg-foreground-overlay: #1c1c1e;
   --text-overlay: var(--color-neutral-0);
+
+  /* ML product card background (Figma "product card" 52:2382, a gradient has no variable).
+     Converted from the Figma gradient matrix: it starts 90px above the card, so the card is
+     already grey at its top edge (250) and reaches #efefef at the bottom */
+  --bg-product-card: linear-gradient(182.7deg, var(--color-neutral-0) -36.1%, #efefef 94%);
+  /* Active model tag (Figma Tag type=model status=active draws a raw color without a variable) */
+  --text-model-active: #668948;
+  /* Highlight over the text of the training model tag (Figma Tag type=model status=training: a
+     rectangle over the text, gradient without a variable). Converted from the Figma gradient
+     matrix: white at 70% peaks at 48.2% of the text width and fades out by 84.7% */
+  --bg-model-training-highlight: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-neutral-0) 70%, transparent) 48.2%,
+    transparent 84.7%
+  );
 
   /* User avatar placeholder (Figma component "avatar" 55:128) */
   --bg-avatar: linear-gradient(146deg, #bfed85 21.5%, #e4ffc3 94.33%);

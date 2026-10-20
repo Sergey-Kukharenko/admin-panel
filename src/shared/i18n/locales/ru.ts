@@ -3,6 +3,45 @@ export const ru = {
     confirm: 'Подтвердить',
     cancel: 'Отмена',
     close: 'Закрыть',
+    statusBadge: {
+      neutral: 'Обработка',
+      loading: 'Загрузка',
+      success: 'Успешно',
+      error: 'Ошибка',
+    },
+  },
+  dashboard: {
+    products: {
+      title: 'ML-Продукты',
+      // Labels and statuses stay in English in the Russian UI, as in the mockup (Figma 1361:147608)
+      data: 'Data',
+      results: 'Results',
+      unavailable: 'Продукт недоступен',
+      descriptions: {
+        playerIntelligence: 'Моделирует поведение игроков и прогнозирует динамику депозитов',
+        recommenderSystem: 'Персонализирует игровые рекомендации на основе интересов пользователей',
+      },
+      productStatus: {
+        awaiting: 'Awaiting',
+        training: 'Training',
+        active: 'Active',
+        error: 'Error',
+      },
+      dataStatus: {
+        awaiting: 'Awaiting',
+        processing: 'Processing',
+        validated: 'Validated',
+        issue: 'Issue',
+        invalidUpdate: 'Invalid Update',
+        outdated: 'Outdated',
+      },
+      resultStatus: {
+        awaiting: 'Awaiting',
+        generating: 'Generating',
+        failed: 'Failed',
+        ready: 'Ready',
+      },
+    },
   },
   auth: {
     error: {
