@@ -107,7 +107,7 @@ function confirmRevoke() {
 
 <template>
   <div class="flex w-full flex-col gap-7">
-    <CredentialsInfoCard id-label="Access Key ID" :id-value="accessKeyId" />
+    <CredentialsInfoCard :rows="[{ label: 'Access Key ID', value: accessKeyId, copyable: true }]" />
 
     <div class="flex flex-col gap-4">
       <p class="text-base font-medium text-(--text-primary)">
