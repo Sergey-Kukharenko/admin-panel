@@ -1,12 +1,13 @@
 import './shared/assets/styles/main.css';
 
-import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'; // Добавляем импорт плагина
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
 import App from '@/App.vue';
 import { router } from '@/app/router';
 import { useUserStore } from '@/entities/user';
+import { isClientError } from '@/shared/api';
 import { i18n } from '@/shared/i18n';
 
 async function bootstrap() {
@@ -22,7 +23,8 @@ async function bootstrap() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false, // Отключаем повторные запросы при переключении вкладок
-        retry: 1, // В случае сбоя сети делаем только одну повторную попытку
+        // Retry once on network failures and 5xx only: repeating a 4xx will not help
+        retry: (failureCount, error) => failureCount < 1 && !isClientError(error),
       },
     },
   });

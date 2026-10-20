@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useQueryClient } from '@tanstack/vue-query';
-import { isAxiosError } from 'axios';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -13,10 +12,11 @@ import type {
   S3ConnectionRequest,
 } from '@/entities/integration';
 import {
-  integrationStatusQueryKey,
+  integrationKeys,
   useIntegrationStatus,
   useRequestIntegrationConnection,
 } from '@/entities/integration';
+import { getHttpStatus } from '@/shared/api';
 import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
@@ -91,13 +91,13 @@ function submitConnectionRequest(request: IntegrationConnectionRequest) {
       router.push('/integrations');
     },
     onError: (error) => {
-      // 409 — активная заявка уже есть (например, отправлена из другой вкладки): закрываем окно
-      // и перезапрашиваем статус, страница покажет «Настройка». Остальные ошибки — окно
-      // остаётся открытым с заполненной формой, можно отправить ещё раз (тексты предложены в WT-337)
-      if (isAxiosError(error) && error.response?.status === 409) {
+      // 409 — an active request already exists (e.g. sent from another tab): close the modal and
+      // refetch, the page will show «Настройка». Any other error keeps the modal open with the
+      // filled form so it can be resent (texts proposed to PM in WT-337)
+      if (getHttpStatus(error) === 409) {
         isConnectionModalOpen.value = false;
         toast.error(t('integrations.detail.requestAlreadySent'));
-        queryClient.invalidateQueries({ queryKey: integrationStatusQueryKey(request.type) });
+        queryClient.invalidateQueries({ queryKey: integrationKeys.overview(request.type) });
         return;
       }
 
