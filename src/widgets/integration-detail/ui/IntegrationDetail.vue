@@ -26,6 +26,8 @@ import { RestApiCredentialsPanel } from '@/widgets/rest-api-credentials';
 import { S3ConnectionModal } from '@/widgets/s3-connection-modal';
 import { S3CredentialsPanel } from '@/widgets/s3-credentials';
 
+import IntegrationDetailErrorState from './IntegrationDetailErrorState.vue';
+
 defineOptions({
   name: 'IntegrationDetail',
 });
@@ -38,9 +40,16 @@ const { t } = useI18n({ useScope: 'global' });
 const router = useRouter();
 const queryClient = useQueryClient();
 
-const { data: status, isPending: isStatusLoading } = useIntegrationStatus(
-  () => props.integration.type,
-);
+const {
+  data: status,
+  isPending: isStatusLoading,
+  isError: isStatusRequestError,
+  refetch: refetchStatus,
+} = useIntegrationStatus(() => props.integration.type);
+
+// Error only when there is no status at all; otherwise the empty state would claim
+// «Интеграция не подключена» for an integration that may well be connected
+const isStatusError = computed(() => isStatusRequestError.value && !status.value);
 // Экраны управления ключами (H2, WT-345–353) — только за фича-флагом, на моках
 const showCredentialsPanel = computed(
   () => FEATURE_INTEGRATION_SECRETS && status.value === 'connected',
@@ -153,6 +162,8 @@ function handleS3Submit(payload: S3ConnectionRequest) {
     />
 
     <!-- Пока статус грузится, пустое состояние не показываем, чтобы не мигала кнопка заявки -->
+    <IntegrationDetailErrorState v-else-if="isStatusError" @retry="refetchStatus()" />
+
     <div v-else-if="!isStatusLoading" class="flex flex-1 items-center justify-center">
       <AppEmptyState
         :title="emptyState.title"

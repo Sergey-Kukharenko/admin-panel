@@ -276,6 +276,14 @@ export const ru = {
         connected: 'Интеграция подключена. Данные для подключения отправлены на почту',
       },
     },
+    // Status request failed (GET /project-*-credentials): no tag and no empty state
+    // that could be mistaken for «not connected»
+    statusError: {
+      tag: 'Статус недоступен',
+      retry: 'Повторить',
+      title: 'Не удалось загрузить статус интеграции',
+      description: 'Проверьте соединение и повторите попытку',
+    },
     status: {
       notConfigured: 'Не настроено',
       pending: 'Настройка',

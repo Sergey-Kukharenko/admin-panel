@@ -269,6 +269,14 @@ export const en: MessageSchema = {
         connected: 'The integration is connected. Connection details have been sent to your email',
       },
     },
+    // Status request failed (GET /project-*-credentials): no tag and no empty state
+    // that could be mistaken for «not connected»
+    statusError: {
+      tag: 'Status unavailable',
+      retry: 'Retry',
+      title: 'Failed to load the integration status',
+      description: 'Check your connection and try again',
+    },
     status: {
       notConfigured: 'Not configured',
       pending: 'In progress',

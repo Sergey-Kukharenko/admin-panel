@@ -7,6 +7,7 @@ import type { Integration } from '@/entities/integration';
 import { ConnectionStatusTag, useIntegrationStatus } from '@/entities/integration';
 import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
 import { AppButton } from '@/shared/ui/app-button';
+import { AppIcon } from '@/shared/ui/app-icon';
 import { AppSkeleton } from '@/shared/ui/app-skeleton';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
 
@@ -29,9 +30,15 @@ const iconByType: Record<Integration['type'], string> = {
   s3: s3Icon,
 };
 
-const { data: status, isPending: isStatusLoading } = useIntegrationStatus(
-  () => props.integration.type,
-);
+const {
+  data: status,
+  isPending: isStatusLoading,
+  isError: isStatusRequestError,
+  refetch: refetchStatus,
+} = useIntegrationStatus(() => props.integration.type);
+
+// Error only when there is no status at all: a failed background poll keeps the shown tag
+const isStatusError = computed(() => isStatusRequestError.value && !status.value);
 
 // После заявки повторно подать её нельзя: кнопка неактивна, подсказка объясняет почему
 // (решение PM 2026-09-24, тексты предложены в WT-337). Если статус не загрузился, кнопку
@@ -70,6 +77,21 @@ function goToDetail() {
         <div class="ml-auto">
           <AppSkeleton v-if="isStatusLoading" class="h-4 w-24 rounded-(--radius-sm)" />
           <ConnectionStatusTag v-else-if="status" :status="status" />
+          <div v-else-if="isStatusError" class="flex items-center gap-1">
+            <span
+              class="font-mono text-xs font-medium whitespace-nowrap uppercase text-(--text-error)"
+            >
+              {{ t('integrations.statusError.tag') }}
+            </span>
+            <AppButton
+              variant="ghost"
+              size="icon"
+              :aria-label="t('integrations.statusError.retry')"
+              @click="refetchStatus()"
+            >
+              <AppIcon name="loop-left-fill" class="size-3.5" />
+            </AppButton>
+          </div>
         </div>
       </div>
 
