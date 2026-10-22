@@ -391,6 +391,7 @@ export const ru = {
       },
       columns: {
         name: 'Наименование',
+        clientId: 'client_id',
         environment: 'Среда',
         permissions: 'Права доступа',
         createdAt: 'Создан',
@@ -404,35 +405,31 @@ export const ru = {
       },
       form: {
         name: 'Наименование',
-        productAccess: 'Доступ к продуктам',
-        productColumn: 'Название',
         create: 'Создать',
       },
     },
     restApiSecrets: {
       title: 'API Secrets',
-      create: 'Новый API secret',
-      formTitle: 'Новый API secret',
+      // The backend issues one credential per environment; a secret can only be replaced
+      // by a new one (rotate-secret), there are no named keys or revoke (WT-338, 2026-10-22)
       empty: {
-        title: 'Создайте свой первый API secret',
+        title: 'Ключи пока не выданы',
+        description: 'Доступы появятся здесь, когда команда завершит подключение',
+      },
+      rotate: {
+        action: 'Получить новый ключ',
+        title: 'Получить новый API secret для {environment}?',
         description:
-          'Самостоятельно создавайте API secrets и определяйте параметры доступа к ML-продуктам',
-        action: 'Создать API secret',
+          'Текущий API secret этой среды сразу перестанет работать. Обновите его во всех сервисах, которые обращаются к API.',
+        confirm: 'Получить ключ',
+        failed: 'Не удалось получить новый ключ. Попробуйте ещё раз',
       },
       reveal: {
-        title: 'API secret успешно создан!',
+        title: 'Новый API secret создан!',
         description:
           'Скопируйте API secret сейчас.\nПосле закрытия окна он больше не будет показан.',
         field: 'API secret',
         copied: 'API secret успешно скопирован!',
-      },
-      revoke: {
-        aria: 'Отозвать API Secret',
-        title: 'Отозвать API Secret',
-        description:
-          'Отозвать API Secret «{name}»? Это действие необратимо. Все запросы с этим API Secret перестанут работать.',
-        confirm: 'Отозвать',
-        done: 'API Secret отозван',
       },
     },
     s3KeySecrets: {

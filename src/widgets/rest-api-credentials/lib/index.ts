@@ -1,1 +1,1 @@
-export * from './clientIdRows';
+export * from './credentialRows';

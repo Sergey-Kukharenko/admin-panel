@@ -382,6 +382,7 @@ export const en: MessageSchema = {
       },
       columns: {
         name: 'Name',
+        clientId: 'client_id',
         environment: 'Environment',
         permissions: 'Permissions',
         createdAt: 'Created',
@@ -395,34 +396,31 @@ export const en: MessageSchema = {
       },
       form: {
         name: 'Name',
-        productAccess: 'Product access',
-        productColumn: 'Product',
         create: 'Create',
       },
     },
     restApiSecrets: {
       title: 'API Secrets',
-      create: 'New API secret',
-      formTitle: 'New API secret',
+      // The backend issues one credential per environment; a secret can only be replaced
+      // by a new one (rotate-secret), there are no named keys or revoke (WT-338, 2026-10-22)
       empty: {
-        title: 'Create your first API secret',
-        description: 'Create API secrets yourself and set access parameters to ML products',
-        action: 'Create API secret',
+        title: 'No keys issued yet',
+        description: 'Credentials will appear here once the team finishes the connection',
+      },
+      rotate: {
+        action: 'Get a new key',
+        title: 'Get a new API secret for {environment}?',
+        description:
+          'The current API secret of this environment stops working immediately. Update it in every service that calls the API.',
+        confirm: 'Get key',
+        failed: 'Failed to get a new key. Please try again',
       },
       reveal: {
-        title: 'API secret created successfully!',
+        title: 'New API secret created!',
         description:
           'Copy the API secret now.\nIt will not be shown again after you close this window.',
         field: 'API secret',
         copied: 'API secret copied successfully!',
-      },
-      revoke: {
-        aria: 'Revoke API Secret',
-        title: 'Revoke API Secret',
-        description:
-          'Revoke API Secret "{name}"? This action cannot be undone. All requests with this API Secret will stop working.',
-        confirm: 'Revoke',
-        done: 'API Secret revoked',
       },
     },
     s3KeySecrets: {

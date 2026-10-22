@@ -15,29 +15,8 @@ const CLIENT_CREDENTIALS: Record<IntegrationType, ClientCredentials> = {
 };
 
 const INITIAL_API_SECRETS: Record<IntegrationType, ApiSecret[]> = {
-  'rest-api': [
-    {
-      id: 'seed-crm-integration',
-      name: 'CRM Integration',
-      environment: 'production',
-      productAccess: [
-        {
-          productId: 'player-intelligence',
-          productName: 'Player Intelligence',
-          writeData: true,
-          readResults: true,
-        },
-        {
-          productId: 'recommender-system',
-          productName: 'Recommender System',
-          writeData: true,
-          readResults: true,
-        },
-      ],
-      createdAt: '2026-05-20',
-      status: 'active',
-    },
-  ],
+  // REST API secrets come from the backend (one credential per environment), no mock list
+  'rest-api': [],
   s3: [
     {
       id: 'seed-temp-key',
