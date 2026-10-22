@@ -77,7 +77,7 @@ describe('AppModal', () => {
     expect(wrapper.emitted('update:open')).toEqual([[false]]);
   });
 
-  it('uses the md width by default and sm on request', async () => {
+  it('uses the md width by default and sm / lg on request', async () => {
     render();
     await nextTick();
     expect(dialog()?.className).toContain('w-120');
@@ -86,5 +86,10 @@ describe('AppModal', () => {
     render({ size: 'sm' });
     await nextTick();
     expect(dialog()?.className).toContain('w-100');
+
+    document.body.innerHTML = '';
+    render({ size: 'lg' });
+    await nextTick();
+    expect(dialog()?.className).toContain('w-180');
   });
 });

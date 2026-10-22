@@ -32,11 +32,15 @@ export const projectApiCredentialApi = {
     );
   },
 
-  /** Получить журнал выдачи токенов Authentik для API-ключа проекта */
-  getLogs(projectApiCredentialId: string, params?: ProjectApiCredentialLogsFilters) {
+  /** Authentik token-issuance log of a project API credential (paginated by page / page_size) */
+  getLogs(
+    projectApiCredentialId: string,
+    params?: ProjectApiCredentialLogsFilters,
+    signal?: AbortSignal,
+  ) {
     return apiClient.get<ProjectApiCredentialLogsResponse>(
       `/project-api-credentials/${projectApiCredentialId}/logs`,
-      { params },
+      { params, signal },
     );
   },
 };

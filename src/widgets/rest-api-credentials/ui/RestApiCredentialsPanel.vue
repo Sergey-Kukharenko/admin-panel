@@ -5,6 +5,7 @@ import { toast } from 'vue-sonner';
 
 import { CredentialsInfoCard, useRestApiCredentials } from '@/entities/integration';
 import { RotateApiSecretAction } from '@/features/rotate-api-secret';
+import { ApiCredentialLogsAction } from '@/features/view-api-credential-logs';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';
 
@@ -21,7 +22,7 @@ const rows = computed(() => mapCredentialsToRows(credentials.value ?? []));
 const COLUMNS = [
   { key: 'environment', width: 'w-50' },
   { key: 'clientId', width: 'flex-1' },
-  { key: 'actions', width: 'w-55' },
+  { key: 'actions', width: 'w-80' },
 ] as const;
 
 async function copyClientId(clientId: string) {
@@ -82,7 +83,11 @@ async function copyClientId(clientId: string) {
               <AppIcon name="file-copy-line" class="size-4" />
             </button>
           </div>
-          <div class="flex h-12 w-55 items-center px-4">
+          <div class="flex h-12 w-80 items-center gap-2 px-4">
+            <ApiCredentialLogsAction
+              :credential-id="row.id"
+              :environment-label="row.environmentLabel"
+            />
             <RotateApiSecretAction
               :credential-id="row.id"
               :environment-label="row.environmentLabel"

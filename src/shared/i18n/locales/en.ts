@@ -415,6 +415,25 @@ export const en: MessageSchema = {
         confirm: 'Get key',
         failed: 'Failed to get a new key. Please try again',
       },
+      logs: {
+        action: 'Log',
+        title: 'Usage log — {environment}',
+        description: 'When and from which IP address access tokens were issued with this key',
+        columns: {
+          createdAt: 'Date and time',
+          action: 'Event',
+          clientIp: 'IP address',
+        },
+        empty: {
+          title: 'No requests yet',
+          description: 'Token issuances with this key will appear here',
+        },
+        error: {
+          title: 'Failed to load the log',
+          description: 'Check your connection and try again',
+          retry: 'Retry',
+        },
+      },
       reveal: {
         title: 'New API secret created!',
         description:

@@ -26,6 +26,8 @@ const sizeClass = computed(() => {
   switch (props.size) {
     case 'sm':
       return 'w-100';
+    case 'lg':
+      return 'w-180';
     case 'md':
     default:
       return 'w-120';
