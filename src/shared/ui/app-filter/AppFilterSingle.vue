@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import {
-  DropdownMenuContent,
-  DropdownMenuPortal,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuRoot,
-  DropdownMenuTrigger,
-} from 'radix-vue';
+import { DropdownMenuRadioGroup } from 'radix-vue';
 import { computed } from 'vue';
 
+import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 import { AppIcon } from '@/shared/ui/app-icon';
 
 import AppFilterTrigger from './AppFilterTrigger.vue';
 import type { AppFilterSingleProps } from './model/types';
 
+// clearable defaults to true in AppFilter, the only consumer
 const props = defineProps<AppFilterSingleProps>();
 
 const emit = defineEmits<{
@@ -26,46 +21,40 @@ const selectedLabel = computed(() => {
 </script>
 
 <template>
-  <!-- modal=false: иначе radix блокирует скролл body и добавляет компенсирующий
-       padding-right поверх уже зарезервированного html { scrollbar-gutter: stable },
-       из-за чего страница дёргается вправо при каждом открытии дропдауна -->
-  <DropdownMenuRoot :modal="false">
-    <DropdownMenuTrigger as-child>
+  <!-- The menu of the UI kit Filter is the base dropdown panel, 212px wide, under the left edge -->
+  <AppDropdown align="start" content-class="w-53 gap-1 p-1">
+    <template #trigger>
       <AppFilterTrigger
+        :disabled="disabled"
         :title="selectedLabel || title"
         :icon="icon"
-        :clearable="!!modelValue"
+        :clearable="clearable && !!modelValue"
         @clear="emit('update:modelValue', '')"
       />
-    </DropdownMenuTrigger>
+    </template>
 
-    <DropdownMenuPortal>
-      <DropdownMenuContent
-        :side-offset="4"
-        class="w-53 rounded-(--radius-xl) bg-(--surface) p-1 shadow-(--shadow-panel)"
+    <DropdownMenuRadioGroup
+      :model-value="modelValue"
+      class="flex flex-col gap-1"
+      @update:model-value="emit('update:modelValue', $event)"
+    >
+      <AppDropdownItem
+        v-for="option in options"
+        :key="option.value"
+        type="radio"
+        :value="option.value"
+        class="justify-between"
       >
-        <DropdownMenuRadioGroup
-          :model-value="modelValue"
-          @update:model-value="emit('update:modelValue', $event)"
-        >
-          <DropdownMenuRadioItem
-            v-for="option in options"
-            :key="option.value"
-            :value="option.value"
-            class="flex h-8 cursor-pointer items-center justify-between rounded-(--radius-xl) px-3 py-1.5 outline-none hover:bg-(--muted) data-highlighted:bg-(--muted)"
-          >
-            <span class="text-sm font-medium text-(--text-primary)">
-              {{ option.label }}
-            </span>
+        <span class="text-body-sm font-medium text-(--text-primary)">
+          {{ option.label }}
+        </span>
 
-            <AppIcon
-              v-if="modelValue === option.value"
-              name="check-line"
-              class="size-4 text-(--text-secondary)"
-            />
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenuPortal>
-  </DropdownMenuRoot>
+        <AppIcon
+          v-if="modelValue === option.value"
+          name="check-line"
+          class="size-4 text-(--text-secondary)"
+        />
+      </AppDropdownItem>
+    </DropdownMenuRadioGroup>
+  </AppDropdown>
 </template>

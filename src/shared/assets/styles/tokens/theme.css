@@ -44,6 +44,7 @@
 
   --text-element-accent: var(--text-element-accent);
   --text-element-accent--line-height: var(--text-element-accent--line-height);
+  --text-element-accent--letter-spacing: var(--text-element-accent--letter-spacing);
 
   --text-element-date-number: var(--text-element-date-number);
   --text-element-date-number--line-height: var(--text-element-date-number--line-height);

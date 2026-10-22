@@ -96,6 +96,8 @@
 
   --text-element-accent: 2rem;
   --text-element-accent--line-height: 2rem;
+  /* Figma "Accent 32/32" letter spacing (dashboard data chart total 1322:142120) */
+  --text-element-accent--letter-spacing: -0.5px;
 
   /* Date/number 18 / 20, mono */
 

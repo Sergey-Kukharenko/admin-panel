@@ -12,9 +12,3 @@ declare module '*.svg?component' {
   const component: DefineComponent<Record<string, never>, Record<string, never>, unknown>;
   export default component;
 }
-
-interface ImportMetaEnv {
-  readonly VITE_API_URL: string;
-  /** 'true' — показать экраны API secrets / Key secrets (H2, на моках) */
-  readonly VITE_FEATURE_INTEGRATION_SECRETS?: string;
-}

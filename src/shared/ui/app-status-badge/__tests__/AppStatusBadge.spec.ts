@@ -8,7 +8,7 @@ import type { IconName } from '@/shared/ui/app-icon';
 import type { AppStatusBadgeStatus } from '../AppStatusBadge.types';
 import AppStatusBadge from '../AppStatusBadge.vue';
 
-function render(props: { status: AppStatusBadgeStatus; label?: string; icon?: IconName }) {
+function render(props: { status: AppStatusBadgeStatus; label?: string; icon?: IconName | null }) {
   return mount(AppStatusBadge, { props, global: { plugins: [i18n] } });
 }
 
@@ -51,5 +51,14 @@ describe('AppStatusBadge', () => {
     [{ status: 'success' }, false],
   ] as const)('%j: the icon spins — %s', (props, spins) => {
     expect(render(props).get('svg').classes().includes('animate-spin')).toBe(spins);
+  });
+
+  it('icon null: no icon, the text keeps the 8px left inset (dashboard period badge 1322:142118)', () => {
+    const wrapper = render({ status: 'neutral', label: 'за 30 дней', icon: null });
+
+    expect(wrapper.find('svg').exists()).toBe(false);
+    expect(wrapper.classes()).toContain('pl-2');
+    expect(wrapper.classes()).not.toContain('pl-1.5');
+    expect(wrapper.text()).toBe('за 30 дней');
   });
 });

@@ -11,6 +11,18 @@ export const ru = {
     },
   },
   dashboard: {
+    dataChart: {
+      // The title is uppercased by the style; "объем" without "ё", as in the mockup (Figma 1322:142117)
+      title: 'Объем обработанных данных',
+      period: 'за 30 дней',
+      rows: 'Строка | Строки | Строк',
+      allTypes: 'Все типы данных',
+      error: {
+        title: 'Не удалось загрузить график',
+        description: 'Попробуйте обновить через пару минут',
+        retry: 'Повторить',
+      },
+    },
     products: {
       title: 'ML-Продукты',
       // Labels and statuses stay in English in the Russian UI, as in the mockup (Figma 1361:147608)

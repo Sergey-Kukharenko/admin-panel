@@ -36,7 +36,7 @@ function formatMau(value: number) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 rounded-(--radius-xl) bg-(--card) p-4">
+  <div class="flex flex-col gap-8 rounded-(--radius-xl) bg-(--bg-surface-primary) p-4">
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between gap-2">
         <p class="text-body-sm font-medium text-(--text-primary)">{{ title }}</p>
@@ -46,7 +46,7 @@ function formatMau(value: number) {
         </p>
       </div>
 
-      <p class="text-element-accent tracking-[-0.5px] text-(--text-primary)">{{ percentLabel }}</p>
+      <p class="text-element-accent text-(--text-primary)">{{ percentLabel }}</p>
     </div>
 
     <div class="flex flex-col gap-3">

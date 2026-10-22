@@ -68,7 +68,7 @@ const totalRows = computed(
             <DropdownMenuContent
               :side-offset="4"
               align="end"
-              class="w-53 rounded-(--radius-xl) bg-(--surface) p-1 shadow-(--shadow-panel)"
+              class="w-53 rounded-(--radius-xl) bg-(--bg-surface-primary) p-1 shadow-(--shadow-panel)"
             >
               <DropdownMenuRadioGroup
                 :model-value="selectedProductId"
@@ -78,7 +78,7 @@ const totalRows = computed(
                   v-for="limit in TARIFF_USAGE_LIMITS"
                   :key="limit.productId"
                   :value="limit.productId"
-                  class="flex h-8 cursor-pointer items-center justify-between rounded-(--radius-lg) px-3 py-1.5 outline-none hover:bg-(--muted) data-highlighted:bg-(--muted)"
+                  class="flex h-8 cursor-pointer items-center justify-between rounded-(--radius-lg) px-3 py-1.5 outline-none hover:bg-(--bg-button-secondary) data-highlighted:bg-(--bg-button-secondary)"
                 >
                   <span class="text-sm font-medium text-(--text-primary)">{{
                     limit.productName
@@ -97,7 +97,7 @@ const totalRows = computed(
       </div>
 
       <div class="flex flex-col">
-        <p class="text-element-accent leading-8 tracking-tight text-(--text-primary)">
+        <p class="text-element-accent leading-8 text-(--text-primary)">
           {{ totalRows.toLocaleString('ru-RU') }}
         </p>
         <p class="text-body-sm text-(--text-secondary)">Строк</p>

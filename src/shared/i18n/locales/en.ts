@@ -13,6 +13,17 @@ export const en: MessageSchema = {
     },
   },
   dashboard: {
+    dataChart: {
+      title: 'Processed data volume',
+      period: 'last 30 days',
+      rows: 'Row | Rows',
+      allTypes: 'All data types',
+      error: {
+        title: 'Could not load the chart',
+        description: 'Try again in a couple of minutes',
+        retry: 'Retry',
+      },
+    },
     products: {
       title: 'ML Products',
       data: 'Data',

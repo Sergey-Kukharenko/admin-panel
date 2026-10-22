@@ -3,9 +3,10 @@ import { AppIcon, type IconName } from '@/shared/ui/app-icon';
 
 defineProps<{
   title: string;
-  icon: IconName;
+  icon?: IconName;
   count?: number;
   clearable?: boolean;
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -20,36 +21,45 @@ function onClear(event: MouseEvent) {
 </script>
 
 <template>
-  <!-- data-state="open" ставит DropdownMenuTrigger (as-child) — по нему переключаем шеврон -->
+  <!-- UI kit Filter (02. Master-components 55:793): 32px, radius 8, inside 1px border, no fill;
+       hover / pressed / open — bg/button/secondary. data-state="open" comes from DropdownMenuTrigger
+       (as-child): it switches the fill and the chevron -->
   <button
     type="button"
-    class="group flex h-8 min-h-8 max-h-8 items-center justify-center gap-1.5 rounded-(--radius-sm) border border-(--border-subtle) bg-(--surface) pl-3 pr-2 py-1.5 transition-colors hover:bg-(--muted)"
+    :disabled="disabled"
+    class="group flex h-8 shrink-0 items-center gap-1.5 rounded-(--radius-lg) py-1.5 pr-2 pl-3 text-element-button font-medium text-(--default-foreground) ring-1 ring-(--border-default) transition-colors ring-inset hover:bg-(--bg-button-secondary) focus-visible:shadow-(--shadow-focus) focus-visible:outline-none active:bg-(--bg-button-secondary) disabled:pointer-events-none disabled:text-(--text-tertiary) data-[state=open]:bg-(--bg-button-secondary)"
   >
-    <AppIcon :name="icon" class="size-4 text-(--text-secondary)" />
+    <AppIcon
+      v-if="icon"
+      :name="icon"
+      class="size-4 text-(--icon-secondary) group-disabled:text-(--icon-tertiary)"
+    />
 
-    <span class="select-none text-sm font-medium leading-5 text-(--text-primary)">
+    <span class="select-none">
       {{ title }}
     </span>
 
+    <!-- UI kit Filter type=multiple state=open (55:830): 14px badge, bg/button/primary, text/on-dark
+         Geist SemiBold 10/14 -->
     <span
       v-if="count"
-      class="flex size-4 items-center justify-center rounded-(--radius-full) bg-(--primary) text-body-2xs font-medium text-(--primary-foreground)"
+      class="flex size-3.5 items-center justify-center rounded-(--radius-full) bg-(--bg-button-primary) text-body-2xs leading-3.5 font-semibold text-(--text-on-dark)"
     >
       {{ count }}
     </span>
 
     <span v-if="clearable" class="flex cursor-pointer items-center justify-center" @click="onClear">
-      <AppIcon name="small-close-line" class="size-4 text-(--text-secondary)" />
+      <AppIcon name="small-close-line" class="size-4 text-(--icon-primary)" />
     </span>
 
     <template v-else>
       <AppIcon
         name="large-line-arrow-down"
-        class="size-4 text-(--text-primary) group-data-[state=open]:hidden"
+        class="size-4 text-(--icon-primary) group-disabled:text-(--icon-tertiary) group-data-[state=open]:hidden"
       />
       <AppIcon
         name="large-line-arrow-up"
-        class="hidden size-4 text-(--text-primary) group-data-[state=open]:block"
+        class="hidden size-4 text-(--icon-primary) group-data-[state=open]:block"
       />
     </template>
   </button>

@@ -10,8 +10,11 @@ const props = defineProps<{
   status: AppStatusBadgeStatus;
   /** Overrides the default text for contexts with their own status wording */
   label?: string;
-  /** Overrides the default icon of the tone (e.g. "awaiting" and "generating" are both neutral) */
-  icon?: IconName;
+  /**
+   * Overrides the default icon of the tone (e.g. "awaiting" and "generating" are both neutral);
+   * null — no icon, as the period badge of the dashboard chart (Figma 1322:142118)
+   */
+  icon?: IconName | null;
 }>();
 
 const { t } = useI18n({ useScope: 'global' });
@@ -45,7 +48,9 @@ const STATUS_CONFIG = {
 >;
 
 const config = computed(() => STATUS_CONFIG[props.status]);
-const iconName = computed<IconName>(() => props.icon ?? config.value.icon);
+const iconName = computed<IconName | null>(() =>
+  props.icon === null ? null : (props.icon ?? config.value.icon),
+);
 // The loader always spins: Figma cannot show motion, and a still loader reads as a hung page
 // (results "Generating" is a neutral badge with the loader icon)
 const spinning = computed(() => iconName.value === 'loader-2-line');
@@ -53,10 +58,16 @@ const spinning = computed(() => iconName.value === 'loader-2-line');
 
 <template>
   <span
-    class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) pr-2 pl-1.5 font-mono text-element-tag font-medium uppercase select-none"
-    :class="config.classes"
+    class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) pr-2 font-mono text-element-tag font-medium uppercase select-none"
+    :class="[config.classes, iconName ? 'pl-1.5' : 'pl-2']"
   >
-    <AppIcon :name="iconName" class="size-3.5 shrink-0" :class="spinning && 'animate-spin'" />
+    <!-- without the icon the text keeps the 8px left inset of the UI kit badge (6px + 2px) -->
+    <AppIcon
+      v-if="iconName"
+      :name="iconName"
+      class="size-3.5 shrink-0"
+      :class="spinning && 'animate-spin'"
+    />
     {{ label ?? t(config.labelKey) }}
   </span>
 </template>

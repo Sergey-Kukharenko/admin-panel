@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import {
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuPortal,
-  DropdownMenuRoot,
-  DropdownMenuTrigger,
-} from 'radix-vue';
 import { computed } from 'vue';
 
+import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 import { AppIcon } from '@/shared/ui/app-icon';
 
 import AppFilterTrigger from './AppFilterTrigger.vue';
@@ -31,44 +25,37 @@ function toggle(value: string) {
 </script>
 
 <template>
-  <!-- modal=false: иначе radix блокирует скролл body и добавляет компенсирующий
-       padding-right поверх уже зарезервированного html { scrollbar-gutter: stable },
-       из-за чего страница дёргается вправо при каждом открытии дропдауна -->
-  <DropdownMenuRoot :modal="false">
-    <DropdownMenuTrigger as-child>
+  <!-- The menu of the UI kit Filter is the base dropdown panel, 212px wide, under the left edge -->
+  <AppDropdown align="start" content-class="w-53 gap-1 p-1">
+    <template #trigger>
       <AppFilterTrigger
+        :disabled="disabled"
         :title="title"
         :icon="icon"
         :count="count"
         :clearable="count > 0"
         @clear="emit('update:modelValue', [])"
       />
-    </DropdownMenuTrigger>
+    </template>
 
-    <DropdownMenuPortal>
-      <DropdownMenuContent
-        :side-offset="4"
-        align="start"
-        class="w-53 rounded-(--radius-xl) bg-(--surface) p-1 shadow-(--shadow-panel)"
-      >
-        <DropdownMenuCheckboxItem
-          v-for="option in options"
-          :key="option.value"
-          :checked="modelValue?.includes(option.value)"
-          class="flex h-8 items-center justify-between rounded-(--radius-xl) px-3 py-1.5 outline-none cursor-pointer hover:bg-(--muted) data-highlighted:bg-(--muted)"
-          @select.prevent="toggle(option.value)"
-        >
-          <span class="text-sm font-medium text-(--text-primary)">
-            {{ option.label }}
-          </span>
+    <!-- select.prevent keeps the menu open: several types are picked in one go -->
+    <AppDropdownItem
+      v-for="option in options"
+      :key="option.value"
+      type="checkbox"
+      :checked="modelValue?.includes(option.value)"
+      class="justify-between"
+      @select.prevent="toggle(option.value)"
+    >
+      <span class="text-body-sm font-medium text-(--text-primary)">
+        {{ option.label }}
+      </span>
 
-          <AppIcon
-            v-if="modelValue?.includes(option.value)"
-            name="check-line"
-            class="size-4 text-(--text-secondary)"
-          />
-        </DropdownMenuCheckboxItem>
-      </DropdownMenuContent>
-    </DropdownMenuPortal>
-  </DropdownMenuRoot>
+      <AppIcon
+        v-if="modelValue?.includes(option.value)"
+        name="check-line"
+        class="size-4 text-(--text-secondary)"
+      />
+    </AppDropdownItem>
+  </AppDropdown>
 </template>

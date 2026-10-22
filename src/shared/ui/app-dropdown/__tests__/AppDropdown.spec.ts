@@ -107,4 +107,17 @@ describe('AppDropdownItem', () => {
     expect(classesOf(item)).toContain('custom');
     expect(classesOf(item)).not.toContain('h-8');
   });
+
+  it('a checked checkbox item is a menuitemcheckbox with the selected fill (open filters 97:115574)', async () => {
+    await open({}, () => [
+      h(AppDropdownItem, { type: 'checkbox', checked: true }, () => 'Bets'),
+      h(AppDropdownItem, { type: 'checkbox', checked: false }, () => 'Users'),
+    ]);
+    const [bets, users] = [...document.body.querySelectorAll('[role="menuitemcheckbox"]')];
+
+    expect(bets?.getAttribute('aria-checked')).toBe('true');
+    expect(bets?.getAttribute('data-state')).toBe('checked');
+    expect(users?.getAttribute('data-state')).toBe('unchecked');
+    expect(bets?.classList.contains('data-[state=checked]:bg-(--bg-surface-secondary)')).toBe(true);
+  });
 });
