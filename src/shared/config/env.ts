@@ -22,3 +22,11 @@ export const FEATURE_NOTIFICATIONS = import.meta.env.VITE_FEATURE_NOTIFICATIONS 
  * Enable locally: VITE_FEATURE_HELP_LINKS=true in .env.local
  */
 export const FEATURE_HELP_LINKS = import.meta.env.VITE_FEATURE_HELP_LINKS === 'true';
+
+/**
+ * "Go to detailed analytics" buttons under the dashboard product charts (WT-326, PRD AC 19). Hidden:
+ * the Superset links are out of the Ph-1 dashboard RFC and their targets are not defined yet.
+ * Enable locally: VITE_FEATURE_PRODUCT_ANALYTICS_LINKS=true in .env.local
+ */
+export const FEATURE_PRODUCT_ANALYTICS_LINKS =
+  import.meta.env.VITE_FEATURE_PRODUCT_ANALYTICS_LINKS === 'true';

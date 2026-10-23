@@ -1,7 +1,7 @@
-/** Lines of the value axis above 0, as in the mockup: 0 / 50k / 100k / 150k / 200k */
+/** Lines of the value axis above 0: 0 / 50k / 100k / 150k / 200k (Figma BarChart 1322:142113) */
 export const AXIS_INTERVALS = 4;
 
-/** Axis top without data, as in the mockup "Нет данных" (Figma 1300:139202) */
+/** Axis top without data (Figma frames "Нет данных" 1300:139202, 1302:140879) */
 export const EMPTY_AXIS_MAX = 200_000;
 
 const NICE_STEPS = [1, 2, 2.5, 5, 10];
@@ -16,6 +16,17 @@ export function getAxisMax(maxValue: number): number {
 
   // rows are whole numbers: no 0.5-row axis steps on tiny data
   return Math.max(step, 1) * AXIS_INTERVALS;
+}
+
+/**
+ * Value axis from the top line down to 0: {@link AXIS_INTERVALS} equal steps of `axisMax`, labels in
+ * the locale (`formatAxisValue`)
+ */
+export function buildAxisTicks(axisMax: number, intlLocale: string) {
+  return Array.from({ length: AXIS_INTERVALS + 1 }, (_, index) => {
+    const value = (axisMax / AXIS_INTERVALS) * (AXIS_INTERVALS - index);
+    return { value, label: formatAxisValue(value, intlLocale) };
+  });
 }
 
 /**

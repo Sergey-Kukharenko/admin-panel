@@ -12,6 +12,8 @@
   --color-neutral-500: #737373;
   --color-neutral-400: #a3a3a3;
   --color-neutral-300: #d4d4d4;
+  /* raw in Figma (the zero line of a product chart without data 1323:161308), no palette variable */
+  --color-neutral-250: #dddddd;
   --color-neutral-200: #e5e5e5;
   /* raw in Figma (chart hatch of Bar item type=empty), no palette variable */
   --color-neutral-150: #ececec;
@@ -20,6 +22,10 @@
   --color-neutral-50: #fafafa;
   --color-neutral-25: #fdfdfd;
   --color-neutral-0: #ffffff;
+
+  /* raw in Figma (the grey line of the product charts 1361:147750), no palette variable: kept exact,
+     close to but not --color-neutral-400 #a3a3a3 */
+  --color-chart-grey: #a4a5a6;
 
   /* Figma colors/eclipse (button labels) */
   --color-eclipse: #18181b;
@@ -83,6 +89,9 @@
   /* Поля ввода */
   --bg-input: rgba(48, 48, 50, 0.06);
   --bg-input-hover: rgba(48, 48, 50, 0.1);
+  /* Checked checkbox on hover / pressed (UI kit _CheckboxControl 52:781): a raw 14% black layer over
+     the fill, no Figma variable; drawn as an image over the background color */
+  --bg-checkbox-checked-hover: linear-gradient(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.14));
 
   /* Typography Mapping */
   --foreground: var(--text-primary);
@@ -107,6 +116,8 @@
   --icon-muted: rgba(48, 48, 50, 0.15);
   --icon-neutral: rgba(48, 48, 50, 0.68);
   --icon-disabled: var(--text-disabled);
+  /* Figma icon/on-dark: an icon on a filled control (the checkbox check, UI kit _CheckboxControl 52:781) */
+  --icon-on-dark: var(--color-neutral-0);
   --icon-loading: var(--text-loading);
   --icon-success: var(--text-success);
   --icon-success-alt: var(--text-success-alt);
@@ -180,6 +191,10 @@
   --stats-balance-daily: rgba(48, 48, 50, 0.22);
   --stats-payments: var(--text-quaternary);
   --stats-vip-users: var(--bg-button-primary);
+  /* Product charts, raw in Figma without variables: the grey line (1361:147750) and the zero line
+     without data (1323:161308) */
+  --stats-neutral: var(--color-chart-grey);
+  --stats-empty-line: var(--color-neutral-250);
   /* Chart grid line: 1px dash 2 / gap 2 in border/dash (Figma BarChart "Data Row" line) */
   --bg-chart-grid-line: repeating-linear-gradient(
     to right,
@@ -208,9 +223,15 @@
      inside a 4px border/focus) */
   --shadow-focus: 0 0 0 2px var(--color-neutral-100), 0 0 0 4px var(--border-focus);
 
+  /* Keyboard focus ring of the checkbox (UI kit _CheckboxControl state=focus 52:794 / 52:809): 2px
+     bg/surface-primary inside a 4px border/accent — the checkbox has its own accent ring, not the grey
+     one of the buttons */
+  --shadow-focus-accent: 0 0 0 2px var(--bg-surface-primary), 0 0 0 4px var(--border-accent);
+
+  /* The Figma style also has a 10% white inner shadow, but with zero offset, blur and spread it draws
+     nothing; a 1px offset here would add a light band on top of the checked checkbox (UI kit 52:781) */
   --shadow-field:
-    0 0 1px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.06), 0 2px 4px 0 rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    0 0 1px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.06), 0 2px 4px 0 rgba(0, 0, 0, 0.04);
 
   --shadow-switch:
     0 0 1px 0 rgba(0, 0, 0, 0.3), 0 2px 10px 0 rgba(0, 0, 0, 0.06), 0 0 5px 0 rgba(0, 0, 0, 0.02);

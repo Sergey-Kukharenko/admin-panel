@@ -23,6 +23,23 @@ export const ru = {
         retry: 'Повторить',
       },
     },
+    productCharts: {
+      // The titles are uppercased by the style (Figma 1322:142185, 1361:147751)
+      title: 'Показатели по ML-продуктам',
+      period: 'за {n} день | за {n} дня | за {n} дней',
+      // The mockup has a typo, «прогнозируеому» (Figma 1361:147757): fixed here
+      subtitles: {
+        recommenderSystem: 'Динамика выдачи рекомендаций по сценариям',
+        playerIntelligence: 'Распределение игроков по прогнозируемому статусу',
+      },
+      analyticsLink: 'Перейти к детальной аналитике',
+      legend: 'Линии графика {product}',
+      error: {
+        title: 'Не удалось загрузить график',
+        description: 'Попробуйте обновить через пару минут',
+        retry: 'Повторить',
+      },
+    },
     products: {
       title: 'ML-Продукты',
       // Labels and statuses stay in English in the Russian UI, as in the mockup (Figma 1361:147608)

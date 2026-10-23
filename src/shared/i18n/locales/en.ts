@@ -24,6 +24,21 @@ export const en: MessageSchema = {
         retry: 'Retry',
       },
     },
+    productCharts: {
+      title: 'ML product metrics',
+      period: 'last {n} day | last {n} days',
+      subtitles: {
+        recommenderSystem: 'Recommendations delivered by scenario',
+        playerIntelligence: 'Players by predicted status',
+      },
+      analyticsLink: 'Go to detailed analytics',
+      legend: '{product} chart lines',
+      error: {
+        title: 'Could not load the chart',
+        description: 'Try again in a couple of minutes',
+        retry: 'Retry',
+      },
+    },
     products: {
       title: 'ML Products',
       data: 'Data',

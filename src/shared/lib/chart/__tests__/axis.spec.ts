@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { EMPTY_AXIS_MAX, formatAxisValue, getAxisMax } from '../axis';
+import { buildAxisTicks, EMPTY_AXIS_MAX, formatAxisValue, getAxisMax } from '../axis';
 
 describe('getAxisMax', () => {
   it.each([
@@ -35,5 +35,28 @@ describe('formatAxisValue', () => {
     [2_500_000, 'en-US', '2.5M'],
   ])('%i in %s → %s', (value, intlLocale, label) => {
     expect(formatAxisValue(value, intlLocale)).toBe(label);
+  });
+});
+
+describe('buildAxisTicks', () => {
+  it('five ticks from the top down to 0, labelled in the locale', () => {
+    expect(buildAxisTicks(200_000, 'ru-RU')).toEqual([
+      { value: 200_000, label: '200k' },
+      { value: 150_000, label: '150k' },
+      { value: 100_000, label: '100k' },
+      { value: 50_000, label: '50k' },
+      { value: 0, label: '0' },
+    ]);
+  });
+
+  it('a 50k top has fractional ticks: 12,5k in ru, 12.5k in en', () => {
+    expect(buildAxisTicks(50_000, 'ru-RU').map((tick) => tick.label)).toEqual([
+      '50k',
+      '37,5k',
+      '25k',
+      '12,5k',
+      '0',
+    ]);
+    expect(buildAxisTicks(50_000, 'en-US')[3]?.label).toBe('12.5k');
   });
 });
