@@ -38,7 +38,9 @@ describe('formatDateLabels', () => {
     const tz = process.env.TZ;
 
     afterEach(() => {
-      process.env.TZ = tz;
+      // assigning undefined would store the string "undefined"
+      if (tz === undefined) delete process.env.TZ;
+      else process.env.TZ = tz;
     });
 
     it('formats in UTC: the day does not shift back', () => {

@@ -1,58 +1,43 @@
 <script setup lang="ts">
-import { AppStatusBadge } from '@/shared/ui/app-status-badge';
+import { useId } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-import { MOCK_RECENT_OPERATIONS } from '../model/data';
+import { useDashboardRecentOperations } from '../model/useDashboardRecentOperations';
+import DashboardRecentOperationsEmptyState from './DashboardRecentOperationsEmptyState.vue';
+import DashboardRecentOperationsErrorState from './DashboardRecentOperationsErrorState.vue';
+import DashboardRecentOperationsSkeleton from './DashboardRecentOperationsSkeleton.vue';
+import DashboardRecentOperationsTable from './DashboardRecentOperationsTable.vue';
 
-defineOptions({
-  name: 'DashboardRecentOperations',
-});
+const { view, hasData, countLabel, isLoading, isError, refetch } = useDashboardRecentOperations();
+
+// the title names the table for screen readers
+const titleId = useId();
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 pt-4">
-    <div class="flex items-center justify-between">
-      <h2 class="text-title-sm font-medium text-(--text-primary)">Последние операции</h2>
-      <p class="text-body-sm text-(--text-primary)">{{ MOCK_RECENT_OPERATIONS.length }} записей</p>
+  <!-- Figma block «Последние операции» (H2 mockup 1574:181319, header 92:54237): 16px on top, title
+       and counter 16px over the table. Not in the MVP dashboard frames: hidden behind
+       FEATURE_RECENT_OPERATIONS on the page (WT-327). The title is text/primary: in the frame every other
+       text but the «Active» tags is bound to a variable, this one has a raw color (asked in WT-327) -->
+  <section class="flex flex-col gap-4 pt-4">
+    <div class="flex h-6 items-center justify-between pr-4">
+      <h2 :id="titleId" class="text-title-sm font-medium text-(--text-primary)">
+        {{ t('dashboard.recentOperations.title') }}
+      </h2>
+      <p v-if="hasData" class="text-body-sm font-medium text-(--text-primary)">
+        {{ countLabel }}
+      </p>
     </div>
 
-    <div class="flex flex-col overflow-hidden rounded-(--radius-xl) border border-(--border-default)">
-      <div class="flex items-center">
-        <div class="flex h-9 flex-1 items-center border-r border-(--border-default) bg-(--bg-surface-secondary) px-4">
-          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">Дата</span>
-        </div>
-        <div class="flex h-9 flex-1 items-center border-r border-(--border-default) bg-(--bg-surface-secondary) px-4">
-          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">
-            Тип операции
-          </span>
-        </div>
-        <div class="flex h-9 flex-1 items-center border-r border-(--border-default) bg-(--bg-surface-secondary) px-4">
-          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">Детали</span>
-        </div>
-        <div class="flex h-9 w-35 shrink-0 items-center bg-(--bg-surface-secondary) px-4">
-          <span class="font-mono text-xs font-medium text-(--text-secondary) uppercase">Статус</span>
-        </div>
-      </div>
-
-      <div
-        v-for="operation in MOCK_RECENT_OPERATIONS"
-        :key="operation.id"
-        class="flex items-center border-t border-(--border-default)"
-      >
-        <div class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4">
-          <span class="text-body-sm font-medium text-(--text-primary)">{{ operation.dateLabel }}</span>
-        </div>
-        <div class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4">
-          <span class="text-body-sm font-medium text-(--text-primary)">{{ operation.type }}</span>
-        </div>
-        <div class="flex h-11 flex-1 items-center border-r border-(--border-default) px-4">
-          <span class="truncate text-body-sm font-medium text-(--text-primary)">
-            {{ operation.details }}
-          </span>
-        </div>
-        <div class="flex h-11 w-35 shrink-0 items-center px-4">
-          <AppStatusBadge :status="operation.status" />
-        </div>
-      </div>
-    </div>
-  </div>
+    <DashboardRecentOperationsSkeleton v-if="isLoading" />
+    <DashboardRecentOperationsErrorState v-else-if="isError" @retry="refetch()" />
+    <DashboardRecentOperationsTable
+      v-else-if="hasData && view"
+      :rows="view.rows"
+      :labelled-by="titleId"
+    />
+    <DashboardRecentOperationsEmptyState v-else />
+  </section>
 </template>

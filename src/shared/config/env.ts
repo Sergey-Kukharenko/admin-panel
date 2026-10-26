@@ -30,3 +30,11 @@ export const FEATURE_HELP_LINKS = import.meta.env.VITE_FEATURE_HELP_LINKS === 't
  */
 export const FEATURE_PRODUCT_ANALYTICS_LINKS =
   import.meta.env.VITE_FEATURE_PRODUCT_ANALYTICS_LINKS === 'true';
+
+/**
+ * «Последние операции» table on the dashboard (WT-327). Hidden: it is not in the MVP dashboard
+ * frames, the PRD or the RFC, and there is no endpoint for it (WT-334); it runs on a mock until the
+ * PM decides on Ph-1 or WT-416 (asked in WT-327).
+ * Enable locally: VITE_FEATURE_RECENT_OPERATIONS=true in .env.local
+ */
+export const FEATURE_RECENT_OPERATIONS = import.meta.env.VITE_FEATURE_RECENT_OPERATIONS === 'true';

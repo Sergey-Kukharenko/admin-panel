@@ -39,6 +39,31 @@ export const en: MessageSchema = {
         retry: 'Retry',
       },
     },
+    recentOperations: {
+      title: 'Recent operations',
+      count: '{total} record | {total} records',
+      columns: {
+        date: 'Date',
+        type: 'Operation type',
+        details: 'Details',
+        status: 'Status',
+      },
+      types: {
+        dataLoad: 'Data upload',
+        mlServiceRun: 'Model run',
+        other: 'Operation',
+      },
+      rows: '{rows} row | {rows} rows',
+      empty: {
+        title: 'No operations yet',
+        description: 'Data uploads and model runs will appear here',
+      },
+      error: {
+        title: 'Could not load the operations',
+        description: 'Try again in a couple of minutes',
+        retry: 'Retry',
+      },
+    },
     products: {
       title: 'ML Products',
       data: 'Data',

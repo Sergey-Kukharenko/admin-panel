@@ -1,0 +1,91 @@
+import type { RecentOperationListResponse } from '../api/types';
+
+/**
+ * Recent operations for the dashboard table until the endpoint exists (WT-334): 8 rows of 12, as
+ * the H2 mockup (Figma 1574:181319 «12 записей»), with every type and status of the Jira task
+ */
+export const MOCK_RECENT_OPERATIONS: RecentOperationListResponse = {
+  total_count: 12,
+  items: [
+    {
+      id: 'op-1',
+      type: 'data_load',
+      status: 'succeeded',
+      created_at: '2026-07-01T11:10:00Z',
+      dataset_type: 'bets',
+      file_format: 'csv',
+      service_slug: null,
+      rows_count: 145_000,
+    },
+    {
+      id: 'op-2',
+      type: 'ml_service_run',
+      status: 'succeeded',
+      created_at: '2026-07-01T09:42:00Z',
+      dataset_type: null,
+      file_format: null,
+      service_slug: 'vip-churn',
+      rows_count: 145_000,
+    },
+    {
+      id: 'op-3',
+      type: 'data_load',
+      status: 'succeeded',
+      created_at: '2026-06-30T18:05:00Z',
+      dataset_type: 'users',
+      file_format: 'csv',
+      service_slug: null,
+      rows_count: 98_200,
+    },
+    {
+      id: 'op-4',
+      type: 'ml_service_run',
+      status: 'processing',
+      created_at: '2026-06-30T14:20:00Z',
+      dataset_type: null,
+      file_format: null,
+      service_slug: 'main',
+      rows_count: 98_200,
+    },
+    {
+      id: 'op-5',
+      type: 'data_load',
+      status: 'failed',
+      created_at: '2026-06-29T20:15:00Z',
+      dataset_type: 'payments',
+      file_format: 'csv',
+      service_slug: null,
+      rows_count: null,
+    },
+    {
+      id: 'op-6',
+      type: 'ml_service_run',
+      status: 'succeeded',
+      created_at: '2026-06-29T10:00:00Z',
+      dataset_type: null,
+      file_format: null,
+      service_slug: 'previp-detection_micoformer',
+      rows_count: 145_000,
+    },
+    {
+      id: 'op-7',
+      type: 'data_load',
+      status: 'succeeded',
+      created_at: '2026-06-28T16:45:00Z',
+      dataset_type: 'balance-daily',
+      file_format: 'csv',
+      service_slug: null,
+      rows_count: 54_000,
+    },
+    {
+      id: 'op-8',
+      type: 'data_load',
+      status: 'processing',
+      created_at: '2026-06-28T09:30:00Z',
+      dataset_type: 'vip-users',
+      file_format: 'csv',
+      service_slug: null,
+      rows_count: 12_300,
+    },
+  ],
+};

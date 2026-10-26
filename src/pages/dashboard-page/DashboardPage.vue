@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FEATURE_RECENT_OPERATIONS } from '@/shared/config/env';
 import { DashboardDataChart } from '@/widgets/dashboard-data-chart';
 import { DashboardProductCharts } from '@/widgets/dashboard-product-charts';
 import { DashboardProducts } from '@/widgets/dashboard-products';
@@ -10,6 +11,6 @@ import { DashboardRecentOperations } from '@/widgets/dashboard-recent-operations
     <DashboardProducts />
     <DashboardDataChart />
     <DashboardProductCharts />
-    <DashboardRecentOperations />
+    <DashboardRecentOperations v-if="FEATURE_RECENT_OPERATIONS" />
   </div>
 </template>

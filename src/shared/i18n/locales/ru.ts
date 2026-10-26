@@ -40,6 +40,33 @@ export const ru = {
         retry: 'Повторить',
       },
     },
+    recentOperations: {
+      title: 'Последние операции',
+      count: '{total} запись | {total} записи | {total} записей',
+      columns: {
+        date: 'Дата',
+        type: 'Тип операции',
+        details: 'Детали',
+        status: 'Статус',
+      },
+      types: {
+        dataLoad: 'Загрузка данных',
+        mlServiceRun: 'Прогон модели',
+        other: 'Операция',
+      },
+      rows: '{rows} строка | {rows} строки | {rows} строк',
+      // Own text: the frame «Нет данных» (Figma 1574:181731) speaks about model results; the title is
+      // the one of the archived dashboard mockup (WT-327)
+      empty: {
+        title: 'Нет операций',
+        description: 'Здесь появятся загрузки данных и прогоны моделей',
+      },
+      error: {
+        title: 'Не удалось загрузить операции',
+        description: 'Попробуйте обновить через пару минут',
+        retry: 'Повторить',
+      },
+    },
     products: {
       title: 'ML-Продукты',
       // Labels and statuses stay in English in the Russian UI, as in the mockup (Figma 1361:147608)
