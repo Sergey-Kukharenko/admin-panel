@@ -1,4 +1,5 @@
 import { computed, onUnmounted, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
 import { userApi } from '@/entities/user';
@@ -6,6 +7,7 @@ import { userApi } from '@/entities/user';
 const COOLDOWN_SECONDS = 15 * 60;
 
 export function usePasswordChange() {
+  const { t } = useI18n({ useScope: 'global' });
   const isModalOpen = ref(false);
   const cooldownSecondsLeft = ref(0);
   let intervalId: ReturnType<typeof setInterval> | undefined;
@@ -53,10 +55,10 @@ export function usePasswordChange() {
 
     try {
       await userApi.requestPasswordChange();
-      toast.success('Письмо направлено! Проверьте почту.');
+      toast.success(t('changePassword.sent'));
       startCooldown();
     } catch {
-      toast.error('Не удалось отправить письмо. Попробуйте позже.');
+      toast.error(t('changePassword.sendFailed'));
     }
   }
 

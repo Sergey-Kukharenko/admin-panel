@@ -3,6 +3,7 @@ export const ru = {
     confirm: 'Подтвердить',
     cancel: 'Отмена',
     close: 'Закрыть',
+    hint: 'Подсказка',
     statusBadge: {
       neutral: 'Обработка',
       loading: 'Загрузка',
@@ -102,6 +103,7 @@ export const ru = {
     },
   },
   auth: {
+    loading: 'Авторизация в системе...',
     error: {
       title: 'Не удалось войти',
       descriptions: {
@@ -113,6 +115,16 @@ export const ru = {
       code: 'Код ошибки',
     },
   },
+  changePassword: {
+    title: 'Изменить пароль',
+    description:
+      'Для изменения пароля мы отправим письмо на {email}. Следуйте инструкции в письме, чтобы задать новый пароль.',
+    linkValidity:
+      'Ссылка действительна в течение 1 часа. Если срок действия истечет, вы сможете запросить новое письмо.',
+    submit: 'Отправить письмо',
+    sent: 'Письмо направлено! Проверьте почту.',
+    sendFailed: 'Не удалось отправить письмо. Попробуйте позже.',
+  },
   pagination: {
     previousPage: 'Предыдущая страница',
     nextPage: 'Следующая страница',
@@ -123,6 +135,7 @@ export const ru = {
     backHome: 'На главную',
   },
   layout: {
+    logoAlt: 'Логотип компании',
     nav: {
       dashboard: 'Главная',
       integrations: 'Интеграции',

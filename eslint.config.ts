@@ -1,3 +1,4 @@
+import pluginVueI18n from '@intlify/eslint-plugin-vue-i18n';
 import pluginVitest from '@vitest/eslint-plugin';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import { globalIgnores } from 'eslint/config';
@@ -122,6 +123,35 @@ export default defineConfigWithVueTs(
   },
 
   // ❗ Prettier всегда последним
+  {
+    // i18n: visible text in templates goes through t()
+    files: ['src/**/*.vue'],
+    plugins: { '@intlify/vue-i18n': pluginVueI18n },
+    rules: {
+      '@intlify/vue-i18n/no-raw-text': [
+        'error',
+        {
+          // Punctuation, separators and numbers need no translation
+          ignorePattern: '^[-–—·•…/|:;,.*+×%#№()\\[\\]\\s\\d]*$',
+          // Technical terms and sample values are not translated
+          ignoreText: ['CSV', 'API', 'Client ID', 'Access Key ID', 'New_Casino'],
+          attributes: { '/.+/': ['aria-label', 'title', 'placeholder', 'alt'] },
+        },
+      ],
+    },
+  },
+
+  {
+    // TODO: hidden screens (profile, tariffs, schedule) are translated when they return to scope
+    files: [
+      'src/widgets/profile-overview/**',
+      'src/widgets/tariff-limits/**',
+      'src/widgets/tariff-usage-chart/**',
+      'src/widgets/prediction-processing-schedule/**',
+    ],
+    rules: { '@intlify/vue-i18n/no-raw-text': 'off' },
+  },
+
   {
     // TODO: the schedule widget is hidden by PM; its header has a clickable span inside a button
     // (month and calendar collapse) — fix together with the widget's return

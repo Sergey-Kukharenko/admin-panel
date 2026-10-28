@@ -5,6 +5,7 @@ export const en: MessageSchema = {
     confirm: 'Confirm',
     cancel: 'Cancel',
     close: 'Close',
+    hint: 'Hint',
     statusBadge: {
       neutral: 'Processing',
       loading: 'Loading',
@@ -98,6 +99,7 @@ export const en: MessageSchema = {
     },
   },
   auth: {
+    loading: 'Signing in...',
     error: {
       title: 'Sign-in failed',
       descriptions: {
@@ -109,6 +111,15 @@ export const en: MessageSchema = {
       code: 'Error code',
     },
   },
+  changePassword: {
+    title: 'Change password',
+    description:
+      'To change the password we will send an email to {email}. Follow the instructions in the email to set a new password.',
+    linkValidity: 'The link is valid for 1 hour. If it expires, you can request a new email.',
+    submit: 'Send email',
+    sent: 'Email sent! Check your inbox.',
+    sendFailed: 'Could not send the email. Please try again later.',
+  },
   pagination: {
     previousPage: 'Previous page',
     nextPage: 'Next page',
@@ -119,6 +130,7 @@ export const en: MessageSchema = {
     backHome: 'Go to home page',
   },
   layout: {
+    logoAlt: 'Company logo',
     nav: {
       dashboard: 'Dashboard',
       integrations: 'Integrations',

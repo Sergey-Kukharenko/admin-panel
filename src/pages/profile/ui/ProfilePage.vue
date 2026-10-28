@@ -8,6 +8,8 @@ defineOptions({
 
 <template>
   <div>
+    <!-- Technical placeholder of a stub page, not user-facing copy -->
+    <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
     <p class="text-sm text-(--muted-foreground)">ProfilePage</p>
   </div>
 </template>

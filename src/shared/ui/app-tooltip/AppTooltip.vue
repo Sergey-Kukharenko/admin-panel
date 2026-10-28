@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'radix-vue';
+import { useI18n } from 'vue-i18n';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
@@ -16,6 +17,8 @@ withDefaults(
     icon: true,
   },
 );
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -24,7 +27,7 @@ withDefaults(
       <button
         v-if="icon"
         type="button"
-        aria-label="Подсказка"
+        :aria-label="t('common.hint')"
         class="flex size-4 shrink-0 items-center justify-center text-(--text-secondary) focus:outline-none"
       >
         <AppIcon name="information-2-line" class="size-4" />

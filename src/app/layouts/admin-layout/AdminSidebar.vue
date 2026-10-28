@@ -26,7 +26,7 @@ const isExpanded = ref(true);
     :class="isExpanded ? 'w-(--sidebar-width)' : 'w-(--sidebar-width-collapsed)'"
   >
     <div class="flex h-12 shrink-0 items-center gap-2 px-3">
-      <img v-if="isExpanded" :src="logoUrl" alt="Логотип компании" class="h-4 pl-3" />
+      <img v-if="isExpanded" :src="logoUrl" :alt="t('layout.logoAlt')" class="h-4 pl-3" />
 
       <CollapsibleTrigger
         class="ml-auto flex size-8 shrink-0 items-center justify-center rounded-(--radius-md) text-(--text-tertiary) transition-colors hover:bg-(--muted) hover:text-(--foreground)"
