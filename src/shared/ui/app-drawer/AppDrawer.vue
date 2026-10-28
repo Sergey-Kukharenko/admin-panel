@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vue';
+import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
@@ -18,6 +19,8 @@ defineProps<AppDrawerProps>();
 const emit = defineEmits<{
   close: [];
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -58,7 +61,12 @@ const emit = defineEmits<{
               {{ title }}
             </h2>
 
-            <AppButton variant="outline" size="icon" @click="emit('close')">
+            <AppButton
+              variant="outline"
+              size="icon"
+              :aria-label="t('common.close')"
+              @click="emit('close')"
+            >
               <AppIcon name="close-line" />
             </AppButton>
           </header>

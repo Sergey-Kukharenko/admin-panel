@@ -142,6 +142,7 @@ const handleFinalConfirm = () => {
       <AppBanner
         :title="t('datasets.upload.bannerTitle')"
         :description="t('datasets.upload.bannerDescription')"
+        :action-label="t('datasets.upload.bannerAction')"
         @action="handleDownloadTemplates"
       >
         <template #icon>

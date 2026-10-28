@@ -5,6 +5,8 @@ import { AppIcon } from '@/shared/ui/app-icon';
 interface Props {
   title: string;
   description?: string;
+  /** aria-label of the icon-only action button */
+  actionLabel: string;
 }
 
 defineProps<Props>();
@@ -36,7 +38,7 @@ const emit = defineEmits<{
     </div>
 
     <div class="shrink-0 ml-auto">
-      <AppButton variant="ghost" size="icon" @click="emit('action')">
+      <AppButton variant="ghost" size="icon" :aria-label="actionLabel" @click="emit('action')">
         <slot name="action-icon">
           <AppIcon name="download-line" />
         </slot>

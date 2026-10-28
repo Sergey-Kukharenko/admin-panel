@@ -119,7 +119,11 @@ const handleFilesChange = (event: Event) => {
       <div class="ml-3 flex shrink-0 items-center gap-0.5">
         <AppDropdown align="end" :side-offset="4">
           <template #trigger>
-            <AppButton variant="ghost" size="icon">
+            <AppButton
+              variant="ghost"
+              size="icon"
+              :aria-label="t('datasets.upload.templateItem.actions')"
+            >
               <AppIcon name="more-line" class="text-(--text-secondary)" />
             </AppButton>
           </template>
@@ -141,11 +145,18 @@ const handleFilesChange = (event: Event) => {
           </AppDropdownItem>
         </AppDropdown>
 
-        <AppButton variant="ghost" size="icon" :disabled="disabled" @click="openFilePicker">
+        <AppButton
+          variant="ghost"
+          size="icon"
+          :disabled="disabled"
+          :aria-label="t('datasets.upload.zone.chooseFiles')"
+          @click="openFilePicker"
+        >
           <AppIcon name="add-circle-line" class="text-(--text-secondary)" />
         </AppButton>
         <input
           ref="inputRef"
+          :aria-label="t('datasets.upload.zone.chooseFiles')"
           class="hidden"
           type="file"
           multiple

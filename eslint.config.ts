@@ -8,6 +8,7 @@ import pluginOxlint from 'eslint-plugin-oxlint';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unusedImports from 'eslint-plugin-unused-imports';
 import pluginVue from 'eslint-plugin-vue';
+import pluginVueA11y from 'eslint-plugin-vuejs-accessibility';
 
 export default defineConfigWithVueTs(
   {
@@ -19,6 +20,9 @@ export default defineConfigWithVueTs(
 
   // ✅ Vue базовые правила
   ...pluginVue.configs['flat/essential'],
+
+  // ✅ Accessibility in templates
+  ...pluginVueA11y.configs['flat/recommended'],
 
   // ✅ TypeScript
   vueTsConfigs.recommended,
@@ -44,6 +48,13 @@ export default defineConfigWithVueTs(
       // =========================
       // 📦 IMPORTS
       // =========================
+
+      // A <label> is tied to its field by for/id OR wraps it; by default the rule requires both
+      'vuejs-accessibility/label-has-for': [
+        'error',
+        // radix-vue CheckboxRoot renders <button role="checkbox">, a form field
+        { required: { some: ['nesting', 'id'] }, controlComponents: ['CheckboxRoot'] },
+      ],
 
       // авто-сортировка imports
       'simple-import-sort/imports': 'error',
@@ -111,6 +122,16 @@ export default defineConfigWithVueTs(
   },
 
   // ❗ Prettier всегда последним
+  {
+    // TODO: the schedule widget is hidden by PM; its header has a clickable span inside a button
+    // (month and calendar collapse) — fix together with the widget's return
+    files: ['src/widgets/prediction-processing-schedule/**'],
+    rules: {
+      'vuejs-accessibility/click-events-have-key-events': 'off',
+      'vuejs-accessibility/no-static-element-interactions': 'off',
+    },
+  },
+
   {
     // Types are not exported from SFCs: shared types live in <Component>.types.ts or model/types.ts
     files: ['src/**/*.vue'],

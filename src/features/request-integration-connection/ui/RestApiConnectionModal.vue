@@ -196,6 +196,7 @@ function handleSubmit() {
             <div v-for="(_, index) in ipAddresses" :key="index" class="flex flex-col gap-1">
               <input
                 v-model="ipAddresses[index]"
+                :aria-label="t('integrations.restApiModal.ipAddress')"
                 type="text"
                 inputmode="decimal"
                 placeholder="192.168.1.1"

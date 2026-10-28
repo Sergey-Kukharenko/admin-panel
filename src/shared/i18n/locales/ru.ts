@@ -221,6 +221,7 @@ export const ru = {
     upload: {
       title: 'Загрузка данных',
       bannerTitle: 'Архив шаблонов',
+      bannerAction: 'Скачать архив шаблонов',
       bannerDescription:
         'Шаблоны и примеры для всех типов данных. Используйте их при подготовке файлов.',
       sectionTitle: 'Загруженные файлы {count}',
@@ -238,12 +239,14 @@ export const ru = {
         submitting: 'Загрузка...',
       },
       templateItem: {
+        actions: 'Действия с шаблоном',
         getTemplate: 'Скачать шаблон',
         removeFiles: 'Удалить файлы',
       },
       zone: {
         empty: 'Нет добавленных файлов',
         chooseFiles: 'Выбрать файлы',
+        dropArea: 'Область для перетаскивания файлов',
       },
       status: {
         queued: 'В процессе',

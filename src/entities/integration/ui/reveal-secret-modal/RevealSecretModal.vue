@@ -78,7 +78,12 @@ async function copySecret() {
               title
             }}</DialogTitle>
 
-            <AppButton variant="outline" size="icon" @click="emit('close')">
+            <AppButton
+              variant="outline"
+              size="icon"
+              :aria-label="t('common.close')"
+              @click="emit('close')"
+            >
               <AppIcon name="close-line" class="size-4" />
             </AppButton>
           </header>
@@ -89,7 +94,7 @@ async function copySecret() {
             </p>
 
             <div class="flex flex-col gap-1">
-              <label class="text-sm font-medium text-(--text-primary)">{{ fieldLabel }}</label>
+              <p class="text-sm font-medium text-(--text-primary)">{{ fieldLabel }}</p>
               <div
                 class="h-9 w-full truncate rounded-(--radius-lg) bg-(--bg-input) px-3 py-2 text-sm text-(--text-primary)"
               >

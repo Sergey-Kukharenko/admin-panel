@@ -48,6 +48,10 @@ function onClear(event: MouseEvent) {
       {{ count }}
     </span>
 
+    <!-- TODO: WT-547 — the reset control is nested in the trigger button (not keyboard-reachable,
+         invalid HTML). Split into two sibling buttons in a shared frame together with the UI-kit
+         Filter states; kept as is so the approved look does not change -->
+    <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events, vuejs-accessibility/no-static-element-interactions -->
     <span v-if="clearable" class="flex cursor-pointer items-center justify-center" @click="onClear">
       <AppIcon name="small-close-line" class="size-4 text-(--icon-primary)" />
     </span>

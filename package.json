@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@feature-sliced/steiger-plugin": "^0.8.0",
+    "@intlify/eslint-plugin-vue-i18n": "^4.5.1",
     "@tailwindcss/vite": "^4.2.2",
     "@tsconfig/node24": "^24.0.4",
     "@types/jsdom": "^28.0.1",
@@ -50,6 +51,7 @@
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "eslint-plugin-unused-imports": "^4.4.1",
     "eslint-plugin-vue": "~10.8.0",
+    "eslint-plugin-vuejs-accessibility": "^2.6.3",
     "jiti": "^2.6.1",
     "jsdom": "^29.0.1",
     "npm-run-all2": "^8.0.4",

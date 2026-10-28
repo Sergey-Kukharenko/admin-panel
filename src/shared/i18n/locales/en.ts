@@ -211,6 +211,7 @@ export const en: MessageSchema = {
     upload: {
       title: 'Data Upload',
       bannerTitle: 'Template Pack',
+      bannerAction: 'Download the templates archive',
       bannerDescription:
         'Templates and sample files for all data types. Use them as a reference when preparing your data.',
       sectionTitle: 'Uploaded Files {count}',
@@ -228,12 +229,14 @@ export const en: MessageSchema = {
         submitting: 'Uploading...',
       },
       templateItem: {
+        actions: 'Template actions',
         getTemplate: 'Get Template',
         removeFiles: 'Remove Files',
       },
       zone: {
         empty: 'No files added',
         chooseFiles: 'Choose Files',
+        dropArea: 'File drop area',
       },
       status: {
         queued: 'In progress',
