@@ -48,10 +48,6 @@ export function usePasswordChange() {
     isModalOpen.value = true;
   }
 
-  function closeModal() {
-    isModalOpen.value = false;
-  }
-
   async function confirmSend() {
     isModalOpen.value = false;
 
@@ -71,7 +67,6 @@ export function usePasswordChange() {
     isOnCooldown,
     cooldownLabel,
     openModal,
-    closeModal,
     confirmSend,
   };
 }

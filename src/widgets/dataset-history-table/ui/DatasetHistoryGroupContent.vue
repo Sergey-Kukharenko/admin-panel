@@ -159,9 +159,8 @@ const visibleCategories = computed(() => {
 
   <!-- ERROR DIALOG -->
   <DatasetHistoryErrorDialog
-    :open="errors.isOpen.value"
+    v-model:open="errors.isOpen.value"
     :details="errors.details.value"
-    @close="errors.close"
     @download="errors.download"
   />
 </template>

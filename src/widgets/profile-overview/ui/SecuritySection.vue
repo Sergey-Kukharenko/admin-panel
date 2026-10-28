@@ -13,8 +13,7 @@ defineOptions({
 const MASKED_PASSWORD = '•'.repeat(10);
 const memberEmail = MOCK_ORGANIZATION_MEMBERS[0]?.email ?? '';
 
-const { isModalOpen, isOnCooldown, cooldownLabel, openModal, closeModal, confirmSend } =
-  usePasswordChange();
+const { isModalOpen, isOnCooldown, cooldownLabel, openModal, confirmSend } = usePasswordChange();
 </script>
 
 <template>
@@ -51,11 +50,6 @@ const { isModalOpen, isOnCooldown, cooldownLabel, openModal, closeModal, confirm
       </ProfileInfoRow>
     </div>
 
-    <ChangePasswordModal
-      :open="isModalOpen"
-      :email="memberEmail"
-      @close="closeModal"
-      @confirm="confirmSend"
-    />
+    <ChangePasswordModal v-model:open="isModalOpen" :email="memberEmail" @confirm="confirmSend" />
   </section>
 </template>

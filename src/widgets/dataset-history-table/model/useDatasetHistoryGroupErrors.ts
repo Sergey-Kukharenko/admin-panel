@@ -57,10 +57,6 @@ export function useDatasetHistoryGroupErrors(groupDate: string) {
     isOpen.value = true;
   }
 
-  function close() {
-    isOpen.value = false;
-  }
-
   async function download() {
     if (!activeFile.value) return;
 
@@ -84,7 +80,6 @@ export function useDatasetHistoryGroupErrors(groupDate: string) {
     isOpen,
     details,
     open,
-    close,
     download,
   };
 }
