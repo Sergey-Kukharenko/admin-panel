@@ -5,9 +5,10 @@ import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
 import App from '@/App.vue';
+import { setupAuthInterceptor } from '@/app/providers';
 import { router } from '@/app/router';
 import { useUserStore } from '@/entities/user';
-import { isClientError } from '@/shared/api';
+import { isRetryableError } from '@/shared/api';
 import { i18n } from '@/shared/i18n';
 
 async function bootstrap() {
@@ -23,8 +24,8 @@ async function bootstrap() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false, // Отключаем повторные запросы при переключении вкладок
-        // Retry once on network failures and 5xx only: repeating a 4xx will not help
-        retry: (failureCount, error) => failureCount < 1 && !isClientError(error),
+        // Retry once on network failures and 5xx only: repeating a 4xx or a cancelled request will not help
+        retry: (failureCount, error) => failureCount < 1 && isRetryableError(error),
       },
     },
   });
@@ -35,6 +36,9 @@ async function bootstrap() {
   const userStore = useUserStore();
 
   await userStore.initAuth();
+
+  // After initAuth: a 401 from /user/me at startup means "not logged in" and is handled by the router guard
+  setupAuthInterceptor();
 
   app.use(router);
 

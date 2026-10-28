@@ -43,7 +43,7 @@
   - ленивые страницы (`() => import('@/pages/x').then((m) => m.XPage)`);
   - сайдбар и шапка, построенные из `meta` (`titleKey`, `nav`, типизация `RouteMeta`);
   - страница 404.
-- [ ] Интерсептор 401 в `app/providers` (подключается после `initAuth()`, не трогает `/user/me` и `/authorization/*`, не редиректит при `authError`, редиректит один раз), `isRetryableError` в `shared/api` для политики ретраев (`getHttpStatus`, `isClientError` уже в `main`).
+- [x] Интерсептор 401 в `app/providers` (подключается после `initAuth()`, не трогает `/user/me` и `/authorization/*`, не редиректит при `authError`, редиректит один раз), `isRetryableError` в `shared/api` для политики ретраев (`getHttpStatus`, `isClientError` уже в `main`).
 - [ ] Один `TooltipProvider` в `App.vue`.
 - [ ] Прокси `/api` в dev (`server.proxy`), относительный `VITE_API_URL` — ждём ответа бэкенда про куку сессии через прокси и `/api` на стендах (в `nginx.conf` `location /api/` указывает на чужой сервис).
 - [ ] Убрать `useI18n` из стора `features/upload-dataset/model/store.ts` (тост берёт `i18n.global.t`, как `entities/dataset/model/templateMapper.ts`).

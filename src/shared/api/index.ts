@@ -1,2 +1,2 @@
 export { apiClient } from './api-client';
-export { getHttpStatus, isClientError } from './http-error';
+export { getHttpStatus, isClientError, isRetryableError } from './http-error';
