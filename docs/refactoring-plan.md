@@ -35,7 +35,8 @@
 - [ ] Перенос модалок и панелей из `widgets` в `features`:
   - [x] `s3-connection-modal` и мутация `useRequestIntegrationConnection` → `features/request-integration-connection` (одна фича на заявку: у S3 и REST общая мутация) — уже в `main`;
   - [x] `rest-api-connection-modal` → туда же — уже в `main`;
-  - отложено до API ключей: модалки ключей → `features/manage-integration-secrets`, панели `rest-api-credentials` и `s3-credentials` → внутренние компоненты `widgets/integration-detail`;
+  - [x] панели `rest-api-credentials` и `s3-credentials` → внутренние компоненты `widgets/integration-detail` (кросс-импорт найден `steiger`);
+  - отложено до API ключей: модалки ключей → `features/manage-integration-secrets`;
   - [x] `uploads-empty-state` → внутренний компонент `widgets/dataset-history-table/ui/DatasetHistoryEmptyState.vue` (действия в нём нет, только событие открыть дровер);
   - `entities/integration/ui/reveal-secret-modal` — тоже отложено, вместе с модалками ключей.
 - [x] Роутер:
@@ -65,4 +66,4 @@
 - [x] Тесты недостающих мапперов и форматтеров живых экранов (история датасетов, проверка файлов, форматтеры предсказаний, `createQueryPatch`). Не покрыты: скрытые экраны (расписание, тарифы), неиспользуемый `cn`, `downloadBlob` (побочный эффект DOM).
 - [ ] Линтер i18n (`@intlify/eslint-plugin-vue-i18n`, `no-raw-text`, включая `aria-label`/`title`/`placeholder`/`alt`) с исправлениями: shared-компоненты (в т.ч. тексты в `<script>`), дашборд, смена пароля, доступ к продуктам. Технические термины (CSV, API, Client ID…) в исключениях; скрытые экраны выключены с TODO.
 - [ ] Линтер a11y (`eslint-plugin-vuejs-accessibility`, `flat/recommended`) с исправлениями. `label-has-for`: достаточно `for`/`id` или вложенности; `CheckboxRoot` считается полем. Исключения с причиной: зона drag-and-drop, скрытый виджет расписания.
-- [ ] Линтер FSD (`steiger`) в `lint` и `check:lint` (CI — вместе с джобой `quality`). Решения по манифесту: страницы — `pages/<name>/ui/`, без суффикса `-page`; у `shared/config`, `shared/lib/router`, `shared/lib/test` есть index-файлы; выключены `insignificant-slice` (ложные срабатывания, спорит с критерием feature/widget) и `segments-by-purpose` (`assets`, `app/providers` оставляем).
+- [x] Линтер FSD (`steiger`) в `lint` и `check:lint` (CI — вместе с джобой `quality`). Решения по манифесту: страницы — `pages/<name>/ui/`, без суффикса `-page`; у `shared/config`, `shared/lib/router`, `shared/lib/test` есть index-файлы; выключены `insignificant-slice` (ложные срабатывания, спорит с критерием feature/widget) и `segments-by-purpose` (`assets`, `app/providers` оставляем).

@@ -9,7 +9,7 @@ import { ApiCredentialLogsAction } from '@/features/view-api-credential-logs';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { mapCredentialsToRows } from '../lib';
+import { mapCredentialsToRows } from '../lib/credentialRows';
 
 const { t } = useI18n({ useScope: 'global' });
 

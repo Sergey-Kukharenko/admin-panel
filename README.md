@@ -30,7 +30,7 @@ npm run dev
 |---|---|
 | `npm run dev` | dev-сервер |
 | `npm run build` | type-check + сборка |
-| `npm run check` | все проверки без исправлений: типы, oxlint, ESLint, Prettier, тесты — **перед коммитом** |
+| `npm run check` | все проверки без исправлений: типы, oxlint, ESLint, steiger, Prettier, тесты — **перед коммитом** |
 | `npm run lint` / `npm run format` | исправить линт / форматирование |
 | `npm run test:unit` | Vitest в watch-режиме |
 | `npm run api:types` | типы API из `openapi/openapi.json` (Swagger бэка) |

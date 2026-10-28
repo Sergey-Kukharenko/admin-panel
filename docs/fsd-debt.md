@@ -14,7 +14,7 @@
 
 | Где | Отклонение | Как привести |
 |---|---|---|
-| `widgets/integration-detail/ui/IntegrationDetail.vue` | Импортирует 4 виджета: `rest-api-connection-modal`, `rest-api-credentials`, `s3-connection-modal`, `s3-credentials` | Модалки → `features/connect-rest-api`, `features/connect-s3`; панели ключей → `features/manage-api-secrets` (или собирать на странице) |
+| `widgets/integration-detail/ui/CreateKeySecretModal.vue`, `S3CredentialsPanel.vue` | Модалка-действие и мутации на моках внутри виджета (экраны ключей S3 за фича-флагом) | Модалку → `features/manage-integration-secrets` — вместе с API ключей |
 | `entities/integration/ui/reveal-secret-modal` | Модалка-действие в слое `entities` | Перенести в `features` |
 | `entities/integration/model/useIntegrationStatus.ts` (`useRequestIntegrationConnection`) | Мутация действия пользователя в `entities` | Перенести в `features/connect-*` вместе с модалками |
 | `entities/integration/model/store.ts` | Мутации на моках в Pinia сущности | Временное решение под фича-флагом; не образец. Заменить на API, когда появится |

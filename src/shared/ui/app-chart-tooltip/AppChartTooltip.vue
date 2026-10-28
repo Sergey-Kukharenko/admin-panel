@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 
 import type { AppChartTooltipProps } from './AppChartTooltip.types';
-import { tooltipSwatch } from './lib';
+import { tooltipSwatch } from './swatch';
 
 const props = defineProps<AppChartTooltipProps>();
 

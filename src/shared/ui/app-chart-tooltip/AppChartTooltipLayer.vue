@@ -2,7 +2,7 @@
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
 
 import type { AppChartTooltipLayerProps } from './AppChartTooltip.types';
-import { nearestIndex, stepIndex } from './lib';
+import { nearestIndex, stepIndex } from './pointIndex';
 
 const props = withDefaults(defineProps<AppChartTooltipLayerProps>(), {
   disabled: () => [],

@@ -9,10 +9,10 @@ import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';
-import { RestApiCredentialsPanel } from '@/widgets/rest-api-credentials';
-import { S3CredentialsPanel } from '@/widgets/s3-credentials';
 
 import IntegrationDetailErrorState from './IntegrationDetailErrorState.vue';
+import RestApiCredentialsPanel from './RestApiCredentialsPanel.vue';
+import S3CredentialsPanel from './S3CredentialsPanel.vue';
 
 defineOptions({
   name: 'IntegrationDetail',
