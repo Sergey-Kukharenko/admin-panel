@@ -52,3 +52,26 @@ npm run test:unit
 ```sh
 npm run lint
 ```
+
+## Deployment
+
+- Helm chart: `helm/`
+
+Dev is deployed automatically on every push to `develop`.
+
+Prod is **not** deployed by pushing to `main` — prod is deployed by a semver tag.
+
+## Release process
+
+`develop` -> `main` -> tag on `main`.
+
+1. Merge the work into `develop`; merge requests target `develop`. Each push to
+   `develop` deploys dev.
+2. When the release is ready, open a merge request from `develop` to `main` and
+   merge it.
+3. Put a semver tag (`vX.Y.Z`) on the resulting `main` commit. The tag pipeline
+   publishes the chart and the image and triggers the prod deploy.
+
+Only a tag that is on `main` deploys prod. A semver tag on any other commit
+fails the `assert-tag-on-main` job before anything is published or deployed, so
+prod always matches a commit reachable from `main` (ML-2958).

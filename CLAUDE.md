@@ -97,7 +97,7 @@
 | Локализация | `vue-i18n` (composition mode, `legacy: false`), языки `ru` / `en` |
 | Уведомления | `vue-sonner` (`toast`) |
 | Даты | `Intl.*` для отображения, `dayjs` — для арифметики дат |
-| Графики | `apexcharts` + `vue3-apexcharts` |
+| Графики | HTML и inline SVG на токенах дизайн-системы поверх `AppChartGrid`, без библиотеки графиков (ось, дни периода и подписи дат — `shared/lib/chart`: подписи днями, `formatDateLabels`) |
 | Тесты | Vitest + `@vue/test-utils` |
 | Линт / формат | oxlint → ESLint (flat config) → Prettier; `steiger`, `eslint-plugin-vuejs-accessibility`, `@intlify/eslint-plugin-vue-i18n` *(подключить)* |
 | Node | `^20.19.0 \|\| >=22.12.0` (в Docker — `node:24-alpine`) |
@@ -494,6 +494,7 @@ const { t } = useI18n({ useScope: 'global' });
 | `AppTooltip` | подсказка (иконка-«i» или обёртка над слотом при `:icon="false"`) |
 | `AppPagination` | пагинация (`v-model:page`, фиксированный `pageSize`) |
 | `AppEmptyState` | пустое состояние с иллюстрацией и слотом `#action` |
+| `AppChartGrid` | сетка графика: ось значений (5 делений), подписи дат, сам график — в слоте |
 | `AppSkeleton`, `AppStatusBadge`, `AppSwitch`, `AppCheckbox`, `AppCard`, `AppBanner`, `AppScrollArea`, `AppSourceCard` | по названию |
 
 Правила компонента дизайн-системы:
@@ -505,7 +506,7 @@ const { t } = useI18n({ useScope: 'global' });
 - **Любая модалка — только на `AppModal`.** Каркас radix-диалога (`DialogRoot`/`DialogOverlay`/`<Transition>`/шапка с закрытием) за пределами `AppModal` и `AppDrawer` не собираем. z-index, оверлей и анимации задаются только внутри базовых компонентов.
 - Дропдауны radix — с `:modal="false"` (иначе radix блокирует скролл body и добавляет padding-right поверх `scrollbar-gutter: stable` — страница дёргается).
 - Каждый интерактивный элемент внутри меню — пункт меню: `AppDropdownItem`, а кнопка — `AppDropdownItem as-child` вокруг `AppButton`. radix-меню держит фокус внутри и перебирает стрелками только пункты.
-- Компонент реализует **все состояния** своего компонента из UI kit (`02. Master-components`): default, hover, pressed, focus, disabled — по заливке, обводке, тексту, иконке и прозрачности, для каждого размера. Фокус с клавиатуры — кольцо `focus-visible:shadow-(--shadow-focus)` (`state=focus` в UI kit), у кастомных кнопок вне `AppButton` — тоже.
+- Компонент реализует **все состояния** своего компонента из UI kit (`02. Master-components`): default, hover, pressed, focus, disabled — по заливке, обводке, тексту, иконке и прозрачности, для каждого размера. Фокус с клавиатуры — кольцо `focus-visible:shadow-(--shadow-focus)` (`state=focus` в UI kit), у кастомных кнопок вне `AppButton` — тоже; если в UI kit у компонента своё кольцо, берём его (чекбокс — `--shadow-focus-accent`).
 - `TooltipProvider` — **один**, в `App.vue`; в компонентах и виджетах провайдеры не создаём. Переход: сначала добавить провайдер в `App.vue`, потом убирать локальные (иначе тултипы перестанут работать).
 - Специализированный компонент строим **поверх базового**, а не копированием обвязки.
 - Тексты внутри компонента дизайн-системы приходят пропсами (с переводом снаружи) или берутся из `t()` — без захардкоженных строк.
@@ -695,7 +696,7 @@ const { t } = useI18n({ useScope: 'global' });
 | тег `vX.Y.Z` на `main` | **prod** | `platform.mico.team` |
 | merge в `main` (без тега) | не деплоится, ждёт тега | — |
 
-> ⚠️ **CI пока не приведён к этому флоу:** сейчас dev-стенд UI катится из `main`, а для `develop` пайплайн не настроен (в бэке портала флоу уже правильный: `develop` → dev). Перенастройка — задача DevOps (тикет заведён); до неё не меняй CI самостоятельно и согласовывай целевую ветку MR с командой.
+Флоу действует с 2026-10-23 (ML-2904): ветка по умолчанию — `develop`, MR задач идут в неё.
 
 **Пайплайн:**
 
