@@ -26,7 +26,6 @@
 | Где | Отклонение | Как привести |
 |---|---|---|
 | Все слайсы | Мапперы, форматтеры, валидация, константы, справочники и моки лежат в `model/` (`model/mapper.ts`, `model/utils.ts`, `model/data.ts`, `model/constants.ts`) | Чистые функции → `lib/`, статические данные → `config/` |
-| `shared/ui/app-pagination/model/getPaginationRange.ts` | Чистая логика в `model/` | → `lib/` |
 
 ## Данные и состояние
 

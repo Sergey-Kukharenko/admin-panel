@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { useDataVolumeChart } from '@/entities/dataset';
 import { toIntlLocale } from '@/shared/i18n';
-import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
+import { createQueryPatch } from '@/shared/lib/router';
 import type { FilterOption } from '@/shared/ui/app-filter';
 
 import { URL_PARAMS } from '../config/urlParams';

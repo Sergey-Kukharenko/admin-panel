@@ -5,8 +5,8 @@ import { computed } from 'vue';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 import { AppIcon } from '@/shared/ui/app-icon';
 
+import type { AppFilterSingleProps } from './AppFilter.types';
 import AppFilterTrigger from './AppFilterTrigger.vue';
-import type { AppFilterSingleProps } from './model/types';
 
 // clearable defaults to true in AppFilter, the only consumer
 const props = defineProps<AppFilterSingleProps>();
