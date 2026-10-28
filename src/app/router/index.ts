@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import { useUserStore } from '@/entities/user';
-import { BillingPage } from '@/pages/billing-page';
-import { DashboardPage } from '@/pages/dashboard-page';
-import { DatasetsPage } from '@/pages/datasets-page';
-import { IntegrationDetailPage } from '@/pages/integration-detail-page';
-import { IntegrationsPage } from '@/pages/integrations-page';
-import { PredictionsPage } from '@/pages/predictions-page';
-import { ProfilePage } from '@/pages/profile-page';
+import { BillingPage } from '@/pages/billing';
+import { DashboardPage } from '@/pages/dashboard';
+import { DatasetsPage } from '@/pages/datasets';
+import { IntegrationDetailPage } from '@/pages/integration-detail';
+import { IntegrationsPage } from '@/pages/integrations';
+import { PredictionsPage } from '@/pages/predictions';
+import { ProfilePage } from '@/pages/profile';
 
 export const router = createRouter({
   history: createWebHistory(),

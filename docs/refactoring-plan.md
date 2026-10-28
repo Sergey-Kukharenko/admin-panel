@@ -40,7 +40,7 @@
   - `entities/integration/ui/reveal-secret-modal` — тоже отложено, вместе с модалками ключей.
 - [ ] Роутер:
   - `ROUTE_NAMES` в `shared/config/routes.ts`, навигация по имени маршрута;
-  - ленивые страницы (`() => import('@/pages/x-page').then((m) => m.XPage)`);
+  - ленивые страницы (`() => import('@/pages/x').then((m) => m.XPage)`);
   - сайдбар и шапка, построенные из `meta` (`titleKey`, `nav`, типизация `RouteMeta`);
   - страница 404.
 - [ ] Интерсептор 401 в `app/providers` (подключается после `initAuth()`, не трогает `/user/me` и `/authorization/*`, не редиректит при `authError`, редиректит один раз), `isRetryableError` в `shared/api` для политики ретраев (`getHttpStatus`, `isClientError` уже в `main`).
