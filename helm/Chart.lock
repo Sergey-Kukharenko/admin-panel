@@ -1,0 +1,6 @@
+dependencies:
+- name: mico-app
+  repository: oci://docker.artifactory.top/mi-external-int-helm-local
+  version: 1.1.3
+digest: sha256:861f7355688e24df72c043665b7b79ac4def1dace38e0cbc154f0da76186a847
+generated: "2026-07-07T20:31:07.630381-03:00"

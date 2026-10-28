@@ -40,4 +40,5 @@ __screenshots__/
 
 # Helm
 helm/charts/
-helm/Chart.lock
+helm/*.tgz
+helm/values-*.local.yaml
