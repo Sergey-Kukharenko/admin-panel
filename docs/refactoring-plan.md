@@ -36,7 +36,7 @@
   - [x] `s3-connection-modal` и мутация `useRequestIntegrationConnection` → `features/request-integration-connection` (одна фича на заявку: у S3 и REST общая мутация) — уже в `main`;
   - [x] `rest-api-connection-modal` → туда же — уже в `main`;
   - отложено до API ключей: модалки ключей → `features/manage-integration-secrets`, панели `rest-api-credentials` и `s3-credentials` → внутренние компоненты `widgets/integration-detail`;
-  - [ ] `uploads-empty-state` → внутренний компонент `widgets/dataset-history-table/ui/DatasetHistoryEmptyState.vue` (действия в нём нет, только событие открыть дровер);
+  - [x] `uploads-empty-state` → внутренний компонент `widgets/dataset-history-table/ui/DatasetHistoryEmptyState.vue` (действия в нём нет, только событие открыть дровер);
   - `entities/integration/ui/reveal-secret-modal` — тоже отложено, вместе с модалками ключей.
 - [x] Роутер:
   - `ROUTE_NAMES` в `shared/config/routes.ts`, навигация по имени маршрута;

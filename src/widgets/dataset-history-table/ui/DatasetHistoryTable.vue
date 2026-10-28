@@ -4,9 +4,9 @@ import { useI18n } from 'vue-i18n';
 
 import { AppButton } from '@/shared/ui/app-button';
 import { AppPagination } from '@/shared/ui/app-pagination';
-import { UploadsEmptyState } from '@/widgets/uploads-empty-state';
 
 import { DATASET_HISTORY_PAGE_SIZE, useDatasetHistoryTable } from '../model';
+import DatasetHistoryEmptyState from './DatasetHistoryEmptyState.vue';
 import DatasetHistoryGroupContent from './DatasetHistoryGroupContent.vue';
 import DatasetHistoryGroupHeader from './DatasetHistoryGroupHeader.vue';
 import DatasetHistoryGroupSkeleton from './DatasetHistoryGroupSkeleton.vue';
@@ -46,7 +46,7 @@ function handleResetFilters(): void {
 </script>
 
 <template>
-  <UploadsEmptyState v-if="!showHistoryTable" @upload="emit('openUploadDrawer')" />
+  <DatasetHistoryEmptyState v-if="!showHistoryTable" @upload="emit('openUploadDrawer')" />
 
   <div v-else class="mx-auto flex flex-1 flex-col items-start gap-4 self-stretch relative w-full">
     <DatasetHistoryTableSkeleton v-if="isTemplatesLoading" />
