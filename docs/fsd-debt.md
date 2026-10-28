@@ -37,11 +37,10 @@
 | `RevealSecretModal`, `CreateKeySecretModal` | Свой каркас radix-диалога (экраны ключей за фича-флагом, на моках) | `AppModal` — вместе с переписыванием под API ключей |
 | `tokens/colors.css` и 43 файла | Алиасы старой темы без переменной в Figma: `--background`, `--card`, `--surface`, `--foreground`, `--muted-foreground`, `--primary`, `--primary-foreground`, `--muted`, `--muted-hover`, `--muted-hover-soft`, `--border`, `--success`, `--danger` | Заменить на токены с именами Figma, сверяя место с макетом (`--surface` → `--bg-surface-primary`, `--muted` → `--bg-button-secondary`, `--muted-hover` → `--bg-button-secondary-hover` — значения совпадают; `--border` (#e5e5e5) отличается от `--border-default` (8%) — выбирать по макету), затем удалить алиасы |
 | `AppFilterTrigger`, кнопки закрытия модалок (кроме `AppConfirmDialog`) | `div @click`, кликабельный `span` внутри `button`, иконочные кнопки без `aria-label` | По правилам доступности |
-| `prediction-processing-schedule` (`hover:bg-black/5`), `tariff-usage-chart` (`repeating-linear-gradient` в `style`), `AppWaveBackground` (hex в JS) — скрытые/неиспользуемые | Хардкод цветов | Токены — когда экраны вернутся в скоуп; `AppWaveBackground` удалить |
+| `prediction-processing-schedule` (`hover:bg-black/5`), `tariff-usage-chart` (`repeating-linear-gradient` в `style`) — скрытые экраны | Хардкод цветов | Токены — когда экраны вернутся в скоуп |
 | `ChangePasswordModal`, `usePasswordChange`, `ProfileInfoRow`, `AppTooltip`, `ProductAccessTable`, `AdminSidebar` (alt) | Тексты в обход i18n | Ключи в `ru.ts` / `en.ts` |
 | `widgets/prediction-processing-schedule/lib/scheduleMapper.ts`, `widgets/tariff-*` (скрытые экраны) | Зашитая локаль `'ru-RU'` | `toIntlLocale` — когда экраны вернутся в скоуп |
 | `widgets/tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |
-| `vitest.config.ts`, `shared/lib/cn.ts`, `tailwind.config.js`, `.stylelintrc.json` + stylelint в devDependencies, `lucide-vue-next` | Не используются / противоречат манифесту | Удалить; окружение Vitest → `node` |
 
 ## Расхождения с макетом (ждут решения PM)
 
