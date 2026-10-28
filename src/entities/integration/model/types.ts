@@ -1,4 +1,4 @@
-import type { IntegrationEnvironment } from './constants';
+import type { IntegrationEnvironment } from '../config/constants';
 
 export type IntegrationType = 'rest-api' | 's3';
 

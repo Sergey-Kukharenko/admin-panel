@@ -4,7 +4,7 @@ import type {
   RestApiConnectionRequest,
   S3ConnectionRequest,
 } from '../api/types';
-import type { IntegrationEnvironment } from './constants';
+import type { IntegrationEnvironment } from '../config/constants';
 
 export const MAX_IP_ADDRESSES = 10;
 

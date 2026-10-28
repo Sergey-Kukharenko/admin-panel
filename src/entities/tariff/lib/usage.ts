@@ -1,4 +1,4 @@
-import type { TariffUsageVariant } from './types';
+import type { TariffUsageVariant } from '../model/types';
 
 const WARNING_THRESHOLD_PERCENT = 70;
 const DANGER_THRESHOLD_PERCENT = 90;

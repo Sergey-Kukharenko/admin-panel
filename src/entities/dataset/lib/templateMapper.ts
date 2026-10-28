@@ -1,7 +1,7 @@
 import { i18n } from '@/shared/i18n';
 
 import type { DatasetTemplateResponse } from '../api/types';
-import type { DatasetIcon, DatasetTemplate } from './types';
+import type { DatasetIcon, DatasetTemplate } from '../model/types';
 
 interface TemplateStaticContent {
   title: string;

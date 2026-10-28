@@ -1,4 +1,4 @@
-import type { TariffMonthlyUsagePoint, TariffUsageLimit } from './types';
+import type { TariffMonthlyUsagePoint, TariffUsageLimit } from '../model/types';
 
 export const TARIFF_PERIOD_LABEL = 'Период: 18 мая - 18 июн';
 
