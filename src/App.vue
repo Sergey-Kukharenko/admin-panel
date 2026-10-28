@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TooltipProvider } from 'radix-vue';
 import { Toaster } from 'vue-sonner';
 
 import { AdminLayout } from '@/app/layouts/admin-layout';
@@ -11,12 +12,15 @@ const userStore = useUserStore();
 </script>
 
 <template>
-  <AuthLoader v-if="userStore.isLoading" />
-  <AuthErrorScreen
-    v-else-if="!userStore.isAuthenticated && userStore.authError"
-    :error-code="userStore.authError"
-  />
-  <AdminLayout v-else />
+  <!-- One provider for the whole app: shared delay and instant switching between tooltips -->
+  <TooltipProvider :delay-duration="100">
+    <AuthLoader v-if="userStore.isLoading" />
+    <AuthErrorScreen
+      v-else-if="!userStore.isAuthenticated && userStore.authError"
+      :error-code="userStore.authError"
+    />
+    <AdminLayout v-else />
+  </TooltipProvider>
 
   <Toaster theme="dark" position="bottom-center" :style="{ '--width': '483px' }">
     <template #success-icon>
