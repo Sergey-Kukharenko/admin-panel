@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api';
 
-import type { UserProfile } from '../model/types';
+import type { UserProfile } from './types';
 
 export const sessionApi = {
   me() {

@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { AppIcon } from '@/shared/ui/app-icon';
 import { AppTooltip } from '@/shared/ui/app-tooltip';
 
-import type { IntegrationStatus } from '../../model/types';
+import type { IntegrationStatus } from '../../api/types';
 
 defineOptions({
   name: 'ConnectionStatusTag',

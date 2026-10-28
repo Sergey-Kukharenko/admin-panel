@@ -1,4 +1,4 @@
-import type { Product } from './api';
+import type { Product } from '../api/types';
 
 /**
  * Сервисы, которые временно не показываем клиенту (решение PM, 30.09.2026): из моделей PreVIP

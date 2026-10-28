@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api';
 
-import type { MLServiceRun, MLServiceRunFilters, MLServiceRunListResponse } from '../model/api';
+import type { MLServiceRun, MLServiceRunFilters, MLServiceRunListResponse } from './types';
 
 export const mlServiceRunApi = {
   /** Получить список прогонов ML-сервисов проекта (включая processing / error) */

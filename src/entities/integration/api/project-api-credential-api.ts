@@ -7,7 +7,7 @@ import type {
   ProjectApiCredentialLogsResponse,
   ProjectApiCredentialRotateSecretResponse,
   ProjectApiCredentialScopesCatalogue,
-} from '../model/api';
+} from './types';
 
 export const projectApiCredentialApi = {
   /** Получить доступные кастомные OAuth-скоупы для окружения.

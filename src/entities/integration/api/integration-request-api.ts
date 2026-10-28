@@ -4,8 +4,9 @@ import type {
   IntegrationRequestCreated,
   IntegrationRequestState,
   ProjectApiCredentialsOverview,
-} from '../model/api';
-import type { RestApiConnectionRequest, S3ConnectionRequest } from '../model/connectionRequest';
+  RestApiConnectionRequest,
+  S3ConnectionRequest,
+} from './types';
 
 // Заявки на подключение интеграций (RFC Ph-1 API и S3). Организацию, проект и пользователя
 // бэкенд берёт из сессии

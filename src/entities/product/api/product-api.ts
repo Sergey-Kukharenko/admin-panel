@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api';
 
-import type { Product, ProductRequiredFilesStatus } from '../model/api';
+import type { Product, ProductRequiredFilesStatus } from './types';
 
 export const productApi = {
   /** Получить список продуктов проекта */

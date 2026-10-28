@@ -99,7 +99,7 @@ export function mapProductToIntegrations(
       status,
       isTraining,
       nextCalculation: formatNextCalculation(service.next_prediction_date, intlLocale),
-      lastCalculation: formatLastCalculation(service.last_prediction_at, intlLocale),
+      lastCalculation: formatLastCalculation(service.last_prediction_at ?? null, intlLocale),
       serviceState,
       iconName: resolveProductIconName(product.name),
       tooltipIcon: TOOLTIP_ICON_BY_SERVICE_STATE[serviceState],

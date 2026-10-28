@@ -1,2 +1,2 @@
 export { predictionApi } from './api/prediction-api';
-export * from './model';
+export type * from './api/types';

@@ -5,12 +5,14 @@ import { computed, toValue } from 'vue';
 import { integrationRequestApi } from '../api/integration-request-api';
 import type {
   IntegrationRequestState,
+  IntegrationStatus,
   ProjectApiCredential,
   ProjectApiCredentialsOverview,
-} from './api';
-import type { RestApiConnectionRequest, S3ConnectionRequest } from './connectionRequest';
+  RestApiConnectionRequest,
+  S3ConnectionRequest,
+} from '../api/types';
 import { integrationKeys } from './queryKeys';
-import type { IntegrationStatus, IntegrationType } from './types';
+import type { IntegrationType } from './types';
 
 // The request is moved to «Подключено» manually on the backend and there is no push channel:
 // while it is in setup, the status is refetched every minute (WT-356).

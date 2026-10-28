@@ -16,7 +16,7 @@
 ## Этап 0 — подготовка
 
 - [x] Свести манифест: за основу — фронтовая версия первой итерации (`CLAUDE.md` + `docs/reference-slice.md`, `docs/checklists.md`, `docs/delivery.md`); из версии `main` (черновик бэкенда) взято полезное фронту — графики без библиотеки, верность UI-киту и Figma (состояния, фокус, токены, прозрачность, обводки), `AppModal` с `v-model:open`, пункты меню, `\u00a0`, флоу прод-GitLab.
-- [x] Получить актуальную OpenAPI-схему бэка (`openapi/openapi.json`, обновляется вручную по новому Swagger). Снимок 2026-10-28: эндпоинта `/registration/invitations` в схеме больше нет.
+- [x] Получить актуальную OpenAPI-схему бэка (`openapi/openapi.json`, обновляется вручную по новому Swagger). Снимок 2026-10-28: эндпоинта `/registration/invitations` в схеме больше нет, неиспользуемая `entities/invitation` удалена.
 - [ ] Согласовать с DevOps джобу `quality`.
 
 ## Этап 1 — быстрые исправления
@@ -50,7 +50,7 @@
 
 ## Этап 3 — типы и структура слайсов
 
-- [ ] Генерация типов из OpenAPI (`npm run api:types` → `shared/api/generated`), алиасы DTO во всех сущностях (`entities/*/api/types.ts`). При изменении бэка: обновить схему → `api:types` → поправить ошибки type-check.
+- [x] Генерация типов из OpenAPI (`npm run api:types` → `shared/api/generated`), алиасы DTO во всех сущностях (`entities/*/api/types.ts`). При изменении бэка: обновить схему → `api:types` → поправить ошибки type-check.
 - [ ] Сегменты `lib/`, `config/` и `api/types.ts` — по слайсам, одним коммитом на слой (`shared`, `entities`, `widgets`; в `features` чистого кода в `model/` не было):
   - `model/` — реактивное: сторы, composables, query keys, UI-типы;
   - `lib/` — чистые функции: мапперы, форматтеры, валидация;

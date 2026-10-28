@@ -2,16 +2,17 @@ import { apiClient } from '@/shared/api';
 
 import type {
   DatasetFilesFilters,
+  DatasetTemplateResponse,
   FetchFilesBackendResponse,
   ReportLocale,
   UploadDatasetRequest,
   UploadedDatasetFile,
-} from '../model/api';
+} from './types';
 
 export const datasetApi = {
   /** Получить список шаблонов CSV */
   getTemplates() {
-    return apiClient.get<Array<{ dataset_type_id: string; name: string }>>('/data-load/templates');
+    return apiClient.get<DatasetTemplateResponse[]>('/data-load/templates');
   },
 
   /** Скачать ZIP со всеми шаблонами */
