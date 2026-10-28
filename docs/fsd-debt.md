@@ -35,7 +35,7 @@
 |---|---|---|
 | `entities/*/api/types.ts` | Статусы в OpenAPI — строки без `enum` (`/fail|error/` в `prediction-run-history/model/mapper.ts`) | `enum` статусов — на стороне бэка, затем `api:types` |
 | `entities/product/model/{displayNames,docsLinks,hiddenServices}.ts`, `entities/dataset/model/templateMapper.ts` | Бизнес-справочники по slug'ам на фронте | Fallback в `config/` с `TODO` на задачу бэка |
-| `features/upload-dataset/model/store.ts` | `useI18n()` в Pinia-сторе; стор сам грузит шаблоны в обход `useDatasetTemplates`; `filesMap` с `File` и квота в `localStorage` | Убрать `useI18n` (хранить ключи); шаблоны через `useDatasetTemplates`; квоту считать на бэке |
+| `features/upload-dataset/model/store.ts` | Стор сам грузит шаблоны в обход `useDatasetTemplates`; `filesMap` с `File` и квота в `localStorage` | Шаблоны через `useDatasetTemplates`; квоту считать на бэке |
 | `.env` | Абсолютный `VITE_API_URL` на dev-хост вшивается в любую сборку (в т.ч. prod) | `server.proxy` + `VITE_API_URL=/api` (порядок — в «Конфигурации») |
 
 ## UI
