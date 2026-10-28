@@ -35,7 +35,6 @@
 | Где | Отклонение | Как привести |
 |---|---|---|
 | `RevealSecretModal`, `CreateKeySecretModal` | Свой каркас radix-диалога (экраны ключей за фича-флагом, на моках) | `AppModal` — вместе с переписыванием под API ключей |
-| `ProductAccessTable.vue`, `DatasetUploadZone.vue` | Экспорт типов из `.vue` | Типы в `*.types.ts` |
 | `tokens/colors.css` и 43 файла | Алиасы старой темы без переменной в Figma: `--background`, `--card`, `--surface`, `--foreground`, `--muted-foreground`, `--primary`, `--primary-foreground`, `--muted`, `--muted-hover`, `--muted-hover-soft`, `--border`, `--success`, `--danger` | Заменить на токены с именами Figma, сверяя место с макетом (`--surface` → `--bg-surface-primary`, `--muted` → `--bg-button-secondary`, `--muted-hover` → `--bg-button-secondary-hover` — значения совпадают; `--border` (#e5e5e5) отличается от `--border-default` (8%) — выбирать по макету), затем удалить алиасы |
 | `AppFilterTrigger`, кнопки закрытия модалок (кроме `AppConfirmDialog`) | `div @click`, кликабельный `span` внутри `button`, иконочные кнопки без `aria-label` | По правилам доступности |
 | ~21 место: `ConnectionStatusTag`, `CredentialsInfoCard`, `AppSwitch`, `AppSkeleton`, `AppWaveBackground`, `profile-overview/*`, … | Хардкод цветов, градиенты в `style`, `bg-red-50`, `bg-neutral-300` | Семантические токены |

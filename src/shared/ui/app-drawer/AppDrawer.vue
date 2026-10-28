@@ -4,7 +4,7 @@ import { DialogContent, DialogOverlay, DialogPortal, DialogRoot } from 'radix-vu
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
 
-export interface AppDrawerProps {
+interface AppDrawerProps {
   open: boolean;
   title: string;
 }
