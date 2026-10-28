@@ -43,11 +43,10 @@ function confirmRotate() {
   </AppButton>
 
   <AppConfirmDialog
-    :open="isConfirmOpen"
+    v-model:open="isConfirmOpen"
     :title="t('integrations.restApiSecrets.rotate.title', { environment: environmentLabel })"
     :description="t('integrations.restApiSecrets.rotate.description')"
     :confirm-label="t('integrations.restApiSecrets.rotate.confirm')"
-    @close="isConfirmOpen = false"
     @confirm="confirmRotate"
   />
 

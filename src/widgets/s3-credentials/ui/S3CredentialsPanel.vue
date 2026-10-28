@@ -272,7 +272,7 @@ function confirmRevoke() {
       :description="t('integrations.s3KeySecrets.deactivate.description')"
       :confirm-label="t('integrations.s3KeySecrets.deactivate.confirm')"
       :cancel-label="t('integrations.connectionForm.cancel')"
-      @close="secretPendingDeactivate = null"
+      @update:open="(value) => !value && (secretPendingDeactivate = null)"
       @confirm="confirmDeactivate"
     />
 

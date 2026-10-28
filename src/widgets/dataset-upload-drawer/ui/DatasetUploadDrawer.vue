@@ -191,11 +191,10 @@ const handleFinalConfirm = () => {
   </AppDrawer>
 
   <AppConfirmDialog
-    :open="isConfirmOpen"
+    v-model:open="isConfirmOpen"
     :title="t('datasets.upload.confirmDialog.title')"
     :description="t('datasets.upload.confirmDialog.description')"
     :confirm-label="t('datasets.upload.confirmDialog.confirmLabel')"
-    @close="isConfirmOpen = false"
     @confirm="handleFinalConfirm"
   />
 </template>

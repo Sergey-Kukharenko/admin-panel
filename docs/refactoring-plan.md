@@ -30,8 +30,8 @@
 
 ## Этап 2 — базовая инфраструктура
 
-- [x] `AppModal` с тестами, `AppConfirmDialog` на его основе — уже в `main` (`v-model:open`), берём его.
-- [ ] Перевод модалок на `AppModal`: подключение интеграций (вместе с переносом в `features`), `ChangePasswordModal`, `DatasetHistoryErrorDialog`. Модалки ключей (`CreateApiSecretModal`, `CreateKeySecretModal`, `RevealSecretModal`) отложены до API ключей: они за фича-флагом на моках и будут переписаны.
+- [x] `AppModal` с тестами (уже в `main`, `v-model:open`), `AppConfirmDialog` на его основе: необязательный заголовок в шапке, оверлей `soft` поверх шторки, `hasDescription`.
+- [x] Перевод модалок на `AppModal`: подключение интеграций (вместе с переносом в `features`), `ChangePasswordModal`, `DatasetHistoryErrorDialog`. Модалки ключей (`CreateApiSecretModal`, `CreateKeySecretModal`, `RevealSecretModal`) отложены до API ключей: они за фича-флагом на моках и будут переписаны.
 - [ ] Перенос модалок и панелей из `widgets` в `features`:
   - [x] `s3-connection-modal` и мутация `useRequestIntegrationConnection` → `features/request-integration-connection` (одна фича на заявку: у S3 и REST общая мутация) — уже в `main`;
   - [x] `rest-api-connection-modal` → туда же — уже в `main`;

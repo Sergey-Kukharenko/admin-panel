@@ -6,15 +6,22 @@ import { useI18n } from 'vue-i18n';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import type { AppModalSize } from './AppModal.types';
+import type { AppModalOverlay, AppModalSize } from './AppModal.types';
 
 const props = withDefaults(
   defineProps<{
-    title: string;
+    /** Without a title the header holds only the close button; the body then renders its own DialogTitle */
+    title?: string;
     size?: AppModalSize;
+    overlay?: AppModalOverlay;
+    /** The body renders a DialogDescription: keep aria-describedby so radix links it */
+    hasDescription?: boolean;
   }>(),
   {
+    title: undefined,
     size: 'md',
+    overlay: 'strong',
+    hasDescription: false,
   },
 );
 
@@ -33,6 +40,18 @@ const sizeClass = computed(() => {
       return 'w-120';
   }
 });
+
+// soft sits above the drawer (z-50) it is opened from
+const overlayClass = computed(() =>
+  props.overlay === 'soft'
+    ? 'z-50 bg-(--overlay) backdrop-blur-overlay'
+    : 'z-40 bg-(--overlay-strong) backdrop-blur-(--blur-overlay)',
+);
+
+// radix warns about a dialog without a description; without one the attribute is opted out
+const contentAttrs = computed(() =>
+  props.hasDescription ? {} : { 'aria-describedby': undefined },
+);
 </script>
 
 <template>
@@ -46,10 +65,7 @@ const sizeClass = computed(() => {
         leave-active-class="transition-opacity duration-150 ease-in"
         leave-to-class="opacity-0"
       >
-        <DialogOverlay
-          v-if="open"
-          class="fixed inset-0 z-40 bg-(--overlay-strong) backdrop-blur-(--blur-overlay)"
-        />
+        <DialogOverlay v-if="open" class="fixed inset-0" :class="overlayClass" />
       </Transition>
 
       <Transition
@@ -60,15 +76,17 @@ const sizeClass = computed(() => {
         leave-active-class="transition-all duration-150 ease-in"
         leave-to-class="opacity-0 scale-95"
       >
-        <!-- No DialogDescription by default: the body is free-form, so aria-describedby is opted out -->
         <DialogContent
           v-if="open"
-          :aria-describedby="undefined"
+          v-bind="contentAttrs"
           class="fixed top-1/2 left-1/2 z-50 flex max-h-[85vh] -translate-x-1/2 -translate-y-1/2 flex-col rounded-(--radius-xxl) bg-(--bg-surface-primary) shadow-(--shadow-panel) focus:outline-none"
           :class="sizeClass"
         >
-          <header class="flex w-full shrink-0 items-center gap-2 px-5 py-4">
-            <DialogTitle class="flex-1 text-sm font-medium text-(--text-primary)">
+          <header
+            class="flex w-full shrink-0 items-center px-5"
+            :class="title ? 'gap-2 py-4' : 'justify-end pt-4'"
+          >
+            <DialogTitle v-if="title" class="flex-1 text-sm font-medium text-(--text-primary)">
               {{ title }}
             </DialogTitle>
 

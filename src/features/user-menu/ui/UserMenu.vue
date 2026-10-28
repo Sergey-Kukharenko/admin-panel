@@ -73,11 +73,10 @@ function handleLogout(): void {
   </AppDropdown>
 
   <AppConfirmDialog
-    :open="isLogoutConfirmOpen"
+    v-model:open="isLogoutConfirmOpen"
     :title="t('layout.userMenu.logoutConfirmTitle')"
     :description="t('layout.userMenu.logoutConfirmDescription')"
     :confirm-label="t('layout.userMenu.logout')"
-    @close="isLogoutConfirmOpen = false"
     @confirm="handleLogout"
   />
 </template>

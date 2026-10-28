@@ -74,19 +74,27 @@ describe('AppConfirmDialog', () => {
   });
 
   it.each([
-    ['Cancel', 'close', 'Отмена'],
-    ['the close icon', 'close', 'Закрыть'],
-    ['Confirm', 'confirm', 'Подтвердить'],
-  ] as const)('%s emits %s', async (_how, event, name) => {
+    ['Cancel', 'Отмена'],
+    ['the close icon', 'Закрыть'],
+  ] as const)('%s closes the dialog', async (_how, name) => {
     const wrapper = render();
     await nextTick();
 
     button(name)!.click();
 
-    expect(wrapper.emitted(event)).toHaveLength(1);
+    expect(wrapper.emitted('update:open')).toEqual([[false]]);
   });
 
-  it('Escape emits close', async () => {
+  it('Confirm emits confirm', async () => {
+    const wrapper = render();
+    await nextTick();
+
+    button('Подтвердить')!.click();
+
+    expect(wrapper.emitted('confirm')).toHaveLength(1);
+  });
+
+  it('Escape closes the dialog', async () => {
     const wrapper = render();
     await nextTick();
 
@@ -95,7 +103,7 @@ describe('AppConfirmDialog', () => {
       .dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     await nextTick();
 
-    expect(wrapper.emitted('close')).toHaveLength(1);
+    expect(wrapper.emitted('update:open')).toEqual([[false]]);
   });
 
   it.each([

@@ -92,4 +92,23 @@ describe('AppModal', () => {
     await nextTick();
     expect(dialog()?.className).toContain('w-180');
   });
+
+  it('keeps only the close button in the header without a title', async () => {
+    render({ title: undefined });
+    await nextTick();
+
+    const header = dialog()?.querySelector('header');
+    expect(header?.textContent?.trim()).toBe('');
+    expect(header?.querySelector('button[aria-label="Закрыть"]')).not.toBeNull();
+  });
+
+  it.each([
+    ['strong', 'bg-(--overlay-strong)'],
+    ['soft', 'bg-(--overlay)'],
+  ] as const)('paints the %s overlay with %s', async (overlay, bg) => {
+    render({ overlay });
+    await nextTick();
+
+    expect(document.body.innerHTML).toContain(bg);
+  });
 });
