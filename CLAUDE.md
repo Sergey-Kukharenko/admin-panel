@@ -1,1187 +1,522 @@
-# Архитектурный манифест — mico-client-portal-ui
+# Архитектурный манифест фронтенда — mico-client-portal-ui
 
-> **Назначение.** Стандарт архитектуры и стиля для фронтенда клиентского портала MICo
-> (Vue 3 + TypeScript + Feature-Sliced Design). Claude Code развивает проект строго по этому
-> документу. Манифест описывает **«как должно быть»**, а не текущий состав файлов — актуальное
-> содержимое всегда смотри в самой репе.
->
-> **Существующий код и долг.** Код, который не соответствует манифесту, — это долг, а не образец.
-> Известные отклонения перечислены в [`docs/fsd-debt.md`](docs/fsd-debt.md). **Перед правкой
-> существующего слайса сверься с этим файлом: перечисленные там паттерны не копировать.**
-> В рамках задачи приводим к манифесту только те файлы, которые и так правим; перенос слайса
-> между слоями или сегментами — отдельной `chore/*`-задачей.
->
-> **Что ещё не реализовано.** Часть правил опирается на инфраструктуру, которой пока нет в коде
-> (таблица ниже). Если задача упирается в такой элемент — создай его по описанию из манифеста
-> (отдельным MR или явно в рамках задачи), а не обходи. Пакеты из таблицы **согласованы** —
-> правило «новые зависимости только по согласованию» на них не распространяется.
->
-> | Элемент | Где описан |
-> |---|---|
-> | Генерация типов из OpenAPI (`openapi-typescript`, `openapi/openapi.json`, `npm run api:types`, `shared/api/generated/` + реэкспорт из `shared/api/index.ts`) | «Работа с бэкендом» |
-> | `isRetryableError` в `shared/api` | «Ошибки и уведомления», «Серверное состояние» |
-> | Интерсептор 401 в `app/providers/` | «Ошибки и уведомления» |
-> | Фабрики query keys `<entity>Keys` | «Серверное состояние» |
-> | `AppModal` | «Дизайн-система» |
-> | `TooltipProvider` в `App.vue` (сейчас создаётся внутри `AppTooltip`) | «Дизайн-система» |
-> | `ROUTE_NAMES`, ленивые страницы, `meta.titleKey` / `meta.nav`, маршрут 404 | «Авторизация и роутинг» |
-> | `server.proxy` в `vite.config.ts` и `VITE_API_URL=/api` | «Конфигурация» |
-> | Vitest: хелпер `withSetup` | «Тесты» |
-> | Скрипты `check`, `check:lint`, `check:format`; CI-джоба `quality` | «Команды», «Деплой и CI/CD» |
-> | Линтеры `steiger`, `eslint-plugin-vuejs-accessibility`, `@intlify/eslint-plugin-vue-i18n` | «Линтинг» |
->
-> **Эталонные места в коде** (делать «как там» — в указанном аспекте):
-> - `widgets/prediction-run-history` — фильтры, сортировка и пагинация в URL; маппер DTO → UI с тестами; состояния loading / error / empty;
-> - `entities/product` — query-composable сущности с `select` и поллингом;
-> - `shared/ui/app-button` — вариативный компонент дизайн-системы;
-> - `shared/ui/app-pagination` — компонент с `defineModel` и чистой логикой с тестом.
->
-> Ключи запросов, раскладка по сегментам и справочники в этих местах — долг (см. `docs/fsd-debt.md`).
->
-> **Принципы, которыми решаем спорное:** чистая архитектура (зависимости только вниз, домен отделён
-> от UI и транспорта), SOLID (одна ответственность у модуля, расширение через пропсы/слоты/композицию,
-> а не правку базового), DRY (одна модалка, один `apiClient`, типы из одного контракта), KISS и YAGNI
-> (не заводим абстракцию, сегмент или пропс «на будущее»). Правила проверяются линтерами, а не только
-> ревью. Если правило мешает этим принципам — меняем правило здесь и фиксируем причину.
->
-> Следуй манифесту строго. Не отклоняйся от описанных паттернов без согласования с командой.
+Стандарт архитектуры и стиля клиентского портала MICo: Vue 3 + TypeScript + Feature-Sliced Design.
+Claude Code развивает проект по этому документу. Манифест описывает **«как должно быть»**; состав
+файлов смотри в самой репе.
+
+**Принципы, которыми решаем спорное:** чистая архитектура (зависимости только вниз, домен отделён от
+UI и транспорта), SOLID (одна ответственность у модуля, расширение через пропсы/слоты/композицию, а не
+правку базового), DRY (одна модалка, один `apiClient`, типы из одного контракта), **KISS и YAGNI**
+(не заводим абстракцию, сегмент или фабрику «на будущее» — только когда есть второй потребитель или
+реальная задача). Правила проверяются линтерами, а не только ревью. Манифест — наш рабочий договор:
+если правило мешает этим принципам, меняем правило и фиксируем решение здесь.
+
+**Долг.** Код, который не соответствует манифесту, — долг, а не образец. Известные отклонения — в
+[`docs/fsd-debt.md`](docs/fsd-debt.md): **эти паттерны не копировать.** В рамках задачи приводим к
+манифесту только тронутые файлы; перенос слайса между слоями или сегментами — отдельной задачей.
+
+**Ещё не сделано** (ждёт внешних решений): прокси `/api` в dev и относительный `VITE_API_URL`
+(«Конфигурация»), CI-джоба `quality` ([`docs/delivery.md`](docs/delivery.md)). Перенос рефакторинга
+(WT-547) — по [`docs/refactoring-plan.md`](docs/refactoring-plan.md): пока он не закончен, часть
+правил ещё не воплощена в коде — это долг, а не образец.
+
+**Эталонные места в коде:** `widgets/prediction-run-history` — фильтры и пагинация в URL, маппер с
+тестами, состояния loading / error / empty; `entities/product` — query-composable с `select` и
+поллингом; `shared/ui/app-button` — вариативный компонент кита; `shared/ui/app-pagination` —
+`defineModel` и чистая логика с тестом; `shared/ui/app-modal` — базовая модалка.
+
+Документы рядом: [`docs/reference-slice.md`](docs/reference-slice.md) — эталонный вертикальный срез,
+[`docs/checklists.md`](docs/checklists.md) — чеклисты, [`docs/delivery.md`](docs/delivery.md) — git,
+коммиты, CI/CD.
 
 ---
 
-## Содержание
+## Стек
 
-- [Технический стек](#технический-стек)
-- [Команды](#команды)
-- [Структура каталогов](#структура-каталогов)
-- [Слои FSD и правила импорта](#слои-fsd-и-правила-импорта)
-- [Feature или widget](#feature-или-widget)
-- [Устройство слайса (сегменты)](#устройство-слайса-сегменты)
-- [Нейминг](#нейминг)
-- [Работа с бэкендом (api-сегмент)](#работа-с-бэкендом-api-сегмент)
-- [Серверное состояние (TanStack Query)](#серверное-состояние-tanstack-query)
-- [Маппинг DTO → UI-модель](#маппинг-dto--ui-модель)
-- [Клиентское состояние](#клиентское-состояние)
-- [Vue-компоненты](#vue-компоненты)
-- [Состояния экрана: загрузка, ошибка, пусто](#состояния-экрана-загрузка-ошибка-пусто)
-- [Дизайн-система (shared/ui)](#дизайн-система-sharedui)
-- [Стили и дизайн-токены](#стили-и-дизайн-токены)
-- [Иконки и ассеты](#иконки-и-ассеты)
-- [Локализация (i18n)](#локализация-i18n)
-- [Даты, числа, форматирование](#даты-числа-форматирование)
-- [Ошибки и уведомления](#ошибки-и-уведомления)
-- [Авторизация и роутинг](#авторизация-и-роутинг)
-- [Конфигурация, env и фича-флаги](#конфигурация-env-и-фича-флаги)
-- [Моки и скрытые фичи](#моки-и-скрытые-фичи)
-- [Требования и макеты](#требования-и-макеты)
-- [Комментарии в коде](#комментарии-в-коде)
-- [Тесты](#тесты)
-- [Линтинг и форматирование](#линтинг-и-форматирование)
-- [Деплой и CI/CD](#деплой-и-cicd)
-- [Чеклисты](#чеклисты)
-- [Эталонный пример (вертикальный срез)](#эталонный-пример-вертикальный-срез)
-- [Definition of Done (перед MR)](#definition-of-done-перед-mr)
-- [Git, ветки и Merge Request](#git-ветки-и-merge-request)
-- [Коммиты](#коммиты)
-- [Язык общения](#язык-общения)
-
----
-
-## Технический стек
-
-| Назначение | Библиотека / инструмент |
+| Назначение | Инструмент |
 |---|---|
-| Фреймворк | Vue 3.5 (Composition API, `<script setup lang="ts">`) |
-| Язык | TypeScript (strict, `noUncheckedIndexedAccess`) |
-| Сборка | Vite 8, `@vitejs/plugin-vue`, `vite-svg-loader`, `vite-plugin-vue-devtools` |
-| Стили | Tailwind CSS v4 (CSS-first, `@tailwindcss/vite`), дизайн-токены — CSS custom properties |
+| Фреймворк | Vue 3.5, Composition API, `<script setup lang="ts">` |
+| Язык | TypeScript 6 (strict, `noUncheckedIndexedAccess`) |
+| Сборка | Vite 8, `vite-svg-loader`, `vite-plugin-vue-devtools` |
+| Стили | Tailwind CSS v4 (CSS-first), дизайн-токены — CSS custom properties |
 | Headless-примитивы | `radix-vue` (Dialog, DropdownMenu, Tooltip, Checkbox, Switch, Collapsible, ScrollArea) |
 | Серверное состояние | `@tanstack/vue-query` v5 |
-| Клиентское состояние | Pinia (setup-store) + URL query через Vue Router |
-| Роутинг | Vue Router |
-| HTTP | axios (единый инстанс `apiClient`) |
-| Типы API | `openapi-typescript` *(подключить)*; v7 объявляет peer-зависимость от TypeScript 5 — через `overrides` в `package.json` он использует TypeScript проекта |
-| Локализация | `vue-i18n` (composition mode, `legacy: false`), языки `ru` / `en` |
-| Уведомления | `vue-sonner` (`toast`) |
-| Даты | `Intl.*` для отображения, `dayjs` — для арифметики дат |
-| Графики | HTML и inline SVG на токенах дизайн-системы поверх `AppChartGrid`, без библиотеки графиков (ось, дни периода и подписи дат — `shared/lib/chart`: подписи днями, `formatDateLabels`) |
-| Тесты | Vitest + `@vue/test-utils` (окружение jsdom) |
-| Линт / формат | oxlint → ESLint (flat config) → Prettier; `steiger`, `eslint-plugin-vuejs-accessibility`, `@intlify/eslint-plugin-vue-i18n` *(подключить)* |
-| Node | `^20.19.0 \|\| >=22.12.0` (в Docker — `node:24-alpine`) |
-| Рантайм | статика в `nginx-unprivileged` (порт 8080) → Helm (`mico-app`) → K8s |
+| Клиентское состояние | URL query (Vue Router 5) + Pinia 3 (setup-store) |
+| HTTP | axios, единый `apiClient` |
+| Контракт API | OpenAPI бэка → `openapi-typescript` (`npm run api:types`) |
+| Локализация | `vue-i18n` 11 (composition, `legacy: false`), `ru` / `en` |
+| Уведомления | `vue-sonner` |
+| Даты | `Intl.*` для отображения, `dayjs` для арифметики |
+| Графики | HTML и inline SVG на токенах поверх `AppChartGrid`, без библиотеки графиков (ось, дни периода, подписи дат — `shared/lib/chart`) |
+| Тесты | Vitest 4 + `@vue/test-utils` (jsdom) |
+| Качество | oxlint → ESLint (flat; Vue, TS, импорты, a11y, i18n) → `steiger` (FSD) → Prettier |
 
-Новые зависимости, кроме перечисленных в таблице «Что ещё не реализовано», не добавлять без
-согласования. Если задача решается уже подключённой библиотекой (radix-vue, dayjs, Intl,
-TanStack Query) — используем её. Неиспользуемые зависимости удаляются из `package.json`.
+Новая зависимость — только если задачу не решают уже подключённые (radix-vue, dayjs, Intl, TanStack
+Query); решение фиксируем в манифесте. Неиспользуемые зависимости удаляем.
 
----
+`openapi-typescript` 7 объявляет peer-зависимость от TypeScript 5; через `overrides` в `package.json`
+он использует TypeScript проекта.
 
 ## Команды
 
-| Команда | Что делает |
-|---|---|
-| `npm run dev` | дев-сервер Vite (запросы на `/api` проксируются на dev-бэкенд — см. «Конфигурация») |
-| `npm run build` | `vue-tsc --build` + `vite build` параллельно |
-| `npm run type-check` | только проверка типов |
-| `npm run test:unit` | Vitest (watch); разово — `npx vitest run`, один файл — `npx vitest run <path>` |
-| `npm run lint` | `run-s lint:*` — oxlint и eslint с `--fix` (**правит файлы**), для локальной работы |
-| `npm run check:lint` | oxlint + eslint **без** `--fix` + `steiger` — для CI и проверки перед MR |
-| `npm run format` | `prettier --write --experimental-cli src/` |
-| `npm run check:format` | `prettier --check --experimental-cli src/` — для CI и проверки перед MR |
-| `npm run check` | всё без `--fix`: `type-check`, `check:lint`, `check:format`, `vitest run` — перед коммитом |
-| `npm run api:types` | перегенерировать типы API из `openapi/openapi.json` в `src/shared/api/generated/` |
-| `npm run icons:sprite` | пересобрать SVG-спрайт и `iconNames.ts` (`node scripts/build-icon-sprite.mjs`) |
+```sh
+npm run dev           # dev-сервер Vite
+npm run build         # type-check + production build
+npm run check         # всё без --fix: type-check, check:lint, check:format, тесты — перед коммитом
+npm run lint          # oxlint --fix, eslint --fix, steiger — локально
+npm run format        # prettier --write src/
+npm run test:unit     # Vitest (watch); разово: npx vitest run [path]
+npm run api:types     # типы API из openapi/openapi.json → src/shared/api/generated
+npm run icons:sprite  # пересобрать SVG-спрайт и iconNames.ts
+```
 
-Скрипты проверок называются `check:*`, а не `lint:check`: скрипт `lint` запускает все `lint:*`
-по маске, и проверочный скрипт с таким префиксом попал бы в него.
+Проверочные скрипты называются `check:*`, а не `lint:check`: `lint` запускает все `lint:*` по маске.
 
 ---
 
-## Структура каталогов
-
-```
-mico-client-portal-ui/
-├── src/
-│   ├── main.ts                 ← bootstrap: Pinia, i18n, QueryClient, initAuth(), HTTP-интерсепторы, router, mount
-│   ├── App.vue                 ← корневой выбор экрана: AuthLoader / AuthErrorScreen / AdminLayout + Toaster + TooltipProvider
-│   │
-│   ├── app/                    ← слой app: всё, что про приложение целиком
-│   │   ├── router/index.ts     ← таблица маршрутов (name, meta) + глобальный guard авторизации
-│   │   ├── providers/          ← подключение HTTP-интерсепторов и прочих глобальных обработчиков
-│   │   └── layouts/admin-layout/  ← каркас: сайдбар, шапка, навигация (строятся из meta маршрутов)
-│   │
-│   ├── pages/                  ← страницы (по одной на маршрут), тонкая композиция виджетов
-│   │   └── <name>/             ← ui/<Name>Page.vue + index.ts (без суффикса -page: так требует steiger)
-│   │
-│   ├── widgets/                ← самостоятельные блоки экрана (имя — существительное)
-│   │   └── <widget-name>/      ← index.ts + ui/ + model/ + lib/ + config/ + assets/ (только нужные сегменты)
-│   │
-│   ├── features/               ← действия пользователя (имя — глагол + объект)
-│   │   └── <verb-object>/      ← index.ts + ui/ + model/ + lib/ + config/ (только нужные сегменты)
-│   │
-│   ├── entities/               ← бизнес-сущности
-│   │   └── <entity>/
-│   │       ├── index.ts
-│   │       ├── @x/             ← (при необходимости) типы для других сущностей
-│   │       ├── api/            ← <name>-api.ts (вызовы бэка) + types.ts (DTO)
-│   │       ├── model/          ← queryKeys.ts, useXxx.ts (query-composables), store.ts, types.ts (UI-типы)
-│   │       ├── lib/            ← чистые функции: валидация, сборка тела запроса, форматтеры
-│   │       ├── config/         ← константы, справочники, моки MOCK_*
-│   │       ├── ui/<component>/ ← отображение сущности (бейдж статуса, иконка типа)
-│   │       └── assets/
-│   │
-│   └── shared/                 ← переиспользуемое, без знания о домене
-│       ├── api/                ← apiClient, getHttpStatus, isClientError, isRetryableError, generated/ (типы из OpenAPI)
-│       ├── config/             ← api.ts (API_URL), env.ts (IS_DEV, фича-флаги), routes.ts (ROUTE_NAMES)
-│       ├── i18n/               ← createI18n, setAppLocale/getAppLocale/toIntlLocale, locales/ru.ts|en.ts
-│       ├── lib/                ← чистые утилиты (downloadBlob, getContentDispositionFilename, router/createQueryPatch)
-│       ├── ui/app-*/           ← дизайн-система: AppButton, AppModal, AppDrawer, AppIcon, ...
-│       └── assets/
-│           ├── icons/ui/       ← исходные SVG иконок (Figma) — вход для спрайта
-│           ├── images/
-│           └── styles/         ← main.css, base/globals.css, tokens/*.css
-│
-├── docs/fsd-debt.md            ← известные отклонения от манифеста (не копировать)
-├── scripts/build-icon-sprite.mjs
-├── helm/                       ← чарт-обёртка над mico-app (values.yaml / values-dev.yaml / values-prod.yaml)
-├── Dockerfile · nginx.conf · .gitlab-ci.yml
-├── eslint.config.ts · .oxlintrc.json · .prettierrc.json · .editorconfig
-└── vite.config.ts · vitest.config.ts · tsconfig.*.json · env.d.ts
-```
-
-Алиас `@/*` → `src/*` (в `vite.config.ts` и `tsconfig.app.json`).
-
----
-
-## Слои FSD и правила импорта
-
-Проект построен по **Feature-Sliced Design**. Слои снизу вверх:
+## Слои FSD и импорты
 
 ```
 shared → entities → features → widgets → pages → app
 ```
 
-| Слой | Что лежит | Может импортировать |
+| Слой | Что лежит | Импортирует |
 |---|---|---|
-| `shared` | дизайн-система, apiClient, i18n, утилиты, токены — **без доменных понятий** | только `shared` |
-| `entities` | бизнес-сущность: API и DTO, query-composables, доменные правила, отображение сущности | `shared` (+ `@x` других сущностей, см. ниже) |
+| `shared` | дизайн-система, `apiClient`, i18n, конфиг, утилиты, токены — **без доменных понятий** | только `shared` |
+| `entities` | бизнес-сущность: API и DTO, query-composables, доменные правила, отображение сущности | `shared` (+ `@x` других сущностей) |
 | `features` | действие пользователя: UI действия, мутация, реакция (тост, закрытие, навигация) | `entities`, `shared` |
-| `widgets` | самостоятельный блок экрана, собранный из фич и сущностей | `features`, `entities`, `shared` |
-| `pages` | страница маршрута — композиция виджетов + страничная логика (онбординг, редирект) | `widgets`, `features`, `entities`, `shared` |
-| `app` | роутер, layout, глобальные провайдеры | все слои |
+| `widgets` | самостоятельный блок экрана из фич и сущностей | `features`, `entities`, `shared` |
+| `pages` | страница маршрута — композиция виджетов + страничная логика (редирект, онбординг) | все ниже |
+| `app` | роутер, layout, глобальные провайдеры, bootstrap | все |
 
-Правила:
-
-- **Импорт только вниз.** Слой не знает о слоях выше себя (`shared` не импортирует из `entities`, `entities` — из `features` и т.д.).
-- **Нет кросс-импортов внутри слоя.** Слайс не импортирует соседний слайс того же слоя (`widgets/a` → `widgets/b`, `features/a` → `features/b` запрещено). Если двум виджетам нужен общий блок — он опускается в `features`/`entities`/`shared`, либо композицию делает слой выше (страница).
-- **Ссылки между сущностями — только через `@x` и только типы.** Если сущности нужен тип другой сущности (прогон → сервис, датасет → продукт), сущность-владелец публикует его в `entities/<owner>/@x/<consumer>.ts`, а потребитель импортирует `@/entities/<owner>/@x/<consumer>`. Через `@x` экспортируются только типы (`export type`); логику и компоненты между сущностями не передаём — это композиция в `features`/`widgets`. Типы не дублируем.
-- **Только через публичный API.** Снаружи слайса импортируем только из его `index.ts` (или `@x`): `@/entities/dataset`, а не `@/entities/dataset/model/types`.
-- **Исключение — `shared`:** у `shared/ui` и `shared/lib` нет общего барреля. Каждый `shared/ui/app-*` — самостоятельный модуль со своим `index.ts` (`@/shared/ui/app-button`); в `shared/lib` верхнеуровневые файлы импортируются напрямую (`@/shared/lib/downloadBlob`), папки — через свой `index.ts` (`@/shared/lib/router`, `@/shared/lib/test`). `@/shared/api`, `@/shared/i18n` и `@/shared/config` импортируются через свои `index.ts` (публичный API сегмента проверяет `steiger`).
-- **В `shared/api` — только транспорт:** `apiClient`, хелперы разбора ошибок и сгенерированные типы. Вызовы конкретных эндпоинтов (в т.ч. сессия и авторизация) — в `entities/<entity>/api` (`entities/user/api/session-api.ts`).
-- **Внутри слайса — относительные импорты** (`../model/useRunHistoryTable`, `./PredictionRunHistoryTable.vue`, `../assets/icon.png`). Свой же слайс по алиасу (`@/entities/dataset/...` изнутри `entities/dataset`) не импортируем.
-- **Внутри слайса `model` и `lib` не импортируют из `ui`.** Типы, которые нужны и логике, и компоненту, живут в `model/types.ts`.
-- Ключ, который нужен нескольким слоям (например query key для инвалидации из feature), кладём в **самый нижний** слайс, которому он принадлежит.
-- Правила слоёв проверяются линтером `steiger` в `check:lint` (`steiger.config.ts`). Выключены `insignificant-slice` (ложные срабатывания, спорит с критерием feature/widget) и `segments-by-purpose` (`assets`, `app/providers` оставляем).
-
----
+- **Только вниз**, **без кросс-импортов внутри слоя** (`widgets/a` → `widgets/b` нельзя). Общий блок
+  опускается ниже или композицию делает слой выше.
+- **Снаружи слайса — только через публичный API** (`index.ts`): `@/entities/dataset`, а не
+  `@/entities/dataset/model/types`.
+- **`shared`:** у `shared/ui/app-*` и `shared/api`, `shared/i18n`, `shared/config` — свои `index.ts`;
+  в `shared/lib` верхнеуровневые файлы импортируются напрямую (`@/shared/lib/downloadBlob`), папки —
+  через свой индекс (`@/shared/lib/router`, `@/shared/lib/test`).
+- **В `shared/api` — только транспорт:** `apiClient`, разбор HTTP-ошибок, сгенерированные типы.
+  Эндпоинты (в т.ч. сессия) — в `entities/<entity>/api`.
+- **Ссылки между сущностями — через `@x` и только типы** (`entities/<owner>/@x/<consumer>.ts`,
+  `export type`). Логику и компоненты между сущностями не передаём — это композиция выше. Типы не
+  дублируем.
+- **Внутри слайса — относительные импорты**; свой слайс по алиасу не импортируем.
+- `model` и `lib` не импортируют из `ui`. Общие типы — `model/types.ts`.
+- Ключ, нужный нескольким слоям (query key для инвалидации из фичи), — в **самом нижнем** слайсе.
+- Проверяется `steiger` (`steiger.config.ts`). Выключены `insignificant-slice` (ложные срабатывания,
+  противоречит критерию feature/widget) и `segments-by-purpose` (`assets`, `app/providers` оставляем).
 
 ## Feature или widget
 
 | | **feature** | **widget** |
 |---|---|---|
-| Что это | одно действие пользователя, которое приносит ценность | самостоятельный блок экрана |
-| Состав | UI действия (кнопка, модалка, форма) + мутация + реакция на результат | собирает несколько фич и сущностей, держит состояние блока (фильтры, пагинация) |
-| Имя | глагол + объект: `connect-s3`, `create-api-secret`, `upload-dataset`, `change-password` | существительное: `integration-detail`, `dataset-history-table` |
-| Примеры | модалка заявки на подключение, кнопка скачивания результата, переключатель языка | таблица истории загрузок, каталог интеграций, история прогонов |
+| Что это | одно действие пользователя с ценностью | самостоятельный блок экрана |
+| Состав | UI действия (кнопка, модалка, форма) + мутация + реакция | собирает фичи и сущности, держит состояние блока (фильтры, пагинация) |
+| Имя | глагол + объект: `request-integration-connection`, `upload-dataset`, `change-password` | существительное: `integration-detail`, `dataset-history-table` |
 
-- Модалка или панель с действием — это **feature**, даже если она большая. Если у двух вариантов действия общая мутация (заявка на S3 и REST API), это **одна** фича, а не две (иначе кросс-импорт или копия).
-- Компонент без своего действия и с одним потребителем (пустое состояние таблицы, кнопка которого только эмитит событие) — внутренний компонент виджета, а не отдельный слайс.
-- Виджет кладёт фичи в нужные места своей разметки (кнопка скачивания в строке таблицы, модалка заявки на странице интеграции).
-- **В `entities/*/ui` — только отображение сущности** без сценариев: бейдж статуса, иконка типа, карточка данных. Модалки с действием, кнопки с мутацией и UI-реакцией (тосты, навигация) — в `features`.
-- `useMutation` в `entities` допустим только как «голая» операция с обновлением кэша, без UI-реакции; сценарий действия вокруг неё — в `features`.
+- Модалка или панель с действием — **feature**, даже большая. Если у двух вариантов действия общая
+  мутация (S3 и REST API), это **одна** фича, а не две (иначе кросс-импорт или копия).
+- Компонент, у которого нет действия и одного потребителя (пустое состояние таблицы с кнопкой,
+  которая лишь эмитит событие), — внутренний компонент виджета, а не отдельный слайс.
+- **`entities/*/ui` — только отображение сущности** (бейдж статуса, иконка типа). Модалки с
+  действием и мутации с UI-реакцией — в `features`. `useMutation` в `entities` — только «голая»
+  операция с обновлением кэша.
 
----
+## Сегменты слайса
 
-## Устройство слайса (сегменты)
+Критерий — **природа кода**, а не тип файла.
 
-Стандартные сегменты FSD. Критерий выбора сегмента — **природа кода**, а не тип файла:
+| Сегмент | Что лежит |
+|---|---|
+| `ui/` | `.vue`-компоненты |
+| `model/` | реактивное: composables, Pinia-store, query keys, UI-типы |
+| `lib/` | чистые функции без Vue: мапперы DTO → UI, форматтеры, валидация, сборка тела запроса |
+| `config/` | статические данные: константы, справочники, имена URL-параметров, моки `MOCK_*` |
+| `api/` | только `entities`: `<name>-api.ts` (вызовы) + `types.ts` (DTO-алиасы OpenAPI) |
+| `assets/` | картинки слайса |
 
-| Сегмент | Что лежит | Примеры |
-|---|---|---|
-| `ui/` | `.vue`-компоненты | `IntegrationCard.vue`, `PredictionRunHistorySkeleton.vue` |
-| `model/` | то, где есть реактивность, состояние или Vue/TanStack: composables, query keys, Pinia-store, UI-типы | `useRunHistoryTable.ts`, `queryKeys.ts`, `store.ts`, `types.ts` |
-| `lib/` | чистые функции «вход → выход» без Vue: мапперы DTO → UI, форматтеры, валидация, сборка тела запроса | `mapper.ts`, `format.ts`, `fileValidation.ts`, `connectionRequest.ts` |
-| `config/` | статические данные без логики: константы, справочники, моки `MOCK_*` | `constants.ts`, `displayNames.ts`, `mocks.ts` |
-| `api/` | только в `entities`: вызовы бэка и DTO | `product-api.ts`, `types.ts` |
-| `assets/` | картинки и иллюстрации слайса | `illustrations/rest-api-empty-state.png` |
-
-- **Сегмент создаём, только когда в нём что-то есть.** Пустые `lib/` и `config/` «на будущее» не заводим.
-- Каждый сегмент с несколькими файлами имеет `index.ts` с реэкспортом (`export * from './mapper'`).
-- **`api/` в `entities`:** `<name>-api.ts` — объект `<name>Api` с вызовами бэка (единственное место, где вызывается `apiClient`); `types.ts` — DTO как алиасы на сгенерированные типы OpenAPI.
-- **`ui/`:** компонент, который экспортируется из слайса или переиспользуется, — папкой (`ui/integration-card/IntegrationCard.vue` + `index.ts`); внутренние части корневого компонента виджета — плоско (`ui/PredictionRunHistoryTable.vue`).
-- Тесты — в `__tests__/` внутри сегмента (`lib/__tests__/mapper.spec.ts`).
-
-**`index.ts` слайса** — публичный API:
-
-```ts
-// entities/<entity>/index.ts
-export { productApi } from './api/product-api';
-export type * from './api/types';
-export * from './model';
-export * from './ui/connection-status-tag';
-
-// widgets/<widget>/index.ts — наружу только корневой компонент (и типы, если нужны снаружи)
-export type { PredictionRunRecord } from './model/types';
-export { default as PredictionRunHistory } from './ui/PredictionRunHistory.vue';
-```
-
-- Компоненты экспортируем **именованно**: `export { default as AppButton } from './AppButton.vue'`. `export default` из `index.ts` не используем.
-
----
+- **Сегмент создаём, только когда в нём что-то есть.** Пустые сегменты «на будущее» не заводим.
+- Сегмент с несколькими файлами — с `index.ts`-реэкспортом.
+- `ui/`: компонент, экспортируемый из слайса, — папкой с `index.ts`; внутренние части виджета — плоско.
+- Тесты — `__tests__/` рядом с модулем.
+- Публичный API слайса — `index.ts`; компоненты экспортируем именованно
+  (`export { default as AppButton } from './AppButton.vue'`), типы DTO — `export type * from './api/types'`.
 
 ## Нейминг
 
 | Что | Правило | Пример |
 |---|---|---|
-| Папка слайса / сегмента ui | kebab-case | `prediction-run-history`, `ui/connection-status-tag/` |
-| Слайс feature | глагол + объект | `connect-s3`, `download-invoice` |
-| Слайс widget | существительное | `integration-detail`, `invoice-history` |
-| Слайс страницы | `pages/<name>/ui/<Name>Page.vue`, без суффикса `-page` в имени слайса | `pages/datasets` → `DatasetsPage` |
-| Vue-компонент | PascalCase, имя файла = имя компонента | `PredictionRunHistory.vue` |
-| Компонент дизайн-системы | префикс `App` | `AppButton`, `AppModal` |
-| Страница | суффикс `Page` | `DatasetsPage` |
-| Части виджета | префикс = имя виджета | `PredictionRunHistorySkeleton`, `DatasetHistoryToolbar` |
-| Файл API | kebab-case, `<name>-api.ts` | `ml-service-run-api.ts` |
-| Объект API | `<name>Api` | `mlServiceRunApi`, `datasetApi` |
-| Методы API | глагол + сущность: `get*`, `list*`, `download*`, `upload*`, `request*`, `create*`, `delete*` | `getProducts`, `downloadPrediction` |
-| Фабрика query keys | `<entity>Keys` в `model/queryKeys.ts` | `productKeys.list()`, `datasetKeys.history(filters)` |
-| Composable | `use<Thing>`, файл = имя функции | `useRunHistoryTable.ts` |
-| Pinia-store | `use<Name>Store`, id — camelCase | `useUserStore` (`'user'`), `useUploadDatasetStore` |
-| Модули в `lib/`, `config/` | camelCase | `connectionRequest.ts`, `displayNames.ts` |
-| Константы | UPPER_SNAKE_CASE | `PREDICTIONS_POLLING_INTERVAL`, `RUN_HISTORY_PAGE_SIZE` |
-| Маппер | `map<From>To<To>` / `to<Something>` | `mapServiceRunToRunRecord`, `toErrorsReportFileName` |
-| Тип DTO | имя схемы бэка без `Schema` | `MLServiceRunListItem`, `PredictionResultListResponse` |
-| Тип фильтров запроса | `<Entity>Filters` | `MLServiceRunFilters` |
-| Union-статусы | строковый union, не `enum` | `type IntegrationStatus = 'not_configured' \| 'setup_in_progress' \| 'connected'` |
-| Имя маршрута | kebab-case, константа в `ROUTE_NAMES` | `ROUTE_NAMES.integrationDetail = 'integration-detail'` |
-| Пропсы-флаги | `is*`/`has*` в модели, в пропсах — короткие прилагательные | `disabled`, `expanded`, `submitting`, `clickable` |
+| Папки слайсов и компонентов | kebab-case | `prediction-run-history`, `ui/connection-status-tag/` |
+| Страница | `pages/<name>/ui/<Name>Page.vue`, без суффикса в имени слайса | `pages/datasets` → `DatasetsPage` |
+| Компонент | PascalCase, файл = имя; кит — префикс `App`; части виджета — префикс виджета | `AppModal`, `DatasetHistoryToolbar` |
+| API | файл `<name>-api.ts`, объект `<name>Api`, методы `get*` / `list*` / `download*` / `upload*` / `request*` / `create*` / `delete*` | `mlServiceRunApi.getMLServiceRuns` |
+| Composable / store | `use<Thing>`, файл = имя; store `use<Name>Store` | `useRunHistoryTable`, `useUserStore` |
+| Модули `lib/`, `config/` | camelCase | `connectionRequest.ts`, `urlParams.ts` |
+| Константы | UPPER_SNAKE_CASE | `PREDICTIONS_POLLING_INTERVAL` |
+| Маппер | `map<From>To<To>` / `to<Something>` | `mapServiceRunToRunRecord` |
+| DTO | имя схемы бэка без `Schema` | `MLServiceRunListItem` |
+| Фильтры запроса | `<Entity>Filters` | `MLServiceRunFilters` |
+| Статусы | строковый union или `as const`, **не `enum`** | `'not_configured' \| 'connected'` |
+| Маршрут | константа в `ROUTE_NAMES`, значение kebab-case | `ROUTE_NAMES.integrationDetail` |
 | События | camelCase в `defineEmits`, kebab-case в шаблоне | `openUploadDrawer` → `@open-upload-drawer` |
-| Ключ localStorage | константа `*_STORAGE_KEY` / `*_KEY`, значение snake_case | `LOCALE_STORAGE_KEY = 'app_locale'` |
-| Тест | `<module>.spec.ts` в `__tests__/` рядом с модулем | `lib/__tests__/mapper.spec.ts` |
-
-TypeScript-перечисления (`enum`) не используем — только строковые union-типы и `as const`-объекты/массивы
-(`ENVIRONMENT_OPTIONS ... as const` + `typeof X[number]['value']`).
+| Ключ localStorage | константа `*_STORAGE_KEY`, значение snake_case | `LOCALE_STORAGE_KEY = 'app_locale'` |
 
 ---
 
-## Работа с бэкендом (api-сегмент)
+## Контракт с бэкендом (api-сегмент)
 
-- Все HTTP-вызовы — через `apiClient` из `@/shared/api` (`baseURL = API_URL`, `withCredentials: true`). Новые axios-инстансы не создаём, `fetch` не используем.
-- Вызовы живут **только** в `entities/<entity>/api/<name>-api.ts`. Компоненты, composables и сторы axios не трогают.
-- **Типы — из OpenAPI.** Схема бэка лежит в `openapi/openapi.json` (обновляем по Swagger); `npm run api:types` генерирует `src/shared/api/generated/schema.d.ts`; `shared/api/index.ts` реэкспортирует `export type { components, operations, paths } from './generated/schema'`. Сгенерированное исключено из линтеров и Prettier. В `entities/<entity>/api/types.ts` — алиасы:
-  - тело и ответ — `components['schemas']['ProductSchema']`;
-  - **query-параметры (фильтры) — тоже из схемы:** `NonNullable<operations['list_products']['parameters']['query']>`.
-  
-  Ручное описание DTO — только если эндпоинта ещё нет в OpenAPI (с `// TODO:` заменить на сгенерированный тип). Статусы приходят как `enum` из схемы бэка, фронт не угадывает их регэкспами.
-- **Контракт поменялся** → обновить `openapi/openapi.json` → `npm run api:types` → исправить ошибки `type-check`. Это и есть проверка совместимости с бэком.
-- Необязательные поля схемы (`field?: T | null`) нормализуем в маппере (`?? null`); сравнения `=== null` на сырых DTO не пишем.
-- API-объект — плоский объект методов, каждый метод **возвращает промис `AxiosResponse<T>`** (не разворачивает `.data`) — развёртка делается в `queryFn`/вызывающем коде.
-- У каждого метода — однострочный JSDoc: что делает, неочевидные коды ответа (`409 — an active request already exists`).
-- Списки принимают `params?: <Entity>Filters` и `signal?: AbortSignal` и пробрасывают `signal` в axios — TanStack Query отменяет устаревшие запросы.
-- Фильтры-множества передаём строкой через запятую (`product_id__in: ids.join(',')`) — так ожидает бэк (fastapi-filter `__in`).
-- Скачивание файлов: `responseType: 'blob'`; имя файла — из `Content-Disposition` через `getContentDispositionFilename(...)`, своё имя — только как fallback; сохранение — `downloadBlob(blob, filename)`.
-- Загрузка файлов: `FormData` + `'Content-Type': 'multipart/form-data'` + `onUploadProgress`.
-- Методы API без потребителя — заготовки под ближайшие фичи, пока эндпоинт есть в схеме; не удаляем.
-
-```ts
-export const mlServiceRunApi = {
-  /** List ML service runs of the current project (including processing / error) */
-  getMLServiceRuns(params?: MLServiceRunFilters, signal?: AbortSignal) {
-    return apiClient.get<MLServiceRunListResponse>('/ml-service-runs', { params, signal });
-  },
-};
-```
-
----
+- Все HTTP — через `apiClient` из `@/shared/api`. Новых инстансов axios и `fetch` нет.
+- Вызовы — **только** в `entities/<entity>/api/<name>-api.ts`. Компоненты, composables и сторы axios
+  не трогают.
+- **Типы — из OpenAPI.** Схема бэка лежит в `openapi/openapi.json` (обновляем по Swagger) →
+  `npm run api:types` → `shared/api/generated/schema.d.ts` (реэкспорт `components`, `operations`,
+  `paths` из `@/shared/api`). В `entities/<entity>/api/types.ts` — алиасы:
+  `components['schemas']['XxxSchema']`; фильтры — `NonNullable<operations['list_xxx']['parameters']['query']>`.
+  Ручной DTO — только для эндпоинта, которого ещё нет в схеме, с `// TODO:`.
+- **Контракт поменялся** → обновить схему → `api:types` → исправить ошибки `type-check`. Это и есть
+  проверка совместимости с бэком.
+- Необязательные поля схемы (`field?: T | null`) нормализуем в маппере (`?? null`); сравнения
+  `=== null` на сырых DTO не пишем.
+- Метод API возвращает **`AxiosResponse<T>`** (не разворачивает `.data`); однострочный JSDoc с
+  неочевидными кодами ответа (`409 — an active request already exists`).
+- Списки принимают `params?: <Entity>Filters` и `signal?: AbortSignal`. Множества — строкой через
+  запятую (`product_id__in`).
+- Скачивание: `responseType: 'blob'`, имя — `getContentDispositionFilename(...)` с fallback,
+  сохранение — `downloadBlob`. Загрузка: `FormData` + `onUploadProgress`.
+- Неиспользуемые методы API — заготовки под ближайшие фичи, пока эндпоинт есть в схеме; не удаляем.
 
 ## Серверное состояние (TanStack Query)
 
-Всё, что пришло с бэка, — это **кэш TanStack Query**, а не Pinia и не `ref` в компоненте.
+Всё с бэка — **кэш TanStack Query**, а не Pinia и не `ref`.
 
-- `QueryClient` создаётся один раз в `main.ts`: `refetchOnWindowFocus: false`; **одна повторная попытка только для сетевых сбоев и 5xx** (4xx и отменённые запросы не повторяем — повтор не поможет): `retry: (count, error) => count < 1 && isRetryableError(error)`. Переопределяем точечно в конкретном запросе с комментарием «почему».
-- **Query-composable сущности** — в `entities/<entity>/model/useXxx.ts` (`useProducts`, `useDatasetTemplates`, `useIntegrationStatus`). Он владеет ключом и `queryFn` и безопасно вызывается из нескольких виджетов — запрос и поллинг идут один раз на всех подписчиков. Composable **уровня виджета** (`useRunHistoryTable`) собирает из них данные конкретного экрана. Один и тот же эндпоинт не запрашивается в обход composable сущности.
-- `queryFn` разворачивает ответ: `const response = await api.getX(params, signal); return response.data;`.
-- **Ключи — только через фабрику сущности** в `model/queryKeys.ts`. Иерархия от общего к частному, чтобы инвалидация по префиксу работала предсказуемо:
+- `QueryClient` один, в `main.ts`: `refetchOnWindowFocus: false`; **одна повторная попытка только
+  для сбоя сети и 5xx** — `retry: (count, error) => count < 1 && isRetryableError(error)` (4xx и
+  отменённые не повторяем). Переопределение — точечно, с комментарием «почему».
+- **Query-composable сущности** — `entities/<entity>/model/use<Thing>.ts`: владеет ключом и `queryFn`,
+  вызывается из любых виджетов (запрос и поллинг один на всех). Composable виджета собирает из них
+  данные экрана. Эндпоинт в обход composable сущности не запрашиваем.
+- `queryFn` разворачивает ответ: `return (await api.getX(params, signal)).data`.
+- **Ключи** — массив, домен первым (`['dataset-history', ...]`), чтобы инвалидация по префиксу
+  работала. Экспортируем ключ, только если его инвалидирует другой слайс (кладём в нижний слайс);
+  иначе — константа рядом с `useQuery`. **Фабрика `<entity>Keys`** (`all`, `list(filters)`, …) —
+  когда у сущности появляются связанные запросы и мутации (KISS: не раньше).
+- Глобальный фильтр данных (скрытые сервисы) — `select` в composable сущности.
+- Зависимые запросы — реактивный `enabled`; смена страницы без мигания — `keepPreviousData`.
+- **Поллинг** — `refetchInterval` с именованной константой и комментарием (нет push-канала; откуда
+  число). Условный — функцией от `query.state.data`. Фоновая вкладка не опрашивается.
+- **Мутации** — в `model/` фичи. После успеха — `setQueryData` (ответ содержит новое состояние) или
+  `invalidateQueries`. Тосты, закрытие модалки и навигация — в фиче.
+- Однотипные запросы по списку id — `useQueries`.
 
-  ```ts
-  export const productKeys = {
-    all: ['products'] as const,
-    list: () => [...productKeys.all, 'list'] as const,
-    requiredFiles: (productId: string) => [...productKeys.all, 'required-files', productId] as const,
-  };
-  ```
+## Маппинг DTO → UI
 
-  Реактивные параметры передаются в ключ через `computed(() => productKeys.requiredFiles(id.value))`. Строковые ключи и ключи, собранные по месту, не используем.
-- Глобальные фильтры, применимые к данным всегда, — через `select` в composable сущности, чтобы их не видел ни один потребитель.
-- Зависимые запросы — `enabled` (реактивный).
-- Смена страницы/фильтра без «мигания»: `placeholderData: keepPreviousData`.
-- **Поллинг** — `refetchInterval` с именованной константой интервала и комментарием, почему нужен поллинг (нет push-канала) и откуда число (AC/PRD). Условный поллинг — функцией от `query.state.data` (опрашиваем, пока есть незавершённые элементы). Фоновая вкладка не опрашивается (дефолт).
-- **Мутации** — `useMutation` в `model/` фичи, которая выполняет действие (см. «Feature или widget»). После успеха — `setQueryData` (если ответ уже содержит новое состояние) или `invalidateQueries({ queryKey: <entity>Keys.all })`. Тосты, закрытие модалки и навигация — в фиче (`onSuccess` / `onError` composable-а фичи или `mutate(vars, { onSuccess, onError })` в её компоненте).
-- Параллельные однотипные запросы по списку id — `useQueries`.
-
----
-
-## Маппинг DTO → UI-модель
-
-- Компоненты не работают с сырыми DTO, если их форма отличается от нужной UI: DTO → UI-модель переводится **чистой функцией-маппером** в `lib/mapper.ts` слайса-потребителя (`mapServiceRunToRunRecord`, `mapProductToIntegrations`).
-- UI-модель описывается в `model/types.ts` (`camelCase`, JSDoc на неочевидных полях: откуда берётся, когда `null`).
-- Маппер **не вызывает `useI18n`** — функции перевода/форматирования передаются аргументом (`{ productName, serviceName }`, `intlLocale`). Так маппер остаётся чистым и тестируемым, а `computed`, который его вызывает, пересчитывается при смене языка.
-- Технические значения бэка (`status`, `source_type`) переводятся в UI-значения через таблицы соответствия `Record<Backend, Ui>` с безопасным дефолтом для неизвестного значения (`?? 'LOADING'`). UI не должен падать на новом значении от бэка.
-- **Бизнес-справочники — источник правды бэкенд.** Человекочитаемые названия, ссылки на документацию, видимость сервисов должны приходить с бэка (`display_name`, `docs_url`, скрытое не отдаётся). Фронтовые справочники по slug'ам (`config/displayNames.ts`, `config/docsLinks.ts`, `config/hiddenServices.ts`) — только **fallback**, пока бэк не отдаёт поле: каждый такой справочник помечается `// TODO:` со ссылкой на задачу бэка, новые не заводятся без согласования.
-- Каждый маппер покрыт юнит-тестом (`lib/__tests__/mapper.spec.ts`).
-
----
+- Компонент не работает с сырым DTO, если форма отличается от нужной UI: перевод — **чистым
+  маппером** в `lib/mapper.ts` слайса-потребителя. UI-модель — `model/types.ts` (camelCase, JSDoc на
+  неочевидных полях).
+- Маппер **не вызывает `useI18n`** — перевод и локаль передаются аргументом; `computed`, вызывающий
+  маппер, пересчитывается при смене языка.
+- Технические значения бэка → UI через `Record<Backend, Ui>` с безопасным дефолтом
+  (`?? 'LOADING'`): новое значение от бэка не роняет UI.
+- **Справочники — источник правды бэк.** Фронтовые справочники по slug'ам (названия, ссылки на доки,
+  скрытые сервисы) — только fallback с `// TODO:` на задачу бэка; новые без согласования не заводим.
+- Каждый маппер — с юнит-тестом.
 
 ## Клиентское состояние
-
-Выбор места хранения:
 
 | Что | Где |
 |---|---|
 | Данные с бэка | TanStack Query |
-| Фильтры, сортировка, пагинация, выбранная вкладка списка — всё, что должно пережить перезагрузку и открываться по ссылке | **URL query** |
-| Глобальное клиентское состояние (сессия пользователя), процессы, живущие дольше компонента (очередь загрузки файлов) | Pinia (setup-store) |
-| Локальное UI-состояние (открыта ли модалка, раскрытые группы, поля формы) | `ref` в компоненте / composable |
-| Пользовательские предпочтения устройства (язык, «онбординг уже показан») | `localStorage` через именованный ключ |
+| Фильтры, сортировка, пагинация — всё, что открывается по ссылке | **URL query** |
+| Сессия; процессы дольше компонента (очередь загрузки файлов) | Pinia setup-store |
+| Локальный UI (открыта модалка, раскрытые группы, поля формы) | `ref` в компоненте / composable |
+| Предпочтения устройства (язык) | `localStorage` через именованный ключ |
 
 **URL как источник истины:**
+- `use<Widget>Filters()` в `model/` виджета; имена параметров — `URL_PARAMS` (`as const`) в
+  `config/urlParams.ts` (это не ключи TanStack Query).
+- Параметр — `computed({ get, set })` поверх `route.query`; запись — `createQueryPatch(route, router)`
+  из `@/shared/lib/router` (`router.replace`, пустое удаляется, массив — через запятую).
+- Дефолты в URL не пишем; `get` валидирует мусор и возвращает дефолт.
+- Несколько параметров — **одним** вызовом `replaceQuery({...})`.
+- Смена фильтра сбрасывает страницу; смена сортировки — нет. Страница за пределами `total` — на
+  последнюю.
+- `watch` по массиву из URL сравнивает сериализованное значение (`ids.value.join(',')`), а не ссылку.
 
-- Composable `use<Widget>Filters()` в `model/` виджета; имена параметров — в объекте `URL_PARAMS = { ... } as const` в `config/urlParams.ts` (имя `QUERY_KEYS` не используем: его путают с ключами TanStack Query).
-- Каждый параметр — `computed({ get, set })` поверх `route.query`; запись — через `createQueryPatch(route, router)` из `@/shared/lib/router` (`router.replace`, пустые значения удаляются из URL, массивы склеиваются через запятую).
-- Дефолтные значения в URL не пишем (`page=1`, пустой фильтр → параметр отсутствует).
-- `get` валидирует сырое значение и возвращает дефолт для мусора (`Number.isInteger(value) && value > 0 ? value : 1`).
-- Несколько параметров меняем **одним** вызовом `replaceQuery({...})` — несколько последовательных `set` перетирают друг друга.
-- Смена фильтра сбрасывает страницу на первую; смена сортировки — нет. Страница за пределами `total` переводится на последнюю.
-- В `watch` по массивам из URL сравниваем сериализованное значение (`types.value.join(',')`), а не ссылку.
-
-**Pinia:**
-
-- Только setup-синтаксис (`defineStore('id', () => { ...; return {...} })`), store живёт в `model/store.ts` своего слайса.
-- В сторе — **только клиентское состояние**. Серверные данные в Pinia не загружаются и не дублируются — их отдаёт TanStack Query.
-- В setup-сторе работает `inject()`, поэтому `useQueryClient()`, `useRoute()` и `useRouter()` в нём допустимы. **`useI18n()` в сторе не вызываем** — ему нужен экземпляр компонента. В сторе храним ключи i18n, перевод делаем при отображении.
-- В `localStorage` не сохраняем несериализуемое (`File`, `Blob`) и то, что должно считаться на бэке (квоты, лимиты). Чтение — `JSON.parse` в `try/catch`.
+**Pinia:** только setup-синтаксис, store в `model/store.ts` своего слайса, только клиентское
+состояние. `inject()` работает, поэтому `useQueryClient` / `useRoute` / `useRouter` допустимы;
+**`useI18n()` в сторе нельзя** — для разового текста `i18n.global.t`, в состоянии храним ключи i18n.
+В `localStorage` не кладём `File`/`Blob` и то, что должно считаться на бэке; чтение — `JSON.parse` в
+`try/catch`.
 
 ---
 
 ## Vue-компоненты
 
-**Каркас SFC** (порядок блоков `script` → `template` → `style` — проверяется ESLint):
+- Только `<script setup lang="ts">` + Composition API. Порядок блоков `script` → `template` →
+  `style` (ESLint). Имя компонента — из имени файла; `defineOptions({ name })` — только если имя
+  должно отличаться.
+- Пропсы — generic `defineProps<{...}>()` + `withDefaults`. Тип пропсов, нужный снаружи, —
+  `<Component>.types.ts` + реэкспорт из `index.ts`. **Типы из `.vue` не экспортируем** (ESLint
+  запрещает именованные экспорты в SFC).
+- **`v-model` — `defineModel`** (в том числе `v-model:open` у модалок). Пара `modelValue` /
+  `update:modelValue` вручную — только при нетривиальной записи.
+- `defineEmits` — tuple-синтаксис с именованными аргументами; в шаблоне `emit(...)`, не `$emit`
+  (проверяет `vue/no-restricted-syntax`).
+- Обёртка над нативным элементом — `inheritAttrs: false` + `v-bind="$attrs"`.
+- `useI18n({ useScope: 'global' })`; роутер и сторы — `useRoute()` / `useRouter()` / `useXxxStore()`,
+  не `$route` в шаблоне.
+- **Логика — в composable.** Корневой компонент виджета деструктурирует `use<Widget>()` и раздаёт
+  детям. **Страница тонкая**: композиция виджетов, без запросов.
+- Обработчик с аргументами вызываем явно: `@retry="refetch()"`.
+- Списки — стабильный `:key` (id, не индекс; исключение — поля формы без id).
+- Формы: `<form @submit.prevent>`, внешняя кнопка — `form="<id>"`; ошибка поля после `blur`;
+  сброс в `watch` на открытие; отправка `disabled` при невалидной форме и во время `submitting`.
+- Таймеры и подписки снимаем в `onUnmounted`.
+- Тернарный оператор — для значения; ветвление с эффектами — `if/else`.
+- Не добавляем пропсы и события, которые никто не использует (YAGNI): API компонента — по реальным
+  потребителям.
+
+### Доступность
+
+- Кликабельное — только `<button>`, `<a>`/`RouterLink` или radix-примитив. **Интерактивное в
+  интерактивном не вкладываем** (кнопка сброса рядом с триггером, а не внутри).
+- Кнопка без текста — `aria-label` через `t()`; поле — `<label for>` или вложенность; скрытый
+  `input type=file` — `aria-label`.
+- `<label>` только для поля; подпись к тексту — обычный элемент.
+- Декоративное изображение — `alt=""`; иконки уже `aria-hidden` в `AppIcon`.
+- Проверяется `eslint-plugin-vuejs-accessibility` (`label-has-for`: `for`/`id` или вложенность;
+  `CheckboxRoot` — поле). Отключение правила — точечно, с причиной в комментарии.
+
+## Состояния экрана
+
+Виджет с данными явно обрабатывает четыре состояния — отдельными компонентами в `ui/`:
 
 ```vue
-<script setup lang="ts">
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-
-import type { DatasetTemplate } from '@/entities/dataset';
-import { AppButton } from '@/shared/ui/app-button';
-
-const props = withDefaults(
-  defineProps<{
-    template: DatasetTemplate;
-    disabled?: boolean;
-  }>(),
-  {
-    disabled: false,
-  },
-);
-
-const expanded = defineModel<boolean>('expanded', { default: false });
-
-const emit = defineEmits<{
-  upload: [files: File[]];
-}>();
-
-const { t } = useI18n({ useScope: 'global' });
-</script>
-
-<template>
-  ...
-</template>
-```
-
-Правила:
-
-- Только `<script setup lang="ts">` + Composition API. Options API не используем.
-- Имя компонента берётся из имени файла; `defineOptions({ name })` нужен только если имя должно отличаться от файла.
-- Пропсы — типизированный generic `defineProps<{...}>()`; дефолты — `withDefaults`. Тип пропсов, нужный снаружи, выносится в `<Component>.types.ts` (`AppSwitchProps`) и реэкспортируется из `index.ts`. **Типы из `.vue`-файлов не экспортируем.**
-- **`v-model` — через `defineModel`** (`const page = defineModel<number>('page', { required: true })`). Пара `modelValue` / `update:modelValue` вручную — только если запись требует нетривиальной логики (преобразование, валидация перед emit).
-- События — `defineEmits` в tuple-синтаксисе с именованными аргументами (`submit: [request: RestApiConnectionRequest]`). В шаблоне вызываем `emit(...)`, а не `$emit(...)`.
-- Компонент дизайн-системы, оборачивающий нативный элемент, — `inheritAttrs: false` + `v-bind="$attrs"` на целевом элементе.
-- `useI18n({ useScope: 'global' })` — всегда с глобальным скоупом.
-- Роутер и сторы — только через `useRoute()` / `useRouter()` / `useXxxStore()` в `setup`; глобалы `$route`, `$router` в шаблоне не используем.
-- **Логика — в composable, не в компоненте.** Корневой компонент виджета деструктурирует результат своего `use<Widget>()` и раскладывает по дочерним компонентам. В компоненте остаются только обработчики UI и локальное состояние вида.
-- **Страница тонкая:** композиция виджетов + страничная логика (онбординг, редирект при невалидном параметре). Запросов к бэку на странице нет.
-- Тернарный оператор — только для вычисления значения; ветвление с побочными эффектами — `if/else`.
-- Обработчик события, у которого функция принимает свои аргументы, вызываем явно: `@retry="refetch()"`, а не `@retry="refetch"` (иначе аргументы события уйдут в функцию).
-- Списки — всегда со стабильным `:key` (id сущности, а не индекс; исключение — массив полей формы без id).
-- Формы: `<form @submit.prevent>`, кнопка отправки вне формы связывается через `form="<id>"`; ошибку поля показываем после `blur` (touched); форма сбрасывается в `watch` на открытие модалки; кнопка отправки `disabled` при невалидной форме и во время `submitting` (+ спиннер `loader-2-line animate-spin`).
-- Таймеры/подписки (`setInterval`, `addEventListener`) обязательно снимаются в `onUnmounted`.
-- Пропсы и события, которые никто не использует, не добавляем (YAGNI): API компонента — по реальным потребителям.
-- **Доступность:** кликабельное — только `<button>`, `<a>`/`RouterLink` или radix-примитив (не `div @click`); интерактивный элемент внутри другого интерактивного не вкладываем; у кнопки без текста — `aria-label` через `t()`; поле — `<label for>` или вложенность в `<label>`, скрытый `input type=file` — `aria-label`; `<label>` — только для поля, подпись к тексту — обычный элемент. Проверяется `eslint-plugin-vuejs-accessibility` (`label-has-for`: `for`/`id` или вложенность; `CheckboxRoot` считается полем).
-- Шаблон: атрибуты по порядку `vue/attributes-order`; при переносе — один атрибут на строку; все теги самозакрывающиеся, если без содержимого (`<div />`, `<AppIcon ... />`).
-
----
-
-## Состояния экрана: загрузка, ошибка, пусто
-
-Каждый виджет, грузящий данные, явно обрабатывает четыре состояния — отдельными компонентами в `ui/`:
-
-```vue
-<PredictionRunHistorySkeleton v-if="isLoading" />
-<PredictionRunHistoryErrorState v-else-if="isError" @retry="refetch()" />
+<XxxSkeleton v-if="isLoading" />
+<XxxErrorState v-else-if="isError" @retry="refetch()" />
 <template v-else-if="hasData"> ... </template>
-<PredictionRunHistoryEmptyState v-else />
+<XxxEmptyState v-else />
 ```
 
-- `isError` — только когда **данных нет совсем**: `computed(() => isRequestError.value && !data.value)`. Упавший фоновый поллинг не прячет уже показанные данные.
-- Скелетон повторяет геометрию реального контента (на `AppSkeleton`), чтобы не было скачка вёрстки.
-- Различаем «данных нет вообще» (empty state с CTA) и «по фильтру ничего не найдено» (сообщение + «Сбросить фильтры»).
-- Пустое состояние не показываем, пока идёт первая загрузка (иначе мигает).
-- Фоновое обновление — ненавязчивый индикатор, без скелетона.
+- `isError` — только когда **данных нет**: `isRequestError.value && !data.value`.
+- Скелетон повторяет геометрию контента (на `AppSkeleton`).
+- Различаем «данных нет» (CTA) и «по фильтру ничего не найдено» («Сбросить фильтры»).
+- Пустое состояние не показываем во время первой загрузки.
 
 ---
 
-## Дизайн-система (shared/ui)
+## Дизайн-система (`shared/ui`)
 
-Перед тем как сверстать элемент, проверь `shared/ui` — используем то, что есть:
+Источник — UI-кит Figma (страница «01. UI-kit», фрейм `Semantic colors` для токенов). Перед вёрсткой
+проверь `shared/ui`:
 
 | Компонент | Назначение |
 |---|---|
-| `AppButton` | кнопки; `variant`: `primary` / `secondary` / `outline` / `ghost`, `size`: `small` / `medium` / `icon` |
-| `AppIcon` | иконка из спрайта, `name: IconName` (типизирован) |
-| `AppModal` | **базовая модалка**: `v-model:open`, `title`, ширина; слоты default и `#footer`; оверлей, анимации, фокус и a11y внутри |
-| `AppConfirmDialog` | подтверждение действия (`variant: warning / danger`), построен на `AppModal` |
+| `AppButton` | `variant`: `primary` / `secondary` / `outline` / `ghost` / `danger`; `size`: `small` / `medium` / `icon` |
+| `AppIcon` | иконка из спрайта, `name: IconName` |
+| `AppModal` | **базовая модалка**: `v-model:open`, `title`, `size: sm \| md \| lg` (400 / 480 / 720px); слоты default (прокручиваемое тело) и `#footer`; оверлей, анимации, фокус и крестик с `aria-label` внутри |
+| `AppConfirmDialog` | подтверждение (`variant: warning \| danger`), на `AppModal` |
 | `AppDrawer` | правая шторка (слоты default + `#footer`) |
-| `AppDropdown` + `AppDropdownItem` | меню по клику (слот `#trigger`) |
-| `AppFilter` | фильтр-дропдаун single/multiple (`FilterOption[]`) |
-| `AppTooltip` | подсказка (иконка-«i» или обёртка над слотом при `:icon="false"`) |
-| `AppPagination` | пагинация (`v-model:page`, фиксированный `pageSize`) |
-| `AppEmptyState` | пустое состояние с иллюстрацией и слотом `#action` |
-| `AppChartGrid` | сетка графика: ось значений (5 делений), подписи дат, сам график — в слоте |
-| `AppSkeleton`, `AppStatusBadge`, `AppSwitch`, `AppCheckbox`, `AppCard`, `AppBanner`, `AppScrollArea`, `AppSourceCard` | по названию |
+| `AppDropdown` + `AppDropdownItem` | меню по клику |
+| `AppFilter` | фильтр single / multiple (`FilterOption[]`) |
+| `AppTooltip` | подсказка; провайдер один — `TooltipProvider` в `App.vue` |
+| `AppPagination` | `v-model:page`, фиксированный `pageSize` |
+| `AppChartGrid` | сетка графика: ось значений (5 делений), подписи дат, график — в слоте |
+| `AppEmptyState`, `AppSkeleton`, `AppStatusBadge`, `AppSwitch`, `AppCheckbox`, `AppCard`, `AppBanner`, `AppScrollArea`, `AppSourceCard` | по названию |
 
-Правила компонента дизайн-системы:
+- Папка `app-<name>/`: `App<Name>.vue`, опционально `App<Name>.types.ts` и чистая логика отдельным
+  файлом рядом (`getPaginationRange.ts`), `index.ts`, `__tests__/`.
+- Компонент **не знает о домене**: только пропсы, события, слоты.
+- Варианты и размеры — `computed` с массивом классов через `switch` (как `AppButton`). CVA и `cn` не
+  используем — условные классы массивом/объектом в `:class`.
+- Интерактив — **на `radix-vue`**; дропдауны — с `:modal="false"` (иначе radix блокирует скролл body
+  и страница дёргается). Всё интерактивное внутри меню — пункт меню: `AppDropdownItem`, кнопка —
+  `AppDropdownItem as-child` вокруг `AppButton` (radix перебирает стрелками только пункты).
+- Компонент реализует **все состояния** из UI-кита (`02. Master-components`): default, hover, pressed,
+  focus, disabled — для каждого размера. Фокус с клавиатуры — `focus-visible:shadow-(--shadow-focus)`,
+  у кастомных кнопок тоже; своё кольцо компонента в ките — берём его (чекбокс —
+  `--shadow-focus-accent`).
+- **Любая модалка — на `AppModal`.** Каркас radix-диалога вне `AppModal` / `AppDrawer` не собираем.
+- Специализированный компонент — поверх базового, а не копией обвязки.
+- Тексты кита — пропсами или `t()`, без хардкода (включая дефолтные подписи).
+- Изменение кита затрагивает все экраны — проверяй все места использования; изменённые значения по
+  умолчанию и задетые экраны перечисляем в описании коммита / MR.
 
-- Папка `shared/ui/app-<name>/`: `App<Name>.vue`, опционально `App<Name>.types.ts` (экспортируемые типы пропсов), `lib/` (чистая логика с тестами, как `getPaginationRange`), `index.ts` с именованным реэкспортом.
-- Компонент **не знает о домене**: никаких сущностей, API, стора. Всё — через пропсы, события, слоты.
-- Варианты и размеры — `computed`, возвращающий массив классов через `switch` по пропсу (см. `AppButton`). CVA и подобные библиотеки не подключаем.
-- **Интерактивные примитивы строим на `radix-vue`** (поведение + доступность), сверху — свои Tailwind-стили на токенах.
-- **Любая модалка — только на `AppModal`.** Каркас radix-диалога (`DialogRoot`/`DialogOverlay`/`<Transition>`/шапка с закрытием) за пределами `AppModal` и `AppDrawer` не собираем. z-index, оверлей и анимации задаются только внутри базовых компонентов.
-- Дропдауны radix — с `:modal="false"` (иначе radix блокирует скролл body и добавляет padding-right поверх `scrollbar-gutter: stable` — страница дёргается).
-- Каждый интерактивный элемент внутри меню — пункт меню: `AppDropdownItem`, а кнопка — `AppDropdownItem as-child` вокруг `AppButton`. radix-меню держит фокус внутри и перебирает стрелками только пункты.
-- Компонент реализует **все состояния** своего компонента из UI kit (`02. Master-components`): default, hover, pressed, focus, disabled — по заливке, обводке, тексту, иконке и прозрачности, для каждого размера. Фокус с клавиатуры — кольцо `focus-visible:shadow-(--shadow-focus)` (`state=focus` в UI kit), у кастомных кнопок вне `AppButton` — тоже; если в UI kit у компонента своё кольцо, берём его (чекбокс — `--shadow-focus-accent`).
-- `TooltipProvider` — **один**, в `App.vue`; в компонентах и виджетах провайдеры не создаём. Переход: сначала добавить провайдер в `App.vue`, потом убирать локальные (иначе тултипы перестанут работать).
-- Специализированный компонент строим **поверх базового**, а не копированием обвязки.
-- Тексты внутри компонента дизайн-системы приходят пропсами (с переводом снаружи) или берутся из `t()` — без захардкоженных строк.
-- Ключевые компоненты дизайн-системы покрыты компонентными тестами (см. «Тесты»): варианты, состояния и значения по умолчанию, на которые опираются потребители.
-- Изменение компонента дизайн-системы затрагивает все экраны — проверяй все места использования. Изменённые значения по умолчанию (ширина, отступы, высота пункта, цвета варианта) и экраны, которые на них опираются, перечисляем в описании MR.
+## Стили и токены
 
----
-
-## Стили и дизайн-токены
-
-- Tailwind v4, **CSS-first**: тема и токены — в `src/shared/assets/styles/`:
-  - `tokens/colors.css` — примитивы (`--color-neutral-*`, `--color-green-*` ...) и семантика (`--text-*`, `--bg-*`, `--icon-*`, `--border-*`, `--shadow-*`, статусы, бейджи);
-  - `tokens/typography.css` — шрифты и типографическая шкала (`--text-title-*`, `--text-body-*`, `--text-element-*`);
-  - `tokens/radius.css`, `tokens/layout.css`; `tokens/theme.css` — проброс в `@theme` для утилит Tailwind;
-  - `base/globals.css` — глобальные правила (scrollbar-gutter, cursor, стили тостов).
-- `tailwind.config.js` (формат Tailwind v3) и stylelint не используются — всё через CSS и утилиты.
-- Токены используются через синтаксис arbitrary-property: `bg-(--bg-surface-primary)`, `text-(--text-secondary)`, `rounded-(--radius-lg)`, `shadow-(--shadow-panel)`, `border-(--border-default)`; градиенты — `bg-(image:--gradient-card)`.
-- Типографика — утилитами шкалы: `text-body-sm`, `text-body-xs`, `text-title-sm`, `text-element-button`, `text-element-tag` (+ `font-medium`, `font-mono`, `uppercase`, где требует макет).
-- В компонентах используем **семантические** токены (`--text-primary`, `--bg-badge-success`), а не примитивы палитры (`--color-neutral-400`) — примитивы допустимы только внутри дизайн-системы.
-- **Токены называются как переменные Figma.** Значение, привязанное в макете к переменной, в коде — токен с тем же именем: `bg/button/secondary` → `--bg-button-secondary`, `default/default-foreground` → `--default-foreground`. Новый токен повторяет цепочку алиасов Figma: семантический ссылается на семантический или примитив (`--bg-scrollbar-thumb: var(--text-disabled)`).
-- **Запрещено:** хардкод цветов (`text-[#668948]`, hex в `style` и в JS-константах), инлайн `style="..."` для статичных стилей, произвольные цвета Tailwind (`bg-red-50`). Нужного токена нет — добавь его в `tokens/colors.css` с именем переменной Figma (если переменной нет — с именем по смыслу). Canvas/JS читает цвета токенов через `getComputedStyle`.
-- **Значения переносим такими, какими они отрисованы в Figma:**
-  - прозрачность слоя-группы — одна `opacity` на обёртке всей группы, а не на каждом дочернем элементе (иначе дочерние элементы просвечивают друг через друга);
-  - обводка внутрь (`strokeAlign: INSIDE`) — `ring-1 ring-inset`: она, как и в Figma, не меняет размер элемента;
-  - итоговый цвет = цвет заливки × прозрачность заливки × прозрачность слоя и всех его родителей.
-- Размеры — шкала Tailwind (`w-120`, `size-4.5`, `gap-1.5`), произвольные `[123px]` — только если значения нет в шкале.
-- `:style` допустим только для действительно динамических значений (ширина прогресс-бара в %).
-- **Условные классы — массив/объект в `:class`** (`:class="[base, cond && 'x']"`). Хелпер `cn` не используем.
-- `<style>`-блоки в SFC не используем — всё утилитами; глобальное — в `base/globals.css`.
-- Тёмной темы нет. Тост-контейнер — `theme="dark"` (так требует макет).
-
----
+- Tailwind v4 CSS-first; токены — `src/shared/assets/styles/tokens/*.css` (`colors`, `typography`,
+  `radius`, `layout`, `theme`), глобальное — `base/globals.css`.
+- Токены — через arbitrary-property: `bg-(--bg-surface-primary)`, `text-(--text-secondary)`,
+  градиенты — `bg-(image:--gradient-card)`.
+- В компонентах — **семантические** токены (`--text-primary`, `--bg-badge-success`), не примитивы
+  палитры. Имена — как переменные Figma (`text/primary` → `--text-primary`).
+- **Запрещено:** hex и `rgba()` в классах, `style` и JS-константах; статичный `style="..."`;
+  произвольные цвета Tailwind (`bg-red-50`). Нет токена — добавь в `tokens/colors.css` (имя из Figma,
+  точное значение, комментарий-источник). Canvas читает цвета через `getComputedStyle`.
+- Типографика — утилитами шкалы (`text-body-sm`, `text-title-sm`, `text-element-button`).
+- Размеры — шкала Tailwind; `[123px]` — только если значения нет в шкале. `:style` — только для
+  динамики (ширина прогресса в %).
+- **Значения переносим такими, какими они отрисованы в Figma:** новый токен повторяет цепочку алиасов
+  Figma (семантический ссылается на семантический или примитив); прозрачность группы — одна `opacity`
+  на обёртке, а не на каждом ребёнке; обводка внутрь (`strokeAlign: INSIDE`) — `ring-1 ring-inset`;
+  цвета и размеры сверяем по числам из Figma, а не на глаз.
+- `<style>` в SFC не используем. Тёмной темы нет.
 
 ## Иконки и ассеты
 
-- **Иконки — только через `AppIcon`** и SVG-спрайт дизайн-системы. Цвет — `currentColor` (задаётся `text-*`), размер по умолчанию 16px, меняется `size-*`.
-- Новая иконка: экспорт из Figma в `src/shared/assets/icons/ui/<name>.svg` → `npm run icons:sprite` → в коммит идут исходник, `shared/ui/app-icon/assets/sprite.svg` и сгенерированный `iconNames.ts` (руками не редактировать).
-- Сторонние иконочные пакеты (`lucide-vue-next` и т.п.) не используем — набор иконок задаёт дизайн-система.
-- Картинки/иллюстрации слайса — в его `assets/`, импортируются относительно (`../assets/illustrations/x.png`). Общие — в `shared/assets/images/`.
-- SVG как картинка — обычный импорт (URL); как компонент — суффикс `?component` (`vite-svg-loader`).
-- Декоративное изображение — `alt=""`, иконка — `aria-hidden` (уже в `AppIcon`); у кнопки без текста — `aria-label` через `t()`.
+- Иконки — **только `AppIcon`** и спрайт: исходник из Figma в `shared/assets/icons/ui/<name>.svg` →
+  `npm run icons:sprite` → в коммит исходник, `sprite.svg`, `iconNames.ts`. Иконочных пакетов нет.
+- Картинки слайса — в его `assets/`, импорт относительный; общие — `shared/assets/images/`.
+- SVG как URL — обычный импорт; как компонент — `?component`.
 
----
+## Локализация
 
-## Локализация (i18n)
+- `ru` (по умолчанию и fallback) и `en`; выбор в `localStorage` (`setAppLocale`).
+- `locales/ru.ts` — эталон схемы (`MessageSchema`), `en.ts` типизирован ей: TypeScript не даст
+  забыть перевод. Ключ — **в оба файла сразу**.
+- Ключи по домену и блоку экрана: `datasets.table.emptyNotFound.title`.
+- **Любой видимый текст** (лейблы, плейсхолдеры, `aria-label`, `alt`, `title`, тосты, ошибки,
+  дефолтные подписи кита) — через `t()`. Проверяется `@intlify/vue-i18n/no-raw-text`: в исключениях
+  знаки и числа и технические термины (`CSV`, `API`, `Client ID`, …). Тексты в `<script>` правило не
+  видит — следим сами.
+- Вне компонента (store, `lib/`) — `i18n.global.t` в момент отображения, не при импорте модуля; в
+  состоянии храним ключ.
+- Не переводятся: технические типы данных (как в Swagger), названия продуктов, названия языков;
+  термины, которые по макету на английском, — ключами с одинаковым текстом в обеих локалях.
+- Интерполяция — именованная: `t('...uploadFailedFile', { fileName })`.
+- Неразрывные пробелы из макета — escape-последовательностью `\u00a0` с комментарием: они задают,
+  где строка переносится.
 
-- Языки — `ru` (по умолчанию и fallback) и `en`. Выбор сохраняется в `localStorage` (`setAppLocale`).
-- Словари — `src/shared/i18n/locales/ru.ts` и `en.ts`. `ru.ts` — **эталон схемы** (`export type MessageSchema = typeof ru`), `en.ts` типизирован `MessageSchema` — TypeScript не даст забыть перевод. Новый ключ добавляется **в оба файла сразу**.
-- Ключи сгруппированы по домену/странице: `auth.*`, `layout.*`, `datasets.*`, `predictions.*`, `integrations.*`, `pagination.*`. Внутри — по блокам экрана (`datasets.table.emptyNotFound.title`).
-- **Любой текст, видимый пользователю** (лейблы, плейсхолдеры, `aria-label`, `alt`, тосты, тексты ошибок, дефолтные подписи компонентов дизайн-системы), — через `t()`. Хардкод строк в шаблоне, в `toast.*` и в константах запрещён; проверяется правилом `@intlify/vue-i18n/no-raw-text` (с исключениями для служебных символов — см. «Линтинг»).
-- В компонентах и composables — `useI18n({ useScope: 'global' })`. Вне `setup` (модули `lib/`, `config/`) — `i18n.global.t` только в функциях, которые вызываются при рендере, а не при импорте модуля.
-- В состоянии (store, очередь, ошибки валидации) храним **ключ** i18n, а не готовый текст — перевод делаем при отображении, чтобы смена языка подхватывалась.
-- Не переводятся: технические названия типов данных (совпадают со Swagger), названия продуктов из макета, названия языков в переключателе. Такое решение фиксируется комментарием рядом со справочником.
-- Интерполяция — именованными параметрами: `t('datasets.validation.uploadFailedFile', { fileName })`.
-- Неразрывные пробелы из текста макета переносим в словарь escape-последовательностью `\u00a0` (так он виден в коде и на ревью) с комментарием рядом: они задают, где строка переносится.
+## Даты и числа
 
----
-
-## Даты, числа, форматирование
-
-- Отображение дат и чисел — `Intl.DateTimeFormat` / `toLocaleString` с локалью `toIntlLocale(locale.value)` из `@/shared/i18n` (`ru-RU` / `en-US`). Хардкод локали (`'ru-RU'`, `'en-GB'`) не используем.
-- Формат должен совпадать с макетом — нужный вид собираем через `formatToParts` (убрать «г.», точку после месяца и т.п.). Время — с `hourCycle: 'h23'` (иначе `en-US` даёт 12-часовой формат).
-- `dayjs` — только для арифметики и ключей (`subtract`, `startOf('day')`, `format('YYYY-MM-DD')`), не для отображения.
-- Отсутствующее значение показываем как `-` (или `—`, если так в макете), а не пустую строку.
-- Функции форматирования — в `lib/format.ts` слайса, чистые, с тестами; `computed`, который их вызывает, зависит от `locale`.
-
----
+- Отображение — `Intl.*` / `toLocaleString` с `toIntlLocale(locale.value)`. Хардкод `'ru-RU'` нет.
+- Вид под макет — через `formatToParts`; время — `hourCycle: 'h23'` (иначе en-US даёт 12-часовой
+  формат).
+- `dayjs` — только арифметика и ключи дат.
+- Нет значения — `-` (или как в макете).
+- Форматтеры — в `lib/`, чистые, с тестами.
 
 ## Ошибки и уведомления
 
-- Пользовательские уведомления — `toast.success / toast.error` из `vue-sonner`, текст через `t()`. Тост успеха — с иконкой `check-line` (настроено в `App.vue`).
-- HTTP-статус ошибки получаем единым хелпером `getHttpStatus(error)` из `@/shared/api` (внутри — `isAxiosError`; там же `isClientError` и `isRetryableError`). Ожидаемые коды (409 «уже существует» и т.п.) обрабатываются явно и с понятным текстом; остальные — общим сообщением.
-- **401 во время работы обрабатывается глобально** response-интерсептором `apiClient`, который подключается в `app/providers/`:
-  - подключается **после** `initAuth()` в `main.ts` — на старте 401 от `/user/me` означает «не залогинен», и это обрабатывает guard роутера;
-  - игнорирует запрос `/user/me`;
-  - не редиректит, если в `useUserStore` есть `authError` (иначе обходится защита от цикла и экран `AuthErrorScreen`);
-  - вызывает `login()` один раз (защита от повторного срабатывания при нескольких параллельных 401).
-- Локально 401 не обрабатываем.
-- Действие, результат которого пользователь может не увидеть (шторка уже закрыта), дублируем тостом.
-- Ошибку не глотаем молча: либо тост/инлайн-ошибка, либо error-state. `console.*` в коде приложения не оставляем (ESLint `no-console`).
-- Ошибки валидации формы — инлайн под полем (`text-xs text-(--text-error)`), поле — `aria-invalid` + `ring-(--border-error)`.
-
----
+- Уведомления — `toast` из `vue-sonner`, текст через `t()`.
+- Статус ошибки — `getHttpStatus(error)` из `@/shared/api` (там же `isClientError`,
+  `isRetryableError`). Ожидаемые коды (409) — явно, с понятным текстом.
+- **401 во время работы** — интерсептор в `app/providers/setupAuthInterceptor.ts`, подключается в
+  `main.ts` **после** `initAuth()`; пропускает `/user/me` и `/authorization/*`, не редиректит при
+  `authError`, вызывает `login()` один раз. Локально 401 не обрабатываем.
+- Результат, который пользователь может не увидеть (шторка закрыта), дублируем тостом.
+- Ошибку не глотаем: тост, инлайн или error-state. `console.log` нет; `console.warn/error` — только
+  как диагностика рядом с пользовательской реакцией.
+- Ошибка поля — инлайн под ним, поле `aria-invalid` + `ring-(--border-error)`.
 
 ## Авторизация и роутинг
 
-- Авторизация — cookie-сессия бэка (OIDC через Authentik). На старте `main.ts` вызывает `useUserStore().initAuth()` (`GET /user/me`) **до** монтирования и подключения роутера. Истечение сессии во время работы ловит интерсептор 401 (см. «Ошибки»).
-- `login()` / `logout()` — полный редирект браузера на `${API_URL}/authorization/login` (в dev — с `frontend=local`) / по `authentik_logout_url`.
-- `App.vue` выбирает экран: `AuthLoader` (идёт проверка) → `AuthErrorScreen` (бэк вернул `?auth=error&error=<код>`) → `AdminLayout`.
-- **Маршруты** — в `app/router/index.ts`:
-  - страницы подключаются **лениво**, с учётом именованного экспорта страницы: `component: () => import('@/pages/billing').then((m) => m.BillingPage)`;
-  - у каждого маршрута есть `name` из `ROUTE_NAMES` (`@/shared/config` — чтобы навигацию по имени могли использовать все слои); навигация — **по имени** (`router.push({ name: ROUTE_NAMES.integrations })`, `<RouterLink :to="{ name: ... }">`), строковые пути в коде не используем;
-  - `meta` маршрута — единый источник для каркаса: `requiresAuth`, `titleKey` (ключ i18n заголовка в шапке), `nav: { icon }` (пункт сайдбара: подпись — `titleKey`, порядок — порядок маршрутов в таблице; отдельный `labelKey` заводим, только когда подпись в сайдбаре отличается от заголовка). `meta` типизирована расширением `RouteMeta`. `AdminHeader` и `SidebarNavigation` строятся из `meta`, а не держат свои списки;
-  - последним идёт catch-all `/:pathMatch(.*)*` → страница 404 (или редирект на раздел по умолчанию).
-- Глобальный `beforeEach` при отсутствии сессии вызывает `login()`; если уже есть `authError` — не редиректит повторно (иначе бесконечный цикл при живой сессии Authentik).
-- Невалидный параметр маршрута обрабатывает страница: `router.replace` на родительский раздел.
-- Внешние ссылки — `<a target="_blank" rel="noopener noreferrer">`.
+- Cookie-сессия (OIDC через Authentik). `main.ts`: `initAuth()` (`GET /user/me`) → интерсептор 401 →
+  роутер → mount. `login()` / `logout()` — полный редирект браузера.
+- `App.vue`: `AuthLoader` → `AuthErrorScreen` (`?auth=error`) → `AdminLayout`; там же `Toaster` и
+  единственный `TooltipProvider`.
+- **Маршруты** (`app/router/index.ts`):
+  - страницы ленивые: `component: () => import('@/pages/billing').then((m) => m.BillingPage)`;
+  - `name` из `ROUTE_NAMES` (`@/shared/config`); навигация **по имени**, строковые пути не пишем;
+  - `meta` (типизирован `RouteMeta`) — единственный источник каркаса: `requiresAuth`, `titleKey`
+    (шапка), `nav: { icon }` (пункт сайдбара; подпись — `titleKey`, порядок — порядок маршрутов);
+  - последний — catch-all → `NotFoundPage`.
+- Guard: нет сессии → `login()`, кроме случая `authError` (защита от цикла).
+- Невалидный параметр маршрута — `router.replace` на родительский раздел в странице.
+- Внешние ссылки — `target="_blank" rel="noopener noreferrer"`.
 
----
+## Конфигурация и фича-флаги
 
-## Конфигурация, env и фича-флаги
+- `import.meta.env` читается **только** в `shared/config/*`; наружу — константы (`API_URL`,
+  `IS_DEV`, `FEATURE_*`).
+- **Цель:** `VITE_API_URL=/api` и `server.proxy` в dev — один образ на все окружения. Порядок: сначала
+  прокси и проверка входа (`frontend=local`) и cookie через прокси (домен, `SameSite` — с бэком),
+  потом смена `VITE_API_URL`. *(Ждёт ответа бэка.)*
+- Фича-флаг — `FEATURE_<NAME>` в `shared/config/env.ts` с JSDoc (что закрывает, почему, тикет, как
+  включить в `.env.local`); по умолчанию выключен.
+- Секретов во фронтенде нет.
 
-- Переменные окружения — только `VITE_*`, читаются **только** в `shared/config/*` и экспортируются константами (`API_URL`, `IS_DEV`, `IS_PROD`, `FEATURE_*`). В остальном коде `import.meta.env` не используем.
-- **`VITE_API_URL` — относительный путь `/api`.** UI и API во всех окружениях живут на одном хосте (`/api` проксируется на `client-portal-api` HTTPRoute'ом gateway), поэтому один образ работает и на dev, и на prod. Абсолютные адреса в закоммиченных `.env` не держим.
-- Локальная разработка: `server.proxy` в `vite.config.ts` проксирует `/api` на dev-бэкенд; персональные переопределения — `.env.local` (в `.gitignore`).
-  - **Порядок перехода:** сначала добавить `server.proxy` и проверить вход в dev (`frontend=local`) и работу cookie сессии через прокси (домен и `SameSite` — согласовать с бэкендом), только потом менять `VITE_API_URL` на `/api`. Иначе ломается локальная разработка.
-- Фича-флаг: `export const FEATURE_<NAME> = import.meta.env.VITE_FEATURE_<NAME> === 'true';` в `shared/config/env.ts` с JSDoc — что закрывает, почему выключено, тикет, как включить локально (`.env.local`). По умолчанию выключен.
-- Секретов во фронтенде нет и быть не может.
+## Моки и скрытые экраны
 
----
-
-## Моки и скрытые фичи
-
-Экраны, для которых ещё нет API, делаются на моках, оформленных так, чтобы замена на реальный API трогала только модель:
-
-- Мок-данные — в `config/mocks.ts` слайса сущности, константы с префиксом `MOCK_` (`MOCK_ORGANIZATION`), тексты — через ключи i18n.
-- Мутации над моками — временный Pinia-store сущности с той же сигнатурой, какой будет API, с комментарием, что это мок и до какого этапа. Это временное решение, а не образец для работы с серверными данными.
-- Компоненты не знают, мок это или API, — переход на реальный бэк меняет только модель/composable.
-- **Скрываем фичи только фича-флагом.** Готовый, но вырезанный из скоупа UI остаётся подключённым к странице/маршруту за `FEATURE_*`, а не «отвязывается» и не лежит мёртвым кодом. Код, который не используется и не находится за флагом, удаляется.
-- Готовый, но скрытый PM экран (профиль, тарифы, расписание) не дорабатываем, пока он не вернулся в скоуп; его долг — в `docs/fsd-debt.md`.
-
----
+- Мок-данные — `config/mocks.ts` (`MOCK_*`); мутации над моками — временный store с сигнатурой
+  будущего API и комментарием. Компоненты не знают, мок это или API.
+- **Скрываем фичу только флагом**; не используемый и не спрятанный за флагом код удаляем.
+- Готовый, но скрытый PM экран (профиль, тарифы, расписание) не дорабатываем, пока он не вернулся в
+  скоуп; его долг — в `docs/fsd-debt.md`.
 
 ## Требования и макеты
 
-- Источники требований — задача Jira, PRD/RFC в Confluence и макет Figma. Узел Figma указывается в задаче и в комментарии в коде у нетривиальной вёрстки.
-- **Расхождение источников — сначала вопрос, потом код.** Если PRD, RFC, макет или поведение API противоречат друг другу или постановке — пишем вопрос в задаче (что расходится, варианты, предлагаемое решение) и ждём ответа. Продуктовое поведение молча не выбираем и «как лучше» без согласования не делаем.
-- Дополнение к требованиям в ходе работы оформляется отдельной задачей или явным изменением текущей.
-- **Приоритет источников вёрстки: UI kit, затем кадр экрана.** Вид и состояния компонента берём из UI kit (страницы `01. UI-kit` и `02. Master-components`), кадр экрана показывает, какой компонент, с каким содержимым и где. Кадр, который расходится с UI kit, — вопрос дизайнеру.
-- Эталон экрана — кадр того состояния, которое выпускаем: кадры намеренно скрывают части (например, элемент за фича-флагом).
-- **Самопроверка по макету перед сдачей** — обязательна (чек-лист в DoD): тексты и подписи, пустые и ошибочные состояния, модалки, иконки, скругления и отступы, состояния (hover, pressed, focus, disabled), навигация с клавиатуры (Tab, Enter, стрелки, Esc), обе локали. Цвета и размеры сверяем по числам из Figma (итоговые значения), а не на глаз.
-
----
+- Источники — задача Jira, PRD/RFC, Figma. **Сначала UI-кит, потом кадр экрана:** вид и состояния
+  компонента — из кита, кадр показывает, какой компонент, с каким содержимым и где. Эталон экрана —
+  кадр выпускаемого состояния (кадры намеренно скрывают части за флагами).
+- **Расхождение источников — сначала вопрос** (что расходится, варианты, предложение), потом код.
+  Продуктовое поведение молча не выбираем.
+- Дополнение к требованиям по ходу работы — отдельная задача или явное изменение текущей.
+- Перед сдачей — самопроверка по макету: тексты, пустые и ошибочные состояния, модалки, иконки,
+  отступы, состояния (hover, pressed, focus, disabled), клавиатура (Tab, Enter, стрелки, Esc), ru и en.
 
 ## Комментарии в коде
 
-- **Язык комментариев — английский**: `//`, JSDoc, `<!-- -->`, CSS-комментарии, комментарии в конфигах. Тексты для пользователя — не комментарии, они идут через i18n.
-- Существующие русские комментарии массово не переводим. Комментарий переводится, когда правится строка кода, к которой он относится.
-- Комментарий объясняет **«почему»**, а не «что»: скрытое ограничение, баг библиотеки, решение PM/дизайна, договорённость с бэком. Комментарий-пересказ кода не пишем.
-- Привязываем к источнику решения: тикет (`WT-448`, `ML-2866`), узел Figma (`mockup 1221:200577`), решение PM с датой (`PM decision, 2026-09-30`), AC из PRD.
-- JSDoc (`/** ... */`) — на методах API, экспортируемых функциях `lib/`, неочевидных полях типов и пропсах.
-- Комментарии в шаблоне `<!-- -->` — для разметки, зависящей от макета или обходящей баг (например, почему `:modal="false"`).
-- Временные решения помечаются `// TODO:` с причиной и условием снятия (и тикетом, если есть).
-
----
+- **Новые комментарии — на английском.** Существующие русские массово не переводим: переводим, когда
+  правим строку.
+- Объясняют **«почему»**: ограничение, баг библиотеки, решение PM, договорённость с бэком; со ссылкой
+  на источник (`WT-448`, `mockup 1221:200577`, `PM decision, 2026-09-30`).
+- JSDoc — на методах API, экспортируемых функциях `lib/`, неочевидных полях и пропсах.
+- Временное — `// TODO:` с причиной и условием снятия.
 
 ## Тесты
 
-- Vitest, окружение **`jsdom`** (в `vitest.config.ts`): компонентным тестам нужен DOM, а `shared/i18n` читает `localStorage` при импорте модуля.
-- Тесты лежат в `__tests__/` **рядом с тестируемым модулем**: `lib/__tests__/mapper.spec.ts`, `shared/ui/app-modal/__tests__/AppModal.spec.ts`.
-- Обязательно покрываем:
-  - `lib/` слайсов: мапперы DTO → UI, форматирование дат/чисел, доменные правила (валидация, сборка тела запроса); утилиты `shared/lib`;
-  - чистую логику компонентов дизайн-системы (`getPaginationRange`);
-  - **компонентными тестами** (`@vue/test-utils`) — ключевые компоненты `shared/ui` (`AppModal`, `AppButton`, `AppPagination`, `AppFilter`): рендер вариантов, события, `v-model`, доступность.
-- Composable с `useI18n` / роутером / Vue Query — через общий хелпер `withSetup` (создать app, подключить плагины, смонтировать) из `@/shared/lib/test`; роутер — `createMemoryHistory`, ожидание навигации — `flushPromises`.
-- Структура — `describe(<имя функции/компонента>)` + `it(<сценарий>)`; `it.each` для табличных проверок. **Описания сценариев — на английском.** Кейсы из макета/тикета помечаем ссылкой (`as in mockup 52:3936`, `WT-511`).
-- Паттерн Arrange → Act → Assert, проверки через `expect`.
-- Сетевые вызовы в юнит-тестах не делаем — тестируем логику, вынесенную в `lib/`.
-- Тест, который нашёл баг, фиксирует исправленное поведение, а не ошибку.
-
----
+- Vitest, окружение **jsdom** (компонентам нужен DOM, `shared/i18n` читает `localStorage` при
+  импорте). Тесты — в `__tests__/` рядом с модулем, `<module>.spec.ts`.
+- Обязательно: `lib/` (мапперы, форматтеры, валидация, сборка запросов), утилиты `shared/lib`,
+  чистая логика кита, **компонентные тесты** ключевых компонентов `shared/ui` (рендер вариантов,
+  события, `v-model`, a11y-атрибуты).
+- Composable с роутером / i18n / Vue Query — через `withSetup` из `@/shared/lib/test`; роутер —
+  `createMemoryHistory`; ожидание навигации — `flushPromises`.
+- `describe(<функция/компонент>)` + `it(<сценарий>)`, `it.each` для таблиц; **описания — на
+  английском**; кейс из макета/тикета — со ссылкой. Arrange → Act → Assert.
+- Сеть в юнит-тестах не трогаем — тестируем логику в `lib/`. Тест, который нашёл баг, фиксирует
+  исправленное поведение, а не ошибку.
 
 ## Линтинг и форматирование
 
-- Перед MR и в CI код обязан проходить `npm run check` (`type-check`, `check:lint`, `check:format`, `vitest run`).
-- Локально — `npm run lint` (с `--fix`) и `npm run format`.
-- `lint` = oxlint (correctness) → ESLint (Vue/TS/импорты/a11y/i18n); `check:lint` дополнительно запускает `steiger` (правила FSD: слои, кросс-импорты, публичный API, сегменты). ESLint-правила, на которые чаще всего натыкаемся:
-  - `simple-import-sort` — импорты сортируются автоматически (группы: внешние пакеты → `@/` → относительные, `import type` — рядом со своим модулем); руками не упорядочиваем;
-  - `unused-imports` — неиспользуемые импорты — ошибка, переменные — предупреждение (неиспользуемый аргумент — префикс `_`);
-  - `vue/block-order` (`script` → `template` → `style`), `vue/attributes-order`, `vue/max-attributes-per-line` (однострочно ≤ 2, при переносе — по одному), `vue/html-self-closing`;
-  - `vuejs-accessibility/*` — доступность разметки; radix-компоненты, которые сами отдают роль и обработку клавиатуры, добавляются в настройки правила как интерактивные;
-  - `@intlify/vue-i18n/no-raw-text` — сырой текст в шаблоне, включая `aria-label`/`title`/`placeholder`/`alt`; служебные символы (`-`, `—`, `·`, `/`, `%`, `…`) и технические термины (`CSV`, `API`, `Client ID`) — в списке исключений правила; тексты в `<script>` правило не видит — следим сами;
-  - `no-console`, `no-debugger` — предупреждения, перед MR — ноль.
-- Prettier: одинарные кавычки, точки с запятой, ширина 100. `.editorconfig`: 2 пробела, LF, финальная пустая строка.
-- `noUncheckedIndexedAccess` включён: доступ по индексу/ключу — `T | undefined`, обрабатываем `?.` / `??` / проверкой, а не `!`.
-- `any` не используем; для внешних данных неизвестной формы — `unknown` + сужение.
-- Правило линтера отключаем только точечно (`eslint-disable-next-line` или блок в конфиге) и с причиной в комментарии.
+- Перед коммитом и в CI: `npm run check` зелёный (type-check, oxlint, ESLint, `steiger`, Prettier,
+  тесты). Локально — `npm run lint`, `npm run format`.
+- ESLint: `simple-import-sort` (руками не сортируем), `unused-imports`, `vue/block-order`,
+  `vue/attributes-order`, `vue/max-attributes-per-line`, `vue/html-self-closing`,
+  `vuejs-accessibility/*`, `@intlify/vue-i18n/no-raw-text`, `no-console` (кроме `warn`/`error`).
+- Prettier: одинарные кавычки, точки с запятой, ширина 100. Сгенерированный `shared/api/generated`
+  исключён из линтеров и Prettier.
+- `noUncheckedIndexedAccess`: индекс — `T | undefined`, обрабатываем `?.` / `??`, не `!`.
+- `any` нет; внешние данные неизвестной формы — `unknown` + сужение.
+- Отключение правила — только точечно (`eslint-disable-next-line` / блок в конфиге) с причиной.
 
 ---
 
-## Деплой и CI/CD
-
-Конфигурация инфраструктуры — стандарт mico, менять только осознанно и согласованно с DevOps.
-
-**Окружения:**
-
-| Ветка / событие | Окружение | Хост |
-|---|---|---|
-| merge в `develop` | **dev** | `client-portal-ui.dev.mico.team` |
-| тег `vX.Y.Z` на `main` | **prod** | `platform.mico.team` |
-| merge в `main` (без тега) | не деплоится, ждёт тега | — |
-
-Флоу действует с 2026-10-23 (ML-2904): ветка по умолчанию — `develop`, MR задач идут в неё.
-
-**Пайплайн:**
-
-- **Проверки качества в MR** — джоба `quality` (стадия `test`): `npm ci` → `type-check` → `check:lint` → `check:format` → `vitest run`. MR с красной `quality` не мержится.
-- **Dockerfile** — multi-stage: `node:24-alpine` (`npm ci` + `npm run build`) → `docker.io/nginxinc/nginx-unprivileged` (non-root, порт **8080**). Имена образов — полностью квалифицированные (buildah в CI не резолвит short names). В образ не попадают локальные `.env.local`.
-- **nginx.conf** — только статика: SPA-fallback на `index.html`, `index.html` без кэша, хэшированные ассеты — `immutable` на год, `/healthz` для проб. Проксирования в nginx нет.
-- **Helm** (`helm/`) — обёртка над общим `mico-app`; `values.yaml` (ресурсы, пробы на `/healthz`, `emptyDir` в `/tmp` под `readOnlyRootFilesystem`), `values-dev.yaml` / `values-prod.yaml` (образ, HTTPRoute: `/api` → `mico-client-portal-api:8000` с вырезанием префикса, `/` → UI). Секретов в values нет.
-- **GitLab CI** — общие mico-компоненты (сборка образа buildah, зеркалирование в `registry.mico.team`), `helm-lint` в MR, публикация чарта и триггер деплоя на стороне mico.
-- Новая переменная `VITE_*` вшивается в сборку на этапе `npm run build` — согласуй её с CI/Docker.
-
----
-
-## Чеклисты
-
-### Новая страница / раздел
-
-1. `pages/<name>/ui/<Name>Page.vue` + `index.ts` (`export { default as <Name>Page } from './ui/<Name>Page.vue'`).
-2. Имя в `ROUTE_NAMES` (`shared/config/routes.ts`).
-3. Маршрут в `app/router/index.ts`: `component: () => import('@/pages/<name>').then((m) => m.<Name>Page)`, `name`, `meta` (`requiresAuth`, `titleKey`, `nav`).
-4. Ключи `layout.nav.<name>` и `<name>.page.*` в `ru.ts` и `en.ts`.
-5. Содержимое — виджетами из `widgets/`.
-
-### Новый эндпоинт / сущность
-
-1. `npm run api:types` — сгенерировать типы; алиасы DTO и фильтров в `entities/<entity>/api/types.ts`.
-2. Метод в `entities/<entity>/api/<name>-api.ts` (возвращает `AxiosResponse`, `signal` для списков).
-3. Ключи в `model/queryKeys.ts` (фабрика `<entity>Keys`).
-4. Query-composable `model/useXxx.ts` (ключ, `queryFn`, при нужде `select`/поллинг).
-5. Реэкспорт через `index.ts` сегментов и слайса.
-6. UI-модель (`model/types.ts`) + маппер (`lib/mapper.ts`) + тест маппера — в слайсе-потребителе (обычно виджет).
-
-### Новое действие пользователя (feature)
-
-1. `features/<verb-object>/`: `ui/` (кнопка / модалка / форма), `model/use<Action>.ts` (`useMutation` + реакция: тост, инвалидация, закрытие), `index.ts`.
-2. Модалка — на `AppModal`; наружу — `v-model:open` и при необходимости событие результата.
-3. Форма сбрасывается при открытии; кнопка отправки блокируется при невалидной форме и во время отправки.
-4. Фичу встраивает виджет или страница; фича не импортирует другие фичи и виджеты.
-
-### Новый виджет
-
-1. `widgets/<noun>/` с `model/use<Name>.ts`, `model/types.ts`, `ui/<Name>.vue`, `index.ts` (+ `lib/`, `config/` при необходимости).
-2. Состояния: `<Name>Skeleton`, `<Name>ErrorState` (`@retry`), `<Name>EmptyState`.
-3. Фильтры/пагинация — в URL (`use<Name>Filters` + `URL_PARAMS`).
-4. Действия — фичами из `features/`; другие виджеты не импортировать.
-
-### Новый компонент дизайн-системы
-
-1. Проверить, что аналога нет в `shared/ui`; при наличии макета — сверить с Figma.
-2. `shared/ui/app-<name>/App<Name>.vue` (+ `.types.ts`, `lib/`), `index.ts`.
-3. Интерактив — на `radix-vue`, стили — токены, варианты — `computed` + `switch`.
-4. Компонентный тест в `__tests__/`.
-5. Никакой доменной логики.
-
----
-
-## Эталонный пример (вертикальный срез)
-
-Фича «История счетов» (`Invoice` — иллюстративная сущность): entity → feature → widget → page.
-Новую функциональность делать **идентично** по структуре и стилю.
-
-**`entities/invoice/api/types.ts`**
-```ts
-import type { components, operations } from '@/shared/api';
-
-/** Invoice list item — GET /invoices */
-export type InvoiceListItem = components['schemas']['InvoiceListItemSchema'];
-export type InvoiceListResponse = components['schemas']['InvoiceListResponseSchema'];
-export type InvoiceStatus = InvoiceListItem['status'];
-export type InvoiceFilters = NonNullable<operations['list_invoices']['parameters']['query']>;
-```
-
-**`entities/invoice/api/invoice-api.ts`**
-```ts
-import { apiClient } from '@/shared/api';
-
-import type { InvoiceFilters, InvoiceListResponse } from './types';
-
-export const invoiceApi = {
-  /** List invoices of the current project */
-  getInvoices(params?: InvoiceFilters, signal?: AbortSignal) {
-    return apiClient.get<InvoiceListResponse>('/invoices', { params, signal });
-  },
-
-  /** Download the invoice PDF */
-  downloadInvoice(invoiceId: string) {
-    return apiClient.get<Blob>(`/invoices/${invoiceId}/download`, { responseType: 'blob' });
-  },
-};
-```
-
-**`entities/invoice/model/queryKeys.ts`**
-```ts
-import type { InvoiceFilters } from '../api/types';
-
-export const invoiceKeys = {
-  all: ['invoices'] as const,
-  list: (filters: InvoiceFilters) => [...invoiceKeys.all, 'list', filters] as const,
-};
-```
-
-**`entities/invoice/index.ts`**
-```ts
-export { invoiceApi } from './api/invoice-api';
-export type * from './api/types';
-export { invoiceKeys } from './model/queryKeys';
-```
-
-**`features/download-invoice/model/useDownloadInvoice.ts`**
-```ts
-import { useMutation } from '@tanstack/vue-query';
-import { useI18n } from 'vue-i18n';
-import { toast } from 'vue-sonner';
-
-import { invoiceApi } from '@/entities/invoice';
-import { downloadBlob } from '@/shared/lib/downloadBlob';
-import { getContentDispositionFilename } from '@/shared/lib/getContentDispositionFilename';
-
-export function useDownloadInvoice() {
-  const { t } = useI18n({ useScope: 'global' });
-
-  return useMutation({
-    mutationFn: async (invoiceId: string) => {
-      const response = await invoiceApi.downloadInvoice(invoiceId);
-      const filename =
-        getContentDispositionFilename(response.headers['content-disposition']) ??
-        `invoice_${invoiceId}.pdf`;
-      downloadBlob(response.data, filename);
-    },
-    onError: () => toast.error(t('billing.invoices.downloadFailed')),
-  });
-}
-```
-
-**`features/download-invoice/ui/DownloadInvoiceButton.vue`**
-```vue
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-
-import { AppButton } from '@/shared/ui/app-button';
-import { AppIcon } from '@/shared/ui/app-icon';
-
-import { useDownloadInvoice } from '../model/useDownloadInvoice';
-
-const props = defineProps<{
-  invoiceId: string;
-}>();
-
-const { t } = useI18n({ useScope: 'global' });
-const { mutate: download, isPending } = useDownloadInvoice();
-</script>
-
-<template>
-  <AppButton
-    variant="ghost"
-    size="icon"
-    :disabled="isPending"
-    :aria-label="t('billing.invoices.download')"
-    @click="download(props.invoiceId)"
-  >
-    <AppIcon
-      :name="isPending ? 'loader-2-line' : 'download-line'"
-      :class="{ 'animate-spin': isPending }"
-    />
-  </AppButton>
-</template>
-```
-
-**`features/download-invoice/index.ts`**
-```ts
-export { default as DownloadInvoiceButton } from './ui/DownloadInvoiceButton.vue';
-```
-
-**`widgets/invoice-history/model/types.ts`**
-```ts
-import type { InvoiceStatus } from '@/entities/invoice';
-
-export interface InvoiceRecord {
-  id: string;
-  amount: number;
-  status: InvoiceStatus;
-  issuedAt: string;
-  /** null until the invoice is paid */
-  paidAt: string | null;
-}
-```
-
-**`widgets/invoice-history/lib/mapper.ts`**
-```ts
-import type { InvoiceListItem } from '@/entities/invoice';
-
-import type { InvoiceRecord } from '../model/types';
-
-export function mapInvoiceToRecord(item: InvoiceListItem): InvoiceRecord {
-  return {
-    id: item.invoice_id,
-    amount: item.amount,
-    status: item.status,
-    issuedAt: item.issued_at,
-    paidAt: item.paid_at,
-  };
-}
-```
-
-**`widgets/invoice-history/config/urlParams.ts`**
-```ts
-export const URL_PARAMS = {
-  page: 'page',
-} as const;
-```
-
-**`widgets/invoice-history/model/useInvoiceHistory.ts`**
-```ts
-import { keepPreviousData, useQuery } from '@tanstack/vue-query';
-import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-
-import { invoiceApi, invoiceKeys } from '@/entities/invoice';
-import { createQueryPatch } from '@/shared/lib/router';
-
-import { URL_PARAMS } from '../config/urlParams';
-import { mapInvoiceToRecord } from '../lib/mapper';
-
-export const INVOICE_HISTORY_PAGE_SIZE = 20;
-
-export function useInvoiceHistory() {
-  const route = useRoute();
-  const router = useRouter();
-  const replaceQuery = createQueryPatch(route, router);
-
-  const page = computed<number>({
-    get() {
-      const value = Number(route.query[URL_PARAMS.page]);
-      return Number.isInteger(value) && value > 0 ? value : 1;
-    },
-    set: (value) => replaceQuery({ [URL_PARAMS.page]: value > 1 ? String(value) : undefined }),
-  });
-
-  const filters = computed(() => ({
-    limit: INVOICE_HISTORY_PAGE_SIZE,
-    offset: (page.value - 1) * INVOICE_HISTORY_PAGE_SIZE,
-  }));
-
-  const {
-    data: response,
-    isLoading,
-    isError: isRequestError,
-    refetch,
-  } = useQuery({
-    queryKey: computed(() => invoiceKeys.list(filters.value)),
-    queryFn: async ({ signal }) => {
-      const result = await invoiceApi.getInvoices(filters.value, signal);
-      return result.data;
-    },
-    placeholderData: keepPreviousData,
-  });
-
-  // Error state only when there is no data at all: a failed refetch keeps the table visible
-  const isError = computed(() => isRequestError.value && !response.value);
-
-  const records = computed(() => (response.value?.items ?? []).map(mapInvoiceToRecord));
-  const totalCount = computed(() => response.value?.total_count ?? 0);
-  const hasData = computed(() => records.value.length > 0 || page.value > 1);
-
-  return { records, totalCount, page, hasData, isLoading, isError, refetch };
-}
-```
-
-**`widgets/invoice-history/ui/InvoiceHistoryTable.vue`** (фрагмент: фича в строке таблицы)
-```vue
-<script setup lang="ts">
-import { DownloadInvoiceButton } from '@/features/download-invoice';
-
-import type { InvoiceRecord } from '../model/types';
-
-defineProps<{
-  items: InvoiceRecord[];
-}>();
-</script>
-
-<template>
-  <ul class="flex flex-col gap-1">
-    <li v-for="item in items" :key="item.id" class="flex items-center gap-4">
-      <!-- ...invoice columns... -->
-      <DownloadInvoiceButton :invoice-id="item.id" />
-    </li>
-  </ul>
-</template>
-```
-
-**`widgets/invoice-history/ui/InvoiceHistory.vue`**
-```vue
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-
-import { AppPagination } from '@/shared/ui/app-pagination';
-
-import { INVOICE_HISTORY_PAGE_SIZE, useInvoiceHistory } from '../model/useInvoiceHistory';
-import InvoiceHistoryEmptyState from './InvoiceHistoryEmptyState.vue';
-import InvoiceHistoryErrorState from './InvoiceHistoryErrorState.vue';
-import InvoiceHistorySkeleton from './InvoiceHistorySkeleton.vue';
-import InvoiceHistoryTable from './InvoiceHistoryTable.vue';
-
-const { records, totalCount, page, hasData, isLoading, isError, refetch } = useInvoiceHistory();
-
-const { t } = useI18n({ useScope: 'global' });
-</script>
-
-<template>
-  <section class="flex w-full flex-col gap-4">
-    <h2 class="text-title-sm font-medium text-(--text-primary)">
-      {{ t('billing.invoices.title') }}
-    </h2>
-
-    <InvoiceHistorySkeleton v-if="isLoading" />
-    <InvoiceHistoryErrorState v-else-if="isError" @retry="refetch()" />
-    <template v-else-if="hasData">
-      <InvoiceHistoryTable :items="records" />
-
-      <AppPagination
-        v-model:page="page"
-        :total-items="totalCount"
-        :page-size="INVOICE_HISTORY_PAGE_SIZE"
-      />
-    </template>
-    <InvoiceHistoryEmptyState v-else />
-  </section>
-</template>
-```
-
-**`widgets/invoice-history/index.ts`**
-```ts
-export { default as InvoiceHistory } from './ui/InvoiceHistory.vue';
-```
-
-**`pages/billing/ui/BillingPage.vue`** и **`pages/billing/index.ts`**
-```vue
-<script setup lang="ts">
-import { InvoiceHistory } from '@/widgets/invoice-history';
-</script>
-
-<template>
-  <div class="flex w-full flex-col gap-10">
-    <InvoiceHistory />
-  </div>
-</template>
-```
-```ts
-export { default as BillingPage } from './ui/BillingPage.vue';
-```
-
-**`app/router/index.ts`** (фрагмент)
-```ts
-{
-  path: '/billing',
-  name: ROUTE_NAMES.billing,
-  component: () => import('@/pages/billing').then((m) => m.BillingPage),
-  meta: {
-    requiresAuth: true,
-    titleKey: 'layout.nav.billing',
-    nav: { icon: 'receipt-line' },
-  },
-},
-```
-
-**`shared/i18n/locales/ru.ts` / `en.ts`** — ключи `billing.invoices.*` в оба файла.
-
-**`widgets/invoice-history/lib/__tests__/mapper.spec.ts`**
-```ts
-import { describe, expect, it } from 'vitest';
-
-import { mapInvoiceToRecord } from '../mapper';
-
-describe('mapInvoiceToRecord', () => {
-  it('maps the DTO to the UI model', () => {
-    expect(
-      mapInvoiceToRecord({
-        invoice_id: 'inv-1',
-        amount: 100,
-        status: 'paid',
-        issued_at: '2026-10-01T00:00:00Z',
-        paid_at: '2026-10-02T00:00:00Z',
-      }),
-    ).toEqual({
-      id: 'inv-1',
-      amount: 100,
-      status: 'paid',
-      issuedAt: '2026-10-01T00:00:00Z',
-      paidAt: '2026-10-02T00:00:00Z',
-    });
-  });
-});
-```
-
----
-
-## Definition of Done (перед MR)
-
-**Код:**
-- [ ] Код лежит в правильном слое и сегменте FSD (feature — действие, widget — блок экрана; `model` / `lib` / `config` / `api` по природе кода); импорты только вниз, без кросс-импортов внутри слоя, снаружи слайса — только через `index.ts` или `@x`.
-- [ ] Паттерны из `docs/fsd-debt.md` не скопированы в новый код.
-- [ ] Вызовы бэка — только в `entities/*/api`, типы DTO и фильтров — из OpenAPI, данные с бэка — через TanStack Query, ключи — через фабрику `<entity>Keys`.
-- [ ] Фильтры/сортировка/пагинация — в URL.
-- [ ] Обработаны состояния loading / error / empty (и «ничего не найдено» для фильтров).
-- [ ] Все видимые тексты — через `t()`, ключи добавлены в `ru.ts` и `en.ts`.
-- [ ] Только токены дизайн-системы: нет хардкода цветов и статичных `style`; иконки — через `AppIcon`; модалки — на `AppModal`.
-- [ ] Новые функции `lib/` и новые компоненты `shared/ui` покрыты тестами.
+## Definition of Done
+
+- [ ] Слой и сегмент выбраны по манифесту; импорты вниз, без кросс-импортов, через `index.ts` / `@x`.
+- [ ] Паттерны из `docs/fsd-debt.md` не скопированы.
+- [ ] Бэк — только в `entities/*/api`, DTO и фильтры — из OpenAPI, данные — через TanStack Query.
+- [ ] Фильтры / сортировка / пагинация — в URL.
+- [ ] Состояния loading / error / empty (и «ничего не найдено»).
+- [ ] Видимые тексты — `t()`, ключи в `ru.ts` и `en.ts`.
+- [ ] Только токены; иконки — `AppIcon`; модалки — `AppModal`; доступность соблюдена.
+- [ ] Новые `lib/` и `shared/ui` покрыты тестами.
 - [ ] `npm run check` зелёный.
-- [ ] Нет `console.*`, `debugger`, закомментированного и неиспользуемого кода.
-- [ ] Новые `VITE_*` переменные описаны в `shared/config` (и согласованы с CI/Docker).
+- [ ] Нет `console.log`, `debugger`, закомментированного и неиспользуемого кода.
+- [ ] Самопроверка по макету (ru и en); расхождения с PRD/макетом согласованы, а не решены молча.
 
-**Соответствие требованиям:**
-- [ ] Самопроверка по макету пройдена: тексты и подписи, пустые и ошибочные состояния, модалки, иконки, скругления и отступы, состояния (hover, pressed, focus, disabled), клавиатура, ru и en.
-- [ ] Новые цвета — токены с именами переменных Figma; изменённые значения по умолчанию компонентов `shared/ui` и задетые экраны перечислены в описании MR.
-- [ ] В описании MR — ссылки на узлы Figma и скриншоты «макет / реализация» для изменённых экранов.
-- [ ] Все расхождения с PRD/RFC/макетом согласованы в задаче (ссылка на ответ), а не решены молча.
+## Git и коммиты
 
----
-
-## Git, ветки и Merge Request
-
-**Флоу:**
-
-```
-feature/* , fix/* , chore/*  ──MR──▶  develop  ──релизный MR──▶  main  ──тег vX.Y.Z──▶  prod
-                                         │
-                                         └──▶ dev-стенд
-```
-
-- `develop` — основная ветка разработки, всё вливается в неё; `main` — релизная, в неё попадает только релизный MR из `develop`; прод выкатывается тегом `vX.Y.Z` на `main`.
-- `main` и `develop` — защищённые ветки, прямой push запрещён. Защищённые ветки создаются только через веб-UI GitLab.
-- Ветки от свежего `develop`; в `develop` мерджим **сквошем**.
-
-**Имена веток:**
-
-| Тип | Шаблон | Когда |
-|---|---|---|
-| Фича / задача | `feature/<TICKET>[-<slug>]` | новая функциональность и обычные задачи |
-| Баг | `fix/<TICKET>[-<slug>]` | исправление ошибки |
-| Техническая задача | `chore/<slug>` | зависимости, CI, документация, рефакторинг и перенос слайсов без изменения поведения; тикет необязателен |
-
-- `<TICKET>` — ключ задачи (`WT-…`, `ML-…`); `<slug>` — необязательное короткое описание в kebab-case: `feature/WT-343-integration-secrets`, `fix/WT-538`, `chore/update-deps`.
-
-**Merge Request:**
-
-- **Один MR — одна задача.** Не собираем в один MR несколько тикетов и не копим работу до конца: черновой MR (Draft) открывается в начале работы, изменения пушатся по ходу.
-- В MR задачи приводим к манифесту только тронутые файлы; перенос слайсов между слоями/сегментами — отдельный `chore/*` MR.
-- **Без самомержа:** MR в `develop` вливается только после ревью и зелёного пайплайна.
-- Описание MR: ссылка на задачу, что сделано, как проверить, ссылки на Figma и скриншоты для UI-изменений.
-
----
-
-## Коммиты
-
-Сообщение коммита — **на английском**, в формате:
-
-```
-<TICKET>: <imperative summary>
-
-- <main change 1>
-- <main change 2>
-```
-
-- **`<TICKET>`** — ключ задачи из имени ветки (`feature/WT-343-...` → `WT-343`). Если тикета нет (`chore/*`) — вместо ключа тип изменения: `chore:`, `docs:`, `ci:`, `refactor:` (`docs: add architecture manifest`).
-- **Заголовок** — короткий, в повелительном наклонении (`add` / `fix` / `refactor`), без точки в конце.
-- **Тело** — маркированная сводка основных изменений (для нетривиальных изменений обязательно; для мелких можно опустить).
-- **Без соавторов.** Не добавлять трейлеры `Co-Authored-By`, подписи `Generated with Claude Code` и любые упоминания AI — автор коммита только пользователь.
-
----
+В этом репозитории одна основная ветка `main`; задача — в своей ветке (`chore/WT-547-refactoring`),
+после приёмки вливается в `main`. Перед коммитом — `npm run check`. Формат коммита —
+`<TICKET>: <imperative summary>` или без тикета `refactor:` / `chore:` / `docs:` / `test:`, на
+английском, тело — список изменений. **Без `Co-Authored-By` и упоминаний AI.** Подробности и флоу
+прод-репозитория GitLab (`develop` → `main`) — [`docs/delivery.md`](docs/delivery.md).
 
 ## Язык общения
 
-- Всегда общаться, объяснять и отвечать на русском языке.
-- Код, имена переменных, комментарии в коде и технические термины — на английском; описания и диалог — на русском.
+Общаемся, объясняем и отвечаем по-русски. Код, имена, новые комментарии и технические термины — на
+английском.

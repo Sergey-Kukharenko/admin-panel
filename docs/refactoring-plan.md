@@ -15,8 +15,8 @@
 
 ## Этап 0 — подготовка
 
-- [x] Свести манифест: за основу — `CLAUDE.md` из `main`, в него перенесены решения первой итерации (страницы `pages/<name>/ui`, `URL_PARAMS`, `meta.nav: { icon }`, индексы `shared/config` и `shared/lib/*`, `isRetryableError`, jsdom в Vitest, `npm run check`, принципы и уточнения). Фабрика `<entity>Keys` — для каждой сущности, как в манифесте `main`.
-- [ ] Получить актуальную OpenAPI-схему бэка (`openapi/openapi.json`, обновляется вручную по новому Swagger).
+- [x] Свести манифест: за основу — фронтовая версия первой итерации (`CLAUDE.md` + `docs/reference-slice.md`, `docs/checklists.md`, `docs/delivery.md`); из версии `main` (черновик бэкенда) взято полезное фронту — графики без библиотеки, верность UI-киту и Figma (состояния, фокус, токены, прозрачность, обводки), `AppModal` с `v-model:open`, пункты меню, `\u00a0`, флоу прод-GitLab.
+- [x] Получить актуальную OpenAPI-схему бэка (`openapi/openapi.json`, обновляется вручную по новому Swagger). Снимок 2026-10-28: эндпоинта `/registration/invitations` в схеме больше нет.
 - [ ] Согласовать с DevOps джобу `quality`.
 
 ## Этап 1 — быстрые исправления
@@ -25,7 +25,7 @@
   - перенести `shared/api/session-api.ts` и `shared/api/authorization-api.ts` в `entities/user/api/`;
   - вынести `ErrorDetails` из `widgets/dataset-history-table/ui/DatasetHistoryErrorDialog.vue` в `model/types.ts`;
   - заменить импорты своего же слайса по алиасу на относительные (`entities/dataset/ui/dataset-template-icon/DatasetTemplateIcon.vue`, `widgets/predictions-manager/model/constants.ts`).
-- [ ] Query keys: фабрика `<entity>Keys` в каждой сущности (иерархия от `all`); `QUERY_KEYS` → `URL_PARAMS` в `config/urlParams.ts` (это имена параметров URL).
+- [ ] Query keys: единый формат (массив, домен первым), экспорт только для инвалидации из другого слайса; фабрика `<entity>Keys` — когда у сущности есть связанные запросы и мутации (как `integrationKeys`); `QUERY_KEYS` → `URL_PARAMS` в `config/urlParams.ts` (это имена параметров URL).
 - [ ] Скрипты `check:lint`, `check:format` и общий `check` (type-check, линт, формат, тесты) — без `--fix`, не попадают под маску `run-s lint:*`; проект доведён до зелёных проверок.
 
 ## Этап 2 — базовая инфраструктура
