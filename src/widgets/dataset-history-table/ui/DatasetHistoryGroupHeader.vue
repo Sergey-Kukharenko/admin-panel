@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { formatDatasetGroupDate } from '../model/utils';
+import { formatDatasetGroupDate } from '../lib/utils';
 
 defineOptions({
   name: 'DatasetHistoryGroupHeader',

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { getMonthCellClasses } from '../model/calendarCellClasses';
+import { getMonthCellClasses } from '../lib/calendarCellClasses';
 
 defineOptions({
   name: 'ScheduleMonthPicker',

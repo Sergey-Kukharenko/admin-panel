@@ -8,7 +8,7 @@ import {
 } from '@/entities/product';
 import { toIntlLocale } from '@/shared/i18n';
 
-import { mapProductToIntegrations } from './mapper';
+import { mapProductToIntegrations } from '../lib/mapper';
 import type { PredictionIntegration } from './types';
 
 export function usePredictionsManager() {

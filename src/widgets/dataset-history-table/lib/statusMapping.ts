@@ -1,4 +1,4 @@
-import type { DatasetStatus } from './types';
+import type { DatasetStatus } from '../model/types';
 
 // Backend различает "awaiting" (в очереди) и "processing" (уже обрабатывается) —
 // в UI оба этих статуса относятся к одному состоянию LOADING

@@ -1,6 +1,10 @@
 import { type MLServiceRunListItem, resolveServiceDocsUrl } from '@/entities/product';
 
-import type { PredictionRunRecord, PredictionRunResultType, PredictionRunStatus } from './types';
+import type {
+  PredictionRunRecord,
+  PredictionRunResultType,
+  PredictionRunStatus,
+} from '../model/types';
 
 // status — MLServiceRunStatusName на бэке: processing / completed / error (подтверждено в WT-511);
 // в OpenAPI пока описан строкой, поэтому сравниваем без учета регистра

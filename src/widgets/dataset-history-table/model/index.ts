@@ -1,4 +1,3 @@
-export * from './statusMapping';
 export * from './types';
 export * from './useDatasetHistoryFilters';
 export * from './useDatasetHistoryPagination';

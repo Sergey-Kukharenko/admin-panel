@@ -7,7 +7,7 @@ import { DatasetTemplateIcon, getDatasetTypeContent } from '@/entities/dataset';
 import { AppIcon } from '@/shared/ui/app-icon';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
-import { mapBackendStatusToUi } from '../model/statusMapping';
+import { mapBackendStatusToUi } from '../lib/statusMapping';
 import type { DatasetSort, DatasetSortOrder } from '../model/types';
 import { useDatasetHistoryGroupErrors } from '../model/useDatasetHistoryGroupErrors';
 import DatasetHistoryErrorDialog from './DatasetHistoryErrorDialog.vue';

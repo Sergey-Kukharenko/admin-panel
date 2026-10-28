@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { toErrorsReportFileName } from '../useDatasetHistoryGroupErrors';
+import { toErrorsReportFileName } from '../errorsReport';
 
 describe('toErrorsReportFileName', () => {
   it('отчет об ошибках сохраняется как XLSX рядом с именем исходного файла', () => {

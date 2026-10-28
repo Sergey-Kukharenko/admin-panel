@@ -2,8 +2,8 @@ import { computed, ref } from 'vue';
 
 import { useProducts } from '@/entities/product';
 
-import { monthShortNames } from './constants';
-import { buildScheduleEvents, toScheduleEvent } from './scheduleMapper';
+import { monthShortNames } from '../config/constants';
+import { buildScheduleEvents, toScheduleEvent } from '../lib/scheduleMapper';
 import type { CalendarDay } from './types';
 
 const DAYS_PER_WEEK = 7;

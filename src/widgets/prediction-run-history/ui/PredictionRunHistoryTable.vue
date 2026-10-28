@@ -6,12 +6,12 @@ import { useI18n } from 'vue-i18n';
 import { toIntlLocale } from '@/shared/i18n';
 import { AppIcon, type IconName } from '@/shared/ui/app-icon';
 
+import { formatRunRecordsCount, formatRunTimestamp } from '../lib/utils';
 import type {
   PredictionRunRecord,
   PredictionRunSortField,
   PredictionRunSortOrder,
 } from '../model/types';
-import { formatRunRecordsCount, formatRunTimestamp } from '../model/utils';
 
 defineOptions({
   name: 'PredictionRunHistoryTable',

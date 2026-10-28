@@ -11,8 +11,8 @@ import { computed } from 'vue';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { getDayCellClasses } from '../model/calendarCellClasses';
-import { monthShortNames } from '../model/constants';
+import { monthShortNames } from '../config/constants';
+import { getDayCellClasses } from '../lib/calendarCellClasses';
 import { useScheduleCalendar } from '../model/useScheduleCalendar';
 import PredictionProcessingScheduleErrorState from './PredictionProcessingScheduleErrorState.vue';
 import PredictionProcessingScheduleItem from './PredictionProcessingScheduleItem.vue';

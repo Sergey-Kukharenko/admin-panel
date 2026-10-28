@@ -2,7 +2,11 @@ import type { IconName } from '@/shared/ui/app-icon';
 
 import playerIntelligenceIcon from '../assets/player-intelligence.png';
 import recommenderSystemIcon from '../assets/recommender-system.png';
-import type { PredictionIconName, PredictionStatus, PredictionTooltipIconName } from './types';
+import type {
+  PredictionIconName,
+  PredictionStatus,
+  PredictionTooltipIconName,
+} from '../model/types';
 
 export const predictionIntegrationIconByName: Record<PredictionIconName, string> = {
   'player-intelligence': playerIntelligenceIcon,

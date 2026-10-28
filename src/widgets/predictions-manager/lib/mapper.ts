@@ -5,7 +5,7 @@ import type {
   PredictionServiceState,
   PredictionStatus,
   PredictionTooltipIconName,
-} from './types';
+} from '../model/types';
 import { formatLastCalculation, formatNextCalculation } from './utils';
 
 // Статусы — строки без enum в OpenAPI; значения берем из RFC "Мониторинг готовности продукта/результата":
