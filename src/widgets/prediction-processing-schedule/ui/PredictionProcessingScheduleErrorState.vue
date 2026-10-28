@@ -6,7 +6,7 @@ defineOptions({
   name: 'PredictionProcessingScheduleErrorState',
 });
 
-defineEmits<{
+const emit = defineEmits<{
   retry: [];
 }>();
 </script>
@@ -19,6 +19,6 @@ defineEmits<{
     <p class="text-sm font-medium leading-5 text-(--text-primary)">
       Не удалось загрузить расписание
     </p>
-    <AppButton variant="outline" size="small" @click="$emit('retry')">Повторить</AppButton>
+    <AppButton variant="outline" size="small" @click="emit('retry')">Повторить</AppButton>
   </aside>
 </template>

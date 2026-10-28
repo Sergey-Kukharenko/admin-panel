@@ -57,6 +57,15 @@ export default defineConfigWithVueTs(
       // 🟢 VUE BEST PRACTICES
       // =========================
 
+      // In templates use emit from defineEmits, not $emit: typed events, one style
+      'vue/no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.name='$emit']",
+          message: 'Use emit() from defineEmits instead of $emit().',
+        },
+      ],
+
       // порядок атрибутов
       'vue/attributes-order': 'error',
 
