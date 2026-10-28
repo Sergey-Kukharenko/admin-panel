@@ -37,7 +37,8 @@ const resolvedCancelLabel = computed(() => props.cancelLabel ?? t('common.cancel
 <template>
   <!-- Soft overlay: confirmations are also opened over the upload drawer -->
   <AppModal v-model:open="open" size="sm" overlay="soft" :has-description="!!description">
-    <div class="flex flex-col items-start gap-4">
+    <!-- -mb-1: 4px between the text and the buttons, as approved (mockup 97:115570); the AppModal body has 8px -->
+    <div class="-mb-1 flex flex-col items-start gap-4">
       <div
         class="flex size-11 items-center justify-center rounded-(--radius-xl) p-3"
         :class="variant === 'danger' ? 'bg-(--bg-badge-danger)' : 'bg-(--bg-warning)'"

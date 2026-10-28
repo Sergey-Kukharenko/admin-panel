@@ -47,7 +47,13 @@ const detailsRows = computed(() => {
 </script>
 
 <template>
-  <AppModal v-model:open="open" :title="title || t('datasets.errorDialog.defaultTitle')" size="sm">
+  <AppModal
+    v-model:open="open"
+    :title="title || t('datasets.errorDialog.defaultTitle')"
+    size="sm"
+    title-size="md"
+    overlay="soft"
+  >
     <div v-if="detailsRows.length" class="flex w-full flex-col items-start gap-2 pb-16">
       <div
         v-for="row in detailsRows"

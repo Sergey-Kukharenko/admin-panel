@@ -14,7 +14,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <AppModal v-model:open="open" title="Изменить пароль">
+  <AppModal v-model:open="open" title="Изменить пароль" title-size="md">
     <div class="flex flex-col gap-4 pb-3 text-sm text-(--text-secondary)">
       <p>
         Для изменения пароля мы отправим письмо на {{ email }}. Следуйте инструкции в письме, чтобы

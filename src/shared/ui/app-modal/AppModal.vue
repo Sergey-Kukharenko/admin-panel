@@ -6,13 +6,14 @@ import { useI18n } from 'vue-i18n';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import type { AppModalOverlay, AppModalSize } from './AppModal.types';
+import type { AppModalOverlay, AppModalSize, AppModalTitleSize } from './AppModal.types';
 
 const props = withDefaults(
   defineProps<{
     /** Without a title the header holds only the close button; the body then renders its own DialogTitle */
     title?: string;
     size?: AppModalSize;
+    titleSize?: AppModalTitleSize;
     overlay?: AppModalOverlay;
     /** The body renders a DialogDescription: keep aria-describedby so radix links it */
     hasDescription?: boolean;
@@ -20,6 +21,7 @@ const props = withDefaults(
   {
     title: undefined,
     size: 'md',
+    titleSize: 'sm',
     overlay: 'strong',
     hasDescription: false,
   },
@@ -41,7 +43,11 @@ const sizeClass = computed(() => {
   }
 });
 
-// soft sits above the drawer (z-50) it is opened from
+const titleClass = computed(() =>
+  props.titleSize === 'md' ? 'text-title-xs font-medium' : 'text-sm font-medium',
+);
+
+// soft also sits above the drawer (z-50) a confirmation is opened from
 const overlayClass = computed(() =>
   props.overlay === 'soft'
     ? 'z-50 bg-(--overlay) backdrop-blur-overlay'
@@ -86,7 +92,7 @@ const contentAttrs = computed(() =>
             class="flex w-full shrink-0 items-center px-5"
             :class="title ? 'gap-2 py-4' : 'justify-end pt-4'"
           >
-            <DialogTitle v-if="title" class="flex-1 text-sm font-medium text-(--text-primary)">
+            <DialogTitle v-if="title" class="flex-1 text-(--text-primary)" :class="titleClass">
               {{ title }}
             </DialogTitle>
 
