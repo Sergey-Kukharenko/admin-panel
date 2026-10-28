@@ -23,7 +23,7 @@ const emit = defineEmits<{
     v-bind="$attrs"
     :checked="modelValue"
     :disabled="disabled"
-    class="relative inline-flex h-4 w-8 shrink-0 cursor-pointer items-center rounded-(--radius-full) outline-none transition-colors duration-150 ease-in-out bg-(--muted) hover:bg-(--muted-hover) active:bg-[#e1e1e2] active:opacity-80 focus-visible:ring-4 focus-visible:ring-(--border-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--bg-surface-primary) disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-(--bg-accent) data-[state=checked]:hover:bg-(--bg-accent-hover) data-[state=checked]:disabled:bg-(--bg-tag-active)"
+    class="relative inline-flex h-4 w-8 shrink-0 cursor-pointer items-center rounded-(--radius-full) outline-none transition-colors duration-150 ease-in-out bg-(--muted) hover:bg-(--muted-hover) active:bg-(--bg-switch-pressed) active:opacity-80 focus-visible:ring-4 focus-visible:ring-(--border-accent) focus-visible:ring-offset-2 focus-visible:ring-offset-(--bg-surface-primary) disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-(--bg-accent) data-[state=checked]:hover:bg-(--bg-accent-hover) data-[state=checked]:disabled:bg-(--bg-tag-active)"
     @update:checked="(value) => emit('update:modelValue', !!value)"
   >
     <SwitchThumb

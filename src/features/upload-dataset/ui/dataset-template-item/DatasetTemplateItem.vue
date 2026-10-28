@@ -131,7 +131,7 @@ const handleFilesChange = (event: Event) => {
           </AppDropdownItem>
           <AppDropdownItem
             :disabled="!hasListItems"
-            class="data-highlighted:bg-red-50!"
+            class="data-highlighted:bg-(--bg-menu-item-danger-hover)!"
             @select="emit('clearAll')"
           >
             <AppIcon name="delete-bin-line" class="size-4 text-(--danger)" />

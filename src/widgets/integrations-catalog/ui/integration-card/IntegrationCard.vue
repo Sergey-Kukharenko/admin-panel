@@ -64,8 +64,7 @@ function goToDetail() {
 
 <template>
   <article
-    class="flex w-full max-w-91 flex-col justify-between overflow-hidden rounded-2xl"
-    style="background-image: linear-gradient(183deg, #ffffff 42%, #efefef 97%)"
+    class="flex w-full max-w-91 flex-col justify-between overflow-hidden rounded-2xl bg-(image:--gradient-card)"
   >
     <div class="flex flex-col gap-5 px-5 pt-5">
       <div class="flex items-center gap-1.5">

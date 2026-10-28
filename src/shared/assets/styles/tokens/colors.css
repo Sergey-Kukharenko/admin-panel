@@ -267,4 +267,18 @@
 
   /* User avatar placeholder (Figma component "avatar" 55:128) */
   --bg-avatar: linear-gradient(146deg, #bfed85 21.5%, #e4ffc3 94.33%);
+
+  /* Values kept exactly as they were hardcoded in components (WT-547); the gradients have no Figma
+     variable. Section card: integration credentials and profile sections */
+  --gradient-section: linear-gradient(180deg, #ffffff 1%, rgba(217, 217, 217, 0.3) 37%);
+  /* Integration catalog card */
+  --gradient-card: linear-gradient(183deg, #ffffff 42%, #efefef 97%);
+  /* AppSwitch pressed (unchecked) */
+  --bg-switch-pressed: #e1e1e2;
+  /* Destructive menu item highlight ("Clear all" in the dataset template menu): Tailwind red-50 */
+  --bg-menu-item-danger-hover: oklch(97.1% 0.013 17.38);
+  /* AppSkeleton shimmer */
+  --gradient-skeleton: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  /* Profile section titles */
+  --text-section-title: #181818;
 }

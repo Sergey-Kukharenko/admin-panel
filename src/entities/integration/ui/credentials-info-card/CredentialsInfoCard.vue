@@ -28,8 +28,7 @@ async function copyValue(value: string) {
 <template>
   <!-- «Общая информация» block of a connected integration (mockups 790:133406, 918:83101) -->
   <section
-    class="flex flex-col gap-3 rounded-(--radius-xl) border border-(--border-default) px-2 pt-4 pb-2"
-    style="background-image: linear-gradient(180deg, #ffffff 1%, rgba(217, 217, 217, 0.3) 37%)"
+    class="flex flex-col gap-3 rounded-(--radius-xl) border border-(--border-default) px-2 pt-4 pb-2 bg-(image:--gradient-section)"
   >
     <p class="px-2 text-base font-medium text-(--text-primary)">
       {{ t('integrations.credentials.generalInfo') }}
