@@ -13,7 +13,10 @@
     "lint": "run-s lint:*",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
+    "check:lint": "oxlint . && eslint . --cache",
     "format": "prettier --write --experimental-cli src/",
+    "check:format": "prettier --check --experimental-cli src/",
+    "check": "run-s type-check check:lint check:format \"test:unit -- --run\"",
     "icons:sprite": "node scripts/build-icon-sprite.mjs"
   },
   "dependencies": {
