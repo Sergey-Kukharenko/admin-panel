@@ -18,16 +18,16 @@
 >
 > | Элемент | Где описан |
 > |---|---|
-> | Генерация типов из OpenAPI (`openapi-typescript`, `npm run api:types`, `shared/api/generated/` + реэкспорт из `shared/api/index.ts`) | «Работа с бэкендом» |
-> | `getHttpStatus`, `isClientError` в `shared/api` | «Ошибки и уведомления», «Серверное состояние» |
+> | Генерация типов из OpenAPI (`openapi-typescript`, `openapi/openapi.json`, `npm run api:types`, `shared/api/generated/` + реэкспорт из `shared/api/index.ts`) | «Работа с бэкендом» |
+> | `isRetryableError` в `shared/api` | «Ошибки и уведомления», «Серверное состояние» |
 > | Интерсептор 401 в `app/providers/` | «Ошибки и уведомления» |
 > | Фабрики query keys `<entity>Keys` | «Серверное состояние» |
 > | `AppModal` | «Дизайн-система» |
 > | `TooltipProvider` в `App.vue` (сейчас создаётся внутри `AppTooltip`) | «Дизайн-система» |
 > | `ROUTE_NAMES`, ленивые страницы, `meta.titleKey` / `meta.nav`, маршрут 404 | «Авторизация и роутинг» |
 > | `server.proxy` в `vite.config.ts` и `VITE_API_URL=/api` | «Конфигурация» |
-> | Vitest: окружение `node` по умолчанию, хелпер `withSetup` | «Тесты» |
-> | Скрипты `check:lint`, `check:format`, `icons:sprite`; CI-джоба `quality` | «Команды», «Деплой и CI/CD» |
+> | Vitest: хелпер `withSetup` | «Тесты» |
+> | Скрипты `check`, `check:lint`, `check:format`; CI-джоба `quality` | «Команды», «Деплой и CI/CD» |
 > | Линтеры `steiger`, `eslint-plugin-vuejs-accessibility`, `@intlify/eslint-plugin-vue-i18n` | «Линтинг» |
 >
 > **Эталонные места в коде** (делать «как там» — в указанном аспекте):
@@ -37,6 +37,12 @@
 > - `shared/ui/app-pagination` — компонент с `defineModel` и чистой логикой с тестом.
 >
 > Ключи запросов, раскладка по сегментам и справочники в этих местах — долг (см. `docs/fsd-debt.md`).
+>
+> **Принципы, которыми решаем спорное:** чистая архитектура (зависимости только вниз, домен отделён
+> от UI и транспорта), SOLID (одна ответственность у модуля, расширение через пропсы/слоты/композицию,
+> а не правку базового), DRY (одна модалка, один `apiClient`, типы из одного контракта), KISS и YAGNI
+> (не заводим абстракцию, сегмент или пропс «на будущее»). Правила проверяются линтерами, а не только
+> ревью. Если правило мешает этим принципам — меняем правило здесь и фиксируем причину.
 >
 > Следуй манифесту строго. Не отклоняйся от описанных паттернов без согласования с командой.
 
@@ -93,12 +99,12 @@
 | Клиентское состояние | Pinia (setup-store) + URL query через Vue Router |
 | Роутинг | Vue Router |
 | HTTP | axios (единый инстанс `apiClient`) |
-| Типы API | `openapi-typescript` *(подключить)* |
+| Типы API | `openapi-typescript` *(подключить)*; v7 объявляет peer-зависимость от TypeScript 5 — через `overrides` в `package.json` он использует TypeScript проекта |
 | Локализация | `vue-i18n` (composition mode, `legacy: false`), языки `ru` / `en` |
 | Уведомления | `vue-sonner` (`toast`) |
 | Даты | `Intl.*` для отображения, `dayjs` — для арифметики дат |
 | Графики | HTML и inline SVG на токенах дизайн-системы поверх `AppChartGrid`, без библиотеки графиков (ось, дни периода и подписи дат — `shared/lib/chart`: подписи днями, `formatDateLabels`) |
-| Тесты | Vitest + `@vue/test-utils` |
+| Тесты | Vitest + `@vue/test-utils` (окружение jsdom) |
 | Линт / формат | oxlint → ESLint (flat config) → Prettier; `steiger`, `eslint-plugin-vuejs-accessibility`, `@intlify/eslint-plugin-vue-i18n` *(подключить)* |
 | Node | `^20.19.0 \|\| >=22.12.0` (в Docker — `node:24-alpine`) |
 | Рантайм | статика в `nginx-unprivileged` (порт 8080) → Helm (`mico-app`) → K8s |
@@ -121,7 +127,8 @@ TanStack Query) — используем её. Неиспользуемые за
 | `npm run check:lint` | oxlint + eslint **без** `--fix` + `steiger` — для CI и проверки перед MR |
 | `npm run format` | `prettier --write --experimental-cli src/` |
 | `npm run check:format` | `prettier --check --experimental-cli src/` — для CI и проверки перед MR |
-| `npm run api:types` | перегенерировать типы API из OpenAPI бэкенда в `src/shared/api/generated/` |
+| `npm run check` | всё без `--fix`: `type-check`, `check:lint`, `check:format`, `vitest run` — перед коммитом |
+| `npm run api:types` | перегенерировать типы API из `openapi/openapi.json` в `src/shared/api/generated/` |
 | `npm run icons:sprite` | пересобрать SVG-спрайт и `iconNames.ts` (`node scripts/build-icon-sprite.mjs`) |
 
 Скрипты проверок называются `check:*`, а не `lint:check`: скрипт `lint` запускает все `lint:*`
@@ -143,7 +150,7 @@ mico-client-portal-ui/
 │   │   └── layouts/admin-layout/  ← каркас: сайдбар, шапка, навигация (строятся из meta маршрутов)
 │   │
 │   ├── pages/                  ← страницы (по одной на маршрут), тонкая композиция виджетов
-│   │   └── <name>-page/        ← <Name>Page.vue + index.ts
+│   │   └── <name>/             ← ui/<Name>Page.vue + index.ts (без суффикса -page: так требует steiger)
 │   │
 │   ├── widgets/                ← самостоятельные блоки экрана (имя — существительное)
 │   │   └── <widget-name>/      ← index.ts + ui/ + model/ + lib/ + config/ + assets/ (только нужные сегменты)
@@ -163,7 +170,7 @@ mico-client-portal-ui/
 │   │       └── assets/
 │   │
 │   └── shared/                 ← переиспользуемое, без знания о домене
-│       ├── api/                ← apiClient, getHttpStatus, isClientError, generated/ (типы из OpenAPI)
+│       ├── api/                ← apiClient, getHttpStatus, isClientError, isRetryableError, generated/ (типы из OpenAPI)
 │       ├── config/             ← api.ts (API_URL), env.ts (IS_DEV, фича-флаги), routes.ts (ROUTE_NAMES)
 │       ├── i18n/               ← createI18n, setAppLocale/getAppLocale/toIntlLocale, locales/ru.ts|en.ts
 │       ├── lib/                ← чистые утилиты (downloadBlob, getContentDispositionFilename, router/createQueryPatch)
@@ -208,12 +215,12 @@ shared → entities → features → widgets → pages → app
 - **Нет кросс-импортов внутри слоя.** Слайс не импортирует соседний слайс того же слоя (`widgets/a` → `widgets/b`, `features/a` → `features/b` запрещено). Если двум виджетам нужен общий блок — он опускается в `features`/`entities`/`shared`, либо композицию делает слой выше (страница).
 - **Ссылки между сущностями — только через `@x` и только типы.** Если сущности нужен тип другой сущности (прогон → сервис, датасет → продукт), сущность-владелец публикует его в `entities/<owner>/@x/<consumer>.ts`, а потребитель импортирует `@/entities/<owner>/@x/<consumer>`. Через `@x` экспортируются только типы (`export type`); логику и компоненты между сущностями не передаём — это композиция в `features`/`widgets`. Типы не дублируем.
 - **Только через публичный API.** Снаружи слайса импортируем только из его `index.ts` (или `@x`): `@/entities/dataset`, а не `@/entities/dataset/model/types`.
-- **Исключение — `shared`:** у `shared/ui`, `shared/lib`, `shared/config` нет общего барреля, каждый сегмент — самостоятельный модуль: `@/shared/ui/app-button`, `@/shared/lib/downloadBlob`, `@/shared/config/env`. `@/shared/api` и `@/shared/i18n` импортируются через свои `index.ts`.
+- **Исключение — `shared`:** у `shared/ui` и `shared/lib` нет общего барреля. Каждый `shared/ui/app-*` — самостоятельный модуль со своим `index.ts` (`@/shared/ui/app-button`); в `shared/lib` верхнеуровневые файлы импортируются напрямую (`@/shared/lib/downloadBlob`), папки — через свой `index.ts` (`@/shared/lib/router`, `@/shared/lib/test`). `@/shared/api`, `@/shared/i18n` и `@/shared/config` импортируются через свои `index.ts` (публичный API сегмента проверяет `steiger`).
 - **В `shared/api` — только транспорт:** `apiClient`, хелперы разбора ошибок и сгенерированные типы. Вызовы конкретных эндпоинтов (в т.ч. сессия и авторизация) — в `entities/<entity>/api` (`entities/user/api/session-api.ts`).
 - **Внутри слайса — относительные импорты** (`../model/useRunHistoryTable`, `./PredictionRunHistoryTable.vue`, `../assets/icon.png`). Свой же слайс по алиасу (`@/entities/dataset/...` изнутри `entities/dataset`) не импортируем.
 - **Внутри слайса `model` и `lib` не импортируют из `ui`.** Типы, которые нужны и логике, и компоненту, живут в `model/types.ts`.
 - Ключ, который нужен нескольким слоям (например query key для инвалидации из feature), кладём в **самый нижний** слайс, которому он принадлежит.
-- Правила слоёв проверяются линтером `steiger` в `check:lint`.
+- Правила слоёв проверяются линтером `steiger` в `check:lint` (`steiger.config.ts`). Выключены `insignificant-slice` (ложные срабатывания, спорит с критерием feature/widget) и `segments-by-purpose` (`assets`, `app/providers` оставляем).
 
 ---
 
@@ -226,7 +233,8 @@ shared → entities → features → widgets → pages → app
 | Имя | глагол + объект: `connect-s3`, `create-api-secret`, `upload-dataset`, `change-password` | существительное: `integration-detail`, `dataset-history-table` |
 | Примеры | модалка заявки на подключение, кнопка скачивания результата, переключатель языка | таблица истории загрузок, каталог интеграций, история прогонов |
 
-- Модалка или панель с действием — это **feature**, даже если она большая.
+- Модалка или панель с действием — это **feature**, даже если она большая. Если у двух вариантов действия общая мутация (заявка на S3 и REST API), это **одна** фича, а не две (иначе кросс-импорт или копия).
+- Компонент без своего действия и с одним потребителем (пустое состояние таблицы, кнопка которого только эмитит событие) — внутренний компонент виджета, а не отдельный слайс.
 - Виджет кладёт фичи в нужные места своей разметки (кнопка скачивания в строке таблицы, модалка заявки на странице интеграции).
 - **В `entities/*/ui` — только отображение сущности** без сценариев: бейдж статуса, иконка типа, карточка данных. Модалки с действием, кнопки с мутацией и UI-реакцией (тосты, навигация) — в `features`.
 - `useMutation` в `entities` допустим только как «голая» операция с обновлением кэша, без UI-реакции; сценарий действия вокруг неё — в `features`.
@@ -277,7 +285,7 @@ export { default as PredictionRunHistory } from './ui/PredictionRunHistory.vue';
 | Папка слайса / сегмента ui | kebab-case | `prediction-run-history`, `ui/connection-status-tag/` |
 | Слайс feature | глагол + объект | `connect-s3`, `download-invoice` |
 | Слайс widget | существительное | `integration-detail`, `invoice-history` |
-| Папка страницы | `<name>-page` | `datasets-page` |
+| Слайс страницы | `pages/<name>/ui/<Name>Page.vue`, без суффикса `-page` в имени слайса | `pages/datasets` → `DatasetsPage` |
 | Vue-компонент | PascalCase, имя файла = имя компонента | `PredictionRunHistory.vue` |
 | Компонент дизайн-системы | префикс `App` | `AppButton`, `AppModal` |
 | Страница | суффикс `Page` | `DatasetsPage` |
@@ -309,17 +317,20 @@ TypeScript-перечисления (`enum`) не используем — то�
 
 - Все HTTP-вызовы — через `apiClient` из `@/shared/api` (`baseURL = API_URL`, `withCredentials: true`). Новые axios-инстансы не создаём, `fetch` не используем.
 - Вызовы живут **только** в `entities/<entity>/api/<name>-api.ts`. Компоненты, composables и сторы axios не трогают.
-- **Типы — из OpenAPI.** `npm run api:types` генерирует `src/shared/api/generated/schema.ts`; `shared/api/index.ts` реэкспортирует `export type { components, operations } from './generated/schema'`. В `entities/<entity>/api/types.ts` — алиасы:
+- **Типы — из OpenAPI.** Схема бэка лежит в `openapi/openapi.json` (обновляем по Swagger); `npm run api:types` генерирует `src/shared/api/generated/schema.d.ts`; `shared/api/index.ts` реэкспортирует `export type { components, operations, paths } from './generated/schema'`. Сгенерированное исключено из линтеров и Prettier. В `entities/<entity>/api/types.ts` — алиасы:
   - тело и ответ — `components['schemas']['ProductSchema']`;
   - **query-параметры (фильтры) — тоже из схемы:** `NonNullable<operations['list_products']['parameters']['query']>`.
   
   Ручное описание DTO — только если эндпоинта ещё нет в OpenAPI (с `// TODO:` заменить на сгенерированный тип). Статусы приходят как `enum` из схемы бэка, фронт не угадывает их регэкспами.
+- **Контракт поменялся** → обновить `openapi/openapi.json` → `npm run api:types` → исправить ошибки `type-check`. Это и есть проверка совместимости с бэком.
+- Необязательные поля схемы (`field?: T | null`) нормализуем в маппере (`?? null`); сравнения `=== null` на сырых DTO не пишем.
 - API-объект — плоский объект методов, каждый метод **возвращает промис `AxiosResponse<T>`** (не разворачивает `.data`) — развёртка делается в `queryFn`/вызывающем коде.
 - У каждого метода — однострочный JSDoc: что делает, неочевидные коды ответа (`409 — an active request already exists`).
 - Списки принимают `params?: <Entity>Filters` и `signal?: AbortSignal` и пробрасывают `signal` в axios — TanStack Query отменяет устаревшие запросы.
 - Фильтры-множества передаём строкой через запятую (`product_id__in: ids.join(',')`) — так ожидает бэк (fastapi-filter `__in`).
 - Скачивание файлов: `responseType: 'blob'`; имя файла — из `Content-Disposition` через `getContentDispositionFilename(...)`, своё имя — только как fallback; сохранение — `downloadBlob(blob, filename)`.
 - Загрузка файлов: `FormData` + `'Content-Type': 'multipart/form-data'` + `onUploadProgress`.
+- Методы API без потребителя — заготовки под ближайшие фичи, пока эндпоинт есть в схеме; не удаляем.
 
 ```ts
 export const mlServiceRunApi = {
@@ -336,7 +347,7 @@ export const mlServiceRunApi = {
 
 Всё, что пришло с бэка, — это **кэш TanStack Query**, а не Pinia и не `ref` в компоненте.
 
-- `QueryClient` создаётся один раз в `main.ts`: `refetchOnWindowFocus: false`; **ретраи только для сетевых сбоев и 5xx** (4xx не повторяем — повтор не поможет): `retry: (count, error) => count < 1 && !isClientError(error)`. Переопределяем точечно в конкретном запросе с комментарием «почему».
+- `QueryClient` создаётся один раз в `main.ts`: `refetchOnWindowFocus: false`; **одна повторная попытка только для сетевых сбоев и 5xx** (4xx и отменённые запросы не повторяем — повтор не поможет): `retry: (count, error) => count < 1 && isRetryableError(error)`. Переопределяем точечно в конкретном запросе с комментарием «почему».
 - **Query-composable сущности** — в `entities/<entity>/model/useXxx.ts` (`useProducts`, `useDatasetTemplates`, `useIntegrationStatus`). Он владеет ключом и `queryFn` и безопасно вызывается из нескольких виджетов — запрос и поллинг идут один раз на всех подписчиков. Composable **уровня виджета** (`useRunHistoryTable`) собирает из них данные конкретного экрана. Один и тот же эндпоинт не запрашивается в обход composable сущности.
 - `queryFn` разворачивает ответ: `const response = await api.getX(params, signal); return response.data;`.
 - **Ключи — только через фабрику сущности** в `model/queryKeys.ts`. Иерархия от общего к частному, чтобы инвалидация по префиксу работала предсказуемо:
@@ -384,8 +395,8 @@ export const mlServiceRunApi = {
 
 **URL как источник истины:**
 
-- Composable `use<Widget>Filters()` в `model/` виджета; имена параметров — в объекте `QUERY_KEYS = { ... } as const`.
-- Каждый параметр — `computed({ get, set })` поверх `route.query`; запись — через `createQueryPatch(route, router)` из `@/shared/lib/router/createQueryPatch` (`router.replace`, пустые значения удаляются из URL, массивы склеиваются через запятую).
+- Composable `use<Widget>Filters()` в `model/` виджета; имена параметров — в объекте `URL_PARAMS = { ... } as const` в `config/urlParams.ts` (имя `QUERY_KEYS` не используем: его путают с ключами TanStack Query).
+- Каждый параметр — `computed({ get, set })` поверх `route.query`; запись — через `createQueryPatch(route, router)` из `@/shared/lib/router` (`router.replace`, пустые значения удаляются из URL, массивы склеиваются через запятую).
 - Дефолтные значения в URL не пишем (`page=1`, пустой фильтр → параметр отсутствует).
 - `get` валидирует сырое значение и возвращает дефолт для мусора (`Number.isInteger(value) && value > 0 ? value : 1`).
 - Несколько параметров меняем **одним** вызовом `replaceQuery({...})` — несколько последовательных `set` перетирают друг друга.
@@ -454,7 +465,8 @@ const { t } = useI18n({ useScope: 'global' });
 - Списки — всегда со стабильным `:key` (id сущности, а не индекс; исключение — массив полей формы без id).
 - Формы: `<form @submit.prevent>`, кнопка отправки вне формы связывается через `form="<id>"`; ошибку поля показываем после `blur` (touched); форма сбрасывается в `watch` на открытие модалки; кнопка отправки `disabled` при невалидной форме и во время `submitting` (+ спиннер `loader-2-line animate-spin`).
 - Таймеры/подписки (`setInterval`, `addEventListener`) обязательно снимаются в `onUnmounted`.
-- **Доступность:** кликабельное — только `<button>`, `<a>`/`RouterLink` или radix-примитив (не `div @click`); интерактивный элемент внутри другого интерактивного не вкладываем; у кнопки без текста — `aria-label` через `t()`. Проверяется `eslint-plugin-vuejs-accessibility`.
+- Пропсы и события, которые никто не использует, не добавляем (YAGNI): API компонента — по реальным потребителям.
+- **Доступность:** кликабельное — только `<button>`, `<a>`/`RouterLink` или radix-примитив (не `div @click`); интерактивный элемент внутри другого интерактивного не вкладываем; у кнопки без текста — `aria-label` через `t()`; поле — `<label for>` или вложенность в `<label>`, скрытый `input type=file` — `aria-label`; `<label>` — только для поля, подпись к тексту — обычный элемент. Проверяется `eslint-plugin-vuejs-accessibility` (`label-has-for`: `for`/`id` или вложенность; `CheckboxRoot` считается полем).
 - Шаблон: атрибуты по порядку `vue/attributes-order`; при переносе — один атрибут на строку; все теги самозакрывающиеся, если без содержимого (`<div />`, `<AppIcon ... />`).
 
 ---
@@ -523,7 +535,7 @@ const { t } = useI18n({ useScope: 'global' });
   - `tokens/radius.css`, `tokens/layout.css`; `tokens/theme.css` — проброс в `@theme` для утилит Tailwind;
   - `base/globals.css` — глобальные правила (scrollbar-gutter, cursor, стили тостов).
 - `tailwind.config.js` (формат Tailwind v3) и stylelint не используются — всё через CSS и утилиты.
-- Токены используются через синтаксис arbitrary-property: `bg-(--bg-surface-primary)`, `text-(--text-secondary)`, `rounded-(--radius-lg)`, `shadow-(--shadow-panel)`, `border-(--border-default)`.
+- Токены используются через синтаксис arbitrary-property: `bg-(--bg-surface-primary)`, `text-(--text-secondary)`, `rounded-(--radius-lg)`, `shadow-(--shadow-panel)`, `border-(--border-default)`; градиенты — `bg-(image:--gradient-card)`.
 - Типографика — утилитами шкалы: `text-body-sm`, `text-body-xs`, `text-title-sm`, `text-element-button`, `text-element-tag` (+ `font-medium`, `font-mono`, `uppercase`, где требует макет).
 - В компонентах используем **семантические** токены (`--text-primary`, `--bg-badge-success`), а не примитивы палитры (`--color-neutral-400`) — примитивы допустимы только внутри дизайн-системы.
 - **Токены называются как переменные Figma.** Значение, привязанное в макете к переменной, в коде — токен с тем же именем: `bg/button/secondary` → `--bg-button-secondary`, `default/default-foreground` → `--default-foreground`. Новый токен повторяет цепочку алиасов Figma: семантический ссылается на семантический или примитив (`--bg-scrollbar-thumb: var(--text-disabled)`).
@@ -568,7 +580,7 @@ const { t } = useI18n({ useScope: 'global' });
 ## Даты, числа, форматирование
 
 - Отображение дат и чисел — `Intl.DateTimeFormat` / `toLocaleString` с локалью `toIntlLocale(locale.value)` из `@/shared/i18n` (`ru-RU` / `en-US`). Хардкод локали (`'ru-RU'`, `'en-GB'`) не используем.
-- Формат должен совпадать с макетом — нужный вид собираем через `formatToParts` (убрать «г.», точку после месяца и т.п.).
+- Формат должен совпадать с макетом — нужный вид собираем через `formatToParts` (убрать «г.», точку после месяца и т.п.). Время — с `hourCycle: 'h23'` (иначе `en-US` даёт 12-часовой формат).
 - `dayjs` — только для арифметики и ключей (`subtract`, `startOf('day')`, `format('YYYY-MM-DD')`), не для отображения.
 - Отсутствующее значение показываем как `-` (или `—`, если так в макете), а не пустую строку.
 - Функции форматирования — в `lib/format.ts` слайса, чистые, с тестами; `computed`, который их вызывает, зависит от `locale`.
@@ -578,7 +590,7 @@ const { t } = useI18n({ useScope: 'global' });
 ## Ошибки и уведомления
 
 - Пользовательские уведомления — `toast.success / toast.error` из `vue-sonner`, текст через `t()`. Тост успеха — с иконкой `check-line` (настроено в `App.vue`).
-- HTTP-статус ошибки получаем единым хелпером `getHttpStatus(error)` из `@/shared/api` (внутри — `isAxiosError`). Ожидаемые коды (409 «уже существует» и т.п.) обрабатываются явно и с понятным текстом; остальные — общим сообщением.
+- HTTP-статус ошибки получаем единым хелпером `getHttpStatus(error)` из `@/shared/api` (внутри — `isAxiosError`; там же `isClientError` и `isRetryableError`). Ожидаемые коды (409 «уже существует» и т.п.) обрабатываются явно и с понятным текстом; остальные — общим сообщением.
 - **401 во время работы обрабатывается глобально** response-интерсептором `apiClient`, который подключается в `app/providers/`:
   - подключается **после** `initAuth()` в `main.ts` — на старте 401 от `/user/me` означает «не залогинен», и это обрабатывает guard роутера;
   - игнорирует запрос `/user/me`;
@@ -597,9 +609,9 @@ const { t } = useI18n({ useScope: 'global' });
 - `login()` / `logout()` — полный редирект браузера на `${API_URL}/authorization/login` (в dev — с `frontend=local`) / по `authentik_logout_url`.
 - `App.vue` выбирает экран: `AuthLoader` (идёт проверка) → `AuthErrorScreen` (бэк вернул `?auth=error&error=<код>`) → `AdminLayout`.
 - **Маршруты** — в `app/router/index.ts`:
-  - страницы подключаются **лениво**, с учётом именованного экспорта страницы: `component: () => import('@/pages/billing-page').then((m) => m.BillingPage)`;
-  - у каждого маршрута есть `name` из `ROUTE_NAMES` (`@/shared/config/routes` — чтобы навигацию по имени могли использовать все слои); навигация — **по имени** (`router.push({ name: ROUTE_NAMES.integrations })`, `<RouterLink :to="{ name: ... }">`), строковые пути в коде не используем;
-  - `meta` маршрута — единый источник для каркаса: `requiresAuth`, `titleKey` (ключ i18n заголовка в шапке), `nav: { labelKey, icon, order }` (пункт сайдбара). `AdminHeader` и `SidebarNavigation` строятся из `meta`, а не держат свои списки;
+  - страницы подключаются **лениво**, с учётом именованного экспорта страницы: `component: () => import('@/pages/billing').then((m) => m.BillingPage)`;
+  - у каждого маршрута есть `name` из `ROUTE_NAMES` (`@/shared/config` — чтобы навигацию по имени могли использовать все слои); навигация — **по имени** (`router.push({ name: ROUTE_NAMES.integrations })`, `<RouterLink :to="{ name: ... }">`), строковые пути в коде не используем;
+  - `meta` маршрута — единый источник для каркаса: `requiresAuth`, `titleKey` (ключ i18n заголовка в шапке), `nav: { icon }` (пункт сайдбара: подпись — `titleKey`, порядок — порядок маршрутов в таблице; отдельный `labelKey` заводим, только когда подпись в сайдбаре отличается от заголовка). `meta` типизирована расширением `RouteMeta`. `AdminHeader` и `SidebarNavigation` строятся из `meta`, а не держат свои списки;
   - последним идёт catch-all `/:pathMatch(.*)*` → страница 404 (или редирект на раздел по умолчанию).
 - Глобальный `beforeEach` при отсутствии сессии вызывает `login()`; если уже есть `authError` — не редиректит повторно (иначе бесконечный цикл при живой сессии Authentik).
 - Невалидный параметр маршрута обрабатывает страница: `router.replace` на родительский раздел.
@@ -626,6 +638,7 @@ const { t } = useI18n({ useScope: 'global' });
 - Мутации над моками — временный Pinia-store сущности с той же сигнатурой, какой будет API, с комментарием, что это мок и до какого этапа. Это временное решение, а не образец для работы с серверными данными.
 - Компоненты не знают, мок это или API, — переход на реальный бэк меняет только модель/composable.
 - **Скрываем фичи только фича-флагом.** Готовый, но вырезанный из скоупа UI остаётся подключённым к странице/маршруту за `FEATURE_*`, а не «отвязывается» и не лежит мёртвым кодом. Код, который не используется и не находится за флагом, удаляется.
+- Готовый, но скрытый PM экран (профиль, тарифы, расписание) не дорабатываем, пока он не вернулся в скоуп; его долг — в `docs/fsd-debt.md`.
 
 ---
 
@@ -654,33 +667,35 @@ const { t } = useI18n({ useScope: 'global' });
 
 ## Тесты
 
-- Vitest. **Окружение по умолчанию — `node`** (в `vitest.config.ts`); тестам, которым нужен DOM (монтирование компонентов, composables с `createApp`), окружение включается в начале файла: `// @vitest-environment jsdom`.
+- Vitest, окружение **`jsdom`** (в `vitest.config.ts`): компонентным тестам нужен DOM, а `shared/i18n` читает `localStorage` при импорте модуля.
 - Тесты лежат в `__tests__/` **рядом с тестируемым модулем**: `lib/__tests__/mapper.spec.ts`, `shared/ui/app-modal/__tests__/AppModal.spec.ts`.
 - Обязательно покрываем:
   - `lib/` слайсов: мапперы DTO → UI, форматирование дат/чисел, доменные правила (валидация, сборка тела запроса); утилиты `shared/lib`;
   - чистую логику компонентов дизайн-системы (`getPaginationRange`);
   - **компонентными тестами** (`@vue/test-utils`) — ключевые компоненты `shared/ui` (`AppModal`, `AppButton`, `AppPagination`, `AppFilter`): рендер вариантов, события, `v-model`, доступность.
-- Composable с `useI18n` — через общий хелпер `withSetup` (создать app, подключить `i18n`, смонтировать) из `shared/lib/test/withSetup.ts`.
+- Composable с `useI18n` / роутером / Vue Query — через общий хелпер `withSetup` (создать app, подключить плагины, смонтировать) из `@/shared/lib/test`; роутер — `createMemoryHistory`, ожидание навигации — `flushPromises`.
 - Структура — `describe(<имя функции/компонента>)` + `it(<сценарий>)`; `it.each` для табличных проверок. **Описания сценариев — на английском.** Кейсы из макета/тикета помечаем ссылкой (`as in mockup 52:3936`, `WT-511`).
 - Паттерн Arrange → Act → Assert, проверки через `expect`.
 - Сетевые вызовы в юнит-тестах не делаем — тестируем логику, вынесенную в `lib/`.
+- Тест, который нашёл баг, фиксирует исправленное поведение, а не ошибку.
 
 ---
 
 ## Линтинг и форматирование
 
-- Перед MR и в CI код обязан проходить: `npm run type-check`, `npm run check:lint`, `npm run check:format`, `npx vitest run`.
+- Перед MR и в CI код обязан проходить `npm run check` (`type-check`, `check:lint`, `check:format`, `vitest run`).
 - Локально — `npm run lint` (с `--fix`) и `npm run format`.
 - `lint` = oxlint (correctness) → ESLint (Vue/TS/импорты/a11y/i18n); `check:lint` дополнительно запускает `steiger` (правила FSD: слои, кросс-импорты, публичный API, сегменты). ESLint-правила, на которые чаще всего натыкаемся:
   - `simple-import-sort` — импорты сортируются автоматически (группы: внешние пакеты → `@/` → относительные, `import type` — рядом со своим модулем); руками не упорядочиваем;
   - `unused-imports` — неиспользуемые импорты — ошибка, переменные — предупреждение (неиспользуемый аргумент — префикс `_`);
   - `vue/block-order` (`script` → `template` → `style`), `vue/attributes-order`, `vue/max-attributes-per-line` (однострочно ≤ 2, при переносе — по одному), `vue/html-self-closing`;
   - `vuejs-accessibility/*` — доступность разметки; radix-компоненты, которые сами отдают роль и обработку клавиатуры, добавляются в настройки правила как интерактивные;
-  - `@intlify/vue-i18n/no-raw-text` — сырой текст в шаблоне; служебные символы (`-`, `—`, `·`, `/`, `%`, `…`) — в списке исключений правила;
+  - `@intlify/vue-i18n/no-raw-text` — сырой текст в шаблоне, включая `aria-label`/`title`/`placeholder`/`alt`; служебные символы (`-`, `—`, `·`, `/`, `%`, `…`) и технические термины (`CSV`, `API`, `Client ID`) — в списке исключений правила; тексты в `<script>` правило не видит — следим сами;
   - `no-console`, `no-debugger` — предупреждения, перед MR — ноль.
 - Prettier: одинарные кавычки, точки с запятой, ширина 100. `.editorconfig`: 2 пробела, LF, финальная пустая строка.
 - `noUncheckedIndexedAccess` включён: доступ по индексу/ключу — `T | undefined`, обрабатываем `?.` / `??` / проверкой, а не `!`.
 - `any` не используем; для внешних данных неизвестной формы — `unknown` + сужение.
+- Правило линтера отключаем только точечно (`eslint-disable-next-line` или блок в конфиге) и с причиной в комментарии.
 
 ---
 
@@ -713,9 +728,9 @@ const { t } = useI18n({ useScope: 'global' });
 
 ### Новая страница / раздел
 
-1. `pages/<name>-page/<Name>Page.vue` + `index.ts` (`export { default as <Name>Page } ...`).
+1. `pages/<name>/ui/<Name>Page.vue` + `index.ts` (`export { default as <Name>Page } from './ui/<Name>Page.vue'`).
 2. Имя в `ROUTE_NAMES` (`shared/config/routes.ts`).
-3. Маршрут в `app/router/index.ts`: `component: () => import('@/pages/<name>-page').then((m) => m.<Name>Page)`, `name`, `meta` (`requiresAuth`, `titleKey`, `nav`).
+3. Маршрут в `app/router/index.ts`: `component: () => import('@/pages/<name>').then((m) => m.<Name>Page)`, `name`, `meta` (`requiresAuth`, `titleKey`, `nav`).
 4. Ключи `layout.nav.<name>` и `<name>.page.*` в `ru.ts` и `en.ts`.
 5. Содержимое — виджетами из `widgets/`.
 
@@ -739,7 +754,7 @@ const { t } = useI18n({ useScope: 'global' });
 
 1. `widgets/<noun>/` с `model/use<Name>.ts`, `model/types.ts`, `ui/<Name>.vue`, `index.ts` (+ `lib/`, `config/` при необходимости).
 2. Состояния: `<Name>Skeleton`, `<Name>ErrorState` (`@retry`), `<Name>EmptyState`.
-3. Фильтры/пагинация — в URL (`use<Name>Filters` + `QUERY_KEYS`).
+3. Фильтры/пагинация — в URL (`use<Name>Filters` + `URL_PARAMS`).
 4. Действия — фичами из `features/`; другие виджеты не импортировать.
 
 ### Новый компонент дизайн-системы
@@ -900,6 +915,13 @@ export function mapInvoiceToRecord(item: InvoiceListItem): InvoiceRecord {
 }
 ```
 
+**`widgets/invoice-history/config/urlParams.ts`**
+```ts
+export const URL_PARAMS = {
+  page: 'page',
+} as const;
+```
+
 **`widgets/invoice-history/model/useInvoiceHistory.ts`**
 ```ts
 import { keepPreviousData, useQuery } from '@tanstack/vue-query';
@@ -907,15 +929,12 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { invoiceApi, invoiceKeys } from '@/entities/invoice';
-import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
+import { createQueryPatch } from '@/shared/lib/router';
 
+import { URL_PARAMS } from '../config/urlParams';
 import { mapInvoiceToRecord } from '../lib/mapper';
 
 export const INVOICE_HISTORY_PAGE_SIZE = 20;
-
-const QUERY_KEYS = {
-  page: 'page',
-} as const;
 
 export function useInvoiceHistory() {
   const route = useRoute();
@@ -924,10 +943,10 @@ export function useInvoiceHistory() {
 
   const page = computed<number>({
     get() {
-      const value = Number(route.query[QUERY_KEYS.page]);
+      const value = Number(route.query[URL_PARAMS.page]);
       return Number.isInteger(value) && value > 0 ? value : 1;
     },
-    set: (value) => replaceQuery({ [QUERY_KEYS.page]: value > 1 ? String(value) : undefined }),
+    set: (value) => replaceQuery({ [URL_PARAMS.page]: value > 1 ? String(value) : undefined }),
   });
 
   const filters = computed(() => ({
@@ -1027,7 +1046,7 @@ const { t } = useI18n({ useScope: 'global' });
 export { default as InvoiceHistory } from './ui/InvoiceHistory.vue';
 ```
 
-**`pages/billing-page/BillingPage.vue`** и **`index.ts`**
+**`pages/billing/ui/BillingPage.vue`** и **`pages/billing/index.ts`**
 ```vue
 <script setup lang="ts">
 import { InvoiceHistory } from '@/widgets/invoice-history';
@@ -1040,7 +1059,7 @@ import { InvoiceHistory } from '@/widgets/invoice-history';
 </template>
 ```
 ```ts
-export { default as BillingPage } from './BillingPage.vue';
+export { default as BillingPage } from './ui/BillingPage.vue';
 ```
 
 **`app/router/index.ts`** (фрагмент)
@@ -1048,11 +1067,11 @@ export { default as BillingPage } from './BillingPage.vue';
 {
   path: '/billing',
   name: ROUTE_NAMES.billing,
-  component: () => import('@/pages/billing-page').then((m) => m.BillingPage),
+  component: () => import('@/pages/billing').then((m) => m.BillingPage),
   meta: {
     requiresAuth: true,
     titleKey: 'layout.nav.billing',
-    nav: { labelKey: 'layout.nav.billing', icon: 'receipt-line', order: 50 },
+    nav: { icon: 'receipt-line' },
   },
 },
 ```
@@ -1099,7 +1118,7 @@ describe('mapInvoiceToRecord', () => {
 - [ ] Все видимые тексты — через `t()`, ключи добавлены в `ru.ts` и `en.ts`.
 - [ ] Только токены дизайн-системы: нет хардкода цветов и статичных `style`; иконки — через `AppIcon`; модалки — на `AppModal`.
 - [ ] Новые функции `lib/` и новые компоненты `shared/ui` покрыты тестами.
-- [ ] `type-check`, `check:lint`, `check:format`, `vitest run` — зелёные.
+- [ ] `npm run check` зелёный.
 - [ ] Нет `console.*`, `debugger`, закомментированного и неиспользуемого кода.
 - [ ] Новые `VITE_*` переменные описаны в `shared/config` (и согласованы с CI/Docker).
 
