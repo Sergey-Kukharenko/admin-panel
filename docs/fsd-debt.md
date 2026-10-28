@@ -46,7 +46,6 @@
 |---|---|---|
 | `AppConfirmDialog`, `RevealSecretModal`, `ChangePasswordModal`, `RestApiConnectionModal`, `S3ConnectionModal`, `CreateApiSecretModal`, `CreateKeySecretModal`, `DatasetHistoryErrorDialog` | Каркас radix-диалога скопирован 8 раз, оверлеи и z-index расходятся | Базовый `AppModal` |
 | `AppTooltip`, `PredictionsManager`, `PredictionRunHistory` | `TooltipProvider` в каждом компоненте, в `App.vue` его нет | Один провайдер в `App.vue`, затем убрать локальные |
-| `app/router/index.ts`, `AdminHeader`, `SidebarNavigation` | Статические импорты страниц, нет `name`, пути строками, заголовки и меню отдельными списками, нет 404 | Ленивые страницы, `ROUTE_NAMES`, `meta` |
 | `ProductAccessTable.vue`, `DatasetUploadZone.vue` | Экспорт типов из `.vue` | Типы в `*.types.ts` |
 | 7 компонентов (`AppDrawer`, `DatasetHistoryGroupHeader`, …) | `$emit` в шаблоне | `emit` |
 | `tokens/colors.css` и 43 файла | Алиасы старой темы без переменной в Figma: `--background`, `--card`, `--surface`, `--foreground`, `--muted-foreground`, `--primary`, `--primary-foreground`, `--muted`, `--muted-hover`, `--muted-hover-soft`, `--border`, `--success`, `--danger` | Заменить на токены с именами Figma, сверяя место с макетом (`--surface` → `--bg-surface-primary`, `--muted` → `--bg-button-secondary`, `--muted-hover` → `--bg-button-secondary-hover` — значения совпадают; `--border` (#e5e5e5) отличается от `--border-default` (8%) — выбирать по макету), затем удалить алиасы |

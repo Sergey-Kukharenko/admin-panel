@@ -3,7 +3,7 @@ import { HelpMenu } from '@/features/help-menu';
 import { LanguageSwitcher } from '@/features/language-switcher';
 import { NotificationsPanel } from '@/features/notifications-panel';
 import { UserMenu } from '@/features/user-menu';
-import { FEATURE_NOTIFICATIONS } from '@/shared/config/env';
+import { FEATURE_NOTIFICATIONS } from '@/shared/config';
 </script>
 
 <template>

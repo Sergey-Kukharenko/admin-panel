@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 import type { Integration } from '@/entities/integration';
 import { useIntegrationStatus } from '@/entities/integration';
 import { RequestIntegrationConnectionModal } from '@/features/request-integration-connection';
-import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config/env';
+import { FEATURE_INTEGRATION_SECRETS } from '@/shared/config';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppEmptyState } from '@/shared/ui/app-empty-state';
 import { AppIcon } from '@/shared/ui/app-icon';

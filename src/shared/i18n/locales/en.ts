@@ -113,6 +113,11 @@ export const en: MessageSchema = {
     previousPage: 'Previous page',
     nextPage: 'Next page',
   },
+  notFound: {
+    title: 'Page not found',
+    description: 'The link may be outdated or the address may contain a typo.',
+    backHome: 'Go to home page',
+  },
   layout: {
     nav: {
       dashboard: 'Dashboard',

@@ -38,7 +38,7 @@
   - отложено до API ключей: модалки ключей → `features/manage-integration-secrets`, панели `rest-api-credentials` и `s3-credentials` → внутренние компоненты `widgets/integration-detail`;
   - [ ] `uploads-empty-state` → внутренний компонент `widgets/dataset-history-table/ui/DatasetHistoryEmptyState.vue` (действия в нём нет, только событие открыть дровер);
   - `entities/integration/ui/reveal-secret-modal` — тоже отложено, вместе с модалками ключей.
-- [ ] Роутер:
+- [x] Роутер:
   - `ROUTE_NAMES` в `shared/config/routes.ts`, навигация по имени маршрута;
   - ленивые страницы (`() => import('@/pages/x').then((m) => m.XPage)`);
   - сайдбар и шапка, построенные из `meta` (`titleKey`, `nav`, типизация `RouteMeta`);

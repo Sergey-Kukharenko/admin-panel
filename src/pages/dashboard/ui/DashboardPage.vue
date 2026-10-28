@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FEATURE_RECENT_OPERATIONS } from '@/shared/config/env';
+import { FEATURE_RECENT_OPERATIONS } from '@/shared/config';
 import { DashboardDataChart } from '@/widgets/dashboard-data-chart';
 import { DashboardProductCharts } from '@/widgets/dashboard-product-charts';
 import { DashboardProducts } from '@/widgets/dashboard-products';

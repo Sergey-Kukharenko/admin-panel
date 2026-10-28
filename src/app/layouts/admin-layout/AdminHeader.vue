@@ -1,42 +1,32 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+import { type RouteLocationRaw, useRoute } from 'vue-router';
 
 import { getIntegrationByType } from '@/entities/integration';
+import { ROUTE_NAMES } from '@/shared/config';
 
 import HeaderActions from './HeaderActions.vue';
 
 const route = useRoute();
 const { t } = useI18n({ useScope: 'global' });
 
-const routeTitles = computed<Record<string, string>>(() => ({
-  '/dashboard': t('layout.nav.dashboard'),
-  '/integrations': t('layout.nav.integrations'),
-  '/datasets': t('layout.nav.datasets'),
-  '/predictions': t('layout.nav.predictions'),
-  '/billing': t('layout.nav.billing'),
-  '/profile': t('layout.userMenu.profile'),
-}));
-
 interface BreadcrumbItem {
   label: string;
-  to?: string;
+  to?: RouteLocationRaw;
 }
 
 const breadcrumb = computed<BreadcrumbItem[]>(() => {
-  const type = route.params.type;
-
-  if (typeof type === 'string') {
-    const integration = getIntegrationByType(type);
+  if (route.name === ROUTE_NAMES.integrationDetail) {
+    const integration = getIntegrationByType(String(route.params.type));
 
     return [
-      { label: t('layout.nav.integrations'), to: '/integrations' },
+      { label: t('layout.nav.integrations'), to: { name: ROUTE_NAMES.integrations } },
       { label: integration?.name ?? t('layout.breadcrumbIntegrationFallback') },
     ];
   }
 
-  return [{ label: routeTitles.value[route.path] ?? t('layout.nav.datasets') }];
+  return route.meta.titleKey ? [{ label: t(route.meta.titleKey) }] : [];
 });
 </script>
 

@@ -1,54 +1,86 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 
 import { useUserStore } from '@/entities/user';
-import { BillingPage } from '@/pages/billing';
-import { DashboardPage } from '@/pages/dashboard';
-import { DatasetsPage } from '@/pages/datasets';
-import { IntegrationDetailPage } from '@/pages/integration-detail';
-import { IntegrationsPage } from '@/pages/integrations';
-import { PredictionsPage } from '@/pages/predictions';
-import { ProfilePage } from '@/pages/profile';
+import { ROUTE_NAMES } from '@/shared/config';
+import type { IconName } from '@/shared/ui/app-icon';
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean;
+    /** i18n key of the header title; also the sidebar label */
+    titleKey?: string;
+    /** Sidebar item; items follow the order of `routes` */
+    nav?: { icon: IconName };
+  }
+}
+
+export const routes: RouteRecordRaw[] = [
+  { path: '/', redirect: { name: ROUTE_NAMES.datasets } },
+  {
+    path: '/dashboard',
+    name: ROUTE_NAMES.dashboard,
+    component: () => import('@/pages/dashboard').then((m) => m.DashboardPage),
+    meta: { requiresAuth: true, titleKey: 'layout.nav.dashboard', nav: { icon: 'function-line' } },
+  },
+  {
+    path: '/integrations',
+    name: ROUTE_NAMES.integrations,
+    component: () => import('@/pages/integrations').then((m) => m.IntegrationsPage),
+    meta: {
+      requiresAuth: true,
+      titleKey: 'layout.nav.integrations',
+      nav: { icon: 'connector-line' },
+    },
+  },
+  {
+    path: '/integrations/:type',
+    name: ROUTE_NAMES.integrationDetail,
+    component: () => import('@/pages/integration-detail').then((m) => m.IntegrationDetailPage),
+    meta: { requiresAuth: true, titleKey: 'layout.nav.integrations' },
+  },
+  {
+    path: '/datasets',
+    name: ROUTE_NAMES.datasets,
+    component: () => import('@/pages/datasets').then((m) => m.DatasetsPage),
+    meta: {
+      requiresAuth: true,
+      titleKey: 'layout.nav.datasets',
+      nav: { icon: 'folder-check-line' },
+    },
+  },
+  {
+    path: '/predictions',
+    name: ROUTE_NAMES.predictions,
+    component: () => import('@/pages/predictions').then((m) => m.PredictionsPage),
+    meta: {
+      requiresAuth: true,
+      titleKey: 'layout.nav.predictions',
+      nav: { icon: 'sparkling-line' },
+    },
+  },
+  {
+    path: '/billing',
+    name: ROUTE_NAMES.billing,
+    component: () => import('@/pages/billing').then((m) => m.BillingPage),
+    meta: { requiresAuth: true, titleKey: 'layout.nav.billing', nav: { icon: 'receipt-line' } },
+  },
+  {
+    path: '/profile',
+    name: ROUTE_NAMES.profile,
+    component: () => import('@/pages/profile').then((m) => m.ProfilePage),
+    meta: { requiresAuth: true, titleKey: 'layout.userMenu.profile' },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: ROUTE_NAMES.notFound,
+    component: () => import('@/pages/not-found').then((m) => m.NotFoundPage),
+    meta: { requiresAuth: true, titleKey: 'notFound.title' },
+  },
+];
 
 export const router = createRouter({
   history: createWebHistory(),
-  routes: [
-    { path: '/', redirect: '/datasets' },
-    {
-      path: '/dashboard',
-      component: DashboardPage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/integrations',
-      component: IntegrationsPage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/integrations/:type',
-      component: IntegrationDetailPage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/datasets',
-      component: DatasetsPage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/predictions',
-      component: PredictionsPage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/billing',
-      component: BillingPage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/profile',
-      component: ProfilePage,
-      meta: { requiresAuth: true },
-    },
-  ],
+  routes,
 });
 
 router.beforeEach((to) => {

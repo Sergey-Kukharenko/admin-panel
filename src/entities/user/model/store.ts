@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import { API_URL } from '@/shared/config/api';
-import { IS_DEV } from '@/shared/config/env';
+import { API_URL } from '@/shared/config';
+import { IS_DEV } from '@/shared/config';
 
 import { authorizationApi } from '../api/authorization-api';
 import { sessionApi } from '../api/session-api';

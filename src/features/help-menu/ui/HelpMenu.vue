@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 
-import { FEATURE_HELP_LINKS } from '@/shared/config/env';
+import { FEATURE_HELP_LINKS } from '@/shared/config';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppDropdown, AppDropdownItem } from '@/shared/ui/app-dropdown';
 import { AppIcon } from '@/shared/ui/app-icon';

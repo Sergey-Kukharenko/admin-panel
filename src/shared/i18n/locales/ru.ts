@@ -117,6 +117,11 @@ export const ru = {
     previousPage: 'Предыдущая страница',
     nextPage: 'Следующая страница',
   },
+  notFound: {
+    title: 'Страница не найдена',
+    description: 'Возможно, ссылка устарела или в адресе опечатка.',
+    backHome: 'На главную',
+  },
   layout: {
     nav: {
       dashboard: 'Главная',

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 
-import { FEATURE_PRODUCT_ANALYTICS_LINKS } from '@/shared/config/env';
+import { FEATURE_PRODUCT_ANALYTICS_LINKS } from '@/shared/config';
 import { AppButton } from '@/shared/ui/app-button';
 import { AppIcon } from '@/shared/ui/app-icon';
 import { AppSkeleton } from '@/shared/ui/app-skeleton';

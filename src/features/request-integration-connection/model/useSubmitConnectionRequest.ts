@@ -6,6 +6,7 @@ import { toast } from 'vue-sonner';
 import type { IntegrationConnectionRequest } from '@/entities/integration';
 import { integrationKeys, useRequestIntegrationConnection } from '@/entities/integration';
 import { getHttpStatus } from '@/shared/api';
+import { ROUTE_NAMES } from '@/shared/config';
 
 /**
  * Sends a connection request and reacts to the result:
@@ -27,7 +28,7 @@ export function useSubmitConnectionRequest(options: { onClose: () => void }) {
         options.onClose();
         // PRD AC9: the success toast stays 5 seconds
         toast.success(t('integrations.detail.requestSuccess'), { duration: 5000 });
-        router.push('/integrations');
+        router.push({ name: ROUTE_NAMES.integrations });
       },
       onError: (error) => {
         if (getHttpStatus(error) === 409) {
