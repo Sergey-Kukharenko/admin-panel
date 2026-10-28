@@ -66,7 +66,7 @@ export function useDatasetHistoryTable() {
     isFetching,
   } = useQuery<FetchFilesBackendResponse>({
     queryKey: [
-      DATASET_HISTORY_QUERY_KEY,
+      ...DATASET_HISTORY_QUERY_KEY,
       // Используем функции-геттеры для реактивного отслеживания фильтров в ключе запроса
       () => filters.types.value.join(','),
       () => filters.status.value,

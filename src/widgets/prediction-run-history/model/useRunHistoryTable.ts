@@ -15,7 +15,7 @@ import { mapServiceRunToRunRecord } from './mapper';
 import type { PredictionRunRecord } from './types';
 import { RUN_HISTORY_PAGE_SIZE, useRunHistoryFilters } from './useRunHistoryFilters';
 
-const RUN_HISTORY_QUERY_KEY = 'prediction-run-history';
+const RUN_HISTORY_QUERY_KEY = ['prediction-run-history'] as const;
 
 export function useRunHistoryTable() {
   const filters = useRunHistoryFilters();
@@ -42,7 +42,7 @@ export function useRunHistoryTable() {
     refetch,
   } = useQuery({
     queryKey: computed(() => [
-      RUN_HISTORY_QUERY_KEY,
+      ...RUN_HISTORY_QUERY_KEY,
       selectedProductId.value,
       visibleServiceIds.value,
       orderBy.value,

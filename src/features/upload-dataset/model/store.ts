@@ -203,7 +203,7 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
 
       // Файл уже попал в /data-load/files — обновляем историю загрузок, чтобы
       // таблица (или переход из пустого состояния в неё) не ждала ручного рефреша
-      queryClient.invalidateQueries({ queryKey: [DATASET_HISTORY_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: DATASET_HISTORY_QUERY_KEY });
     } catch {
       upload.status = 'error';
       upload.progress = null;

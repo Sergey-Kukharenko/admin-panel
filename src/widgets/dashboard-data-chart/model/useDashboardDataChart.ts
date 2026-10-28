@@ -7,11 +7,8 @@ import { toIntlLocale } from '@/shared/i18n';
 import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
 import type { FilterOption } from '@/shared/ui/app-filter';
 
+import { URL_PARAMS } from '../config/urlParams';
 import { mapDataVolumeToChart } from '../lib/mapper';
-
-const QUERY_KEYS = {
-  dataTypeId: 'dataTypeId',
-} as const;
 
 /** Value of the "all data types" option: no type in the request and in the URL */
 const ALL_TYPES = '';
@@ -24,7 +21,7 @@ export function useDashboardDataChart() {
 
   // Raw URL value: a repeated or comma-joined parameter keeps its first id only
   const requestedTypeId = computed(() => {
-    const raw = route.query[QUERY_KEYS.dataTypeId];
+    const raw = route.query[URL_PARAMS.dataTypeId];
     const value = Array.isArray(raw) ? raw[0] : raw;
     return value?.split(',')[0]?.trim() ?? ALL_TYPES;
   });
@@ -50,7 +47,7 @@ export function useDashboardDataChart() {
   // One data type at a time, as the UI kit Filter type=single in the mockup (Figma 1322:142184)
   const selectedTypeId = computed<string>({
     get: () => (isKnownType.value ? requestedTypeId.value : ALL_TYPES),
-    set: (value) => replaceQuery({ [QUERY_KEYS.dataTypeId]: value || undefined }),
+    set: (value) => replaceQuery({ [URL_PARAMS.dataTypeId]: value || undefined }),
   });
 
   // The type list has arrived: only then an unknown id can be told from a list still loading.
@@ -60,7 +57,7 @@ export function useDashboardDataChart() {
   watch(
     [requestedTypeId, isKnownType, hasTypeList],
     ([id, known, listed]) => {
-      if (id && listed && !known) replaceQuery({ [QUERY_KEYS.dataTypeId]: undefined });
+      if (id && listed && !known) replaceQuery({ [URL_PARAMS.dataTypeId]: undefined });
     },
     { immediate: true },
   );

@@ -4,17 +4,11 @@ import { useRoute, useRouter } from 'vue-router';
 import { useProductDisplayNames, useProducts } from '@/entities/product';
 import { createQueryPatch } from '@/shared/lib/router/createQueryPatch';
 
+import { URL_PARAMS } from '../config/urlParams';
 import type { PredictionRunSortField, PredictionRunSortOrder } from './types';
 
 // Размер страницы фиксированный: выбора «Строк на стр.» в UI-ките нет (решение PM)
 export const RUN_HISTORY_PAGE_SIZE = 20;
-
-const QUERY_KEYS = {
-  product: 'product',
-  page: 'page',
-  sort: 'sort',
-  order: 'order',
-} as const;
 
 // Колонка таблицы -> поле order_by в GET /ml-service-runs (оно же пишется в URL).
 // Продукт и сервис бэк сортирует по системному имени (product_name / ml_service_name),
@@ -47,25 +41,25 @@ export function useRunHistoryFilters() {
   const replaceQuery = createQueryPatch(route, router);
 
   const selectedProductId = computed<string>({
-    get: () => route.query[QUERY_KEYS.product]?.toString() ?? '',
+    get: () => route.query[URL_PARAMS.product]?.toString() ?? '',
     set: (value) =>
-      replaceQuery({ [QUERY_KEYS.product]: value || undefined, [QUERY_KEYS.page]: undefined }),
+      replaceQuery({ [URL_PARAMS.product]: value || undefined, [URL_PARAMS.page]: undefined }),
   });
 
   const page = computed<number>({
     get() {
-      const value = Number(route.query[QUERY_KEYS.page]);
+      const value = Number(route.query[URL_PARAMS.page]);
       return Number.isInteger(value) && value > 0 ? value : 1;
     },
-    set: (value) => replaceQuery({ [QUERY_KEYS.page]: value > 1 ? String(value) : undefined }),
+    set: (value) => replaceQuery({ [URL_PARAMS.page]: value > 1 ? String(value) : undefined }),
   });
 
   const sortField = computed<PredictionRunSortField | null>(
-    () => SORT_FIELD_BY_API_FIELD[route.query[QUERY_KEYS.sort]?.toString() ?? ''] ?? null,
+    () => SORT_FIELD_BY_API_FIELD[route.query[URL_PARAMS.sort]?.toString() ?? ''] ?? null,
   );
 
   const sortOrder = computed<PredictionRunSortOrder>(() =>
-    route.query[QUERY_KEYS.order] === 'desc' ? 'desc' : 'asc',
+    route.query[URL_PARAMS.order] === 'desc' ? 'desc' : 'asc',
   );
 
   // Первый клик по колонке — по возрастанию, повторный — по убыванию
@@ -76,8 +70,8 @@ export function useRunHistoryFilters() {
     // Страницу не сбрасываем: число записей от сортировки не меняется, пользователь остается
     // на той же странице, просто с другим порядком строк
     replaceQuery({
-      [QUERY_KEYS.sort]: RUN_HISTORY_SORT_API_FIELD[field],
-      [QUERY_KEYS.order]: order,
+      [URL_PARAMS.sort]: RUN_HISTORY_SORT_API_FIELD[field],
+      [URL_PARAMS.order]: order,
     });
   }
 

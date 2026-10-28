@@ -1,4 +1,5 @@
-export const QUERY_KEYS = {
+// URL query parameter names (filters, sort, pagination), not TanStack Query keys
+export const URL_PARAMS = {
   types: 'types',
   status: 'status',
   period: 'period',
