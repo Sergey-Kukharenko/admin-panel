@@ -209,6 +209,11 @@
     var(--color-neutral-150) 0 1px,
     transparent 1px 4.16px
   );
+  /* Series square of the chart tooltip (Figma chart tooltip 55:2287): a raw white fill under the
+     series color (balance-daily and payments are translucent greys) and a raw 20% white inside
+     stroke around the dark vip-users square */
+  --bg-chart-tooltip-swatch: var(--color-neutral-0);
+  --border-chart-tooltip-swatch: color-mix(in srgb, var(--color-neutral-0) 20%, transparent);
 
   /* Shadows */
   --shadow-panel:
@@ -239,8 +244,9 @@
   --shadow-sidebar-banner:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
 
-  /* Tooltip */
-  --bg-foreground-overlay: #1c1c1e;
+  /* Tooltip: Figma foreground/overlay #18181b (the chart tooltip 55:2287 and the Tooltip arrow 55:850);
+     a raw color in Figma, the same as colors/eclipse */
+  --bg-foreground-overlay: var(--color-eclipse);
   --text-overlay: var(--color-neutral-0);
 
   /* ML product card background (Figma "product card" 52:2382, a gradient has no variable).

@@ -1,5 +1,12 @@
 import type { ProductChartResponse } from '@/entities/product';
-import { buildAxisTicks, formatDateLabels, getAxisMax, listDays } from '@/shared/lib/chart';
+import type { ChartTooltip } from '@/shared/lib/chart';
+import {
+  buildAxisTicks,
+  buildChartTooltip,
+  formatDateLabels,
+  getAxisMax,
+  listDays,
+} from '@/shared/lib/chart';
 
 import { EMPTY_LINE_COLOR, SERIES_COLORS } from '../config/seriesColors';
 import type { ProductChartLine, ProductChartPlotPoint, ProductChartView } from '../model/types';
@@ -17,6 +24,11 @@ interface MapOptions {
   fallbackPeriod: ProductChartResponse['period'];
 }
 
+/** x of a day in percent of the plot: the first day on the left edge, the last one on the right */
+function dayX(index: number, count: number): number {
+  return count === 1 ? 50 : (index / (count - 1)) * 100;
+}
+
 function toPoints(
   days: string[],
   valueOf: (date: string) => number,
@@ -24,7 +36,7 @@ function toPoints(
 ): ProductChartPlotPoint[] {
   return days.map((date, index) => ({
     date,
-    x: days.length === 1 ? 50 : (index / (days.length - 1)) * 100,
+    x: dayX(index, days.length),
     y: (1 - valueOf(date) / axisMax) * 100,
   }));
 }
@@ -59,16 +71,20 @@ export function mapProductChartToView(
   const axisMax = getAxisMax(maxValue);
   const ticks = buildAxisTicks(axisMax, intlLocale);
 
+  const shownSeries = shown.map(({ item, color }) => ({
+    seriesKey: item.series_key,
+    label: serviceName(item.series_key),
+    color,
+    values: new Map(item.points.map((point) => [point.date, point.value])),
+  }));
+
   const lines: ProductChartLine[] =
     series.length > 0
-      ? shown.map(({ item, color }) => {
-          const values = new Map(item.points.map((point) => [point.date, point.value]));
-          return {
-            seriesKey: item.series_key,
-            color,
-            points: toPoints(days, (date) => values.get(date) ?? 0, axisMax),
-          };
-        })
+      ? shownSeries.map(({ seriesKey, color, values }) => ({
+          seriesKey,
+          color,
+          points: toPoints(days, (date) => values.get(date) ?? 0, axisMax),
+        }))
       : [
           {
             seriesKey: 'empty',
@@ -76,6 +92,23 @@ export function mapProductChartToView(
             points: toPoints(days, () => 0, axisMax),
           },
         ];
+
+  // the tooltip of a day lists the shown lines with the names of the legend (Figma 1323:162588)
+  const tooltips: ChartTooltip[] =
+    shownSeries.length > 0
+      ? days.map((date) =>
+          buildChartTooltip(
+            date,
+            shownSeries.map(({ seriesKey, label, color, values }) => ({
+              key: seriesKey,
+              label,
+              value: values.get(date) ?? 0,
+              color,
+            })),
+            intlLocale,
+          ),
+        )
+      : [];
 
   return {
     ticks,
@@ -87,5 +120,7 @@ export function mapProductChartToView(
       color,
       hidden: hiddenSeries.has(item.series_key),
     })),
+    positions: days.map((_, index) => dayX(index, days.length)),
+    tooltips,
   };
 }

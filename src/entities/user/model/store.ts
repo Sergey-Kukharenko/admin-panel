@@ -42,7 +42,8 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function login() {
-    const url = new URL(`${API_URL}/authorization/login`);
+    // A relative API_URL (/api) needs an explicit base.
+    const url = new URL(`${API_URL}/authorization/login`, window.location.origin);
 
     if (IS_DEV) {
       url.searchParams.set('frontend', 'local');

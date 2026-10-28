@@ -1,6 +1,13 @@
 import type { DataVolumeChartResponse } from '@/entities/dataset';
-import { buildAxisTicks, formatDateLabels, getAxisMax, listDays } from '@/shared/lib/chart';
+import {
+  buildAxisTicks,
+  buildChartTooltip,
+  formatDateLabels,
+  getAxisMax,
+  listDays,
+} from '@/shared/lib/chart';
 
+import { DATA_TYPE_COLORS, OTHER_DATA_TYPE_COLOR } from '../config/seriesColors';
 import type { DataVolumeBar, DataVolumeChartView } from '../model/types';
 
 /**
@@ -18,14 +25,21 @@ export function mapDataVolumeToChart(
   }));
 
   const bars: DataVolumeBar[] = days.map((date) => {
-    const segments = valuesBySeries
-      .map(({ seriesKey, values }) => ({
-        seriesKey,
-        value: values.get(date) ?? 0,
-      }))
-      .filter((segment) => segment.value > 0);
+    const values = valuesBySeries.map(({ seriesKey, values: byDate }) => ({
+      seriesKey,
+      value: byDate.get(date) ?? 0,
+    }));
+    const total = values.reduce((sum, { value }) => sum + value, 0);
 
-    return { date, total: segments.reduce((sum, segment) => sum + segment.value, 0), segments };
+    // every data type of the response, zeros included; the type name is the label
+    const series = values.map(({ seriesKey, value }) => ({
+      key: seriesKey,
+      label: seriesKey,
+      value,
+      color: DATA_TYPE_COLORS[seriesKey] ?? OTHER_DATA_TYPE_COLOR,
+    }));
+
+    return { date, total, tooltip: total > 0 ? buildChartTooltip(date, series, intlLocale) : null };
   });
 
   const axisMax = getAxisMax(Math.max(0, ...bars.map((bar) => bar.total)));

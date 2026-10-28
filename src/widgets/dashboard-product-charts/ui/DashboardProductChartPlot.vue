@@ -1,11 +1,18 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 import { AppChartGrid } from '@/shared/ui/app-chart-grid';
+import { AppChartTooltip, AppChartTooltipLayer } from '@/shared/ui/app-chart-tooltip';
 
 import type { ProductChartView } from '../model/types';
 
 defineProps<{
   chart: ProductChartView;
+  /** Product name for the accessible name of the chart */
+  productName: string;
 }>();
+
+const { t } = useI18n({ useScope: 'global' });
 </script>
 
 <template>
@@ -13,7 +20,7 @@ defineProps<{
     <!-- Figma Linechart 1323:161280 (frames 1322:142194, 1302:140879): lines from the top grid line
          (8px) to the 0 line (212px), points 3px inside the grid so the 6px markers of the first and
          last day stay in it (the mockup starts the lines under the value labels) -->
-    <div class="absolute top-2 right-0.75 left-10.25 h-51">
+    <div class="absolute top-2 right-0.75 left-10.25 h-51" aria-hidden="true">
       <svg
         class="absolute inset-0 size-full overflow-visible"
         viewBox="0 0 100 100"
@@ -52,5 +59,24 @@ defineProps<{
         />
       </div>
     </div>
+
+    <!-- the tooltip of a day with the shown lines (Figma 1323:162588) and the vertical cursor of the
+         UI kit line chart (52:3356); none on a chart without data: the zero line has nothing to tell -->
+    <AppChartTooltipLayer
+      v-if="chart.tooltips.length > 0"
+      class="absolute top-2 right-0.75 left-10.25 h-51"
+      :positions="chart.positions"
+      cursor
+      :label="t('dashboard.productCharts.plotLabel', { product: productName })"
+      :describe="(index) => chart.tooltips[index]?.description ?? ''"
+    >
+      <template #default="{ index }">
+        <AppChartTooltip
+          v-if="chart.tooltips[index]"
+          :title="chart.tooltips[index].title"
+          :rows="chart.tooltips[index].rows"
+        />
+      </template>
+    </AppChartTooltipLayer>
   </AppChartGrid>
 </template>

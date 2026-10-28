@@ -3,6 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { lastDaysPeriod, listDays } from '../days';
 
 describe('listDays', () => {
+  it.each([
+    ['not a date', '2026-06-02'],
+    ['2026-05-30', ''],
+    ['', ''],
+  ])('an invalid period %j – %j gives no days instead of an endless loop', (start, end) => {
+    expect(listDays(start, end)).toEqual([]);
+  });
+
   it('lists every UTC day of the period inclusive, across a month end', () => {
     expect(listDays('2026-05-30', '2026-06-02')).toEqual([
       '2026-05-30',

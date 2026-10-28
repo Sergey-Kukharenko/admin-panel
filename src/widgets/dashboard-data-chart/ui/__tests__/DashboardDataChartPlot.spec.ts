@@ -2,6 +2,8 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 
+import { i18n } from '@/shared/i18n';
+
 import type { DataVolumeChartView } from '../../model/types';
 import DashboardDataChartPlot from '../DashboardDataChartPlot.vue';
 
@@ -21,21 +23,40 @@ const CHART: DataVolumeChartView = {
     {
       date: '2026-05-13',
       total: 150_000,
-      segments: [
-        { seriesKey: 'bets', value: 100_000 },
-        { seriesKey: 'users', value: 50_000 },
-      ],
+      tooltip: {
+        title: '13 мая 2026',
+        rows: [
+          {
+            key: 'bets',
+            label: 'bets',
+            value: '100 000',
+            color: 'var(--stats-bets)',
+          },
+          {
+            key: 'users',
+            label: 'users',
+            value: '50 000',
+            color: 'var(--stats-users)',
+          },
+        ],
+        description: '13 мая 2026, bets 100 000, users 50 000',
+      },
     },
-    { date: '2026-05-14', total: 0, segments: [] },
+    { date: '2026-05-14', total: 0, tooltip: null },
     {
       date: '2026-05-15',
       total: 200_000,
-      segments: [{ seriesKey: 'bets', value: 200_000 }],
+      tooltip: {
+        title: '15 мая 2026',
+        rows: [{ key: 'bets', label: 'bets', value: '200 000', color: 'var(--stats-bets)' }],
+        description: '15 мая 2026, bets 200 000',
+      },
     },
   ],
 };
 
-const render = () => mount(DashboardDataChartPlot, { props: { chart: CHART } });
+const render = () =>
+  mount(DashboardDataChartPlot, { props: { chart: CHART }, global: { plugins: [i18n] } });
 const columnsOf = (wrapper: ReturnType<typeof render>) => wrapper.findAll('[data-chart-bar]');
 
 describe('DashboardDataChartPlot', () => {
@@ -71,5 +92,54 @@ describe('DashboardDataChartPlot', () => {
     expect(empty?.classes()).toEqual(
       expect.arrayContaining(['h-37', 'bg-(image:--bg-chart-empty-bar-hatch)']),
     );
+  });
+
+  it('the columns are hidden from screen readers; the tooltip layer is the focusable chart', () => {
+    const wrapper = render();
+    const layer = wrapper.find('[data-chart-tooltip-layer]');
+
+    expect(columnsOf(wrapper)[0]?.element.closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(layer.attributes('tabindex')).toBe('0');
+    expect(layer.attributes('aria-label')).toBe(i18n.global.t('dashboard.dataChart.plotLabel'));
+  });
+
+  it('the layer cells are centered on the columns: (index + 0.5) / days', async () => {
+    const wrapper = render();
+    await wrapper.find('[data-chart-tooltip-layer]').trigger('keydown', { key: 'ArrowRight' });
+
+    const tooltip = wrapper.find('[data-chart-tooltip]');
+    expect(tooltip.text()).toContain('13 мая 2026');
+    expect(tooltip.findAll('[data-chart-tooltip-row]').map((row) => row.text())).toEqual([
+      'bets100 000',
+      'users50 000',
+    ]);
+    expect(tooltip.element.parentElement?.getAttribute('style')).toContain(
+      `left: ${(0.5 / 3) * 100}%`,
+    );
+  });
+
+  it('the arrows skip a hatched day: it has no tooltip (WT-328)', async () => {
+    const wrapper = render();
+    const layer = wrapper.find('[data-chart-tooltip-layer]');
+    await layer.trigger('keydown', { key: 'ArrowRight' });
+    await layer.trigger('keydown', { key: 'ArrowRight' });
+
+    expect(wrapper.find('[data-chart-tooltip]').text()).toContain('15 мая 2026');
+    expect(wrapper.find('[data-chart-tooltip-layer]').attributes('aria-valuetext')).toBe(
+      '15 мая 2026, bets 200 000',
+    );
+  });
+
+  it('a period without uploads: no tooltip layer, nothing focusable that would stay silent', () => {
+    const empty = {
+      ...CHART,
+      bars: CHART.bars.map((bar) => ({ ...bar, total: 0, tooltip: null })),
+    };
+    const wrapper = mount(DashboardDataChartPlot, {
+      props: { chart: empty },
+      global: { plugins: [i18n] },
+    });
+
+    expect(wrapper.find('[data-chart-tooltip-layer]').exists()).toBe(false);
   });
 });

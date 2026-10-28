@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { formatDateLabels } from '../dateLabels';
+import { formatDateLabels, formatTooltipDate } from '../dateLabels';
 
 describe('formatDateLabels', () => {
   const days = ['2026-05-13', '2026-05-14', '2026-05-15', '2026-05-16', '2026-05-17'];
@@ -52,5 +52,30 @@ describe('formatDateLabels', () => {
 
   it('no days: no labels', () => {
     expect(formatDateLabels([], 'ru-RU')).toEqual([]);
+  });
+});
+
+describe('formatTooltipDate', () => {
+  it.each([
+    ['ru-RU', '12 мая 2026'],
+    ['en-US', 'May 12, 2026'],
+  ])('%s: the day, the month and the year without " г."', (intlLocale, label) => {
+    expect(formatTooltipDate('2026-05-12', intlLocale)).toBe(label);
+  });
+
+  describe('in a timezone west of UTC', () => {
+    const tz = process.env.TZ;
+
+    afterEach(() => {
+      // assigning undefined would store the string "undefined"
+      if (tz === undefined) delete process.env.TZ;
+      else process.env.TZ = tz;
+    });
+
+    it('a UTC day: the date does not shift back', () => {
+      process.env.TZ = 'America/New_York';
+
+      expect(formatTooltipDate('2026-06-01', 'ru-RU')).toBe('1 июня 2026');
+    });
   });
 });

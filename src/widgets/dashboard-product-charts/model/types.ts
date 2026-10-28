@@ -1,3 +1,4 @@
+import type { ChartSeriesColor, ChartTooltip } from '@/shared/lib/chart';
 import type { AppChartGridTick } from '@/shared/ui/app-chart-grid';
 
 /** One point of a line, in percent of the plot area */
@@ -15,7 +16,7 @@ export interface ProductChartLine {
   /** `series_key` from the API (`main`, `vip-churn`, …), `empty` for the zero line */
   seriesKey: string;
   /** Color token of the line and its markers */
-  color: `var(--${string})`;
+  color: ChartSeriesColor;
   points: ProductChartPlotPoint[];
 }
 
@@ -25,7 +26,7 @@ export interface ProductChartLegendItem {
   /** Display name of the service from the product dictionary (Recommended for You, VIP Churn, …) */
   label: string;
   /** CSS color of the line, for the checkbox */
-  color: `var(--${string})`;
+  color: ChartSeriesColor;
   /** Hidden from the chart by a click in the legend */
   hidden: boolean;
 }
@@ -39,6 +40,14 @@ export interface ProductChartView {
   lines: ProductChartLine[];
   /** Every service of the response, hidden ones included; empty without data */
   legend: ProductChartLegendItem[];
+  /** x of every day of the period in percent of the plot (the points of the lines stand on them) */
+  positions: number[];
+  /**
+   * One tooltip per day of the period, in the point order: the date and every shown line in the
+   * legend order, named as in the legend (WT-328); empty without data or with every line hidden:
+   * the zero line has nothing to tell
+   */
+  tooltips: ChartTooltip[];
 }
 
 /** One product chart of the block: the header is always shown, the plot once the data is loaded */

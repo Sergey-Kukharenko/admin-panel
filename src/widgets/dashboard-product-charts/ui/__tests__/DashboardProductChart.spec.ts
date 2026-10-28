@@ -20,6 +20,8 @@ const CHART: ProductChartView = {
       hidden: true,
     },
   ],
+  positions: [],
+  tooltips: [],
 };
 
 function render(overrides: Partial<ProductChartItem> = {}) {

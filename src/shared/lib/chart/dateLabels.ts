@@ -15,3 +15,23 @@ export function formatDateLabels(days: readonly string[], intlLocale: string): s
     .filter((day): day is string => Boolean(day))
     .map((day) => format.format(new Date(`${day}T00:00:00Z`)));
 }
+
+/**
+ * Day of a chart tooltip: "12 мая 2026" / "May 12, 2026", in UTC as the period. The mockup writes
+ * «12 Мая, 2026» (Figma chart tooltip 55:2287); the portal dates keep the lowercase month without a
+ * comma (asked in WT-328). Intl adds " г." after the year in ru-RU: everything after the year is cut.
+ */
+export function formatTooltipDate(day: string, intlLocale: string): string {
+  const parts = new Intl.DateTimeFormat(intlLocale, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).formatToParts(new Date(`${day}T00:00:00Z`));
+  const yearIndex = parts.findIndex((part) => part.type === 'year');
+
+  return parts
+    .slice(0, yearIndex + 1)
+    .map((part) => part.value)
+    .join('');
+}

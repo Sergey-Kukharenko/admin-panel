@@ -18,6 +18,7 @@ export const en: MessageSchema = {
       period: 'last 30 days',
       rows: 'Row | Rows',
       allTypes: 'All data types',
+      plotLabel: 'Chart by day: use the left and right arrows for the values of a day',
       error: {
         title: 'Could not load the chart',
         description: 'Try again in a couple of minutes',
@@ -33,6 +34,7 @@ export const en: MessageSchema = {
       },
       analyticsLink: 'Go to detailed analytics',
       legend: '{product} chart lines',
+      plotLabel: '{product}: chart by day, use the left and right arrows for the values of a day',
       error: {
         title: 'Could not load the chart',
         description: 'Try again in a couple of minutes',

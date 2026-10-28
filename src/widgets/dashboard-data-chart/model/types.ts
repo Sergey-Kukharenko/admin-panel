@@ -1,11 +1,5 @@
+import type { ChartTooltip } from '@/shared/lib/chart';
 import type { AppChartGridTick } from '@/shared/ui/app-chart-grid';
-
-/** One data type of a day: the breakdown for the column tooltip (WT-328); the column is one color */
-export interface DataVolumeSegment {
-  /** Data type name from the API (`bets`, `users`, …), shown as is: it matches Swagger */
-  seriesKey: string;
-  value: number;
-}
 
 /** One day of the chart */
 export interface DataVolumeBar {
@@ -13,8 +7,12 @@ export interface DataVolumeBar {
   date: string;
   /** Sum of the day; 0 — nothing was uploaded, drawn as a hatched column */
   total: number;
-  /** Non-empty data types of the day in the API order */
-  segments: DataVolumeSegment[];
+  /**
+   * The day and every data type of the response in the API order, zeros included; the type name is
+   * shown as is (it matches Swagger). null for a day without uploads: the hatching already says
+   * «no data», no tooltip (WT-328)
+   */
+  tooltip: ChartTooltip | null;
 }
 
 export interface DataVolumeChartView {

@@ -22,6 +22,8 @@ const ITEMS: ProductChartItem[] = [
       ticks: [200, 150, 100, 50, 0].map((value) => ({ value, label: String(value) })),
       dateLabels: ['first', 'middle', 'last'],
       lines: [],
+      positions: [],
+      tooltips: [],
       legend: [
         {
           seriesKey: 'main',

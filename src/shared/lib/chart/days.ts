@@ -3,11 +3,17 @@ import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
 
-/** Every UTC day from `start` to `end` inclusive, `YYYY-MM-DD` (the period of a chart in UTC days) */
+/**
+ * Every UTC day from `start` to `end` inclusive, `YYYY-MM-DD` (the period of a chart in UTC days).
+ * An unparsable date gives no days: a comparison with an invalid date is always false, so the loop
+ * would never end and freeze the tab
+ */
 export function listDays(start: string, end: string): string[] {
   const days: string[] = [];
+  const first = dayjs.utc(start);
   const last = dayjs.utc(end);
-  for (let day = dayjs.utc(start); !day.isAfter(last); day = day.add(1, 'day')) {
+  if (!first.isValid() || !last.isValid()) return days;
+  for (let day = first; !day.isAfter(last); day = day.add(1, 'day')) {
     days.push(day.format('YYYY-MM-DD'));
   }
   return days;

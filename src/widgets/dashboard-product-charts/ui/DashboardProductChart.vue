@@ -42,7 +42,7 @@ const { t } = useI18n({ useScope: 'global' });
     />
     <DashboardProductChartErrorState v-else-if="item.isError" @retry="emit('retry')" />
     <template v-else-if="item.chart">
-      <DashboardProductChartPlot :chart="item.chart" />
+      <DashboardProductChartPlot :chart="item.chart" :product-name="item.title" />
       <DashboardProductChartLegend
         v-if="item.chart.legend.length > 0"
         :items="item.chart.legend"

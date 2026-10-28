@@ -36,9 +36,19 @@ describe('AppChartGrid', () => {
     expect(wrapper.findAll('[data-chart-date]')).toHaveLength(3);
   });
 
-  it('is hidden from screen readers: the chart is described by its title', () => {
-    const wrapper = mount(AppChartGrid, { props: { ticks: TICKS, dateLabels: [] } });
+  it('hides the axis and the dates from screen readers, not the slot (the tooltip layer, WT-328)', () => {
+    const wrapper = mount(AppChartGrid, {
+      props: { ticks: TICKS, dateLabels: ['July 1'] },
+      slots: { default: '<div data-plot />' },
+    });
 
-    expect(wrapper.attributes('aria-hidden')).toBe('true');
+    expect(wrapper.attributes('aria-hidden')).toBeUndefined();
+    expect(
+      wrapper.find('[data-chart-tick]').element.closest('[aria-hidden="true"]'),
+    ).not.toBeNull();
+    expect(
+      wrapper.find('[data-chart-date]').element.closest('[aria-hidden="true"]'),
+    ).not.toBeNull();
+    expect(wrapper.find('[data-plot]').element.closest('[aria-hidden="true"]')).toBeNull();
   });
 });

@@ -144,4 +144,110 @@ describe('mapProductChartToView', () => {
       expect(map(null).legend).toEqual([]);
     });
   });
+
+  describe('tooltips (WT-328)', () => {
+    it('one per day: the date and every shown line with its legend name and color (1323:162588)', () => {
+      const { tooltips } = map(response());
+
+      expect(tooltips).toHaveLength(3);
+      expect(tooltips[1]).toEqual({
+        title: '14 мая 2026',
+        rows: [
+          {
+            key: 'main',
+            label: 'name:main',
+            value: '200',
+            color: 'var(--stats-users)',
+          },
+          {
+            key: 'similar',
+            label: 'name:similar',
+            value: '0',
+            color: 'var(--stats-bets-daily)',
+          },
+        ],
+        description: '14 мая 2026, name:main 200, name:similar 0',
+      });
+    });
+
+    it('a line hidden in the legend leaves the tooltip too', () => {
+      const { tooltips } = map(response(), new Set(['main']));
+
+      expect(tooltips[0]?.rows.map((row) => row.key)).toEqual(['similar']);
+    });
+
+    it('no tooltips without data, for a product that is not connected, with every line hidden', () => {
+      expect(map(response({ has_data: false })).tooltips).toEqual([]);
+      expect(map(null).tooltips).toEqual([]);
+      expect(map(response(), new Set(['main', 'similar'])).tooltips).toEqual([]);
+    });
+
+    it('the squares take the line colors: the 4th line is vip-users', () => {
+      const four = response({
+        series: ['a', 'b', 'c', 'd'].map((key) => ({
+          series_key: key,
+          points: [{ date: '2026-05-13', value: 1 }],
+        })),
+      });
+
+      expect(map(four).tooltips[0]?.rows.map((row) => row.color)).toEqual([
+        'var(--stats-users)',
+        'var(--stats-bets-daily)',
+        'var(--stats-neutral)',
+        'var(--stats-vip-users)',
+      ]);
+    });
+
+    it('positions: x of every day, the same as the points of the lines (one tooltip per day)', () => {
+      const chart = map(response());
+
+      expect(chart.positions).toEqual([0, 50, 100]);
+      expect(chart.positions).toEqual(chart.lines[0]?.points.map((point) => point.x));
+      expect(chart.tooltips).toHaveLength(chart.positions.length);
+    });
+
+    it('positions of a one-day period: the middle', () => {
+      const one = response({
+        period: { start_date: '2026-05-13', end_date: '2026-05-13', granularity: 'day' },
+      });
+
+      expect(map(one).positions).toEqual([50]);
+    });
+
+    it('values and the date in the interface language', () => {
+      const big = response({
+        series: [{ series_key: 'main', points: [{ date: '2026-05-13', value: 108_217 }] }],
+      });
+      const en = mapProductChartToView(big, { ...OPTIONS, intlLocale: 'en-US' });
+
+      expect(map(big).tooltips[0]?.rows[0]?.value).toBe('108\u00a0217');
+      expect(en.tooltips[0]?.rows[0]?.value).toBe('108,217');
+      expect(en.tooltips[0]?.title).toBe('May 13, 2026');
+    });
+  });
+
+  it('the axis keeps the short labels after a legend toggle (Jira WT-328: «200k», not «200000»)', () => {
+    const big = response({
+      series: [
+        { series_key: 'main', points: [{ date: '2026-05-13', value: 380_000 }] },
+        { series_key: 'similar', points: [{ date: '2026-05-13', value: 90_000 }] },
+      ],
+    });
+
+    expect(map(big).ticks.map((tick) => tick.label)).toEqual(['400k', '300k', '200k', '100k', '0']);
+    expect(map(big, new Set(['main'])).ticks.map((tick) => tick.label)).toEqual([
+      '100k',
+      '75k',
+      '50k',
+      '25k',
+      '0',
+    ]);
+  });
+
+  it('an invalid period from the API: no points and no tooltips, the chart does not hang', () => {
+    const chart = map(response({ period: { ...PERIOD, start_date: 'garbage' } }));
+
+    expect(chart.lines.every((line) => line.points.length === 0)).toBe(true);
+    expect(chart.tooltips).toEqual([]);
+  });
 });
