@@ -21,7 +21,7 @@
 
 ## Этап 1 — быстрые исправления
 
-- [ ] Точечные нарушения FSD:
+- [x] Точечные нарушения FSD:
   - перенести `shared/api/session-api.ts` и `shared/api/authorization-api.ts` в `entities/user/api/`;
   - вынести `ErrorDetails` из `widgets/dataset-history-table/ui/DatasetHistoryErrorDialog.vue` в `model/types.ts`;
   - заменить импорты своего же слайса по алиасу на относительные (`entities/dataset/ui/dataset-template-icon/DatasetTemplateIcon.vue`, `widgets/predictions-manager/model/constants.ts`).

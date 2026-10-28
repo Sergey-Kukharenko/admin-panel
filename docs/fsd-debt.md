@@ -14,15 +14,11 @@
 
 | Где | Отклонение | Как привести |
 |---|---|---|
-| `shared/api/session-api.ts`, `shared/api/authorization-api.ts` | `shared` импортирует `UserProfile` из `@/entities/user` (импорт вверх, цикл) | Перенести в `entities/user/api/` |
 | `widgets/integration-detail/ui/IntegrationDetail.vue` | Импортирует 4 виджета: `rest-api-connection-modal`, `rest-api-credentials`, `s3-connection-modal`, `s3-credentials` | Модалки → `features/connect-rest-api`, `features/connect-s3`; панели ключей → `features/manage-api-secrets` (или собирать на странице) |
 | `widgets/dataset-history-table/ui/DatasetHistoryTable.vue` | Импортирует виджет `uploads-empty-state` | Пустое состояние с CTA загрузки → в `features/upload-dataset` или внутрь виджета |
-| `widgets/dataset-history-table/model/useDatasetHistoryGroupErrors.ts` | `model` импортирует тип из `.vue` (`../ui/DatasetHistoryErrorDialog.vue`) | Вынести `ErrorDetails` в `model/types.ts` |
 | `entities/integration/ui/reveal-secret-modal` | Модалка-действие в слое `entities` | Перенести в `features` |
 | `entities/integration/model/useIntegrationStatus.ts` (`useRequestIntegrationConnection`) | Мутация действия пользователя в `entities` | Перенести в `features/connect-*` вместе с модалками |
 | `entities/integration/model/store.ts` | Мутации на моках в Pinia сущности | Временное решение под фича-флагом; не образец. Заменить на API, когда появится |
-| `entities/dataset/ui/dataset-template-icon/DatasetTemplateIcon.vue` | Свой же слайс по алиасу `@/entities/dataset/model/types` | Относительный импорт |
-| `widgets/predictions-manager/model/constants.ts` | Свой же слайс по алиасу `@/widgets/predictions-manager/assets/...` | Относительный импорт |
 
 Импортов вверх из `entities` и `features`, кросс-импортов между `features` и между `entities` нет; страницы тонкие и без запросов.
 

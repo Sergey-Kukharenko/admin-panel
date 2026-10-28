@@ -6,7 +6,7 @@ import { getAppLocale } from '@/shared/i18n';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 import { getContentDispositionFilename } from '@/shared/lib/getContentDispositionFilename';
 
-import type { ErrorDetails } from '../ui/DatasetHistoryErrorDialog.vue';
+import type { ErrorDetails } from './types';
 import { formatDatasetGroupDate } from './utils';
 
 interface ErrorFile {

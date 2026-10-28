@@ -1,6 +1,6 @@
-import type { UserProfile } from '@/entities/user';
+import { apiClient } from '@/shared/api';
 
-import { apiClient } from './api-client';
+import type { UserProfile } from '../model/types';
 
 export const sessionApi = {
   me() {

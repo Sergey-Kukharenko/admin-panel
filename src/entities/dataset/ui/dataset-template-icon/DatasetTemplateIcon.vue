@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { DatasetIcon } from '@/entities/dataset/model/types';
 import { AppIcon, type IconName } from '@/shared/ui/app-icon';
+
+import type { DatasetIcon } from '../../model/types';
 
 defineOptions({
   name: 'DatasetTemplateIcon',
