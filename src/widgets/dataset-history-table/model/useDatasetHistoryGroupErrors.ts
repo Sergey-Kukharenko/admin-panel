@@ -2,7 +2,7 @@ import { ref } from 'vue';
 
 import type { ValidationErrors } from '@/entities/dataset';
 import { datasetApi } from '@/entities/dataset';
-import { getAppLocale } from '@/shared/i18n';
+import { getAppLocale, toIntlLocale } from '@/shared/i18n';
 import { downloadBlob } from '@/shared/lib/downloadBlob';
 import { getContentDispositionFilename } from '@/shared/lib/getContentDispositionFilename';
 
@@ -26,7 +26,7 @@ export function useDatasetHistoryGroupErrors(groupDate: string) {
     activeFile.value = file;
 
     details.value = {
-      checkDate: formatDatasetGroupDate(groupDate),
+      checkDate: formatDatasetGroupDate(groupDate, toIntlLocale(getAppLocale())),
       dataType: categoryTitle,
       checkedRows: file.rowsCount,
       errorsFound: countValidationErrors(file.validation_errors),

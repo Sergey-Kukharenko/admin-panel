@@ -3,13 +3,13 @@ import dayjs from 'dayjs';
 import type { DatasetPeriod } from '../model/types';
 
 /**
- * Переводит ISO-дату с бэкенда, например "2026-07-24T09:57:23.585609Z",
- * в формат "24 июл. 2026 г."
+ * ISO date from the backend ("2026-07-24T09:57:23.585609Z") → "24 июл. 2026 г." / "Jul 24, 2026"
+ * in the interface locale
  */
-export function formatDatasetGroupDate(dateIso: string): string {
+export function formatDatasetGroupDate(dateIso: string, intlLocale: string): string {
   if (!dateIso) return '';
 
-  return new Intl.DateTimeFormat('ru-RU', {
+  return new Intl.DateTimeFormat(intlLocale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',

@@ -1,7 +1,9 @@
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 import { useProductDisplayNames, useProducts } from '@/entities/product';
+import { toIntlLocale } from '@/shared/i18n';
 import { createQueryPatch } from '@/shared/lib/router';
 
 import { URL_PARAMS } from '../config/urlParams';
@@ -85,11 +87,12 @@ export function useRunHistoryFilters() {
 
   const { data: productsResponse } = useProducts();
   const { productName } = useProductDisplayNames();
+  const { locale } = useI18n({ useScope: 'global' });
 
   const productOptions = computed(() =>
     (productsResponse.value ?? [])
       .map((product) => ({ id: product.product_id, name: productName(product.name) }))
-      .sort((first, second) => first.name.localeCompare(second.name, 'ru')),
+      .sort((first, second) => first.name.localeCompare(second.name, toIntlLocale(locale.value))),
   );
 
   const selectedProductName = computed(

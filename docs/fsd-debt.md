@@ -40,7 +40,7 @@
 | ~21 место: `ConnectionStatusTag`, `CredentialsInfoCard`, `AppSwitch`, `AppSkeleton`, `AppWaveBackground`, `profile-overview/*`, … | Хардкод цветов, градиенты в `style`, `bg-red-50`, `bg-neutral-300` | Семантические токены |
 | `entities/integration/ui/connection-status-tag/ConnectionStatusTag.vue`, `widgets/predictions-manager/model/constants.ts` | Зелёный «активного» статуса зашит как `text-[#668948]` | `text-(--text-model-active)` — токен того же цвета (WT-324); переменной в Figma пока нет, дизайнер заведёт |
 | `ChangePasswordModal`, `usePasswordChange`, `ProfileInfoRow`, `AppTooltip`, `ProductAccessTable`, `AdminSidebar` (alt) | Тексты в обход i18n | Ключи в `ru.ts` / `en.ts` |
-| `widgets/dataset-history-table/model/utils.ts`, `entities/integration/model/format.ts` | Зашитые локали `'ru-RU'`, `'en-GB'` | `toIntlLocale` |
+| `widgets/prediction-processing-schedule/lib/scheduleMapper.ts`, `widgets/tariff-*` (скрытые экраны) | Зашитая локаль `'ru-RU'` | `toIntlLocale` — когда экраны вернутся в скоуп |
 | `widgets/tariff-*`, `profile-overview`, `prediction-processing-schedule`; `entities/tariff`, `entities/organization` | Готовый UI отвязан от страниц | Подключить за фича-флагом или удалить |
 | `vitest.config.ts`, `shared/lib/cn.ts`, `tailwind.config.js`, `.stylelintrc.json` + stylelint в devDependencies, `lucide-vue-next` | Не используются / противоречат манифесту | Удалить; окружение Vitest → `node` |
 
