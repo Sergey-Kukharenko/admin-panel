@@ -54,9 +54,10 @@ const visibleCategories = computed(() => {
       const { title, icon } = getDatasetTypeContent(group.dataset_type);
 
       const files = group.files.map((file) => {
-        // ⚠ Имя файла берём с бэкенда, а не из group.dataset_type — они могут расходиться
-        // (например group "balance_daily" при file_name_csv "balances_daily.csv")
-        const prettyFileName = file.file_name_csv;
+        // File name comes from the backend, not from group.dataset_type — they can differ
+        // (group "balance_daily" vs file "balances_daily.csv"). `file_name` is the only
+        // name field; `file_name_csv` is being removed by the backend (WT-456, WT-468)
+        const prettyFileName = file.file_name;
         const computedStatus = mapBackendStatusToUi(file.status);
 
         return {
