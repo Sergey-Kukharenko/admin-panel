@@ -200,9 +200,31 @@
         ],
         "summary": "Request password change email (Authentik recovery link via SES)",
         "operationId": "request_user_password_change",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChangeRequestSchema",
+                "default": {
+                  "lang": "en"
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "204": {
             "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
         }
       }
@@ -1428,6 +1450,48 @@
           }
         }
       }
+    },
+    "/dashboard/charts/game-recommender": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Daily completed predictions per game-recommender ML service (last 30 UTC days)",
+        "operationId": "get_game_recommender_chart",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChartResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/charts/player-intelligence": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Daily completed predictions per player-intelligence ML service (last 30 UTC days)",
+        "operationId": "get_player_intelligence_chart",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChartResponseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1500,6 +1564,130 @@
         ],
         "title": "Body_upload_input_data_file"
       },
+      "ChartName": {
+        "type": "string",
+        "enum": [
+          "data-volume",
+          "game-recommender",
+          "player-intelligence"
+        ]
+      },
+      "ChartPeriodSchema": {
+        "properties": {
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Start Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "title": "End Date"
+          },
+          "granularity": {
+            "type": "string",
+            "const": "day",
+            "title": "Granularity",
+            "default": "day"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start_date",
+          "end_date"
+        ],
+        "title": "ChartPeriodSchema"
+      },
+      "ChartPointSchema": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "value": {
+            "type": "integer",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "value"
+        ],
+        "title": "ChartPointSchema"
+      },
+      "ChartResponseSchema": {
+        "properties": {
+          "chart_name": {
+            "$ref": "#/components/schemas/ChartName"
+          },
+          "period": {
+            "$ref": "#/components/schemas/ChartPeriodSchema"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ChartSummarySchema"
+          },
+          "filters": {
+            "type": "null",
+            "title": "Filters"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/ChartSeriesSchema"
+            },
+            "type": "array",
+            "title": "Series"
+          },
+          "has_data": {
+            "type": "boolean",
+            "title": "Has Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "chart_name",
+          "period",
+          "summary",
+          "series",
+          "has_data"
+        ],
+        "title": "ChartResponseSchema"
+      },
+      "ChartSeriesSchema": {
+        "properties": {
+          "series_key": {
+            "type": "string",
+            "title": "Series Key"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/ChartPointSchema"
+            },
+            "type": "array",
+            "title": "Points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "series_key",
+          "points"
+        ],
+        "title": "ChartSeriesSchema"
+      },
+      "ChartSummarySchema": {
+        "properties": {
+          "total_value": {
+            "type": "integer",
+            "title": "Total Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_value"
+        ],
+        "title": "ChartSummarySchema"
+      },
       "ColumnIssueDetailSchema": {
         "properties": {
           "error_count": {
@@ -1543,6 +1731,14 @@
           "name"
         ],
         "title": "DatasetTemplateResponseSchema"
+      },
+      "EmailLang": {
+        "type": "string",
+        "enum": [
+          "en",
+          "ru"
+        ],
+        "title": "EmailLang"
       },
       "HTTPValidationError": {
         "properties": {
@@ -2311,6 +2507,18 @@
         ],
         "title": "NotAllowedValueDetailSchema",
         "description": "One disallowed value with optional ML diagnostics."
+      },
+      "PasswordChangeRequestSchema": {
+        "properties": {
+          "lang": {
+            "$ref": "#/components/schemas/EmailLang",
+            "description": "Language of the password change email body and subject.",
+            "default": "en"
+          }
+        },
+        "type": "object",
+        "title": "PasswordChangeRequestSchema",
+        "description": "Optional body for ``POST /user/password-change`` (no project scope fields)."
       },
       "PredictionResultListItemSchema": {
         "properties": {

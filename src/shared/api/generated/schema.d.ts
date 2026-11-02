@@ -484,6 +484,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/dashboard/charts/game-recommender": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Daily completed predictions per game-recommender ML service (last 30 UTC days) */
+        get: operations["get_game_recommender_chart"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/dashboard/charts/player-intelligence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Daily completed predictions per player-intelligence ML service (last 30 UTC days) */
+        get: operations["get_player_intelligence_chart"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -525,6 +559,61 @@ export interface components {
              */
             file: string;
         };
+        /** @enum {string} */
+        ChartName: "data-volume" | "game-recommender" | "player-intelligence";
+        /** ChartPeriodSchema */
+        ChartPeriodSchema: {
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /**
+             * Granularity
+             * @default day
+             * @constant
+             */
+            granularity: "day";
+        };
+        /** ChartPointSchema */
+        ChartPointSchema: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Value */
+            value: number;
+        };
+        /** ChartResponseSchema */
+        ChartResponseSchema: {
+            chart_name: components["schemas"]["ChartName"];
+            period: components["schemas"]["ChartPeriodSchema"];
+            summary: components["schemas"]["ChartSummarySchema"];
+            /** Filters */
+            filters?: null;
+            /** Series */
+            series: components["schemas"]["ChartSeriesSchema"][];
+            /** Has Data */
+            has_data: boolean;
+        };
+        /** ChartSeriesSchema */
+        ChartSeriesSchema: {
+            /** Series Key */
+            series_key: string;
+            /** Points */
+            points: components["schemas"]["ChartPointSchema"][];
+        };
+        /** ChartSummarySchema */
+        ChartSummarySchema: {
+            /** Total Value */
+            total_value: number;
+        };
         /**
          * ColumnIssueDetailSchema
          * @description Optional rich detail for a column-level issue (sample rows / counts).
@@ -545,6 +634,11 @@ export interface components {
             /** Name */
             name: string;
         };
+        /**
+         * EmailLang
+         * @enum {string}
+         */
+        EmailLang: "en" | "ru";
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -824,6 +918,17 @@ export interface components {
             error_count?: number | null;
             /** Sample Rows */
             sample_rows?: number[];
+        };
+        /**
+         * PasswordChangeRequestSchema
+         * @description Optional body for ``POST /user/password-change`` (no project scope fields).
+         */
+        PasswordChangeRequestSchema: {
+            /**
+             * @description Language of the password change email body and subject.
+             * @default en
+             */
+            lang: components["schemas"]["EmailLang"];
         };
         /** PredictionResultListItemSchema */
         PredictionResultListItemSchema: {
@@ -1323,7 +1428,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PasswordChangeRequestSchema"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             204: {
@@ -1331,6 +1440,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
             };
         };
     };
@@ -2012,6 +2130,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_game_recommender_chart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChartResponseSchema"];
+                };
+            };
+        };
+    };
+    get_player_intelligence_chart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChartResponseSchema"];
                 };
             };
         };
