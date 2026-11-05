@@ -14,6 +14,16 @@ export const en: MessageSchema = {
     },
   },
   dashboard: {
+    page: {
+      title: 'Dashboard',
+      description: 'Everything you need to work with ML products, on one platform',
+    },
+    welcome: {
+      title: 'Connect your data in any way that suits you and make the most of ML products',
+      description: 'Upload data to get your first results.',
+      uploadCsv: 'Upload CSV',
+      connectIntegrations: 'Connect integrations',
+    },
     dataChart: {
       title: 'Processed data volume',
       period: 'last 30 days',

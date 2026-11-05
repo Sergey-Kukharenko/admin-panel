@@ -12,6 +12,17 @@ export const ru = {
     },
   },
   dashboard: {
+    page: {
+      title: 'Главная',
+      description: 'Всё необходимое для работы с ML-продуктами — на одной платформе',
+    },
+    // Texts of the frame «Идет обучение модели» in every state (PM decision, 2026-11-03, WT-564)
+    welcome: {
+      title: 'Подключайте данные любым удобным способом и используйте возможность ML-продуктов',
+      description: 'Загружайте данные, чтобы получить первые результаты.',
+      uploadCsv: 'Загрузить CSV',
+      connectIntegrations: 'Подключить интеграции',
+    },
     dataChart: {
       // The title is uppercased by the style; "объем" without "ё", as in the mockup (Figma 1322:142117)
       title: 'Объем обработанных данных',

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 
+import { ROUTE_QUERY } from '@/shared/config';
+import { createQueryPatch } from '@/shared/lib/router';
 import { DatasetHistoryTable } from '@/widgets/dataset-history-table';
 import { DatasetUploadDrawer } from '@/widgets/dataset-upload-drawer';
 
@@ -31,6 +34,22 @@ watch(hasHistory, (value) => {
   localStorage.setItem(ONBOARDING_DRAWER_SHOWN_KEY, 'true');
   isDrawerOpen.value = true;
 });
+
+const route = useRoute();
+const replaceQuery = createQueryPatch(route, useRouter());
+
+// A link from another page asks to open the drawer right away ("Загрузить CSV" on the dashboard,
+// WT-564). The param is a one-time command, so it is removed: a reload must not reopen the drawer
+watch(
+  () => route.query[ROUTE_QUERY.openUpload],
+  (value) => {
+    if (value === undefined) return;
+
+    isDrawerOpen.value = true;
+    replaceQuery({ [ROUTE_QUERY.openUpload]: undefined });
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
