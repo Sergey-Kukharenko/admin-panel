@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 
 import logoUrl from '@/shared/assets/images/logo.svg';
 import { AppIcon } from '@/shared/ui/app-icon';
+import { QuickStartGuide } from '@/widgets/quick-start-guide';
 
 import SidebarNavigation from './SidebarNavigation.vue';
 
@@ -39,5 +40,9 @@ const isExpanded = ref(true);
     <div class="flex min-w-0 flex-1 flex-col">
       <SidebarNavigation :is-expanded="isExpanded" />
     </div>
+
+    <!-- On every page, only in the expanded sidebar (PM decision, 2026-11-03, WT-565). Fixed width:
+         while the sidebar animates its width the guide is clipped instead of reflowing -->
+    <QuickStartGuide v-if="isExpanded" class="mx-3 mb-3 w-54 shrink-0" />
   </CollapsibleRoot>
 </template>

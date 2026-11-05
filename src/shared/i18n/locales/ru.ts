@@ -113,6 +113,30 @@ export const ru = {
       },
     },
   },
+  quickStart: {
+    title: 'Быстрый старт',
+    description: 'Четыре шага от данных до готовых предсказаний',
+    progress: 'Выполнено шагов: {done} из {total}',
+    done: 'Выполнено',
+    steps: {
+      uploadData: {
+        title: 'Загрузите данные',
+        description: 'Загрузите исторические данные для работы',
+      },
+      setupProduct: {
+        title: 'Настраиваем ML-продукт',
+        description: 'Адаптируем продукт под ваши данные',
+      },
+      generatePredictions: {
+        title: 'Формируем предсказания',
+        description: 'Продукт обрабатывает данные и подготавливает результат',
+      },
+      resultReady: {
+        title: 'Результат готов',
+        description: 'Забирайте результаты удобным для вас способом',
+      },
+    },
+  },
   auth: {
     loading: 'Авторизация в системе...',
     error: {

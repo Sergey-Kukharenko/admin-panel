@@ -30,6 +30,9 @@
   /* Figma colors/eclipse (button labels) */
   --color-eclipse: #18181b;
 
+  /* raw black in Figma (the quick start guide 1417:190195), no palette variable */
+  --color-black: #000000;
+
   /* Green */
   --color-green-700: #15803d;
   --color-green-400: #4ade80;
@@ -267,6 +270,25 @@
 
   /* User avatar placeholder (Figma component "avatar" 55:128) */
   --bg-avatar: linear-gradient(146deg, #bfed85 21.5%, #e4ffc3 94.33%);
+
+  /* Quick start guide in the sidebar (Figma «guide tour» 1417:190195, WT-565). Only text/on-dark,
+     bg/tag-active and icon/secondary are Figma variables; the rest is raw in the mockup */
+  --bg-guide: color-mix(in srgb, var(--color-black) 92%, transparent);
+  --bg-guide-badge: color-mix(in srgb, var(--bg-tag-active) 20%, transparent);
+  --text-guide-step: color-mix(in srgb, var(--color-neutral-0) 98%, transparent);
+  --text-guide-step-description: color-mix(in srgb, var(--color-neutral-0) 68%, transparent);
+  --icon-guide-step-done: var(--color-black);
+  --border-guide-step-pending: color-mix(in srgb, var(--color-neutral-0) 40%, transparent);
+  --border-guide-step-connector: color-mix(in srgb, var(--color-neutral-0) 20%, transparent);
+  /* Progress track: icon/secondary under raw black 1px lines at 45°, 5.86px apart vertically
+     (4.14px across the lines) */
+  --bg-guide-progress-track: var(--icon-secondary);
+  --bg-guide-progress-hatch: repeating-linear-gradient(
+    135deg,
+    var(--color-black) 0 1px,
+    transparent 1px 4.14px
+  );
+  --bg-guide-progress-fill: var(--bg-tag-active);
 
   /* Values kept exactly as they were hardcoded in components (WT-547); the gradients have no Figma
      variable. Section card: integration credentials and profile sections */

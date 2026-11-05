@@ -108,6 +108,30 @@ export const en: MessageSchema = {
       },
     },
   },
+  quickStart: {
+    title: 'Quick start',
+    description: 'Four steps from data to ready predictions',
+    progress: 'Steps completed: {done} of {total}',
+    done: 'Completed',
+    steps: {
+      uploadData: {
+        title: 'Upload data',
+        description: 'Upload historical data to get started',
+      },
+      setupProduct: {
+        title: 'Setting up the ML product',
+        description: 'We adapt the product to your data',
+      },
+      generatePredictions: {
+        title: 'Generating predictions',
+        description: 'The product processes the data and prepares the result',
+      },
+      resultReady: {
+        title: 'Result is ready',
+        description: 'Get the results in the way that suits you',
+      },
+    },
+  },
   auth: {
     loading: 'Signing in...',
     error: {
