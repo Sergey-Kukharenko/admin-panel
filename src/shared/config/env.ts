@@ -38,3 +38,10 @@ export const FEATURE_PRODUCT_ANALYTICS_LINKS =
  * Enable locally: VITE_FEATURE_RECENT_OPERATIONS=true in .env.local
  */
 export const FEATURE_RECENT_OPERATIONS = import.meta.env.VITE_FEATURE_RECENT_OPERATIONS === 'true';
+
+/**
+ * «Тарифы» page and its sidebar item. Hidden for the MVP release: the page is a stub (status
+ * update 2026-11-06, «Тарифы — скрыть раздел»).
+ * Enable locally: VITE_FEATURE_BILLING=true in .env.local
+ */
+export const FEATURE_BILLING = import.meta.env.VITE_FEATURE_BILLING === 'true';

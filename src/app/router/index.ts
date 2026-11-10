@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 
 import { useUserStore } from '@/entities/user';
-import { ROUTE_NAMES } from '@/shared/config';
+import { FEATURE_BILLING, ROUTE_NAMES } from '@/shared/config';
 import type { IconName } from '@/shared/ui/app-icon';
 
 declare module 'vue-router' {
@@ -58,12 +58,20 @@ export const routes: RouteRecordRaw[] = [
       nav: { icon: 'sparkling-line' },
     },
   },
-  {
-    path: '/billing',
-    name: ROUTE_NAMES.billing,
-    component: () => import('@/pages/billing').then((m) => m.BillingPage),
-    meta: { requiresAuth: true, titleKey: 'layout.nav.billing', nav: { icon: 'receipt-line' } },
-  },
+  ...(FEATURE_BILLING
+    ? [
+        {
+          path: '/billing',
+          name: ROUTE_NAMES.billing,
+          component: () => import('@/pages/billing').then((m) => m.BillingPage),
+          meta: {
+            requiresAuth: true,
+            titleKey: 'layout.nav.billing',
+            nav: { icon: 'receipt-line' as const },
+          },
+        },
+      ]
+    : []),
   {
     path: '/profile',
     name: ROUTE_NAMES.profile,
