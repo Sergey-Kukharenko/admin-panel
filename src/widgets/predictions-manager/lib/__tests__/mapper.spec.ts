@@ -182,4 +182,62 @@ describe('mapProductToIntegrations', () => {
       });
     });
   });
+  // Product run statuses of the scheduled run (WT-532), badges proposed to PM in WT-555
+  describe('product run status', () => {
+    const withRunStatus = (status: string | null): Product => ({
+      ...playerIntelligence,
+      last_product_run_status: status,
+    });
+
+    it.each([
+      ['data_delayed', 'noData'],
+      ['data_validation_failed', 'invalidData'],
+      ['prediction_delayed', 'delayed'],
+      ['DATA_DELAYED', 'noData'],
+    ])('maps %s to the %s badge over the service status', (runStatus, status) => {
+      const [card] = mapProductToIntegrations(withRunStatus(runStatus), options);
+
+      expect(card).toMatchObject({ status, isTraining: false, isAwaitingSchedule: false });
+    });
+
+    it('keeps earlier results available when the scheduled run has an issue', () => {
+      const [card] = mapProductToIntegrations(withRunStatus('data_delayed'), options);
+
+      expect(card).toMatchObject({ serviceState: 'ready', lastCalculation: '23 сент, 2026' });
+    });
+
+    it('applies the product run status to every service of the product', () => {
+      const product: Product = {
+        ...withRunStatus('prediction_delayed'),
+        services: [
+          playerIntelligence.services[0]!,
+          { ...playerIntelligence.services[0]!, ml_service_id: 'second', name: 'vip_churn' },
+        ],
+      };
+
+      const cards = mapProductToIntegrations(product, options);
+
+      expect(cards.map((card) => card.status)).toEqual(['delayed', 'delayed']);
+    });
+
+    it('marks awaiting as waiting for the schedule only for the awaiting run status', () => {
+      const [scheduled] = mapProductToIntegrations(
+        { ...gameRecommender, last_product_run_status: 'awaiting' },
+        options,
+      );
+      const [firstRun] = mapProductToIntegrations(gameRecommender, options);
+
+      expect(scheduled).toMatchObject({ status: 'awaiting', isAwaitingSchedule: true });
+      expect(firstRun).toMatchObject({ status: 'awaiting', isAwaitingSchedule: false });
+    });
+
+    it.each([['awaiting'], ['completed'], ['unknown_status'], [null]])(
+      'keeps the service-based status for %s',
+      (runStatus) => {
+        const [card] = mapProductToIntegrations(withRunStatus(runStatus), options);
+
+        expect(card).toMatchObject({ status: 'generating', isAwaitingSchedule: false });
+      },
+    );
+  });
 });

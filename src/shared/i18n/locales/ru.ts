@@ -368,11 +368,28 @@ export const ru = {
           'Не удалось завершить подготовку продукта и обучить модель.\n\nМы уже разбираемся в причинах и отправим вам уведомление на почту, как только всё будет готово.',
       },
       // Тултипы бейджа «Статус результата»
+      // Badge labels stay in English in both locales, as the other statuses on the page (WT-555)
+      statusLabel: {
+        awaiting: 'Awaiting',
+        generating: 'Generating',
+        ready: 'Ready',
+        failed: 'Failed',
+        noData: 'No Data',
+        invalidData: 'Invalid Data',
+        delayed: 'Delayed',
+      },
       badgeTooltip: {
         training: 'Training',
         generating: 'Generating',
         failed:
           'Ошибка генерации результата.\n\nМы уже ищем причину. Пришлем вам на email разбор ошибки или уведомление о том, что всё успешно исправлено.',
+        awaitingSchedule: 'Ждём время расчёта по расписанию. Результаты появятся после запуска.',
+        noData:
+          'К времени расчёта не хватает данных. Загрузите недостающие файлы, и расчёт запустится.',
+        invalidData:
+          'Загруженные данные не прошли проверку. Проверьте файлы и загрузите их заново.',
+        delayed:
+          'Данные в порядке, но расчёт задерживается. Мы уже разбираемся, ничего делать не нужно.',
       },
       empty: {
         title: 'Продукты пока недоступны',

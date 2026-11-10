@@ -5,8 +5,11 @@ import { useI18n } from 'vue-i18n';
 
 import { AppIcon } from '@/shared/ui/app-icon';
 
-import { predictionStatusIconByStatus } from '../config/constants';
-import type { PredictionIntegration } from '../model/types';
+import {
+  predictionStatusColorClassByStatus,
+  predictionStatusIconByStatus,
+} from '../config/constants';
+import type { PredictionIntegration, PredictionStatus } from '../model/types';
 
 defineOptions({
   name: 'PredictionIntegrationMetrics',
@@ -18,24 +21,43 @@ const props = defineProps<{
 
 const { t } = useI18n({ useScope: 'global' });
 
+// Statuses with an explanation in the tooltip: run statuses of the scheduled run (WT-555)
+const TOOLTIP_KEY_BY_STATUS: Partial<Record<PredictionStatus, string>> = {
+  failed: 'predictions.manager.badgeTooltip.failed',
+  noData: 'predictions.manager.badgeTooltip.noData',
+  invalidData: 'predictions.manager.badgeTooltip.invalidData',
+  delayed: 'predictions.manager.badgeTooltip.delayed',
+};
+
 // Тултип над бейджем: для generating — текст статуса вычисления (Training/Generating,
 // по макетам; Training — по service_status из бэкенда), для failed — текст из макета
 // «Ошибка при генерации предикта»
 const badgeTooltipText = computed(() => {
-  if (props.integration.status === 'generating') {
+  const { status, isTraining, isAwaitingSchedule } = props.integration;
+
+  if (status === 'generating') {
     return t(
-      props.integration.isTraining
+      isTraining
         ? 'predictions.manager.badgeTooltip.training'
         : 'predictions.manager.badgeTooltip.generating',
     );
   }
 
-  if (props.integration.status === 'failed') {
-    return t('predictions.manager.badgeTooltip.failed');
+  if (status === 'awaiting' && isAwaitingSchedule) {
+    return t('predictions.manager.badgeTooltip.awaitingSchedule');
   }
 
-  return null;
+  const tooltipKey = TOOLTIP_KEY_BY_STATUS[status];
+
+  return tooltipKey ? t(tooltipKey) : null;
 });
+
+const statusLabel = computed(() =>
+  t(`predictions.manager.statusLabel.${props.integration.status}`),
+);
+const statusColorClass = computed(
+  () => predictionStatusColorClassByStatus[props.integration.status],
+);
 </script>
 
 <template>
@@ -56,26 +78,20 @@ const badgeTooltipText = computed(() => {
             :data-status="integration.status"
             data-type="results"
             class="max-w-full rounded-(--radius-sm) inline-flex justify-end items-center gap-1 cursor-help"
+            :class="statusColorClass"
           >
             <div class="size-3.5 shrink-0 flex items-center justify-center">
               <AppIcon
                 :name="predictionStatusIconByStatus[integration.status]"
                 class="size-3.5"
-                :class="{
-                  'animate-spin': integration.status === 'generating',
-                  'text-[var(--danger-failed)]': integration.status === 'failed',
-                }"
+                :class="{ 'animate-spin': integration.status === 'generating' }"
               />
             </div>
 
             <div
               class="min-w-0 justify-start font-mono text-element-tag font-medium uppercase truncate"
-              :class="{
-                'text-[var(--danger-failed)]': integration.status === 'failed',
-                'text-[var(--text-primary)]': integration.status !== 'failed',
-              }"
             >
-              {{ integration.status }}
+              {{ statusLabel }}
             </div>
           </div>
         </TooltipTrigger>
@@ -102,28 +118,16 @@ const badgeTooltipText = computed(() => {
         :data-status="integration.status"
         data-type="results"
         class="max-w-full rounded-(--radius-sm) inline-flex justify-end items-center gap-1"
+        :class="statusColorClass"
       >
         <div class="size-3.5 shrink-0 flex items-center justify-center">
-          <AppIcon
-            :name="predictionStatusIconByStatus[integration.status]"
-            class="size-3.5"
-            :class="{
-              'text-[var(--success-ready)]': integration.status === 'ready',
-              'text-[var(--danger-failed)]': integration.status === 'failed',
-            }"
-          />
+          <AppIcon :name="predictionStatusIconByStatus[integration.status]" class="size-3.5" />
         </div>
 
         <div
           class="min-w-0 justify-start font-mono text-element-tag font-medium uppercase truncate"
-          :class="{
-            'text-[var(--success-ready)]': integration.status === 'ready',
-            'text-[var(--danger-failed)]': integration.status === 'failed',
-            'text-[var(--text-primary)]':
-              integration.status !== 'ready' && integration.status !== 'failed',
-          }"
         >
-          {{ integration.status }}
+          {{ statusLabel }}
         </div>
       </div>
     </div>

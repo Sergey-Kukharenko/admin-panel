@@ -352,11 +352,27 @@ export const en: MessageSchema = {
         trainingFailed:
           "Product preparation couldn't be completed.\n\nWe're already investigating the issue and will notify you by email as soon as everything is ready.",
       },
+      // Badge labels stay in English in both locales, as the other statuses on the page (WT-555)
+      statusLabel: {
+        awaiting: 'Awaiting',
+        generating: 'Generating',
+        ready: 'Ready',
+        failed: 'Failed',
+        noData: 'No Data',
+        invalidData: 'Invalid Data',
+        delayed: 'Delayed',
+      },
       badgeTooltip: {
         training: 'Training',
         generating: 'Generating',
         failed:
           "Result generation failed.\n\nWe're already investigating the issue and will notify you by email as soon as it's resolved.",
+        awaitingSchedule: 'Waiting for the scheduled run. Results will appear once it starts.',
+        noData:
+          'Some data is missing for the scheduled run. Upload the missing files and the run will start.',
+        invalidData: 'The uploaded data failed validation. Check the files and upload them again.',
+        delayed:
+          "Your data is fine, but the run is delayed. We're already on it, no action needed.",
       },
       empty: {
         title: 'No products available yet',

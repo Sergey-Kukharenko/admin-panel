@@ -15,6 +15,15 @@ import { formatLastCalculation, formatNextCalculation } from './utils';
 const FAILED_PATTERN = /fail|error/;
 const IN_PROGRESS_PATTERN = /process|progress|run|generat|pending/;
 
+// Product run statuses of a scheduled run that ML platform has not started yet (WT-532). They
+// describe the upcoming run, so they override the card status, while earlier results stay
+// available. Other values (awaiting, run statuses, unknown) keep the service-based status
+const RUN_ISSUE_STATUS_BY_PRODUCT_RUN_STATUS: Record<string, PredictionStatus | undefined> = {
+  data_delayed: 'noData',
+  data_validation_failed: 'invalidData',
+  prediction_delayed: 'delayed',
+};
+
 // Info-иконка рядом с названием отражает подготовку/обучение сервиса, а не результат:
 // в макете «Результат с ошибкой» бейдж FAILED, а иконка остается зеленой
 const TOOLTIP_ICON_BY_SERVICE_STATE: Record<PredictionServiceState, PredictionTooltipIconName> = {
@@ -87,9 +96,14 @@ export function mapProductToIntegrations(
   product: Product,
   { isDataReady, intlLocale, productName, serviceName }: MapProductOptions,
 ): PredictionIntegration[] {
+  const productRunStatus = (product.last_product_run_status ?? '').toLowerCase();
+  const runIssueStatus = RUN_ISSUE_STATUS_BY_PRODUCT_RUN_STATUS[productRunStatus];
+
   return product.services.map((service) => {
     const isAwaitingData = isDataReady === false && !service.last_prediction_at;
-    const { status, isTraining } = resolveStatus(service, isAwaitingData);
+    const serviceStatus = resolveStatus(service, isAwaitingData);
+    const status = runIssueStatus ?? serviceStatus.status;
+    const isTraining = runIssueStatus ? false : serviceStatus.isTraining;
     const serviceState = resolveServiceState(service, isDataReady);
 
     return {
@@ -98,6 +112,7 @@ export function mapProductToIntegrations(
       name: serviceName(service.name),
       status,
       isTraining,
+      isAwaitingSchedule: status === 'awaiting' && productRunStatus === 'awaiting',
       nextCalculation: formatNextCalculation(service.next_prediction_date, intlLocale),
       lastCalculation: formatLastCalculation(service.last_prediction_at ?? null, intlLocale),
       serviceState,

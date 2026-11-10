@@ -1,4 +1,15 @@
-export type PredictionStatus = 'awaiting' | 'generating' | 'ready' | 'failed';
+/**
+ * Result badge status. noData / invalidData / delayed come from the product run status of the
+ * scheduled run (last_product_run_status, WT-532), proposed to PM in WT-555
+ */
+export type PredictionStatus =
+  | 'awaiting'
+  | 'generating'
+  | 'ready'
+  | 'failed'
+  | 'noData'
+  | 'invalidData'
+  | 'delayed';
 
 export type PredictionIconName = 'player-intelligence' | 'game-recommendations';
 
@@ -18,6 +29,8 @@ export interface PredictionIntegration {
   status: PredictionStatus;
   /** true, если generating вызван первичным обучением (service_status = TRAINING), а не инференсом */
   isTraining: boolean;
+  /** true if awaiting is the scheduled run waiting to start (last_product_run_status = awaiting) */
+  isAwaitingSchedule: boolean;
   nextCalculation: string;
   /** null, если у сервиса еще не было ни одного успешного расчета (первое обучение, фаза POC) */
   lastCalculation: string | null;
