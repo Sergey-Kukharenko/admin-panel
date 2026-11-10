@@ -1,15 +1,14 @@
 /**
- * Result badge status. noData / invalidData / delayed come from the product run status of the
- * scheduled run (last_product_run_status, WT-532), proposed to PM in WT-555
+ * Result badge status. outdated / invalidData come from the product run status of the scheduled
+ * run (last_product_run_status, WT-532; PM decision in WT-555)
  */
 export type PredictionStatus =
   | 'awaiting'
   | 'generating'
   | 'ready'
   | 'failed'
-  | 'noData'
-  | 'invalidData'
-  | 'delayed';
+  | 'outdated'
+  | 'invalidData';
 
 export type PredictionIconName = 'player-intelligence' | 'game-recommendations';
 

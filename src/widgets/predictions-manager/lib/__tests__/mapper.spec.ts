@@ -182,7 +182,7 @@ describe('mapProductToIntegrations', () => {
       });
     });
   });
-  // Product run statuses of the scheduled run (WT-532), badges proposed to PM in WT-555
+  // Product run statuses of the scheduled run (WT-532), badges agreed with PM in WT-555
   describe('product run status', () => {
     const withRunStatus = (status: string | null): Product => ({
       ...playerIntelligence,
@@ -190,10 +190,10 @@ describe('mapProductToIntegrations', () => {
     });
 
     it.each([
-      ['data_delayed', 'noData'],
+      ['data_delayed', 'outdated'],
       ['data_validation_failed', 'invalidData'],
-      ['prediction_delayed', 'delayed'],
-      ['DATA_DELAYED', 'noData'],
+      ['prediction_delayed', 'failed'],
+      ['DATA_DELAYED', 'outdated'],
     ])('maps %s to the %s badge over the service status', (runStatus, status) => {
       const [card] = mapProductToIntegrations(withRunStatus(runStatus), options);
 
@@ -217,7 +217,7 @@ describe('mapProductToIntegrations', () => {
 
       const cards = mapProductToIntegrations(product, options);
 
-      expect(cards.map((card) => card.status)).toEqual(['delayed', 'delayed']);
+      expect(cards.map((card) => card.status)).toEqual(['failed', 'failed']);
     });
 
     it('marks awaiting as waiting for the schedule only for the awaiting run status', () => {

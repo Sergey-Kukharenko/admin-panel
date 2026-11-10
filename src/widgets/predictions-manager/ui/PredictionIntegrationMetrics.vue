@@ -24,9 +24,8 @@ const { t } = useI18n({ useScope: 'global' });
 // Statuses with an explanation in the tooltip: run statuses of the scheduled run (WT-555)
 const TOOLTIP_KEY_BY_STATUS: Partial<Record<PredictionStatus, string>> = {
   failed: 'predictions.manager.badgeTooltip.failed',
-  noData: 'predictions.manager.badgeTooltip.noData',
+  outdated: 'predictions.manager.badgeTooltip.outdated',
   invalidData: 'predictions.manager.badgeTooltip.invalidData',
-  delayed: 'predictions.manager.badgeTooltip.delayed',
 };
 
 // Тултип над бейджем: для generating — текст статуса вычисления (Training/Generating,

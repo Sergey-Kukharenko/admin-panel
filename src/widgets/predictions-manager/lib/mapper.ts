@@ -17,11 +17,13 @@ const IN_PROGRESS_PATTERN = /process|progress|run|generat|pending/;
 
 // Product run statuses of a scheduled run that ML platform has not started yet (WT-532). They
 // describe the upcoming run, so they override the card status, while earlier results stay
-// available. Other values (awaiting, run statuses, unknown) keep the service-based status
+// available. Other values (awaiting, run statuses, unknown) keep the service-based status.
+// PM decision in WT-555: missing data is OUTDATED as in the mockups; a run delayed on our side
+// is shown as a plain failure, without telling the client the reason
 const RUN_ISSUE_STATUS_BY_PRODUCT_RUN_STATUS: Record<string, PredictionStatus | undefined> = {
-  data_delayed: 'noData',
+  data_delayed: 'outdated',
   data_validation_failed: 'invalidData',
-  prediction_delayed: 'delayed',
+  prediction_delayed: 'failed',
 };
 
 // Info-иконка рядом с названием отражает подготовку/обучение сервиса, а не результат:

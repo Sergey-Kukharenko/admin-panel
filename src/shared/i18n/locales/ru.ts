@@ -374,9 +374,8 @@ export const ru = {
         generating: 'Generating',
         ready: 'Ready',
         failed: 'Failed',
-        noData: 'No Data',
+        outdated: 'Outdated',
         invalidData: 'Invalid Data',
-        delayed: 'Delayed',
       },
       badgeTooltip: {
         training: 'Training',
@@ -384,12 +383,10 @@ export const ru = {
         failed:
           'Ошибка генерации результата.\n\nМы уже ищем причину. Пришлем вам на email разбор ошибки или уведомление о том, что всё успешно исправлено.',
         awaitingSchedule: 'Ждём время расчёта по расписанию. Результаты появятся после запуска.',
-        noData:
+        outdated:
           'К времени расчёта не хватает данных. Загрузите недостающие файлы, и расчёт запустится.',
         invalidData:
           'Загруженные данные не прошли проверку. Проверьте файлы и загрузите их заново.',
-        delayed:
-          'Данные в порядке, но расчёт задерживается. Мы уже разбираемся, ничего делать не нужно.',
       },
       empty: {
         title: 'Продукты пока недоступны',

@@ -30,20 +30,17 @@ export const predictionStatusIconByStatus: Record<PredictionStatus, IconName> = 
   generating: 'loader-2-line',
   ready: 'check-line',
   failed: 'small-close-line',
-  // WT-555: no new icons — the issue statuses reuse the failed / awaiting ones
-  noData: 'small-close-line',
+  // WT-555: the data issue statuses reuse the failed icon
+  outdated: 'small-close-line',
   invalidData: 'small-close-line',
-  delayed: 'progress-2-line',
 };
 
-// Badge tone without new kit colors (WT-555): data problems the client can fix are red like
-// failed, the delay on our side stays neutral
+// Badge tone without new kit colors (WT-555): data problems are red like failed
 export const predictionStatusColorClassByStatus: Record<PredictionStatus, string> = {
   awaiting: 'text-(--text-primary)',
   generating: 'text-(--text-primary)',
   ready: 'text-(--success-ready)',
   failed: 'text-(--danger-failed)',
-  noData: 'text-(--danger-failed)',
+  outdated: 'text-(--danger-failed)',
   invalidData: 'text-(--danger-failed)',
-  delayed: 'text-(--text-primary)',
 };
