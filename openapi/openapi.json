@@ -172,6 +172,59 @@
         }
       }
     },
+    "/authorization/password-reset": {
+      "post": {
+        "tags": [
+          "authorization"
+        ],
+        "summary": "Request password reset email from Authentik forgot-password (recovery link via SES)",
+        "description": "Authentik expression-policy webhook: always 204 before any lookup.\n\nWork runs after the response so latency does not reveal whether the account exists.\nEnd-user IP/UA come only from the Authentik payload (no request fallback).",
+        "operationId": "request_authorization_password_reset",
+        "parameters": [
+          {
+            "name": "X-Authentik-Webhook-Secret",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Authentik-Webhook-Secret"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequestSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/me": {
       "get": {
         "tags": [
@@ -1451,6 +1504,57 @@
         }
       }
     },
+    "/dashboard/charts/data-volume": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Daily succeeded upload row counts per dataset type (last 30 UTC days)",
+        "operationId": "get_data_volume_chart",
+        "parameters": [
+          {
+            "name": "dataset_type_id__in",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated dataset type UUIDs (?dataset_type_id__in=a,b). Empty or omitted = all types with data. Max 100 unique IDs. Repeating the parameter is not allowed.",
+              "title": "Dataset Type Id  In"
+            },
+            "description": "Comma-separated dataset type UUIDs (?dataset_type_id__in=a,b). Empty or omitted = all types with data. Max 100 unique IDs. Repeating the parameter is not allowed."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataVolumeChartResponseSchema"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dashboard/charts/game-recommender": {
       "get": {
         "tags": [
@@ -1712,6 +1816,107 @@
         "type": "object",
         "title": "ColumnIssueDetailSchema",
         "description": "Optional rich detail for a column-level issue (sample rows / counts)."
+      },
+      "DataVolumeChartResponseSchema": {
+        "properties": {
+          "chart_name": {
+            "type": "string",
+            "const": "data-volume",
+            "title": "Chart Name"
+          },
+          "period": {
+            "$ref": "#/components/schemas/ChartPeriodSchema"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ChartSummarySchema"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/DataVolumeFiltersSchema"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/DataVolumeChartSeriesSchema"
+            },
+            "type": "array",
+            "title": "Series"
+          },
+          "has_data": {
+            "type": "boolean",
+            "title": "Has Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "chart_name",
+          "period",
+          "summary",
+          "filters",
+          "series",
+          "has_data"
+        ],
+        "title": "DataVolumeChartResponseSchema"
+      },
+      "DataVolumeChartSeriesSchema": {
+        "properties": {
+          "series_key": {
+            "type": "string",
+            "title": "Series Key"
+          },
+          "dataset_type_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Dataset Type Id"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/ChartPointSchema"
+            },
+            "type": "array",
+            "title": "Points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "series_key",
+          "dataset_type_id",
+          "points"
+        ],
+        "title": "DataVolumeChartSeriesSchema"
+      },
+      "DataVolumeDatasetTypeFilterSchema": {
+        "properties": {
+          "dataset_type_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Dataset Type Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataset_type_id",
+          "name"
+        ],
+        "title": "DataVolumeDatasetTypeFilterSchema"
+      },
+      "DataVolumeFiltersSchema": {
+        "properties": {
+          "dataset_types": {
+            "items": {
+              "$ref": "#/components/schemas/DataVolumeDatasetTypeFilterSchema"
+            },
+            "type": "array",
+            "title": "Dataset Types"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataset_types"
+        ],
+        "title": "DataVolumeFiltersSchema"
       },
       "DatasetTemplateResponseSchema": {
         "properties": {
@@ -2519,6 +2724,51 @@
         "type": "object",
         "title": "PasswordChangeRequestSchema",
         "description": "Optional body for ``POST /user/password-change`` (no project scope fields)."
+      },
+      "PasswordResetRequestSchema": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "Account email to send the recovery link to."
+          },
+          "lang": {
+            "$ref": "#/components/schemas/EmailLang",
+            "description": "Language of the password reset email body and subject.",
+            "default": "en"
+          },
+          "client_ip": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Ip",
+            "description": "End-user IP as seen by Authentik; invalid values are ignored."
+          },
+          "user_agent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Agent",
+            "description": "End-user User-Agent as seen by Authentik (truncated)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "PasswordResetRequestSchema",
+        "description": "Body for ``POST /authorization/password-reset`` (Authentik webhook)."
       },
       "PredictionResultListItemSchema": {
         "properties": {
