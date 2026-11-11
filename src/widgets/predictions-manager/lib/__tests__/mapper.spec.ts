@@ -192,7 +192,7 @@ describe('mapProductToIntegrations', () => {
     it.each([
       ['data_delayed', 'outdated'],
       ['data_validation_failed', 'invalidData'],
-      ['prediction_delayed', 'failed'],
+      ['prediction_delayed', 'delayed'],
       ['DATA_DELAYED', 'outdated'],
     ])('maps %s to the %s badge over the service status', (runStatus, status) => {
       const [card] = mapProductToIntegrations(withRunStatus(runStatus), options);
@@ -217,7 +217,7 @@ describe('mapProductToIntegrations', () => {
 
       const cards = mapProductToIntegrations(product, options);
 
-      expect(cards.map((card) => card.status)).toEqual(['failed', 'failed']);
+      expect(cards.map((card) => card.status)).toEqual(['delayed', 'delayed']);
     });
 
     it('marks awaiting as waiting for the schedule only for the awaiting run status', () => {

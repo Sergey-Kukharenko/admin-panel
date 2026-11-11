@@ -26,6 +26,7 @@ const TOOLTIP_KEY_BY_STATUS: Partial<Record<PredictionStatus, string>> = {
   failed: 'predictions.manager.badgeTooltip.failed',
   outdated: 'predictions.manager.badgeTooltip.outdated',
   invalidData: 'predictions.manager.badgeTooltip.invalidData',
+  delayed: 'predictions.manager.badgeTooltip.delayed',
 };
 
 // Тултип над бейджем: для generating — текст статуса вычисления (Training/Generating,

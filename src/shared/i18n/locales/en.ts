@@ -362,6 +362,7 @@ export const en: MessageSchema = {
         failed: 'Failed',
         outdated: 'Outdated',
         invalidData: 'Invalid Data',
+        delayed: 'Delayed',
       },
       badgeTooltip: {
         training: 'Training',
@@ -372,6 +373,8 @@ export const en: MessageSchema = {
         outdated:
           'Some data is missing for the scheduled run. Upload the missing files and the run will start.',
         invalidData: 'The uploaded data failed validation. Check the files and upload them again.',
+        delayed:
+          "Your data is fine, but the run is delayed. We're already on it, no action needed.",
       },
       empty: {
         title: 'No products available yet',

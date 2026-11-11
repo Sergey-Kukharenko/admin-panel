@@ -381,6 +381,7 @@ export const ru = {
         failed: 'Failed',
         outdated: 'Outdated',
         invalidData: 'Invalid Data',
+        delayed: 'Delayed',
       },
       badgeTooltip: {
         training: 'Training',
@@ -392,6 +393,8 @@ export const ru = {
           'К времени расчёта не хватает данных. Загрузите недостающие файлы, и расчёт запустится.',
         invalidData:
           'Загруженные данные не прошли проверку. Проверьте файлы и загрузите их заново.',
+        delayed:
+          'Данные в порядке, но расчёт задерживается. Мы уже разбираемся, ничего делать не нужно.',
       },
       empty: {
         title: 'Продукты пока недоступны',
