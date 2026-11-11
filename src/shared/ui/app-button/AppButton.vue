@@ -12,6 +12,7 @@ const props = withDefaults(defineProps<AppButtonProps>(), {
   variant: 'primary',
   size: 'medium',
   disabled: false,
+  as: 'button',
 });
 
 // Colors per variant and state follow the Figma "Button" component set (UI kit 55:1353).
@@ -118,9 +119,10 @@ const typographyClasses = computed(() => {
 </script>
 
 <template>
-  <button
+  <component
+    :is="as"
     v-bind="$attrs"
-    :disabled="disabled"
+    :disabled="as === 'button' ? disabled : undefined"
     :class="[
       'inline-flex items-center justify-center',
       'whitespace-nowrap',
@@ -136,5 +138,5 @@ const typographyClasses = computed(() => {
     ]"
   >
     <slot />
-  </button>
+  </component>
 </template>

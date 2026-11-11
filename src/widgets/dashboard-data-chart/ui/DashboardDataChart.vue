@@ -22,7 +22,7 @@ const { t } = useI18n({ useScope: 'global' });
       <h2 class="font-mono text-element-tag font-medium text-(--text-secondary) uppercase">
         {{ t('dashboard.dataChart.title') }}
       </h2>
-      <AppStatusBadge status="neutral" :icon="null" :label="t('dashboard.dataChart.period')" />
+      <AppStatusBadge status="neutral" :icon="null" :label="t('dashboard.period')" />
     </div>
 
     <DashboardDataChartSkeleton v-if="isLoading" />

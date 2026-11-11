@@ -2,7 +2,7 @@ import { type Query, useQuery } from '@tanstack/vue-query';
 import { computed, ref, watch } from 'vue';
 
 import type { FetchFilesBackendResponse } from '@/entities/dataset';
-import { DATASET_HISTORY_QUERY_KEY, datasetApi, useDatasetTemplates } from '@/entities/dataset';
+import { datasetApi, datasetKeys, useDatasetTemplates } from '@/entities/dataset';
 
 import { mapSourceTypeToLabel } from '../lib/sourceMapping';
 import { mapUiStatusToBackend } from '../lib/statusMapping';
@@ -65,15 +65,15 @@ export function useDatasetHistoryTable() {
     isLoading,
     isFetching,
   } = useQuery<FetchFilesBackendResponse>({
-    queryKey: [
-      ...DATASET_HISTORY_QUERY_KEY,
-      // Используем функции-геттеры для реактивного отслеживания фильтров в ключе запроса
-      () => filters.types.value.join(','),
-      () => filters.status.value,
-      () => filters.period.value,
-      () => orderByParam.value,
-      () => offset.value,
-    ],
+    queryKey: computed(() =>
+      datasetKeys.history({
+        types: filters.types.value.join(','),
+        status: filters.status.value,
+        period: filters.period.value,
+        orderBy: orderByParam.value,
+        offset: offset.value,
+      }),
+    ),
     queryFn: async ({ signal }) => {
       const { gte, lte } = getPeriodDates(filters.period.value);
       const backendStatus = mapUiStatusToBackend(filters.status.value);

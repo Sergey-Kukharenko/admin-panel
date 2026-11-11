@@ -8,7 +8,7 @@ import { createQueryPatch } from '@/shared/lib/router';
 import type { FilterOption } from '@/shared/ui/app-filter';
 
 import { URL_PARAMS } from '../config/urlParams';
-import { mapDataVolumeToChart } from '../lib/mapper';
+import { mapDataVolumeToChart, toDataVolumeFilters } from '../lib';
 
 /** Value of the "all data types" option: no type in the request and in the URL */
 const ALL_TYPES = '';
@@ -23,23 +23,21 @@ export function useDashboardDataChart() {
   const requestedTypeId = computed(() => {
     const raw = route.query[URL_PARAMS.dataTypeId];
     const value = Array.isArray(raw) ? raw[0] : raw;
-    return value?.split(',')[0]?.trim() ?? ALL_TYPES;
+    return value?.split(',')[0]?.trim().toLowerCase() ?? ALL_TYPES;
   });
 
   // The id from the URL goes to the request before it is checked: the list of known types comes in
-  // the same response (filters.dataset_types), so the first request cannot wait for it. An unknown
-  // id costs one extra request, then the watch below drops it (how the API answers an unknown id is
-  // asked in the RFC, WT-322)
+  // the same response (filters.dataset_types), so the first request cannot wait for it. For an id
+  // outside the list the API still returns the full list, then the watch below drops the id: one
+  // extra request
   const {
     data,
     isLoading,
     isError: isRequestError,
     refetch,
-  } = useDataVolumeChart(() => ({
-    dataset_type_id__in: requestedTypeId.value ? [requestedTypeId.value] : [],
-  }));
+  } = useDataVolumeChart(() => toDataVolumeFilters(requestedTypeId.value));
 
-  const dataTypes = computed(() => data.value?.filters?.dataset_types ?? []);
+  const dataTypes = computed(() => data.value?.filters.dataset_types ?? []);
   const isKnownType = computed(() =>
     dataTypes.value.some((type) => type.dataset_type_id === requestedTypeId.value),
   );
@@ -50,8 +48,9 @@ export function useDashboardDataChart() {
     set: (value) => replaceQuery({ [URL_PARAMS.dataTypeId]: value || undefined }),
   });
 
-  // The type list has arrived: only then an unknown id can be told from a list still loading.
-  const hasTypeList = computed(() => data.value?.filters != null);
+  // Every response brings the type list: only then an unknown id can be told from a list still
+  // loading
+  const hasTypeList = computed(() => data.value !== undefined);
 
   // An id the API does not know (old link, typo) falls back to all types and leaves the URL
   watch(
@@ -62,7 +61,8 @@ export function useDashboardDataChart() {
     { immediate: true },
   );
 
-  // Error state only when there is no data at all: a failed refetch keeps the chart visible
+  // A failed refetch of the same key keeps cached data visible. After a key change, a failed
+  // request clears keepPreviousData's placeholder and shows the error state instead.
   const isError = computed(() => isRequestError.value && !data.value);
 
   const chart = computed(() =>

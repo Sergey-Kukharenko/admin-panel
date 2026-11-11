@@ -13,6 +13,7 @@ function response(overrides: Partial<DataVolumeChartResponse> = {}): DataVolumeC
     series: [
       {
         series_key: 'bets',
+        dataset_type_id: 'bets-id',
         points: [
           { date: '2026-05-13', value: 30 },
           { date: '2026-05-14', value: 0 },
@@ -21,6 +22,7 @@ function response(overrides: Partial<DataVolumeChartResponse> = {}): DataVolumeC
       },
       {
         series_key: 'users',
+        dataset_type_id: 'users-id',
         points: [
           { date: '2026-05-13', value: 20 },
           { date: '2026-05-14', value: 0 },
@@ -54,13 +56,13 @@ describe('mapDataVolumeToChart', () => {
         key: 'bets',
         label: 'bets',
         value: '30',
-        color: 'var(--stats-bets)',
+        color: 'var(--stats-bets-daily)',
       },
       {
         key: 'users',
         label: 'users',
         value: '20',
-        color: 'var(--stats-users)',
+        color: 'var(--stats-bets-daily)',
       },
     ]);
     expect(tooltip?.description).toBe('13 мая 2026, bets 30, users 20');
@@ -70,8 +72,12 @@ describe('mapDataVolumeToChart', () => {
     const chart = mapDataVolumeToChart(
       response({
         series: [
-          { series_key: 'bets', points: [{ date: '2026-05-13', value: 5 }] },
-          { series_key: 'users', points: [] },
+          {
+            series_key: 'bets',
+            dataset_type_id: 'bets-id',
+            points: [{ date: '2026-05-13', value: 5 }],
+          },
+          { series_key: 'users', dataset_type_id: 'users-id', points: [] },
         ],
       }),
       'ru-RU',
@@ -87,23 +93,35 @@ describe('mapDataVolumeToChart', () => {
     expect(mapDataVolumeToChart(response(), 'ru-RU').bars[1]?.tooltip).toBeNull();
   });
 
-  it.each([
-    ['vip-users', 'var(--stats-vip-users)'],
-    ['balance-daily', 'var(--stats-balance-daily)'],
-    ['payments', 'var(--stats-payments)'],
-    ['new-type', 'var(--stats-neutral)'],
-  ])('%s: square %s (mockup 55:2287; unknown type grey)', (key, color) => {
-    const chart = mapDataVolumeToChart(
-      response({ series: [{ series_key: key, points: [{ date: '2026-05-13', value: 1 }] }] }),
-      'ru-RU',
-    );
+  it.each(['bets', 'vip-users', 'new-type'])(
+    '%s: the column color for every type (WT-571, stats/bets-daily)',
+    (key) => {
+      const chart = mapDataVolumeToChart(
+        response({
+          series: [
+            {
+              series_key: key,
+              dataset_type_id: `${key}-id`,
+              points: [{ date: '2026-05-13', value: 1 }],
+            },
+          ],
+        }),
+        'ru-RU',
+      );
 
-    expect(chart.bars[0]?.tooltip?.rows[0]?.color).toBe(color);
-  });
+      expect(chart.bars[0]?.tooltip?.rows[0]?.color).toBe('var(--stats-bets-daily)');
+    },
+  );
 
   it('values in the locale: 148\u00a0000 in ru, 148,000 in en', () => {
     const big = response({
-      series: [{ series_key: 'users', points: [{ date: '2026-05-13', value: 148_000 }] }],
+      series: [
+        {
+          series_key: 'users',
+          dataset_type_id: 'users-id',
+          points: [{ date: '2026-05-13', value: 148_000 }],
+        },
+      ],
     });
 
     expect(mapDataVolumeToChart(big, 'ru-RU').bars[0]?.tooltip?.rows[0]?.value).toBe(
@@ -180,13 +198,27 @@ describe('mapDataVolumeToChart', () => {
   it('the axis keeps the short labels after the data type filter (Jira WT-328: «200k»)', () => {
     const all = response({
       series: [
-        { series_key: 'bets', points: [{ date: '2026-05-13', value: 150_000 }] },
-        { series_key: 'users', points: [{ date: '2026-05-13', value: 30_000 }] },
+        {
+          series_key: 'bets',
+          dataset_type_id: 'bets-id',
+          points: [{ date: '2026-05-13', value: 150_000 }],
+        },
+        {
+          series_key: 'users',
+          dataset_type_id: 'users-id',
+          points: [{ date: '2026-05-13', value: 30_000 }],
+        },
       ],
     });
     // the filter asks the API for one type: the response has only its series
     const filtered = response({
-      series: [{ series_key: 'users', points: [{ date: '2026-05-13', value: 30_000 }] }],
+      series: [
+        {
+          series_key: 'users',
+          dataset_type_id: 'users-id',
+          points: [{ date: '2026-05-13', value: 30_000 }],
+        },
+      ],
     });
 
     expect(mapDataVolumeToChart(all, 'ru-RU').ticks.map((tick) => tick.label)).toEqual([

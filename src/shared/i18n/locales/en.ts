@@ -24,9 +24,9 @@ export const en: MessageSchema = {
       uploadCsv: 'Upload CSV',
       connectIntegrations: 'Connect integrations',
     },
+    period: 'past month',
     dataChart: {
       title: 'Processed data volume',
-      period: 'last 30 days',
       rows: 'Row | Rows',
       allTypes: 'All data types',
       plotLabel: 'Chart by day: use the left and right arrows for the values of a day',
@@ -38,10 +38,9 @@ export const en: MessageSchema = {
     },
     productCharts: {
       title: 'ML product metrics',
-      period: 'last {n} day | last {n} days',
       subtitles: {
-        recommenderSystem: 'Recommendations delivered by scenario',
-        playerIntelligence: 'Players by predicted status',
+        recommenderSystem: 'Recommendations delivered per day by scenario',
+        playerIntelligence: 'Players in the prediction of each scenario, per day',
       },
       analyticsLink: 'Go to detailed analytics',
       legend: '{product} chart lines',
@@ -82,9 +81,11 @@ export const en: MessageSchema = {
       data: 'Data',
       results: 'Results',
       unavailable: 'Product unavailable',
+      // Texts of the analyst (Natalia, Slack 2026-11-10, WT-571)
       descriptions: {
-        playerIntelligence: 'Models player behavior and forecasts deposit dynamics',
-        recommenderSystem: 'Personalizes game recommendations based on player interests',
+        playerIntelligence:
+          'Predicts player behavior and measures the impact of bonuses and campaigns on deposits',
+        recommenderSystem: 'Recommends games that balance player preferences with operator goals',
       },
       productStatus: {
         awaiting: 'Awaiting',
@@ -187,8 +188,9 @@ export const en: MessageSchema = {
     helpMenu: {
       ariaLabel: 'Help',
       title: 'Help',
+      // Text of the analyst (Natalia, Slack 2026-11-10, WT-571)
       description:
-        'MiCo AI Platform is a predictive analytics environment for iGaming.\n\nWe analyze player behavior with ML models so you always stay one step ahead.',
+        'MICo Platform is a single platform for connecting to and working with ML products for iGaming',
       docs: 'Documentation',
       contactManager: 'Contact manager',
     },

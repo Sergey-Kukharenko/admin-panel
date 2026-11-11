@@ -1,50 +1,92 @@
-import { describe, expect, it } from 'vitest';
-import { ref } from 'vue';
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { type App, ref } from 'vue';
 
-import type { DataVolumeChartFilters } from '../../api/types';
+import { withSetup } from '@/shared/lib/test';
+
+import type { DataVolumeChartFilters, DataVolumeChartResponse } from '../../api/types';
 import { useDataVolumeChart } from '../useDataVolumeChart';
 
-const sum = (values: number[]) => values.reduce((total, value) => total + value, 0);
+const getChart = vi.hoisted(() => vi.fn());
+vi.mock('../../api/dataset-api', () => ({
+  datasetApi: { getDataVolumeChart: getChart },
+}));
 
-describe('useDataVolumeChart (mock until WT-322)', () => {
-  it('returns every data type of the period without a filter (RFC 4.2)', () => {
-    const { data } = useDataVolumeChart({});
+const response: DataVolumeChartResponse = {
+  chart_name: 'data-volume',
+  period: { start_date: '2026-10-12', end_date: '2026-10-13', granularity: 'day' },
+  summary: { total_value: 0 },
+  filters: { dataset_types: [] },
+  series: [],
+  has_data: false,
+};
 
-    expect(data.value?.series.map((series) => series.series_key)).toEqual([
-      'bets',
-      'users',
-      'bets-daily',
-      'balance-daily',
-      'payments',
-      'vip-users',
-    ]);
-    expect(data.value?.series.every((series) => series.points.length === 31)).toBe(true);
-    expect(data.value?.summary.total_value).toBe(
-      sum(data.value?.series.flatMap((series) => series.points.map((point) => point.value)) ?? []),
-    );
+let app: App | undefined;
+let client: QueryClient | undefined;
+
+function setup(filters = ref<DataVolumeChartFilters>({})) {
+  client ??= new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const queryClient = client;
+  const [query, mounted] = withSetup(
+    () => useDataVolumeChart(filters),
+    [{ install: (vueApp) => vueApp.use(VueQueryPlugin, { queryClient }) }],
+  );
+  app = mounted;
+  return query;
+}
+
+afterEach(() => {
+  app?.unmount();
+  app = undefined;
+  client?.clear();
+  client = undefined;
+  getChart.mockReset();
+});
+
+describe('useDataVolumeChart', () => {
+  it('keeps cached data when a refetch of the same key fails', async () => {
+    getChart.mockResolvedValueOnce({ data: response });
+    const query = setup();
+    await vi.waitFor(() => expect(query.isSuccess.value).toBe(true));
+
+    getChart.mockRejectedValueOnce(new Error('Refetch failed'));
+    await query.refetch();
+
+    expect(query.isError.value).toBe(true);
+    expect(query.data.value).toEqual(response);
   });
 
-  it('keeps only the selected types and recalculates the summary, as the backend does', () => {
+  it('clears the previous placeholder when a request for a new key fails', async () => {
+    getChart.mockResolvedValueOnce({ data: response });
     const filters = ref<DataVolumeChartFilters>({});
-    const { data } = useDataVolumeChart(filters);
-    const betsId = data.value?.filters?.dataset_types.find(
-      (type) => type.name === 'bets',
-    )?.dataset_type_id;
+    const query = setup(filters);
+    await vi.waitFor(() => expect(query.isSuccess.value).toBe(true));
 
-    filters.value = { dataset_type_id__in: [betsId ?? ''] };
-
-    expect(data.value?.series.map((series) => series.series_key)).toEqual(['bets']);
-    expect(data.value?.summary.total_value).toBe(
-      sum(data.value?.series[0]?.points.map((point) => point.value) ?? []),
+    let rejectRequest!: (error: Error) => void;
+    getChart.mockImplementationOnce(
+      () => new Promise((_resolve, reject) => (rejectRequest = reject)),
     );
-    // the filter list stays complete so the user can switch to another type
-    expect(data.value?.filters?.dataset_types).toHaveLength(6);
+    filters.value = { dataset_type_id__in: '3f1c2c6e-8a5d-4b7b-9a1e-2f0d6c1e9b11' };
+    await vi.waitFor(() => expect(query.isPlaceholderData.value).toBe(true));
+    expect(query.data.value).toEqual(response);
+
+    rejectRequest(new Error('New filter failed'));
+    await vi.waitFor(() => expect(query.isError.value).toBe(true));
+
+    expect(query.data.value).toBeUndefined();
+    expect(query.isPlaceholderData.value).toBe(false);
   });
 
-  it('has the shape of useQuery: a synchronous mock is never loading or failing', () => {
-    const { isLoading, isError, refetch } = useDataVolumeChart({});
+  it('refetches cached data when the chart is mounted again', async () => {
+    getChart.mockResolvedValue({ data: response });
+    const firstQuery = setup();
+    await vi.waitFor(() => expect(firstQuery.isSuccess.value).toBe(true));
+    app?.unmount();
 
-    expect([isLoading.value, isError.value]).toEqual([false, false]);
-    expect(refetch()).toBeInstanceOf(Promise);
+    const nextQuery = setup();
+    await vi.waitFor(() => expect(getChart).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(nextQuery.isFetching.value).toBe(false));
+
+    expect(nextQuery.data.value).toEqual(response);
   });
 });

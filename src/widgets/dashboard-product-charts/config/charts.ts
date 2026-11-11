@@ -1,6 +1,7 @@
 /**
  * Days the product charts look back: the API returns the last 30 days (RFC Ph-1 Dashboard, 4.3–4.4).
- * The period badge and the fallback period of a product that is not connected follow it
+ * The fallback period of a product that is not connected follows it; the period badge names a month
+ * whatever the number of days (WT-571)
  */
 export const PRODUCT_CHART_PERIOD_DAYS = 30;
 

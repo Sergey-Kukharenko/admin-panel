@@ -3,7 +3,6 @@ import { useI18n } from 'vue-i18n';
 
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
-import { PRODUCT_CHART_PERIOD_DAYS } from '../config/charts';
 import { useDashboardProductCharts } from '../model/useDashboardProductCharts';
 import DashboardProductChart from './DashboardProductChart.vue';
 
@@ -20,11 +19,7 @@ const { t } = useI18n({ useScope: 'global' });
       <h2 class="font-mono text-element-tag font-medium text-(--text-secondary) uppercase">
         {{ t('dashboard.productCharts.title') }}
       </h2>
-      <AppStatusBadge
-        status="neutral"
-        :icon="null"
-        :label="t('dashboard.productCharts.period', PRODUCT_CHART_PERIOD_DAYS)"
-      />
+      <AppStatusBadge status="neutral" :icon="null" :label="t('dashboard.period')" />
     </div>
 
     <div class="grid grid-cols-2 gap-12">

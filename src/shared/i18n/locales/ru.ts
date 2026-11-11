@@ -23,10 +23,11 @@ export const ru = {
       uploadCsv: 'Загрузить CSV',
       connectIntegrations: 'Подключить интеграции',
     },
+    // Period badge of both dashboard charts, whatever number of days the backend sends (WT-571)
+    period: 'за месяц',
     dataChart: {
       // The title is uppercased by the style; "объем" without "ё", as in the mockup (Figma 1322:142117)
       title: 'Объем обработанных данных',
-      period: 'за 30 дней',
       rows: 'Строка | Строки | Строк',
       allTypes: 'Все типы данных',
       plotLabel: 'График по дням: значения дня — стрелками влево и вправо',
@@ -39,11 +40,10 @@ export const ru = {
     productCharts: {
       // The titles are uppercased by the style (Figma 1322:142185, 1361:147751)
       title: 'Показатели по ML-продуктам',
-      period: 'за {n} день | за {n} дня | за {n} дней',
-      // The mockup has a typo, «прогнозируеому» (Figma 1361:147757): fixed here
+      // Texts of the analyst (Natalia, WT-571 comment of 2026-11-10), not the mockup
       subtitles: {
-        recommenderSystem: 'Динамика выдачи рекомендаций по сценариям',
-        playerIntelligence: 'Распределение игроков по прогнозируемому статусу',
+        recommenderSystem: 'Количество выданных рекомендаций в день по сценариям',
+        playerIntelligence: 'Количество игроков в прогнозе каждого сценария, в день',
       },
       analyticsLink: 'Перейти к детальной аналитике',
       legend: 'Линии графика {product}',
@@ -88,8 +88,11 @@ export const ru = {
       results: 'Results',
       unavailable: 'Продукт недоступен',
       descriptions: {
-        playerIntelligence: 'Моделирует поведение игроков и прогнозирует динамику депозитов',
-        recommenderSystem: 'Персонализирует игровые рекомендации на основе интересов пользователей',
+        // Texts of the analyst (Natalia, WT-571 comment of 2026-11-10)
+        playerIntelligence:
+          'Прогнозирует поведение игроков и оценивает влияние бонусов и коммуникаций на депозиты',
+        recommenderSystem:
+          'Подбирает игры, балансируя между предпочтениями игрока и интересами оператора',
       },
       productStatus: {
         awaiting: 'Awaiting',
@@ -195,8 +198,10 @@ export const ru = {
     helpMenu: {
       ariaLabel: 'Помощь',
       title: 'Помощь',
+      // Text of the analyst (Natalia, WT-571 comment of 2026-11-10); the non-breaking space keeps the
+      // dash on the line of the name
       description:
-        'MiCo AI Platform\u00a0— предиктивная аналитическая среда для iGaming.\n\nМы анализируем поведение игроков с помощью ML-моделей, чтобы вы всегда были на шаг впереди.',
+        'MICo Platform\u00a0— единая платформа для подключения и работы с ML-продуктами для iGaming',
       docs: 'Документация',
       contactManager: 'Связаться с менеджером',
     },

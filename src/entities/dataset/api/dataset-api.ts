@@ -3,6 +3,8 @@ import { apiClient } from '@/shared/api';
 import type {
   DatasetFilesFilters,
   DatasetTemplateResponse,
+  DataVolumeChartFilters,
+  DataVolumeChartResponse,
   FetchFilesBackendResponse,
   ReportLocale,
   UploadDatasetRequest,
@@ -63,6 +65,17 @@ export const datasetApi = {
     return apiClient.get<Blob>(`/data-load/files/${fileId}/errors`, {
       params: { lang },
       responseType: 'blob',
+    });
+  },
+
+  /**
+   * Rows of succeeded uploads per day and data type for the last 30 days (dashboard chart);
+   * 422 — a non-UUID id or more than 100 unique ids in `dataset_type_id__in`
+   */
+  getDataVolumeChart(params?: DataVolumeChartFilters, signal?: AbortSignal) {
+    return apiClient.get<DataVolumeChartResponse>('/dashboard/charts/data-volume', {
+      params,
+      signal,
     });
   },
 

@@ -75,6 +75,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/authorization/password-reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request password reset email from Authentik forgot-password (recovery link via SES)
+         * @description Authentik expression-policy webhook: always 204 before any lookup.
+         *
+         *     Work runs after the response so latency does not reveal whether the account exists.
+         *     End-user IP/UA come only from the Authentik payload (no request fallback).
+         */
+        post: operations["request_authorization_password_reset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/user/me": {
         parameters: {
             query?: never;
@@ -484,6 +507,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/dashboard/charts/data-volume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Daily succeeded upload row counts per dataset type (last 30 UTC days) */
+        get: operations["get_data_volume_chart"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/dashboard/charts/game-recommender": {
         parameters: {
             query?: never;
@@ -623,6 +663,48 @@ export interface components {
             error_count?: number | null;
             /** Sample Rows */
             sample_rows?: number[];
+        };
+        /** DataVolumeChartResponseSchema */
+        DataVolumeChartResponseSchema: {
+            /**
+             * Chart Name
+             * @constant
+             */
+            chart_name: "data-volume";
+            period: components["schemas"]["ChartPeriodSchema"];
+            summary: components["schemas"]["ChartSummarySchema"];
+            filters: components["schemas"]["DataVolumeFiltersSchema"];
+            /** Series */
+            series: components["schemas"]["DataVolumeChartSeriesSchema"][];
+            /** Has Data */
+            has_data: boolean;
+        };
+        /** DataVolumeChartSeriesSchema */
+        DataVolumeChartSeriesSchema: {
+            /** Series Key */
+            series_key: string;
+            /**
+             * Dataset Type Id
+             * Format: uuid
+             */
+            dataset_type_id: string;
+            /** Points */
+            points: components["schemas"]["ChartPointSchema"][];
+        };
+        /** DataVolumeDatasetTypeFilterSchema */
+        DataVolumeDatasetTypeFilterSchema: {
+            /**
+             * Dataset Type Id
+             * Format: uuid
+             */
+            dataset_type_id: string;
+            /** Name */
+            name: string;
+        };
+        /** DataVolumeFiltersSchema */
+        DataVolumeFiltersSchema: {
+            /** Dataset Types */
+            dataset_types: components["schemas"]["DataVolumeDatasetTypeFilterSchema"][];
         };
         /** DatasetTemplateResponseSchema */
         DatasetTemplateResponseSchema: {
@@ -929,6 +1011,33 @@ export interface components {
              * @default en
              */
             lang: components["schemas"]["EmailLang"];
+        };
+        /**
+         * PasswordResetRequestSchema
+         * @description Body for ``POST /authorization/password-reset`` (Authentik webhook).
+         */
+        PasswordResetRequestSchema: {
+            /**
+             * Email
+             * Format: email
+             * @description Account email to send the recovery link to.
+             */
+            email: string;
+            /**
+             * @description Language of the password reset email body and subject.
+             * @default en
+             */
+            lang: components["schemas"]["EmailLang"];
+            /**
+             * Client Ip
+             * @description End-user IP as seen by Authentik; invalid values are ignored.
+             */
+            client_ip?: string | null;
+            /**
+             * User Agent
+             * @description End-user User-Agent as seen by Authentik (truncated).
+             */
+            user_agent?: string | null;
         };
         /** PredictionResultListItemSchema */
         PredictionResultListItemSchema: {
@@ -1397,6 +1506,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LogoutResponse"];
+                };
+            };
+        };
+    };
+    request_authorization_password_reset: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Authentik-Webhook-Secret"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PasswordResetRequestSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2121,6 +2263,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IntegrationRequestResponseSchema"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_data_volume_chart: {
+        parameters: {
+            query?: {
+                /** @description Comma-separated dataset type UUIDs (?dataset_type_id__in=a,b). Empty or omitted = all types with data. Max 100 unique IDs. Repeating the parameter is not allowed. */
+                dataset_type_id__in?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataVolumeChartResponseSchema"];
                 };
             };
             /** @description Validation Error */

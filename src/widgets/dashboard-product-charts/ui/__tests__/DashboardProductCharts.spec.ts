@@ -65,9 +65,9 @@ describe('DashboardProductCharts', () => {
     expect(toggleSeries).toHaveBeenCalledExactlyOnceWith('game-recommender', 'main');
   });
 
-  it('the period badge takes the number of days of the charts', () => {
+  it('the period badge takes the shared dashboard period (WT-571)', () => {
     const wrapper = mount(DashboardProductCharts, { global: { plugins: [i18n] } });
 
-    expect(wrapper.text()).toContain(i18n.global.t('dashboard.productCharts.period', 30));
+    expect(wrapper.text()).toContain(i18n.global.t('dashboard.period'));
   });
 });

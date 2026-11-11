@@ -52,9 +52,9 @@ const { t } = useI18n({ useScope: 'global' });
     </template>
 
     <!-- TODO: the button has no target yet: the Superset links are out of the Ph-1 dashboard RFC
-         (PRD AC 19, asked in WT-326). It stays behind FEATURE_PRODUCT_ANALYTICS_LINKS as the help
-         buttons behind FEATURE_HELP_LINKS (HelpMenu); with the link it becomes an external link,
-         AppButton as-child around <a target="_blank" rel="noopener noreferrer"> -->
+         (PRD AC 19, asked in WT-326). It stays behind FEATURE_PRODUCT_ANALYTICS_LINKS; with the
+         link it becomes an external link, AppButton as="a" with target="_blank"
+         rel="noopener noreferrer", as the docs button of HelpMenu -->
     <AppButton
       v-if="FEATURE_PRODUCT_ANALYTICS_LINKS"
       variant="secondary"

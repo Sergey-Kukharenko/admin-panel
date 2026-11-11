@@ -6,9 +6,9 @@ import { toast } from 'vue-sonner';
 import type { DatasetFile, DatasetUpload } from '@/entities/dataset';
 import {
   DATASET_FILE_ERRORS,
-  DATASET_HISTORY_QUERY_KEY,
   DATASET_MAX_TOTAL_SIZE_BYTES,
   datasetApi,
+  datasetKeys,
   getDatasetFileValidationError,
 } from '@/entities/dataset';
 import { i18n } from '@/shared/i18n';
@@ -165,9 +165,9 @@ export const useUploadDatasetStore = defineStore('uploadDataset', () => {
         (item) => item.id !== upload.id,
       );
 
-      // Файл уже попал в /data-load/files — обновляем историю загрузок, чтобы
-      // таблица (или переход из пустого состояния в неё) не ждала ручного рефреша
-      queryClient.invalidateQueries({ queryKey: DATASET_HISTORY_QUERY_KEY });
+      // The file is already in /data-load/files: refresh the upload history so the table (or the
+      // switch from the empty state to it) does not wait for a manual reload
+      queryClient.invalidateQueries({ queryKey: datasetKeys.histories() });
     } catch {
       upload.status = 'error';
       upload.progress = null;

@@ -148,4 +148,20 @@ describe('AppButton', () => {
     expect(wrapper.get('button').attributes('aria-label')).toBe('Close');
     expect(wrapper.get('button').attributes('type')).toBe('submit');
   });
+
+  it('as="a" renders a link with the button look and the link attributes', () => {
+    const wrapper = render(
+      { as: 'a', variant: 'secondary', size: 'small' },
+      { href: 'https://docs.example.test', target: '_blank', rel: 'noopener noreferrer' },
+    );
+    const link = wrapper.get('a');
+
+    expect(wrapper.find('button').exists()).toBe(false);
+    expect(link.text()).toBe('Label');
+    expect(link.attributes('href')).toBe('https://docs.example.test');
+    expect(link.attributes('target')).toBe('_blank');
+    expect(link.attributes('rel')).toBe('noopener noreferrer');
+    expect(link.attributes('disabled')).toBeUndefined();
+    expect(link.classes()).toContain('bg-(--bg-button-secondary)');
+  });
 });

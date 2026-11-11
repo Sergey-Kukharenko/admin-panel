@@ -42,7 +42,11 @@ const { t } = useI18n({ useScope: 'global' });
     </div>
 
     <div v-if="card.isAvailable" class="flex items-center gap-3 px-5 py-4">
-      <div class="flex flex-col items-start gap-1">
+      <!-- Minimum width, so Results does not move when the Data status changes (WT-571): 136px fits
+           the widest known badge, «Invalid Update» (133px in Geist Mono, measured after the web font
+           loads; the statuses are English in both locales); a longer status widens the column
+           instead of running into Results -->
+      <div class="flex min-w-34 shrink-0 flex-col items-start gap-1">
         <span class="font-mono text-element-tag text-(--text-secondary) uppercase">
           {{ t('dashboard.products.data') }}
         </span>

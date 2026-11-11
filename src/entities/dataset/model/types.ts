@@ -1,5 +1,13 @@
 import type { DatasetUploadStatus } from './upload';
 
+export interface DatasetHistoryKeyParams {
+  types: string;
+  status: string;
+  period: string;
+  orderBy: string;
+  offset: number;
+}
+
 export type DatasetIcon = 'users' | 'vip' | 'bets' | 'balance' | 'payments';
 
 export interface DatasetFile {

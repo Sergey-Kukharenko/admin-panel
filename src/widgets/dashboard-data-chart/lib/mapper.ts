@@ -7,7 +7,7 @@ import {
   listDays,
 } from '@/shared/lib/chart';
 
-import { DATA_TYPE_COLORS, OTHER_DATA_TYPE_COLOR } from '../config/seriesColors';
+import { DATA_TYPE_TOOLTIP_COLOR } from '../config/seriesColors';
 import type { DataVolumeBar, DataVolumeChartView } from '../model/types';
 
 /**
@@ -36,7 +36,7 @@ export function mapDataVolumeToChart(
       key: seriesKey,
       label: seriesKey,
       value,
-      color: DATA_TYPE_COLORS[seriesKey] ?? OTHER_DATA_TYPE_COLOR,
+      color: DATA_TYPE_TOOLTIP_COLOR,
     }));
 
     return { date, total, tooltip: total > 0 ? buildChartTooltip(date, series, intlLocale) : null };
