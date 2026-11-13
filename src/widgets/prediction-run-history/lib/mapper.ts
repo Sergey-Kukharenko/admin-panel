@@ -10,8 +10,11 @@ import type {
 // Checked before the patterns below: data_validation_failed would otherwise match "fail"
 const SCHEDULED_RUN_STATUS: Record<string, PredictionRunStatus | undefined> = {
   awaiting: 'awaiting',
-  data_delayed: 'outdated',
+  data_not_uploaded: 'outdated',
   data_validation_failed: 'invalidData',
+  // TODO: drop data_delayed / validation_failed once Swagger lists the final names (Yaroslav, 2026-11-13)
+  data_delayed: 'outdated',
+  validation_failed: 'invalidData',
   prediction_delayed: 'delayed',
 };
 

@@ -76,7 +76,9 @@ describe('mapServiceRunToRunRecord', () => {
   // without dates, results and is_downloadable false
   it.each([
     ['awaiting', 'awaiting'],
+    ['data_not_uploaded', 'outdated'],
     ['data_delayed', 'outdated'],
+    ['validation_failed', 'invalidData'],
     ['data_validation_failed', 'invalidData'],
     ['prediction_delayed', 'delayed'],
     ['AWAITING', 'awaiting'],

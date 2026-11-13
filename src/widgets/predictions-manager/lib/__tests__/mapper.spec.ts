@@ -190,7 +190,9 @@ describe('mapProductToIntegrations', () => {
     });
 
     it.each([
+      ['data_not_uploaded', 'outdated'],
       ['data_delayed', 'outdated'],
+      ['validation_failed', 'invalidData'],
       ['data_validation_failed', 'invalidData'],
       ['prediction_delayed', 'delayed'],
       ['DATA_DELAYED', 'outdated'],

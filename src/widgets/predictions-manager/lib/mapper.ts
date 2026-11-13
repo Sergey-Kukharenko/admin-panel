@@ -21,8 +21,11 @@ const IN_PROGRESS_PATTERN = /process|progress|run|generat|pending/;
 // PM decisions in WT-555: missing data is OUTDATED as in the mockups; a run delayed on our side
 // is DELAYED (PM in Slack, 2026-11-11, reverting the plain FAILED of 2026-11-10)
 const RUN_ISSUE_STATUS_BY_PRODUCT_RUN_STATUS: Record<string, PredictionStatus | undefined> = {
-  data_delayed: 'outdated',
+  data_not_uploaded: 'outdated',
   data_validation_failed: 'invalidData',
+  // TODO: drop data_delayed / validation_failed once Swagger lists the final names (Yaroslav, 2026-11-13)
+  data_delayed: 'outdated',
+  validation_failed: 'invalidData',
   prediction_delayed: 'delayed',
 };
 
