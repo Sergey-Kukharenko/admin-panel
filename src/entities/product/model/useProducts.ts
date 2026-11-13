@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/vue-query';
 
 import { productApi } from '../api/product-api';
 import { withoutHiddenServices } from '../lib/hiddenServices';
+import { productKeys } from './queryKeys';
 
-const PRODUCTS_QUERY_KEY = ['products'] as const;
 // Push-канала (WS/SSE) у бэкенда нет, поэтому статусы сервисов обновляем поллингом —
 // по PRD смена статуса должна появиться в интерфейсе максимум за 5 секунд (AC 6).
 // Вкладка в фоне не опрашивается (refetchIntervalInBackground по умолчанию false)
@@ -18,10 +18,9 @@ export const PREDICTIONS_POLLING_INTERVAL = 5000;
  */
 export function useProducts() {
   return useQuery({
-    queryKey: PRODUCTS_QUERY_KEY,
+    queryKey: productKeys.list(),
     queryFn: async () => {
-      const response = await productApi.getProducts();
-      return response.data;
+      return (await productApi.getProducts()).data;
     },
     // Скрытые сервисы (hiddenServices.ts) убираем один раз здесь — так их не видят ни карточки,
     // ни фильтры, ни история прогонов, которая берет из /products список видимых сервисов

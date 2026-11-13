@@ -1,4 +1,4 @@
-import type { Product } from '../api/types';
+import type { Product, ProductChartResponse } from '../api/types';
 
 /**
  * Сервисы, которые временно не показываем клиенту (решение PM, 30.09.2026): из моделей PreVIP
@@ -21,4 +21,30 @@ export function withoutHiddenServices(products: Product[]): Product[] {
     ...product,
     services: product.services.filter((service) => !isServiceHidden(service.name)),
   }));
+}
+
+/**
+ * Apply the same service visibility policy to charts (PM decision reconfirmed on 2026-11-11).
+ * Used as query select: the cache keeps the server response, while totals and the empty state
+ * describe only the visible series. Removing a name from HIDDEN_SERVICE_NAMES restores it everywhere.
+ */
+export function withoutHiddenChartSeries(
+  response: ProductChartResponse | null,
+): ProductChartResponse | null {
+  if (!response) return response;
+
+  const series = response.series.filter((item) => !isServiceHidden(item.series_key));
+  if (series.length === response.series.length) return response;
+
+  const total = series.reduce(
+    (sum, item) => sum + item.points.reduce((acc, point) => acc + point.value, 0),
+    0,
+  );
+
+  return {
+    ...response,
+    series,
+    summary: { ...response.summary, total_value: total },
+    has_data: total > 0,
+  };
 }

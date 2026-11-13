@@ -1,6 +1,11 @@
 import { apiClient } from '@/shared/api';
 
-import type { Product, ProductRequiredFilesStatus } from './types';
+import type {
+  Product,
+  ProductChartResponse,
+  ProductChartSlug,
+  ProductRequiredFilesStatus,
+} from './types';
 
 export const productApi = {
   /** Получить список продуктов проекта */
@@ -25,5 +30,13 @@ export const productApi = {
     return apiClient.post<ProductRequiredFilesStatus>(
       `/products/${productId}/required-files/notify`,
     );
+  },
+
+  /**
+   * Daily results of the product's ML services for the last 30 days (dashboard chart);
+   * 404 — the product is not connected to the project
+   */
+  getProductChart(productSlug: ProductChartSlug, signal?: AbortSignal) {
+    return apiClient.get<ProductChartResponse>(`/dashboard/charts/${productSlug}`, { signal });
   },
 };

@@ -1,3 +1,4 @@
+import type { ProductChartSlug } from '@/entities/product';
 import type { ChartSeriesColor, ChartTooltip } from '@/shared/lib/chart';
 import type { AppChartGridTick } from '@/shared/ui/app-chart-grid';
 
@@ -52,7 +53,7 @@ export interface ProductChartView {
 
 /** One product chart of the block: the header is always shown, the plot once the data is loaded */
 export interface ProductChartItem {
-  productSlug: string;
+  productSlug: ProductChartSlug;
   /** Product name from the product dictionary (Recommender System, Player Intelligence) */
   title: string;
   subtitle: string;
