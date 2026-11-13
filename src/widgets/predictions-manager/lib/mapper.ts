@@ -23,9 +23,9 @@ const IN_PROGRESS_PATTERN = /process|progress|run|generat|pending/;
 const RUN_ISSUE_STATUS_BY_PRODUCT_RUN_STATUS: Record<string, PredictionStatus | undefined> = {
   data_not_uploaded: 'outdated',
   data_validation_failed: 'invalidData',
-  // TODO: drop data_delayed / validation_failed once Swagger lists the final names (Yaroslav, 2026-11-13)
+  // TODO: drop data_delayed (old name of data_not_uploaded) once Swagger lists the final names
+  // (Yaroslav, 2026-11-13)
   data_delayed: 'outdated',
-  validation_failed: 'invalidData',
   prediction_delayed: 'delayed',
 };
 
