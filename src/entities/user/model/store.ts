@@ -15,6 +15,9 @@ export const useUserStore = defineStore('user', () => {
 
   const isAuthenticated = computed(() => user.value?.authenticated ?? false);
 
+  // Missing until the backend ships the field: the quick start guide stays visible meanwhile
+  const isOnboardingComplete = computed(() => user.value?.is_onboarding_complete ?? false);
+
   // Бэк после неудачного OIDC-callback возвращает на фронт с ?auth=error&error=<код>.
   // Запоминаем ошибку, чтобы показать экран ошибки вместо повторного редиректа на логин:
   // сессия в Authentik жива, и повторный login() сразу вернул бы ту же ошибку — бесконечный цикл
@@ -72,6 +75,7 @@ export const useUserStore = defineStore('user', () => {
     user,
     isLoading,
     isAuthenticated,
+    isOnboardingComplete,
     authError,
     initAuth,
     login,

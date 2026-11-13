@@ -8,7 +8,7 @@ import { AppIcon } from '@/shared/ui/app-icon';
 
 import { useQuickStartGuide } from '../model/useQuickStartGuide';
 
-const { progress } = useQuickStartGuide();
+const { progress, isVisible } = useQuickStartGuide();
 
 const { t } = useI18n({ useScope: 'global' });
 
@@ -19,6 +19,7 @@ const isOpen = ref(true);
   <!-- Figma «guide tour» (dashboard frame «Идет обучение модели» 1417:190195). The collapsed state
        has no mockup: it keeps the header, the description and the progress bar -->
   <CollapsibleRoot
+    v-if="isVisible"
     v-model:open="isOpen"
     as="section"
     class="flex flex-col gap-2 rounded-(--radius-xl) bg-(--bg-guide) p-3"
