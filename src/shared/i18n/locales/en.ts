@@ -404,9 +404,21 @@ export const en: MessageSchema = {
         ready: 'Ready',
         generating: 'Generating',
         failed: 'Failed',
+        awaiting: 'Awaiting',
+        outdated: 'Outdated',
+        invalidData: 'Invalid Data',
+        delayed: 'Delayed',
       },
-      failedTooltip:
-        "Result generation failed.\n\nWe're already investigating the issue and will notify you by email as soon as it's resolved.",
+      statusTooltip: {
+        failed:
+          "Result generation failed.\n\nWe're already investigating the issue and will notify you by email as soon as it's resolved.",
+        awaiting: 'Waiting for the scheduled run. Results will appear once it starts.',
+        outdated:
+          'Some data is missing for the scheduled run. Upload the missing files and the run will start.',
+        invalidData: 'The uploaded data failed validation. Check the files and upload them again.',
+        delayed:
+          "Your data is fine, but the run is delayed. We're already on it, no action needed.",
+      },
       inProgress: 'Run in progress',
       downloadCsvAriaLabel: 'Download CSV',
       openApiDocsAriaLabel: 'Open service API documentation',

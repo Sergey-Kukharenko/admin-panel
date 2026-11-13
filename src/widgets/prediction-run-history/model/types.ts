@@ -1,4 +1,15 @@
-export type PredictionRunStatus = 'ready' | 'generating' | 'failed';
+/**
+ * Run status in the history table. awaiting / outdated / invalidData / delayed — a scheduled run
+ * that ML platform has not started yet (WT-532), shown as the result badges of the cards (WT-555)
+ */
+export type PredictionRunStatus =
+  | 'ready'
+  | 'generating'
+  | 'failed'
+  | 'awaiting'
+  | 'outdated'
+  | 'invalidData'
+  | 'delayed';
 
 export type PredictionRunResultType = 'csv' | 'api';
 

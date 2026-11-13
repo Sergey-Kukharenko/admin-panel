@@ -72,4 +72,28 @@ describe('mapServiceRunToRunRecord', () => {
 
     expect(record.resultType).toBe('csv');
   });
+  // Runs pre-created by the inference schedule (WT-532); backend sample 2026-11-13: awaiting
+  // without dates, results and is_downloadable false
+  it.each([
+    ['awaiting', 'awaiting'],
+    ['data_delayed', 'outdated'],
+    ['data_validation_failed', 'invalidData'],
+    ['prediction_delayed', 'delayed'],
+    ['AWAITING', 'awaiting'],
+  ])('maps the scheduled run status %s to %s without a result', (runStatus, status) => {
+    const record = mapServiceRunToRunRecord(
+      {
+        ...baseRun,
+        status: runStatus,
+        started_at: null,
+        finished_at: null,
+        total_predictions: null,
+        prediction_result_id: null,
+        is_downloadable: false,
+      },
+      resolvers,
+    );
+
+    expect(record).toMatchObject({ status, resultType: null, startedAt: null });
+  });
 });

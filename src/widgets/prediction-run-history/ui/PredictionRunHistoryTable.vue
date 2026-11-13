@@ -5,7 +5,9 @@ import { useI18n } from 'vue-i18n';
 
 import { toIntlLocale } from '@/shared/i18n';
 import { AppIcon, type IconName } from '@/shared/ui/app-icon';
+import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
+import { RUN_STATUS_BADGES } from '../config/statusBadges';
 import { formatRunRecordsCount, formatRunTimestamp } from '../lib/utils';
 import type {
   PredictionRunRecord,
@@ -34,6 +36,7 @@ const emit = defineEmits<{
 // Гибкие колонки делят место поровну (при 1440px — 182px, как в макете) и растут на широких
 // экранах. У колонок с датами минимум 182px, как в макете: на узком экране сжимаются «Продукт»
 // и «Сервис» (длинные названия обрезаются многоточием), а даты и заголовки остаются целыми.
+// The status column is 152px instead of the mockup's 140px so INVALID DATA (WT-555) fits on one line.
 // Колонка ID по макету 78px — влезает 5 символов product_run_id, полный id — в title ячейки
 const RUN_ID_PREVIEW_LENGTH = 5;
 
@@ -156,7 +159,7 @@ function sortIconClassFor(field: PredictionRunSortField) {
 
       <button
         type="button"
-        class="flex h-9 w-35 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
+        class="flex h-9 w-38 shrink-0 items-center gap-1.5 border-r border-(--border-default) bg-(--bg-surface-neutral) px-4 transition-colors hover:bg-(--muted-hover)"
         @click="emit('sort', 'status')"
       >
         <span
@@ -226,39 +229,14 @@ function sortIconClassFor(field: PredictionRunSortField) {
           </span>
         </div>
 
-        <div class="flex h-11 w-35 shrink-0 items-center border-r border-(--border-default) px-4">
-          <div
-            v-if="item.status === 'ready'"
-            class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) bg-(--bg-badge-success) py-1 pl-1.5 pr-2"
-          >
-            <AppIcon name="checkbox-circle-line" class="size-3.5 text-(--success-alt)" />
-            <span class="font-mono text-element-tag font-medium uppercase text-(--success-alt)">
-              {{ t('predictions.history.status.ready') }}
-            </span>
-          </div>
-
-          <div
-            v-else-if="item.status === 'generating'"
-            class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) bg-(--bg-badge-loading) py-1 pl-1.5 pr-2"
-          >
-            <AppIcon name="loader-2-line" class="size-3.5 animate-spin text-(--icon-loading)" />
-            <span class="font-mono text-element-tag font-medium uppercase text-(--icon-loading)">
-              {{ t('predictions.history.status.generating') }}
-            </span>
-          </div>
-
-          <TooltipRoot v-else>
+        <div class="flex h-11 w-38 shrink-0 items-center border-r border-(--border-default) px-4">
+          <TooltipRoot v-if="RUN_STATUS_BADGES[item.status].tooltipKey">
             <TooltipTrigger as-child>
-              <div
-                class="inline-flex h-5.75 cursor-help items-center gap-1 rounded-(--radius-full) bg-(--bg-badge-danger) py-1 pl-1.5 pr-2"
-              >
-                <AppIcon name="close-circle-line" class="size-3.5 text-(--danger-failed)" />
-                <span
-                  class="font-mono text-element-tag font-medium uppercase text-(--danger-failed)"
-                >
-                  {{ t('predictions.history.status.failed') }}
-                </span>
-              </div>
+              <AppStatusBadge
+                :status="RUN_STATUS_BADGES[item.status].tone"
+                :label="t(`predictions.history.status.${item.status}`)"
+                class="cursor-help"
+              />
             </TooltipTrigger>
 
             <TooltipContent
@@ -272,13 +250,19 @@ function sortIconClassFor(field: PredictionRunSortField) {
                 <p
                   class="max-w-56 text-xs font-normal leading-4 text-(--text-overlay) whitespace-pre-line"
                 >
-                  {{ t('predictions.history.failedTooltip') }}
+                  {{ t(RUN_STATUS_BADGES[item.status].tooltipKey ?? '') }}
                 </p>
               </div>
 
               <TooltipArrow class="fill-(--bg-foreground-overlay)" :width="8" :height="4" />
             </TooltipContent>
           </TooltipRoot>
+
+          <AppStatusBadge
+            v-else
+            :status="RUN_STATUS_BADGES[item.status].tone"
+            :label="t(`predictions.history.status.${item.status}`)"
+          />
         </div>
 
         <div class="flex h-11 w-[91px] shrink-0 items-center justify-center px-2">

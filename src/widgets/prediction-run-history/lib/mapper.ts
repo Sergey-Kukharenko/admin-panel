@@ -6,11 +6,22 @@ import type {
   PredictionRunStatus,
 } from '../model/types';
 
-// status — MLServiceRunStatusName на бэке: processing / completed / error (подтверждено в WT-511);
-// в OpenAPI пока описан строкой, поэтому сравниваем без учета регистра
+// Statuses of a run pre-created by the inference schedule before ML platform starts it (WT-532).
+// Checked before the patterns below: data_validation_failed would otherwise match "fail"
+const SCHEDULED_RUN_STATUS: Record<string, PredictionRunStatus | undefined> = {
+  awaiting: 'awaiting',
+  data_delayed: 'outdated',
+  data_validation_failed: 'invalidData',
+  prediction_delayed: 'delayed',
+};
+
+// status — MLServiceRunStatusName на бэке: processing / completed / error (подтверждено в WT-511)
+// plus the scheduled run statuses above; в OpenAPI описан строкой, поэтому сравниваем без учета регистра
 function mapRunStatus(item: MLServiceRunListItem): PredictionRunStatus {
   const normalizedStatus = item.status.toLowerCase();
+  const scheduledStatus = SCHEDULED_RUN_STATUS[normalizedStatus];
 
+  if (scheduledStatus) return scheduledStatus;
   if (/fail|error/.test(normalizedStatus)) return 'failed';
   if (/process|progress|run|generat|pending/.test(normalizedStatus)) return 'generating';
 

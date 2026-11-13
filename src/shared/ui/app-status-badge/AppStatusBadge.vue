@@ -58,7 +58,7 @@ const spinning = computed(() => iconName.value === 'loader-2-line');
 
 <template>
   <span
-    class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) pr-2 font-mono text-element-tag font-medium uppercase select-none"
+    class="inline-flex h-5.75 items-center gap-1 rounded-(--radius-full) pr-2 font-mono text-element-tag font-medium uppercase whitespace-nowrap select-none"
     :class="[config.classes, iconName ? 'pl-1.5' : 'pl-2']"
   >
     <!-- without the icon the text keeps the 8px left inset of the UI kit badge (6px + 2px) -->
