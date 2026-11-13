@@ -4,12 +4,12 @@ type Schemas = components['schemas'];
 
 /**
  * GET /user/me.
- * TODO: WT-566 — `is_onboarding_complete` is agreed with the backend (2026-11-13) but is not in the
- * OpenAPI schema yet; drop the extension once `npm run api:types` brings the field
+ * TODO: WT-566 — `project_onboarding_completed` is agreed with the backend (2026-11-13) but is not
+ * in the OpenAPI schema yet; drop the extension once `npm run api:types` brings the field
  */
 export type UserProfile = Schemas['AuthorizationMeResponseSchema'] & {
   /** The client has received the first result; never reset afterwards (PM decision, 2026-11-03) */
-  is_onboarding_complete?: boolean;
+  project_onboarding_completed?: boolean;
 };
 
 export type AuthorizationFrontend = NonNullable<

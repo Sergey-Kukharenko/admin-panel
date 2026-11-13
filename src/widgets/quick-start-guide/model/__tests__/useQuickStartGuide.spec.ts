@@ -34,8 +34,8 @@ describe('useQuickStartGuide', () => {
   // WT-566: the backend field may be missing until it ships, the guide stays visible then
   it.each([
     ['the field is missing', USER, true],
-    ['onboarding is not complete', { ...USER, is_onboarding_complete: false }, true],
-    ['onboarding is complete', { ...USER, is_onboarding_complete: true }, false],
+    ['onboarding is not complete', { ...USER, project_onboarding_completed: false }, true],
+    ['onboarding is complete', { ...USER, project_onboarding_completed: true }, false],
   ])('when %s, isVisible is %s', (_case, user, visible) => {
     expect(setup(user).isVisible.value).toBe(visible);
   });

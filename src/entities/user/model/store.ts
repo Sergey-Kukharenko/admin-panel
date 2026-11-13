@@ -16,7 +16,7 @@ export const useUserStore = defineStore('user', () => {
   const isAuthenticated = computed(() => user.value?.authenticated ?? false);
 
   // Missing until the backend ships the field: the quick start guide stays visible meanwhile
-  const isOnboardingComplete = computed(() => user.value?.is_onboarding_complete ?? false);
+  const isOnboardingComplete = computed(() => user.value?.project_onboarding_completed ?? false);
 
   // Бэк после неудачного OIDC-callback возвращает на фронт с ?auth=error&error=<код>.
   // Запоминаем ошибку, чтобы показать экран ошибки вместо повторного редиректа на логин:
