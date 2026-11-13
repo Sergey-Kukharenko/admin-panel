@@ -514,7 +514,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Daily succeeded upload row counts per dataset type (last 30 UTC days) */
+        /** Daily succeeded upload row counts per dataset type (last 30 days in the project timezone) */
         get: operations["get_data_volume_chart"];
         put?: never;
         post?: never;
@@ -531,7 +531,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Daily completed predictions per game-recommender ML service (last 30 UTC days) */
+        /** Daily completed predictions per game-recommender ML service (last 30 days in the project timezone) */
         get: operations["get_game_recommender_chart"];
         put?: never;
         post?: never;
@@ -548,7 +548,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Daily completed predictions per player-intelligence ML service (last 30 UTC days) */
+        /** Daily completed predictions per player-intelligence ML service (last 30 days in the project timezone) */
         get: operations["get_player_intelligence_chart"];
         put?: never;
         post?: never;
@@ -585,6 +585,8 @@ export interface components {
             authentik_user_id: string;
             /** Name */
             name: string;
+            /** Timezone */
+            timezone: string;
         };
         /** Body_upload_input_data_file */
         Body_upload_input_data_file: {
@@ -763,6 +765,11 @@ export interface components {
             /** Status */
             status: string;
             validation_errors?: components["schemas"]["ValidationErrorsSchema"] | null;
+            /**
+             * Uploaded At
+             * Format: date-time
+             */
+            uploaded_at: string;
         };
         /** InputDataListResponseSchema */
         InputDataListResponseSchema: {
@@ -807,6 +814,11 @@ export interface components {
             /** Updated At */
             updated_at?: string | null;
         };
+        /**
+         * InputDataStatusName
+         * @enum {string}
+         */
+        InputDataStatusName: "awaiting" | "processing" | "failed" | "succeeded";
         /**
          * IntegrationAccessType
          * @enum {string}
@@ -1259,13 +1271,12 @@ export interface components {
              * @description Product run status (an ML service run status name). Without an active inference schedule, the latest started run. Otherwise the upcoming scheduled run once it is due or data has arrived for it, else the latest started run; null without runs. Before ML platform starts a scheduled run, its status is ``awaiting`` (waiting for the scheduled time or for ML platform), ``data_delayed`` (required data missing at the scheduled time), ``data_validation_failed`` (required data invalid) or ``prediction_delayed`` (required data valid, but ML platform has not started the run 3 hours after the scheduled time).
              */
             last_product_run_status?: string | null;
+            /** @description Aggregated status of the data package for the next inference (``InputDataStatusName``). With an active inference schedule, files are taken from the half-open interval between the previous cron fire and the next one (``coalesce(uploaded_at, created_at)``). Without a usable schedule, the window is the current local day; a missing or invalid project timezone uses UTC. Per required dataset type the latest file in the window is used (project rows, else the product catalog). ``failed`` when any of those files failed; ``awaiting`` when a required type has no file in the window; ``processing`` when every required type has a file and at least one is not yet succeeded; ``succeeded`` when every required type succeeded. Null when the product requires no dataset types. */
+            last_file_upload_status?: components["schemas"]["InputDataStatusName"] | null;
             /** Last Prediction At */
             last_prediction_at?: string | null;
-            /**
-             * Next Prediction Date
-             * Format: date-time
-             */
-            next_prediction_date: string;
+            /** Next Prediction Date */
+            next_prediction_date?: string | null;
             /** Services */
             services: components["schemas"]["ProjectProductServiceItemSchema"][];
         };
@@ -1284,11 +1295,8 @@ export interface components {
             last_service_run_status?: string | null;
             /** Last Prediction At */
             last_prediction_at?: string | null;
-            /**
-             * Next Prediction Date
-             * Format: date-time
-             */
-            next_prediction_date: string;
+            /** Next Prediction Date */
+            next_prediction_date?: string | null;
         };
         /**
          * ProjectS3CredentialRequestCreateSchema

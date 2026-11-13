@@ -254,6 +254,7 @@ export const ru = {
     table: {
       header: {
         name: 'Наименование',
+        uploadTime: 'Время загрузки',
         rowCount: 'Объём строк',
         status: 'Статус',
       },

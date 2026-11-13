@@ -239,6 +239,7 @@ export const en: MessageSchema = {
     table: {
       header: {
         name: 'Name',
+        uploadTime: 'Upload Time',
         rowCount: 'Row Count',
         status: 'Status',
       },

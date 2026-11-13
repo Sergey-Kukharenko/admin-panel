@@ -4,10 +4,12 @@ import { useI18n } from 'vue-i18n';
 
 import type { DatasetGroup } from '@/entities/dataset';
 import { DatasetTemplateIcon, getDatasetTypeContent } from '@/entities/dataset';
+import { toIntlLocale } from '@/shared/i18n';
 import { AppIcon } from '@/shared/ui/app-icon';
 import { AppStatusBadge } from '@/shared/ui/app-status-badge';
 
 import { mapBackendStatusToUi } from '../lib/statusMapping';
+import { formatUploadTime } from '../lib/utils';
 import type { DatasetSort, DatasetSortOrder } from '../model/types';
 import { useDatasetHistoryGroupErrors } from '../model/useDatasetHistoryGroupErrors';
 import DatasetHistoryErrorDialog from './DatasetHistoryErrorDialog.vue';
@@ -23,7 +25,7 @@ const props = defineProps<{
   groupDate: string;
 }>();
 
-const { t } = useI18n({ useScope: 'global' });
+const { t, locale } = useI18n({ useScope: 'global' });
 
 const errors = useDatasetHistoryGroupErrors(props.groupDate);
 
@@ -63,6 +65,7 @@ const visibleCategories = computed(() => {
         return {
           id: file.file_id,
           name: prettyFileName,
+          uploadTime: formatUploadTime(file.uploaded_at ?? null, toIntlLocale(locale.value)),
           rowsCount: file.rows_count,
           status: computedStatus,
           rawFile: {
@@ -127,6 +130,13 @@ const visibleCategories = computed(() => {
         <div class="flex h-11 flex-1 items-center border-r border-(--border-default) pl-10 pr-4">
           <span class="truncate text-sm font-medium text-(--text-primary)">
             {{ file.name }}
+          </span>
+        </div>
+
+        <!-- UPLOAD TIME -->
+        <div class="flex h-11 w-40 items-center border-r border-(--border-default) pl-4">
+          <span class="font-mono text-sm font-medium text-(--text-primary)">
+            {{ file.uploadTime }}
           </span>
         </div>
 

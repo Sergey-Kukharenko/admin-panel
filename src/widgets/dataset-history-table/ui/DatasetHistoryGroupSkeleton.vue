@@ -43,6 +43,10 @@ const FILE_ROWS_COUNT = 6;
           </div>
 
           <div class="flex h-11 w-40 items-center border-r border-(--border-default) pl-4">
+            <AppSkeleton class="h-3 w-10 rounded-(--radius-sm)" />
+          </div>
+
+          <div class="flex h-11 w-40 items-center border-r border-(--border-default) pl-4">
             <AppSkeleton class="h-3 w-16 rounded-(--radius-sm)" />
           </div>
 

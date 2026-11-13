@@ -1509,7 +1509,7 @@
         "tags": [
           "dashboard"
         ],
-        "summary": "Daily succeeded upload row counts per dataset type (last 30 UTC days)",
+        "summary": "Daily succeeded upload row counts per dataset type (last 30 days in the project timezone)",
         "operationId": "get_data_volume_chart",
         "parameters": [
           {
@@ -1560,7 +1560,7 @@
         "tags": [
           "dashboard"
         ],
-        "summary": "Daily completed predictions per game-recommender ML service (last 30 UTC days)",
+        "summary": "Daily completed predictions per game-recommender ML service (last 30 days in the project timezone)",
         "operationId": "get_game_recommender_chart",
         "responses": {
           "200": {
@@ -1581,7 +1581,7 @@
         "tags": [
           "dashboard"
         ],
-        "summary": "Daily completed predictions per player-intelligence ML service (last 30 UTC days)",
+        "summary": "Daily completed predictions per player-intelligence ML service (last 30 days in the project timezone)",
         "operationId": "get_player_intelligence_chart",
         "responses": {
           "200": {
@@ -1635,6 +1635,10 @@
           "name": {
             "type": "string",
             "title": "Name"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone"
           }
         },
         "additionalProperties": false,
@@ -1643,7 +1647,8 @@
           "email",
           "project_id",
           "authentik_user_id",
-          "name"
+          "name",
+          "timezone"
         ],
         "title": "AuthorizationMeResponseSchema",
         "description": "Identity summary for ``GET /authorization/me`` (no tokens)."
@@ -2042,6 +2047,11 @@
                 "type": "null"
               }
             ]
+          },
+          "uploaded_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Uploaded At"
           }
         },
         "type": "object",
@@ -2051,7 +2061,8 @@
           "file_name_csv",
           "source_type",
           "rows_count",
-          "status"
+          "status",
+          "uploaded_at"
         ],
         "title": "InputDataListItemSchema"
       },
@@ -2194,6 +2205,16 @@
           "created_at"
         ],
         "title": "InputDataResponseSchema"
+      },
+      "InputDataStatusName": {
+        "type": "string",
+        "enum": [
+          "awaiting",
+          "processing",
+          "failed",
+          "succeeded"
+        ],
+        "title": "InputDataStatusName"
       },
       "IntegrationAccessType": {
         "type": "string",
@@ -3417,6 +3438,17 @@
             "title": "Last Product Run Status",
             "description": "Product run status (an ML service run status name). Without an active inference schedule, the latest started run. Otherwise the upcoming scheduled run once it is due or data has arrived for it, else the latest started run; null without runs. Before ML platform starts a scheduled run, its status is ``awaiting`` (waiting for the scheduled time or for ML platform), ``data_delayed`` (required data missing at the scheduled time), ``data_validation_failed`` (required data invalid) or ``prediction_delayed`` (required data valid, but ML platform has not started the run 3 hours after the scheduled time)."
           },
+          "last_file_upload_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InputDataStatusName"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Aggregated status of the data package for the next inference (``InputDataStatusName``). With an active inference schedule, files are taken from the half-open interval between the previous cron fire and the next one (``coalesce(uploaded_at, created_at)``). Without a usable schedule, the window is the current local day; a missing or invalid project timezone uses UTC. Per required dataset type the latest file in the window is used (project rows, else the product catalog). ``failed`` when any of those files failed; ``awaiting`` when a required type has no file in the window; ``processing`` when every required type has a file and at least one is not yet succeeded; ``succeeded`` when every required type succeeded. Null when the product requires no dataset types."
+          },
           "last_prediction_at": {
             "anyOf": [
               {
@@ -3430,8 +3462,15 @@
             "title": "Last Prediction At"
           },
           "next_prediction_date": {
-            "type": "string",
-            "format": "date-time",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Next Prediction Date"
           },
           "services": {
@@ -3447,7 +3486,6 @@
           "product_id",
           "name",
           "product_status",
-          "next_prediction_date",
           "services"
         ],
         "title": "ProjectProductListItemSchema"
@@ -3491,8 +3529,15 @@
             "title": "Last Prediction At"
           },
           "next_prediction_date": {
-            "type": "string",
-            "format": "date-time",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Next Prediction Date"
           }
         },
@@ -3500,8 +3545,7 @@
         "required": [
           "ml_service_id",
           "name",
-          "service_status",
-          "next_prediction_date"
+          "service_status"
         ],
         "title": "ProjectProductServiceItemSchema"
       },

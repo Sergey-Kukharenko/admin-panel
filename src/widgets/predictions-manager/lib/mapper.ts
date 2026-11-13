@@ -115,7 +115,7 @@ export function mapProductToIntegrations(
       status,
       isTraining,
       isAwaitingSchedule: status === 'awaiting' && productRunStatus === 'awaiting',
-      nextCalculation: formatNextCalculation(service.next_prediction_date, intlLocale),
+      nextCalculation: formatNextCalculation(service.next_prediction_date ?? null, intlLocale),
       lastCalculation: formatLastCalculation(service.last_prediction_at ?? null, intlLocale),
       serviceState,
       iconName: resolveProductIconName(product.name),

@@ -17,6 +17,20 @@ export function formatDatasetGroupDate(dateIso: string, intlLocale: string): str
 }
 
 /**
+ * File upload time from the backend → "09:05" in the user's timezone; 24-hour clock in every
+ * locale (WT-570). "-" without a value.
+ */
+export function formatUploadTime(dateIso: string | null, intlLocale: string): string {
+  if (!dateIso) return '-';
+
+  return new Intl.DateTimeFormat(intlLocale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(new Date(dateIso));
+}
+
+/**
  * Стабильный ключ дня для day-группы. В отличие от сырого uploaded_at с бэка,
  * который пересчитывается на любое изменение внутри группы (например, когда
  * в неё дозагружается файл), этот ключ не меняется, пока группа остаётся тем

@@ -21,6 +21,15 @@ const { t } = useI18n({ useScope: 'global' });
       </span>
     </div>
 
+    <!-- Upload time tells apart files with the same name; the date is in the group header (WT-570) -->
+    <div class="flex h-9 w-40 items-center border-r border-(--border-subtle) pl-4 pr-3 text-left">
+      <span
+        class="font-mono text-element-tag font-medium uppercase text-(--text-secondary) select-none"
+      >
+        {{ t('datasets.table.header.uploadTime') }}
+      </span>
+    </div>
+
     <!-- 2. Ячейка: ОБЪЁМ СТРОК (сортировка отключена — бэкенд не поддерживает order_by=rows_count) -->
     <div
       class="flex h-9 w-40 items-center justify-between gap-1.5 border-r border-(--border-subtle) pl-4 pr-3 text-left"

@@ -33,6 +33,10 @@ defineOptions({
         <AppSkeleton class="h-2.5 w-20 rounded-(--radius-sm)" />
       </div>
 
+      <div class="flex h-9 w-40 items-center gap-1.5 border-r border-(--border-subtle) pl-4 pr-3">
+        <AppSkeleton class="h-2.5 w-20 rounded-(--radius-sm)" />
+      </div>
+
       <div class="flex h-9 w-40 items-center pl-4 pr-3">
         <AppSkeleton class="h-2.5 w-20 rounded-(--radius-sm)" />
       </div>
