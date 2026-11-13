@@ -1,11 +1,38 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import type { DatasetFileListItem, DatasetHistoryDayGroup } from '@/entities/dataset';
+
 import {
   formatDatasetGroupDate,
   formatUploadTime,
   getDatasetGroupDayKey,
+  getDatasetGroupKey,
+  getDatasetGroupSourceType,
   getPeriodDates,
 } from '../utils';
+
+function makeFile(sourceType: string): DatasetFileListItem {
+  return {
+    file_id: `file-${sourceType}`,
+    file_name: 'users.parquet',
+    file_name_csv: 'users.csv',
+    source_type: sourceType,
+    rows_count: 1,
+    status: 'succeeded',
+    uploaded_at: '2026-11-13T10:00:00Z',
+  };
+}
+
+function makeDayGroup(uploadedAt: string, sourceTypes: string[][]): DatasetHistoryDayGroup {
+  return {
+    uploaded_at: uploadedAt,
+    dataset_groups: sourceTypes.map((files) => ({
+      dataset_type: 'users',
+      files_count: files.length,
+      files: files.map(makeFile),
+    })),
+  };
+}
 
 afterEach(() => {
   vi.useRealTimers();
@@ -45,6 +72,50 @@ describe('formatUploadTime', () => {
 describe('getDatasetGroupDayKey', () => {
   it('keys the group by its calendar day', () => {
     expect(getDatasetGroupDayKey('2026-07-24T09:57:23Z')).toBe('2026-07-24');
+  });
+});
+
+describe('getDatasetGroupSourceType', () => {
+  it('takes the source of the first file, lower case', () => {
+    expect(getDatasetGroupSourceType(makeDayGroup('2026-11-13T10:00:00Z', [['S3']]))).toBe('s3');
+  });
+
+  it('skips dataset groups without files', () => {
+    const dayGroup = makeDayGroup('2026-11-13T10:00:00Z', [[], ['API']]);
+
+    expect(getDatasetGroupSourceType(dayGroup)).toBe('api');
+  });
+
+  it('falls back to client_portal without files', () => {
+    expect(getDatasetGroupSourceType(makeDayGroup('2026-11-13T10:00:00Z', []))).toBe(
+      'client_portal',
+    );
+  });
+});
+
+// WT-590: the backend returns one group per «day + source»
+describe('getDatasetGroupKey', () => {
+  it.each([
+    ['CLIENT_PORTAL', '2026-11-13:client_portal'],
+    ['API', '2026-11-13:api'],
+    ['S3', '2026-11-13:s3'],
+  ])('keys a %s group by day and source', (sourceType, expected) => {
+    expect(getDatasetGroupKey(makeDayGroup('2026-11-13T10:00:00Z', [[sourceType]]))).toBe(expected);
+  });
+
+  it('gives groups of one day with different sources different keys', () => {
+    const keys = ['CLIENT_PORTAL', 'API', 'S3'].map((sourceType) =>
+      getDatasetGroupKey(makeDayGroup('2026-11-13T10:00:00Z', [[sourceType]])),
+    );
+
+    expect(new Set(keys).size).toBe(3);
+  });
+
+  it('keeps the key when the time changes within the same day and source (WT-448)', () => {
+    const before = getDatasetGroupKey(makeDayGroup('2026-11-13T10:00:00Z', [['S3']]));
+    const after = getDatasetGroupKey(makeDayGroup('2026-11-13T15:30:00Z', [['S3']]));
+
+    expect(after).toBe(before);
   });
 });
 

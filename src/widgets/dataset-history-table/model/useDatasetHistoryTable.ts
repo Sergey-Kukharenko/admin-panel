@@ -6,7 +6,7 @@ import { datasetApi, datasetKeys, useDatasetTemplates } from '@/entities/dataset
 
 import { mapSourceTypeToLabel } from '../lib/sourceMapping';
 import { mapUiStatusToBackend } from '../lib/statusMapping';
-import { getDatasetGroupDayKey, getPeriodDates } from '../lib/utils';
+import { getDatasetGroupKey, getDatasetGroupSourceType, getPeriodDates } from '../lib/utils';
 import { useDatasetHistoryFilters } from './useDatasetHistoryFilters';
 import {
   DATASET_HISTORY_PAGE_SIZE,
@@ -25,9 +25,8 @@ export function useDatasetHistoryTable() {
   } = useDatasetTemplates();
 
   const expandedGroups = ref<string[]>([]);
-  // Id верхней (самой свежей) группы, которую мы уже авто-раскрыли — нужен,
-  // чтобы не переоткрывать её на каждый рефетч, но раскрыть заново, если
-  // наверху списка оказался другой день (см. WT-448)
+  // Id of the top (latest) group already auto-expanded: don't reopen it on every refetch, but
+  // expand again when another «day + source» group gets to the top (WT-448, WT-590)
   const autoExpandedTopGroupId = ref<string | null>(null);
 
   const offset = computed(() => (page.value - 1) * DATASET_HISTORY_PAGE_SIZE);
@@ -150,13 +149,11 @@ export function useDatasetHistoryTable() {
         return;
       }
 
-      const firstGroupDate = newData.items.at(0)?.uploaded_at;
-      const topGroupId = firstGroupDate ? getDatasetGroupDayKey(firstGroupDate) : null;
+      const topGroup = newData.items.at(0);
+      const topGroupId = topGroup ? getDatasetGroupKey(topGroup) : null;
 
-      // Раскрываем верхнюю группу автоматически только когда наверху списка
-      // реально сменился день (новая загрузка сегодня, смена суток) — а не на
-      // каждый рефетч, иначе мы бы принудительно открывали то, что пользователь
-      // сам свернул
+      // Auto-expand only when another group gets to the top (new upload, new day), not on every
+      // refetch — otherwise a card the user collapsed would reopen
       if (topGroupId && topGroupId !== autoExpandedTopGroupId.value) {
         if (!expandedGroups.value.includes(topGroupId)) {
           expandedGroups.value = [...expandedGroups.value, topGroupId];
@@ -182,15 +179,12 @@ export function useDatasetHistoryTable() {
         );
         const totalCount = datasetGroups.reduce((acc, group) => acc + group.files.length, 0);
 
-        const firstFile = datasetGroups[0]?.files?.[0];
-        const source = mapSourceTypeToLabel(firstFile?.source_type ?? 'client_portal');
-
         return {
-          id: getDatasetGroupDayKey(dayGroup.uploaded_at),
+          id: getDatasetGroupKey(dayGroup),
           date: dayGroup.uploaded_at,
           uploadedCount,
           totalCount,
-          source,
+          source: mapSourceTypeToLabel(getDatasetGroupSourceType(dayGroup)),
           datasetGroups,
         };
       })

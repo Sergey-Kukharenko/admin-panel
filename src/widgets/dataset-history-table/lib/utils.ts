@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 
+import type { DatasetHistoryDayGroup } from '@/entities/dataset';
+
 import type { DatasetPeriod } from '../model/types';
 
 /**
@@ -39,6 +41,28 @@ export function formatUploadTime(dateIso: string | null, intlLocale: string): st
  */
 export function getDatasetGroupDayKey(dateIso: string): string {
   return dayjs(dateIso).format('YYYY-MM-DD');
+}
+
+/** Source of files uploaded via the portal UI; also the fallback for a group without files */
+const DEFAULT_SOURCE_TYPE = 'client_portal';
+
+/**
+ * Raw `source_type` of a group, lower case. The backend groups files by «day + source» but keeps
+ * the source on each file, not on the group (WT-590).
+ */
+export function getDatasetGroupSourceType(dayGroup: DatasetHistoryDayGroup): string {
+  const firstFile = dayGroup.dataset_groups.find((group) => group.files.length > 0)?.files[0];
+
+  return (firstFile?.source_type ?? DEFAULT_SOURCE_TYPE).toLowerCase();
+}
+
+/**
+ * Card key for :key, expanding and auto-expanding: "2026-11-13:client_portal". Several groups of
+ * one day differ only by source, so the day alone collides (WT-590); the day part stays stable
+ * across refetches (WT-448).
+ */
+export function getDatasetGroupKey(dayGroup: DatasetHistoryDayGroup): string {
+  return `${getDatasetGroupDayKey(dayGroup.uploaded_at)}:${getDatasetGroupSourceType(dayGroup)}`;
 }
 
 export function getPeriodDates(period: DatasetPeriod | '') {
